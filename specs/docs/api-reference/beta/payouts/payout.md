@@ -176,6 +176,11 @@ Use the Payouts API to create and track payouts, manage saved payout methods, an
       Available options: `standard`, `instant`
     </ResponseField>
 
+    <ResponseField name="statement_descriptor" type="string | null" required>
+      Text that appears on the recipient's bank statement, or `null` if no
+      descriptor was set. When set, 5-22 alphanumeric characters (A-Z, a-z, 0-9).
+    </ResponseField>
+
     <ResponseField name="status" type="string" required>
       Current payout status.
 
@@ -233,6 +238,7 @@ Use the Payouts API to create and track payouts, manage saved payout methods, an
       	"speed": "standard",
       	"status": "completed",
       	"status_detail": "completed",
+      	"statement_descriptor": "MYCOMPANY",
       	"trace_code": "021000021234567"
       }
       ```

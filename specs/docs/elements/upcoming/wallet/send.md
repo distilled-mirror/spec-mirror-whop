@@ -6,7 +6,7 @@
 
 > Sends money from an account to a recipient — a user, another account, or a public claim link anyone can redeem. Direct transfers use the source account's configured fiat or crypto rail. Renders its own recipient search resolved from the account ID with no credentials beyond the account's own token. Needs an `accessToken` scoped to `payout:transfer_funds` for direct transfers and `payout:withdraw_funds` for recipient lists; account recipient search additionally needs `company:authorized_user:read` and `member:basic:read`, and account claim links need `airdrop_link:manage` — a host without one of those scopes should turn off the matching prop rather than leave a row that will 403.
 
-Mounts inside [`Wallet`](/elements/upcoming/wallet/overview). `accountId` and `currency` come from there. Pass props and callbacks through the create options or React props. Keep the created handle, or React `ref`, to call `refresh()`.
+Mounts inside [`Wallet`](/elements/upcoming/wallet/overview). `accountId` and `accessToken` come from there. Pass props and callbacks through the create options or React props. Keep the created handle, or React `ref`, to call `refresh()`.
 
 <Note>You can mount this element **inline** (`create`) or open it as a **modal** overlay (`createOverlay`).</Note>
 

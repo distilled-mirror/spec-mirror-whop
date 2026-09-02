@@ -4,7 +4,7 @@
 
 # ExpressCheckoutElement
 
-> One-press Apple Pay and Google Pay buttons for a checkout — the OS payment sheet collects whatever the session still needs (the buyer's email, a shipping address for physical goods, a promo code where the seller offers entry) and one press finishes the purchase. It shares the checkout's entry slot with the full checkout element, so a handle mounts exactly one of the two: this button alone where the purchase is simple enough for a sheet to finish, or the full checkout surface for everything else. Renders only the wallets the buyer's device can actually pay with — and the checkout's own payment method configuration allows — using the served button art, and renders nothing where no wallet is available. A checkout the sheet cannot honestly finish — a waitlist join, a transfer, a form question only a page can ask — refuses loudly instead of rendering a doomed button.
+> One-press Apple Pay and Google Pay buttons for a checkout — the OS payment sheet collects whatever the session still needs (the buyer's email, a shipping address for physical goods, a promo code where the seller offers entry) and one press finishes the purchase. It shares the checkout's entry slot with the full checkout element, so a handle mounts exactly one of the two: this button alone where the purchase is simple enough for a sheet to finish, or the full checkout surface for everything else. Renders only the wallets the buyer's device can actually pay with — and the checkout's own payment method configuration allows — using the served button art, and renders nothing where no wallet is available. Apple Pay additionally requires the page's domain to be a verified payment method domain: first-party whop.com pages are pre-approved, and any other site must register its domain through the Payment Method Domains API before the button renders there. A checkout the sheet cannot honestly finish — a waitlist join, a transfer, a form question only a page can ask — refuses loudly instead of rendering a doomed button.
 
 Mounts inside [`Checkout`](/elements/upcoming/checkout/overview). Pass props and callbacks through the create options or React props.
 
@@ -54,7 +54,7 @@ Mounts inside [`Checkout`](/elements/upcoming/checkout/overview). Pass props and
 ## Props
 
 <ResponseField name="wallets" type="(&#x22;apple_pay&#x22; | &#x22;google_pay&#x22;)[]">
-  Which wallets may render — a filter over what the buyer’s device actually offers. The element never shows a wallet the device, the served matrix, or the checkout’s payment method configuration cannot back, and the render order stays best-native-first whatever order this lists. An empty list renders nothing (warned in dev builds). Defaults to `["apple_pay","google_pay"]`.
+  Which wallets may render — a filter over what the buyer’s device actually offers. The element never shows a wallet the device, the served matrix, or the checkout’s payment method configuration cannot back, and the render order stays best-native-first whatever order this lists. An empty list renders nothing (warned in dev builds). Apple Pay also needs the page’s domain verified as a [payment method domain](/api-reference/beta/payment-method-domains/payment-method-domain) — first-party whop.com pages are pre-approved; on any other site, register and verify the domain or the Apple Pay button stays hidden. Defaults to `["apple_pay","google_pay"]`.
 </ResponseField>
 
 <ResponseField name="layout" type="&#x22;auto&#x22; | &#x22;horizontal&#x22; | &#x22;vertical&#x22;">

@@ -4,9 +4,12 @@
 
 # Install the Whop Pixel on Shopify
 
-> Add the Whop Pixel to a Shopify storefront, including checkout, with a custom pixel.
+> Add the Whop Pixel to a Shopify storefront with a theme snippet, plus a custom pixel that covers checkout.
 
-Shopify's checkout runs in a sandboxed environment that ignores scripts pasted into `theme.liquid`, so a normal pixel install never sees it. Shopify's own **Custom Pixel** feature is the way around that — it runs in every part of your store, checkout included, and reports standard events like `checkout_completed` and `payment_info_submitted` directly. The script below listens for those events and forwards each one to Whop.
+A Shopify install has two parts, and you need both:
+
+1. **The pixel snippet in your theme.** It runs on every storefront page — home, products, collections, cart — where it tracks visitors and powers the install overlay you see when verifying your pixel from the Whop dashboard.
+2. **A custom pixel.** Shopify's checkout runs in a sandbox that ignores theme scripts, so the snippet goes dark there. Shopify's own **Custom Pixel** feature is the way around that — it runs in every part of your store, checkout included, and reports standard events like `checkout_completed` and `payment_info_submitted`. The script in step 4 forwards each one to Whop, tied to the same visitor the theme snippet tracks.
 
 <Steps>
   <Step title="Get your Whop Account ID" iconType="regular" titleSize="h2">
@@ -15,12 +18,28 @@ Shopify's checkout runs in a sandboxed environment that ignores scripts pasted i
     <img src="https://mintcdn.com/whop/i81Det37UaKELkrh/images/dashboard-url.png?fit=max&auto=format&n=i81Det37UaKELkrh&q=85&s=f8dce6ea378318d4c89f7bce9239605d" width="1270" height="244" data-path="images/dashboard-url.png" />
   </Step>
 
+  <Step title="Add the pixel snippet to your theme" iconType="regular" titleSize="h2">
+    In Shopify, go to **Online Store > Themes**. On your current theme, select **⋯ > Edit code**. Under **Layout**, open `theme.liquid` and paste this snippet immediately before the closing `</head>` tag. Replace `biz_xxxxxxxxxxxxx` with your own account ID, then select **Save**.
+
+    ```html Pixel snippet theme={null}
+    <script>
+    !function(w,d,s,u,n,a,b){if(w[n])return;a=w[n]={q:[],t:+new Date,s:[],o:u,track:function(){a.q.push([+new Date].concat([].slice.call(arguments)))},setScope:function(){a.s=[].slice.call(arguments).filter(function(x){return typeof x==="string"});a.q.push([+new Date,"setScope"].concat(a.s))},scope:function(){var c=[].slice.call(arguments);return{track:function(){a.q.push([+new Date].concat([].slice.call(arguments)).concat([{__scope:c}]))}}}};b=d.createElement(s);b.async=1;b.src=u+"/s.js";d.getElementsByTagName(s)[0].parentNode.insertBefore(b,d.getElementsByTagName(s)[0])}(window,document,"script","https://t.whop.tw","whop");
+    whop.setScope("biz_xxxxxxxxxxxxx");
+    whop.track("page");
+    </script>
+    ```
+
+    Because `theme.liquid` wraps every storefront page, this one edit covers your whole store. Don't paste the snippet into a single page or section template instead. A visitor who lands anywhere else wouldn't be tracked, and the install overlay would disappear as soon as you navigate off that page.
+  </Step>
+
   <Step title="Add a custom pixel" iconType="regular" titleSize="h2">
     In Shopify, go to **Settings > Customer events**, then click **Add custom pixel**. Name it `Whop`.
   </Step>
 
   <Step title="Paste the script" iconType="regular" titleSize="h2">
     Paste this into the pixel's code editor. Replace `biz_xxxxxxxxxxxxx` with your own account ID.
+
+    The script reads the `_wuid` cookie the theme snippet sets, so checkout events land on the same visitor the theme snippet has been tracking. It also skips storefront page views — the theme snippet already reports those — and only sends page views from checkout, where theme scripts can't run.
 
     ```javascript Custom pixel theme={null}
     const WHOP_ACCOUNT_ID = "biz_xxxxxxxxxxxxx";
@@ -121,6 +140,17 @@ Shopify's checkout runs in a sandboxed environment that ignores scripts pasted i
       return { fbp, fbc, ga, ttp };
     }
 
+    // On the very first page view of a visit the theme snippet may still be
+    // loading, so give its _wuid cookie a moment to appear — otherwise that page
+    // view would be reported twice.
+    async function readWuid(eventName) {
+      const wuid = await readCookie("_wuid");
+      if (wuid || eventName !== "page_viewed") return wuid;
+
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+      return readCookie("_wuid");
+    }
+
     function readQueryParameters(href) {
       if (!href) return {};
 
@@ -169,7 +199,12 @@ Shopify's checkout runs in a sandboxed environment that ignores scripts pasted i
       });
     }
 
-    function getAnonymousId(clientId) {
+    // Prefer the visitor ID the theme snippet stores in the _wuid cookie, so a
+    // checkout is tied to the storefront visit that led to it. The shopify_
+    // fallback covers pages where that cookie isn't readable.
+    function getAnonymousId(clientId, wuid) {
+      if (wuid) return wuid;
+
       if (!clientId) return null;
 
       const anonymousId = `shopify_${clientId}`;
@@ -214,8 +249,8 @@ Shopify's checkout runs in a sandboxed environment that ignores scripts pasted i
       return `shopify:${event.name}:${event.id}`;
     }
 
-    function buildUser(event, checkout) {
-      const anonymousId = getAnonymousId(event.clientId);
+    function buildUser(event, checkout, wuid) {
+      const anonymousId = getAnonymousId(event.clientId, wuid);
 
       if (!anonymousId) return null;
 
@@ -253,6 +288,17 @@ Shopify's checkout runs in a sandboxed environment that ignores scripts pasted i
           address.country ||
           null,
       });
+    }
+
+    function isCheckoutSurface(href) {
+      if (!href) return false;
+
+      try {
+        const path = new URL(href).pathname;
+        return path.includes("/checkouts") || path.includes("/orders/");
+      } catch {
+        return false;
+      }
     }
 
     async function sendWhopEvent(payload) {
@@ -294,12 +340,26 @@ Shopify's checkout runs in a sandboxed environment that ignores scripts pasted i
     }
 
     async function handleShopifyEvent(event) {
+      const href = event.context?.document?.location?.href || null;
+      const wuid = await readWuid(event.name);
+
+      // The theme snippet already reports storefront page views. Only checkout
+      // and the order status page, where theme scripts can't run, need their
+      // page views sent from here.
+      if (
+        event.name === "page_viewed" &&
+        wuid &&
+        !isCheckoutSurface(href)
+      ) {
+        return;
+      }
+
       const checkout = event.data?.checkout;
-      const user = buildUser(event, checkout);
+      const user = buildUser(event, checkout, wuid);
 
       if (!user) {
         console.warn(
-          "Shopify event missing client ID",
+          "Shopify event missing a visitor ID",
           event.name,
         );
         return;
@@ -316,9 +376,7 @@ Shopify's checkout runs in a sandboxed environment that ignores scripts pasted i
         event_time: event.timestamp,
         action_source:
           event.name === "page_viewed" ? null : "website",
-        url:
-          event.context?.document?.location?.href ||
-          null,
+        url: href,
         referrer_url:
           event.context?.document?.referrer ||
           null,
@@ -373,6 +431,8 @@ Shopify's checkout runs in a sandboxed environment that ignores scripts pasted i
 
   <Step title="Confirm it's tracking" iconType="regular" titleSize="h2">
     Visit a live storefront page, then check the [Websites page](https://whop.com/dashboard/websites) in your Whop dashboard. Your domain appears there once a page view comes through. Then place a test order and confirm a purchase shows up too.
+
+    When you verify the install live from the dashboard, the overlay follows you across storefront pages but disappears once you enter checkout — Shopify doesn't run theme scripts there. That's expected: the custom pixel keeps reporting checkout events, and the test purchase still shows up in your dashboard.
   </Step>
 </Steps>
 

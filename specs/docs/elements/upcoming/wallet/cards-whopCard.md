@@ -6,21 +6,23 @@
 
 > Renders one issued Whop Card. The element prefetches authorized secrets immediately after it mounts with a card ID, but keeps them masked until the viewer clicks it or selects `View details`. The API remains the permission authority. Includes lock and unlock controls by default.
 
-Mounts inside [`Wallet`](/elements/upcoming/wallet/overview). `accountId` comes from there. Pass props and callbacks through the create options or React props.
+Mounts inside [`Cards`](/elements/upcoming/wallet/cards), in [`Wallet`](/elements/upcoming/wallet/overview). `accountId` and `accessToken` come from `Wallet`. Pass props and callbacks through the create options or React props.
 
 <div data-whop-split style={{ display: "flex", gap: "1.5rem", alignItems: "flex-start", flexWrap: "wrap" }}>
   <div style={{ flex: "1 1 26rem", minWidth: 0 }}>
-    <div data-whop-usage="wallet/whopCard">
+    <div data-whop-usage="wallet/cards-whopCard">
       <CodeGroup>
         ```tsx React theme={null}
-        import { WhopElements, Wallet, WhopCardElement } from "@whop/elements-react";
+        import { WhopElements, Wallet, Cards, WhopCardElement } from "@whop/elements-react";
         import { loadWhop } from "@whop/elements";
 
         function Example() {
           return (
             <WhopElements elements={loadWhop()}>
               <Wallet /* options */>
-                <WhopCardElement onDetailsChanged={(e) => console.log(e)} onLockRequested={(e) => console.log(e)} onLockChanged={(e) => console.log(e)} onAppleWalletRequested={(e) => console.log(e)} />
+                <Cards>
+                  <WhopCardElement onDetailsChanged={(e) => console.log(e)} onLockRequested={(e) => console.log(e)} onLockChanged={(e) => console.log(e)} onAppleWalletRequested={(e) => console.log(e)} />
+                </Cards>
               </Wallet>
             </WhopElements>
           );
@@ -31,12 +33,13 @@ Mounts inside [`Wallet`](/elements/upcoming/wallet/overview). `accountId` comes 
         <script src="https://js.whop.cloud/elements/amber/elements.js" data-whop-elements></script>
         <script type="module">
           const wallet = window.WhopElements().wallet.create({ /* options */ });
-          wallet.create('whopCard', {
+          const cards = wallet.create('cards', { /* options */ });
+          cards.create('whopCard', {
             onDetailsChanged: (e) => console.log(e),
             onLockRequested: (e) => console.log(e),
             onLockChanged: (e) => console.log(e),
             onAppleWalletRequested: (e) => console.log(e)
-          }).mount('#wallet-whopCard');
+          }).mount('#wallet-cards-whopCard');
         </script>
         ```
       </CodeGroup>
@@ -47,7 +50,7 @@ Mounts inside [`Wallet`](/elements/upcoming/wallet/overview). `accountId` comes 
     <div data-whop-demo-shell style={{ position: "relative", minHeight: "320px", transition: "min-height 200ms ease" }}>
       <div data-whop-demo-skeleton style={{ position: "absolute", inset: "0", borderRadius: "12px", background: "rgba(140, 140, 140, 0.12)", pointerEvents: "none", transition: "opacity 200ms ease" }} />
 
-      <div data-whop-demo-native="element:wallet/whopCard" data-whop-elements-version="" style={{ position: "relative" }} />
+      <div data-whop-demo-native="element:cards/whopCard" data-whop-elements-version="" style={{ position: "relative" }} />
     </div>
 
     <p style={{ fontSize: "0.8125rem", opacity: 0.7 }}>Example data. [Open the Playground](/elements/upcoming/wallet/overview#playground).</p>

@@ -4,7 +4,7 @@
 
 # ActivityDetailElement
 
-> A standalone detail drawer for one ledger activity. Pass either a prefetched financial-activity row or its activity ID. A prefetched row takes precedence; otherwise the element retrieves the row from the Financial Activity REST API.
+> A standalone detail drawer for one movement. Point it at a prefetched financial-activity row, a ledger activity ID, or a card transaction ID — a prefetched row takes precedence, otherwise the element retrieves the record itself. A card transaction opens the card receipt: merchant, amount, status, the card it was charged to, its cardholder on a company account, the settlement date, category, currency conversion and cashback.
 
 Opens as a modal from [`Wallet`](/elements/upcoming/wallet/overview): `wallet.createOverlay('activityDetail')`. Pass props and callbacks in the create options.
 
@@ -22,7 +22,7 @@ Opens as a modal from [`Wallet`](/elements/upcoming/wallet/overview): `wallet.cr
           return (
             <WhopElements elements={loadWhop()}>
               <Wallet /* options */>
-                <ActivityDetailElement onCardSelected={(e) => console.log(e)} onCardTransactionIssueRequested={(e) => console.log(e)} />
+                <ActivityDetailElement onCardSelected={(e) => console.log(e)} onCardholderSelected={(e) => console.log(e)} onCardTransactionIssueRequested={(e) => console.log(e)} />
               </Wallet>
             </WhopElements>
           );
@@ -35,6 +35,7 @@ Opens as a modal from [`Wallet`](/elements/upcoming/wallet/overview): `wallet.cr
           const wallet = window.WhopElements().wallet.create({ /* options */ });
           wallet.createOverlay('activityDetail', {
             onCardSelected: (e) => console.log(e),
+            onCardholderSelected: (e) => console.log(e),
             onCardTransactionIssueRequested: (e) => console.log(e)
           }).open();
         </script>
@@ -64,6 +65,14 @@ Opens as a modal from [`Wallet`](/elements/upcoming/wallet/overview): `wallet.cr
   Optional ledger activity ID to retrieve when no prefetched activity row is provided. Defaults to `null`.
 </ResponseField>
 
+<ResponseField name="cardTransactionId" type="string | null">
+  Optional card transaction ID (`citx_`) to retrieve and show as a card receipt — what a card table hands back when a row is pressed. Takes precedence over `activityId`, and is ignored when a prefetched row is passed. Defaults to `null`.
+</ResponseField>
+
+<ResponseField name="showCardholder" type="boolean">
+  Show the cardholder row on a card receipt. Company accounts only — a personal wallet has one cardholder, so the row never appears there. Reading the name needs `company:authorized_user:read`; without it the row reads Unavailable. Defaults to `true`.
+</ResponseField>
+
 <ResponseField name="showCardTransactionReportIssueAction" type="boolean">
   Show the report-an-issue action for eligible card transactions. The action emits an event for the host. Defaults to `false`.
 </ResponseField>
@@ -77,6 +86,12 @@ Pass callbacks in the create options or React props.
 The card row was clicked.
 
 **Signature:** `((payload: { cardId: string; }) => void)`
+
+### `onCardholderSelected`
+
+The cardholder row was clicked. Open your own profile surface for that user.
+
+**Signature:** `((payload: { userId: string; }) => void)`
 
 ### `onCardTransactionIssueRequested`
 

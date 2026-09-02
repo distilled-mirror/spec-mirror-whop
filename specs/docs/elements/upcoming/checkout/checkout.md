@@ -134,6 +134,7 @@ Style these parts through `appearance.classes`. Use camel case or kebab case for
 | `.whop-CardSaveNotice`                  | Payment method saving consent                                                                                                                                                   |
 | `.whop-Checkout`                        | The checkout element root                                                                                                                                                       |
 | `.whop-CheckoutAwaitClaim`              | The resting await\_claim line on the success face                                                                                                                               |
+| `.whop-CheckoutBlocked`                 | The notice standing in for the pay flow while the session carries a blocking error                                                                                              |
 | `.whop-CheckoutBreakdownPending`        | The placeholder shown for a figure that is still being calculated                                                                                                               |
 | `.whop-CheckoutBreakdownRows`           | The opened price breakdown — the item’s own subtotal and the service fee                                                                                                        |
 | `.whop-CheckoutBreakdownToggle`         | The "Price breakdown" disclosure that opens the subtotal and service fee rows                                                                                                   |
@@ -341,7 +342,7 @@ const checkout = whop.checkout.create({
   }
 });
 
-// 224 classes use this shape
+// 225 classes use this shape
 checkout.update({
   appearance: { classes: { 'whop-Address': { fontWeight: '700' } } }
 });

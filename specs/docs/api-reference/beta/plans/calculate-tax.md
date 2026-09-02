@@ -352,6 +352,16 @@ tags:
       hosted, and remove domains that should no longer serve wallet payments. A
       domain a platform shares with its connected accounts at checkout is listed
       on the platform's account, not on each connected account.
+
+
+      Wallet buttons at checkout depend on this: embedded surfaces like the
+      [Express Checkout element](/elements/beta/checkout/expressCheckout) only
+      render Apple Pay on a `verified` domain (first-party whop.com pages are
+      pre-approved). To verify a domain, [create
+      it](/api-reference/beta/payment-method-domains/create-payment-method-domain),
+      host the association file at the path above, then [retry
+      verification](/api-reference/beta/payment-method-domains/verify-payment-method-domain)
+      until `status` is `verified`.
     name: Payment Method Domains
     x-whop-summary: >-
       Domains verified to show wallet payment methods like Apple Pay at

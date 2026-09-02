@@ -4,7 +4,7 @@
 
 # Getting Started with Elements
 
-> Install Whop Elements and mount your first element in React, JavaScript, or Swift.
+> Install Whop Elements and mount your first element in React, JavaScript, Swift, or React Native.
 
 <div data-whop-platform="web">
   Whop Elements are hosted, themeable UI components you embed in your own site. Each element renders in an isolated frame served from Whop's CDN. You install a thin, fully typed package and the element code stays up to date on its own.
@@ -14,15 +14,27 @@
   Whop Elements are themeable UI components you can import in your iOS app. They ship as a single Swift SPM package. Each one is a plain SwiftUI view that fetches its own data and manages its own state, so a balance screen is a couple of views in a `VStack` instead of a networking layer and a view model. Add the package, tell the SDK how to fetch an access token, and put the elements in your view hierarchy.
 </div>
 
+<div data-whop-platform="react-native" style={{ display: "none" }}>
+  Whop Elements are themeable UI components you can drop into a React Native app. They are real React Native components, not web views: the payment method tiles, the address form and the card fields are all native input, and Apple Pay and Google Pay open the platform's own sheet. Install the package, tell the SDK how to fetch an access token, and mount the elements.
+</div>
+
 ## Install
 
 <div data-whop-platform="swift" style={{ display: "none" }}>
   Add the package to your `Package.swift` (or **File → Add Package Dependencies** in Xcode):
 </div>
 
+<div data-whop-platform="react-native" style={{ display: "none" }}>
+  Install the SDK:
+</div>
+
 <CodeGroup>
   ```bash React theme={null}
   npm install @whop/elements-react @whop/elements
+  ```
+
+  ```bash React Native theme={null}
+  npm install @whop/elements-react-native
   ```
 
   ```bash JavaScript theme={null}
@@ -95,10 +107,38 @@
   ```
 </div>
 
+<div data-whop-platform="react-native" style={{ display: "none" }}>
+  ## Requirements
+
+  |              |                                            |
+  | ------------ | ------------------------------------------ |
+  | React Native | `0.87+`, New Architecture (Fabric) enabled |
+  | React        | `19.2.3+`                                  |
+  | iOS          | 15.1+, **Swift Package Manager only**      |
+  | Android      | `minSdk 24`, `compileSdk 37`               |
+
+  <Warning>**Your iOS app must be on Swift Package Manager.** This package ships a `Package.swift` and no podspec, so an app still integrating through CocoaPods cannot link its native code — you would need to move the app to SPM first. `npx react-native spm add` performs that conversion, and the example app in the repo does exactly this if you want to see it end to end.</Warning>
+
+  <Note>Native code is Swift and Kotlin generated through React Native Codegen: nothing here asks you to hand-edit Objective-C or Java, and there are no native peer dependencies to install.</Note>
+
+  ## Before you start
+
+  You need two things:
+
+  1. **An `accountId`.** A company ID, prefixed `biz_`.
+  2. **A server endpoint that mints an access token** for that account. Never ship a Whop API key in the app: it creates tokens, so anyone who extracts it can act as the account. Mint the token on your server and return only that.
+
+  Your server calls [Create Access Token](/api-reference/access-tokens/create-access-token) and hands the result back to `getToken`.
+</div>
+
 ## Mount your first element
 
 <div data-whop-platform="swift" style={{ display: "none" }}>
   A complete app. `configure` runs once at launch, and the elements render a spinner until it lands, so nothing races it:
+</div>
+
+<div data-whop-platform="react-native" style={{ display: "none" }}>
+  A complete checkout. `<WhopElements>` holds the token resolver, `<Payments>` holds the charge, and the elements between them collect it:
 </div>
 
 <CodeGroup>
@@ -116,6 +156,49 @@
           <EmailElement />
           <TaxIdElement />
           <BrandingElement />
+        </Payments>
+      </WhopElements>
+    );
+  }
+  ```
+
+  ```tsx React Native theme={null}
+  import { useRef, useState } from 'react';
+  import { Button, ScrollView } from 'react-native';
+  import {
+    AddressElement,
+    BrandingElement,
+    EmailElement,
+    PaymentElement,
+    Payments,
+    WhopElements,
+    type PaymentsHandle,
+  } from '@whop/elements-react-native';
+
+  export function Checkout() {
+    const payments = useRef<PaymentsHandle | null>(null);
+    const [ready, setReady] = useState(false);
+
+    return (
+      // Called again before every request, so fetch rather than cache.
+      <WhopElements getToken={() => myBackend.whopAccessToken()}>
+        <Payments ref={payments} accountId="biz_xxxxxxxx" plan="plan_xxxxxxxx">
+          <ScrollView>
+            <EmailElement />
+            <AddressElement />
+            <PaymentElement onChange={(p) => setReady(p.complete)} />
+            <BrandingElement />
+          </ScrollView>
+          <Button
+            title="Pay"
+            disabled={!ready}
+            onPress={async () => {
+              const token = await payments.current!.createConfirmationToken();
+              // Confirm server-side, then hand the payment's client_secret back:
+              // await payments.current!.handleNextAction({ clientSecret });
+              console.log(token.confirmationToken);
+            }}
+          />
         </Payments>
       </WhopElements>
     );
@@ -360,4 +443,77 @@
   * [`ActivityElement`](/elements/upcoming/wallet/activity#swift): the ledger activity feed
 
   `WhopChatView` and `WhopDMsListView` ship in the same package for viewer-authenticated chat. See the [README](https://github.com/whopio/whopsdk-elements-swift).
+</div>
+
+<div data-whop-platform="react-native" style={{ display: "none" }}>
+  ## Authentication
+
+  `getToken` is your only integration point, and the SDK calls it **before every request**, so return a fresh token rather than caching one:
+
+  ```tsx theme={null}
+  <WhopElements getToken={async () => (await fetch('/api/whop-token')).text()}>
+    {/* your app */}
+  </WhopElements>
+  ```
+
+  An element that needs no credentials works without it, so you can render a card form before wiring your backend.
+
+  ## Taking a payment
+
+  Collection and confirmation are separate, and the split is deliberate: the app never sees a card number and your server never trusts the client.
+
+  1. The elements collect. Card numbers go straight from PCI-isolated inputs to a token, never through your code.
+  2. `createConfirmationToken()` returns a **confirmation token**, which is safe to send to your own backend.
+  3. Your backend confirms the payment with the Whop API.
+  4. If the API answers that the payment needs more from the buyer, hand its `client_secret` to `handleNextAction()` and the SDK runs the 3D Secure or redirect step.
+
+  ```tsx theme={null}
+  const token = await payments.current!.createConfirmationToken();
+  const { status, clientSecret } = await myBackend.confirm(token.confirmationToken);
+  if (status === 'requires_action') await payments.current!.handleNextAction({ clientSecret });
+  ```
+
+  ## Redirects and 3D Secure
+
+  Off-app steps open the **system browser** (`ASWebAuthenticationSession` on iOS, Custom Tabs on Android), never a WebView, so the issuer's page stays outside your app's trust boundary and its cookies stay outside your app's jar.
+
+  Set `returnUrl` on `<Payments>` to an **https** URL you host. The API refuses anything but https or loopback (`PaymentsApi::ValidateReturnUrl`), so a custom app scheme will not work here — and you do not need one: `handleNextAction` polls the payment to rest and closes the browser itself, rather than waiting on a deep link back into your app.
+
+  ```tsx theme={null}
+  <Payments accountId="biz_xxxxxxxx" plan="plan_xxxxxxxx" returnUrl="https://example.com/checkout/return">
+  ```
+
+  ## Apple Pay and Google Pay
+
+  Wallet tiles appear only once the platform can present a sheet. Pass `applePayMerchantId` (and `googlePayMerchantName`) on `<Payments>`, add the **Apple Pay** capability with that merchant ID in Xcode, and the tile presents `PKPaymentAuthorizationController` with Google's `PayButton` as the Android counterpart.
+
+  ## Theming
+
+  `appearance` on `<WhopElements>` themes every element beneath it, with the same `theme` object the web elements take. See [Appearance](/elements/upcoming/appearance).
+
+  ## What the elements handle, and what you own
+
+  Each element fetches its own data and renders its own loading, empty and error states. You own **navigation and submission**: the elements report through `onChange` and never push a screen or call your backend.
+
+  ## Troubleshooting
+
+  | What you see                       | Why                                                                                                                                      |
+  | ---------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+  | `BrandingRequiredError` on confirm | No `BrandingElement` is mounted. Mount one inside `<Payments>`.                                                                          |
+  | `ChargeConfigError`                | `<Payments>` has neither a `plan` nor an `amount` and `currency` pair.                                                                   |
+  | No wallet tile                     | `applePayMerchantId` is unset, the Apple Pay capability is missing, or the device has no card.                                           |
+  | Method tiles never arrive          | `getToken` is returning an API key rather than an access token, or the token is not scoped for the account.                              |
+  | A blank card field                 | The native build predates the package. `@basis-theory/react-native-elements` installs with it, so rebuild rather than adding it by hand. |
+
+  ## Available in React Native
+
+  The payments elements:
+
+  * [`PaymentElement`](/elements/upcoming/payments/payment): the method tiles and everything the selected method needs
+  * [`AddressElement`](/elements/upcoming/payments/address): the billing address in the buyer's own country format
+  * [`CardElement`](/elements/upcoming/payments/card): number, expiry and security code as one component
+  * [`CardFields`](/elements/upcoming/payments/cardFields): the same three fields, placed individually
+  * [`EmailElement`](/elements/upcoming/payments/email): the buyer's email
+  * [`TaxIdElement`](/elements/upcoming/payments/taxId): a registration type and number
+  * [`BrandingElement`](/elements/upcoming/payments/branding): the Powered by Whop mark, required on every form
 </div>

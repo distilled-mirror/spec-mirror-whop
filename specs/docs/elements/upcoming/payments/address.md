@@ -14,6 +14,10 @@
   Mounts anywhere. Keep an `AddressElementManager` near your submit button to read and validate the address.
 </div>
 
+<div data-whop-platform="react-native" style={{ display: "none" }}>
+  Mount inside `<Payments>`, which owns the charge and the confirmation token. `<Payments>` itself mounts inside `<WhopElements>`. It renders the billing address in the buyer's own country format and publishes it to the provider, so `createConfirmationToken` picks it up without being passed anything.
+</div>
+
 <div data-whop-split style={{ display: "flex", gap: "1.5rem", alignItems: "flex-start", flexWrap: "wrap" }}>
   <div style={{ flex: "1 1 26rem", minWidth: 0 }}>
     <div data-whop-usage="payments/address">
@@ -29,6 +33,27 @@
                 <AddressElement onChange={(e) => console.log(e)} />
               </Payments>
             </WhopElements>
+          );
+        }
+        ```
+
+        ```tsx React Native theme={null}
+        import { ScrollView } from 'react-native';
+        import { AddressElement, Payments } from '@whop/elements-react-native';
+
+        export function BillingStep() {
+          return (
+            <Payments accountId="biz_xxxxxxxx" plan="plan_xxxxxxxx">
+              <ScrollView>
+                <AddressElement
+                  layout="full"
+                  scope="full"
+                  name="combined"
+                  line2="toggle"
+                  onChange={({ complete, address }) => console.log(complete, address.country)}
+                />
+              </ScrollView>
+            </Payments>
           );
         }
         ```
@@ -85,6 +110,14 @@
       <div style={{ width: "22rem", maxWidth: "100%" }}>
         <div data-whop-simulator-shell className="whop-ios-simulator" style={{ position: "relative", aspectRatio: "390 / 800", overflow: "hidden" }}>
           <iframe src={"https://app.revyl.ai/embed/89c536ac-28ef-45d0-b99a-ecfffe579e33?controls=0"} title="AddressElement running on an iPhone simulator" loading="lazy" allow="fullscreen; clipboard-read; clipboard-write" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", border: 0, background: "transparent", display: "block" }} />
+        </div>
+      </div>
+    </div>
+
+    <div data-whop-platform="react-native" style={{ display: "none" }}>
+      <div style={{ width: "22rem", maxWidth: "100%" }}>
+        <div data-whop-simulator-shell className="whop-ios-simulator" style={{ position: "relative", aspectRatio: "390 / 800", overflow: "hidden" }}>
+          <iframe src={"https://app.revyl.ai/embed/d5ebb0fa-b4cb-48b7-8fd4-033f844518c0?controls=0"} title="AddressElement running on Android, in the React Native example app" loading="lazy" allow="fullscreen; clipboard-read; clipboard-write" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", border: 0, background: "transparent", display: "block" }} />
         </div>
       </div>
     </div>
@@ -318,5 +351,97 @@
 
   <Note>
     Call `WhopSDK.configure(tokenProvider:)` once at launch. Views wait for the token. See [Getting started](/elements/upcoming/getting-started). Apply a theme with `.whopTheme(_:)`.
+  </Note>
+</div>
+
+<div data-whop-platform="react-native" style={{ display: "none" }}>
+  ## Props
+
+  <ResponseField name="mode" type="'billing' | 'shipping'">
+    Autocomplete purpose. Defaults to `billing`.
+  </ResponseField>
+
+  <ResponseField name="layout" type="'full' | 'compact'">
+    `full` labels every field and stacks them. `compact` moves the labels into placeholders. Defaults to `full`.
+  </ResponseField>
+
+  <ResponseField name="scope" type="'full' | 'minimal'">
+    `full` follows the country's complete format. `minimal` collects country and postal code only. Defaults to `full`.
+  </ResponseField>
+
+  <ResponseField name="name" type="'combined' | 'split' | 'none'">
+    One full-name field, first and last, or no name field. Defaults to `combined`.
+  </ResponseField>
+
+  <ResponseField name="organization" type="'none' | 'name' | 'name_with_type'">
+    Whether to collect an organization, and whether to also ask if it is a business or an individual. Defaults to `none`.
+  </ResponseField>
+
+  <ResponseField name="line2" type="'toggle' | 'always' | 'never'">
+    How the second address line appears. Defaults to `toggle`, which shows an "Add address line 2" button.
+  </ResponseField>
+
+  <ResponseField name="allowedCountries" type="string[]">
+    Restrict the country selector to these ISO 3166-1 alpha-2 codes. A selected payment method's own country list narrows this further, never widens it.
+  </ResponseField>
+
+  <ResponseField name="detectCountry" type="boolean">
+    Default the country from the buyer's IP.
+  </ResponseField>
+
+  <ResponseField name="countryHint" type="string">
+    Fallback country after `defaultValues` and IP detection. ISO 3166-1 alpha-2.
+  </ResponseField>
+
+  <ResponseField name="defaultValues" type="{ name?: string; address?: Partial<EmittedAddress> }">
+    Seed values applied once at mount, for a resumed session.
+  </ResponseField>
+
+  <ResponseField name="customFields" type="CustomFieldSpec[]">
+    Extra fields rendered at a declared position (`after_name`, `after_organization`, `before_country`, `after_address`). A required one gates `complete`.
+  </ResponseField>
+
+  <ResponseField name="onChange" type="(payload: AddressChangePayload) => void">
+    Fires on every edit with the current snapshot.
+  </ResponseField>
+
+  <ResponseField name="style" type="StyleProp<ViewStyle>">
+    Applied to the element's outer `View`. For theming, prefer `appearance.parts` on the provider, which covers every element on this surface. Note the React Native part names are their own set today, not the web's `whop-*` class names, so a web appearance object does not port across unchanged.
+  </ResponseField>
+
+  <ResponseField name="fallback" type="ReactNode">
+    Rendered instead of the built-in skeleton while the element loads.
+  </ResponseField>
+
+  <ResponseField name="onReady" type="() => void">
+    Fires once the element is interactive. `<Payments>` groups these, so its own `onLoadingChange` is usually the one you want.
+  </ResponseField>
+
+  <ResponseField name="onError" type="(error: { message: string; code?: string }) => void">
+    A load or configuration failure for this element. The element renders its own error face either way.
+  </ResponseField>
+
+  ## `AddressChangePayload`
+
+  What `onChange` hands back:
+
+  * `complete: boolean`: every field the country requires is filled and valid
+  * `address: EmittedAddress`: what the buyer has entered so far
+  * `custom: Record<string, string>`: values for any `customFields` you declared
+
+  ## States
+
+  A three-field skeleton while the country catalog loads, then the form. Changing the country re-plans the fields, because the format is the country's, not a fixed set. `onChange` reports `complete` when every field the country requires is filled and valid.
+
+  ## Good to know
+
+  * The country defaults from the buyer's IP when `detectCountry` is on, then `countryHint`, then US. `defaultValues.address.country` overrides all three.
+  * `autocomplete` is on by default, as on web, but it is served by the **platform geocoder** rather than Google Places, so it needs no API key, no account and no extra dependency. iOS uses `MKLocalSearchCompleter`, a real as-you-type API that answers a fragment with several candidates. Android uses `android.location.Geocoder`, which resolves a *complete* address rather than predicting from a partial one: expect roughly one result, and a coarser one on a half-typed street. Android ships no keyless typeahead, and the alternative — the Places SDK — would add several megabytes and force location permissions on every app embedding this SDK.
+  * Either platform falling short is silent by design: a geocoder with no backend, no network or no matches shows nothing and the buyer types the address by hand, which is where they started. Autocomplete never blocks a checkout.
+  * The emitted address uses the same keys as the web element and the confirmation token's `billing_details`, so one payload shape works across platforms.
+  * A mounted address element is the provider's billing source. Unmount it and `createConfirmationToken` falls back to whatever you pass it directly.
+
+  <Note>
+    Wrap your app in `<WhopElements getToken={…}>` once, then mount `<Payments>` around the elements. See [Getting started](/elements/upcoming/getting-started) and [Appearance](/elements/upcoming/appearance).
   </Note>
 </div>

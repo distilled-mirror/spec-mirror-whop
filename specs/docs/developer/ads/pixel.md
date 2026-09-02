@@ -67,17 +67,18 @@ The Whop Pixel is a JavaScript snippet that you add to your website. It measures
 
 ## Standard events
 
-The Whop Pixel includes a set of standard event names for common stages of a funnel. Each one optionally accepts a `value` (number) and `currency` ISO 4217 code).
+The Whop Pixel includes a set of standard event names for common stages of a funnel. Each one accepts an optional `value` (number) and `currency` (ISO 4217 code). The exception is `purchase`, which requires a positive `value`.
 
-| Event                   | When to fire it                                    |
-| ----------------------- | -------------------------------------------------- |
-| `lead`                  | A visitor submits contact info or an opt-in form   |
-| `schedule`              | A visitor books a call or appointment              |
-| `submit_application`    | A visitor submits an application                   |
-| `contact`               | A visitor starts a conversation or contact request |
-| `complete_registration` | A signup or registration finishes                  |
-| `view_content`          | A visitor views a key page or piece of content     |
-| `add_to_cart`           | A visitor adds an item to a cart                   |
+| Event                   | When to fire it                                                                                                                                                     |
+| ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `lead`                  | A visitor submits contact info or an opt-in form                                                                                                                    |
+| `schedule`              | A visitor books a call or appointment                                                                                                                               |
+| `submit_application`    | A visitor submits an application                                                                                                                                    |
+| `contact`               | A visitor starts a conversation or contact request                                                                                                                  |
+| `complete_registration` | A signup or registration finishes                                                                                                                                   |
+| `view_content`          | A visitor views a key page or piece of content                                                                                                                      |
+| `add_to_cart`           | A visitor adds an item to a cart                                                                                                                                    |
+| `purchase`              | A sale completes on [your own checkout](#track-sales-on-your-own-checkout) — only for payments that happen outside Whop. Whop tracks its own checkout automatically |
 
 ## Custom events
 
@@ -103,6 +104,25 @@ form.addEventListener("submit", async (e) => {
 ```
 
 * **The action redirects** (e.g. a form that sends the visitor to a new page on submit). Fire the event on the page they land on, such as the thank-you or confirmation page. Make sure the pixel snippet is installed on that page too.
+
+## Track sales on your own checkout
+
+If you sell through your own checkout instead of Whop's, fire a `purchase` event when a sale completes. `value` is required — Whop rejects a purchase event that has no positive value, because ad platforms can't optimize toward a sale with no amount. `currency` is optional and defaults to USD.
+
+```javascript Purchase on your own checkout theme={null}
+whop.track("purchase", {
+  value: 149.99,
+  currency: "USD",
+  event_id: "order_8412",
+  email: "visitor@example.com",
+});
+```
+
+Whop forwards these to the ad platforms as their standard Purchase event, so a purchase-optimized campaign learns from them. In Whop reporting they appear as external purchases, kept separate from purchases — purchases and ROAS count only the payments Whop processes.
+
+<Warning>
+  Never fire `purchase` for a sale that Whop processed. Whop already reports that sale to the ad platform, so yours would count it twice.
+</Warning>
 
 ## Give each event an ID
 
@@ -158,5 +178,5 @@ whop.track("lead", {
 </Warning>
 
 <Note>
-  **Don't track purchases, subscriptions, or trials.** Whop records every checkout view, purchase, subscription, and trial start server-side with zero configuration. The pixel won't accept duplicates. Only send events Whop can't see. Examples include leads and bookings on your own infrastructure.
+  **Don't track Whop checkouts, subscriptions, or trials.** Whop records every checkout view, purchase, subscription, and trial start on its own checkout server-side with zero configuration. The pixel won't accept duplicates. Only send events Whop can't see: leads and bookings on your own infrastructure, and [sales on your own checkout](#track-sales-on-your-own-checkout).
 </Note>

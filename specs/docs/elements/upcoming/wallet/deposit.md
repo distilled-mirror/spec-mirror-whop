@@ -6,7 +6,7 @@
 
 > Funds a Whop account. Renders an amount field and the account's live funding rails — crypto (a per-network deposit address with its QR) and bank transfer (the wire fields for each settlement currency). A business account's rails resolve with no credentials, so they work on any page; a personal (`user_`) account only reveals its rails to itself, so pass `accessToken` for it — omitted, the viewer's own same-origin session covers it. Cards and platform balance are opt-in: pass `savedCards`, `allowNewCard`, or `showPlatformBalance` and the element collects the amount and the choice, then emits `cardDepositRequested` / `addCardRequested` / `platformBalanceSelected` and waits for you to call `showStep({ step: 'amount' })` when your own screen is done.
 
-Mounts inside [`Wallet`](/elements/upcoming/wallet/overview). `accountId` and `currency` come from there. Pass props and callbacks through the create options or React props. Keep the created handle, or React `ref`, to call `showStep()` and `refresh()`.
+Mounts inside [`Wallet`](/elements/upcoming/wallet/overview). `accountId` and `accessToken` come from there. Pass props and callbacks through the create options or React props. Keep the created handle, or React `ref`, to call `showStep()` and `refresh()`.
 
 <Note>You can mount this element **inline** (`create`) or open it as a **modal** overlay (`createOverlay`).</Note>
 
@@ -76,7 +76,7 @@ Mounts inside [`Wallet`](/elements/upcoming/wallet/overview). `accountId` and `c
 </ResponseField>
 
 <ResponseField name="showBank" type="boolean">
-  Offer the bank-transfer rail. Shown even before the account has a virtual bank account — choosing it then asks the viewer to verify their identity. Defaults to `true`.
+  Offer the bank-transfer rail. Shown even before the account has bank details — choosing it then asks the viewer to verify their identity when that is what the account still owes, and reports the rail as not available yet when it is not. Defaults to `true`.
 </ResponseField>
 
 <ResponseField name="savedCards" type="DepositSavedCard[]">

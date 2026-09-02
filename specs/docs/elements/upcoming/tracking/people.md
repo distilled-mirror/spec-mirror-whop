@@ -147,7 +147,7 @@ The viewer sorted a column. Persist and pass back as `sort`/`dir`, or sorting re
 
 ### `onPersonOpened`
 
-The viewer clicked a person row and the handle has no `links.person` to follow — open your own person view with it (`personId` is the stable per-person key; `identifier` is the most human-meaningful one the surface has), or pass `links.person` on the handle to turn rows into real anchors instead.
+The viewer clicked a person row and the handle has no `links.person` to follow. Present the `person` element with it, e.g. `createOverlay("person", { identifier: payload.personId })` (`personId` is the stable per-person key; `identifier` is the most human-meaningful one the surface has), or pass `links.person` on the handle to turn rows into real anchors instead.
 
 **Signature:** `((payload: { identifier: string; personId: string; }) => void)`
 

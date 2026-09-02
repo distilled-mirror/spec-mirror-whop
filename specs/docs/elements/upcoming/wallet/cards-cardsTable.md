@@ -2,25 +2,27 @@
 > Fetch the complete documentation index at: https://docs.whop.com/llms.txt
 > Use this file to discover all available pages before exploring further.
 
-# CardsChartElement
+# CardsTableElement
 
-> A business account's card spend over time, using the same interactive bar chart as Whop's cards dashboard. The period picker changes the mounted chart and emits an event so the host can persist the selection.
+> A sortable table of every issued card on an account, including cardholder, last month's spend, limit, and creation date. Rows and the create button emit events so the host owns card details and issuance flows.
 
-Mounts inside [`Wallet`](/elements/upcoming/wallet/overview). `accountId` comes from there. Pass props and callbacks through the create options or React props. Keep the created handle, or React `ref`, to call `refresh()`.
+Mounts inside [`Cards`](/elements/upcoming/wallet/cards), in [`Wallet`](/elements/upcoming/wallet/overview). `accountId` and `accessToken` come from `Wallet`. Pass props and callbacks through the create options or React props. Keep the created handle, or React `ref`, to call `refresh()`.
 
 <div data-whop-split style={{ display: "flex", gap: "1.5rem", alignItems: "flex-start", flexWrap: "wrap" }}>
   <div style={{ flex: "1 1 26rem", minWidth: 0 }}>
-    <div data-whop-usage="wallet/cardsChart">
+    <div data-whop-usage="wallet/cards-cardsTable">
       <CodeGroup>
         ```tsx React theme={null}
-        import { WhopElements, Wallet, CardsChartElement } from "@whop/elements-react";
+        import { WhopElements, Wallet, Cards, CardsTableElement } from "@whop/elements-react";
         import { loadWhop } from "@whop/elements";
 
         function Example() {
           return (
             <WhopElements elements={loadWhop()}>
               <Wallet /* options */>
-                <CardsChartElement onPeriodChanged={(e) => console.log(e)} onDateSelected={(e) => console.log(e)} />
+                <Cards>
+                  <CardsTableElement onCardSelected={(e) => console.log(e)} onCreateCardRequested={(e) => console.log(e)} />
+                </Cards>
               </Wallet>
             </WhopElements>
           );
@@ -31,10 +33,11 @@ Mounts inside [`Wallet`](/elements/upcoming/wallet/overview). `accountId` comes 
         <script src="https://js.whop.cloud/elements/amber/elements.js" data-whop-elements></script>
         <script type="module">
           const wallet = window.WhopElements().wallet.create({ /* options */ });
-          wallet.create('cardsChart', {
-            onPeriodChanged: (e) => console.log(e),
-            onDateSelected: (e) => console.log(e)
-          }).mount('#wallet-cardsChart');
+          const cards = wallet.create('cards', { /* options */ });
+          cards.create('cardsTable', {
+            onCardSelected: (e) => console.log(e),
+            onCreateCardRequested: (e) => console.log(e)
+          }).mount('#wallet-cards-cardsTable');
         </script>
         ```
       </CodeGroup>
@@ -45,7 +48,7 @@ Mounts inside [`Wallet`](/elements/upcoming/wallet/overview). `accountId` comes 
     <div data-whop-demo-shell style={{ position: "relative", minHeight: "320px", transition: "min-height 200ms ease" }}>
       <div data-whop-demo-skeleton style={{ position: "absolute", inset: "0", borderRadius: "12px", background: "rgba(140, 140, 140, 0.12)", pointerEvents: "none", transition: "opacity 200ms ease" }} />
 
-      <div data-whop-demo-native="element:wallet/cardsChart" data-whop-elements-version="" style={{ position: "relative" }} />
+      <div data-whop-demo-native="element:cards/cardsTable" data-whop-elements-version="" style={{ position: "relative" }} />
     </div>
 
     <p style={{ fontSize: "0.8125rem", opacity: 0.7 }}>Example data. [Open the Playground](/elements/upcoming/wallet/overview#playground).</p>
@@ -55,32 +58,36 @@ Mounts inside [`Wallet`](/elements/upcoming/wallet/overview). `accountId` comes 
 ## Props
 
 <ResponseField name="accessToken" type="string">
-  A scoped token for card transaction reads. Needs `payout:account:read`. Omitted, calls carry the viewer's own session, which only answers same-origin.
+  A scoped token for the privileged reads. Card rows need `payout:account:read`; cardholder names also need `company:authorized_user:read`. Omitted, calls carry the viewer's own session, which only answers same-origin.
 </ResponseField>
 
 <ResponseField name="enabled" type="boolean">
-  Off, the chart performs no reads and renders an empty plot. Defaults to `true`.
+  Off, the element does not fetch and renders its shell with no card rows. Defaults to `true`.
 </ResponseField>
 
-<ResponseField name="period" type="&#x22;7d&#x22; | &#x22;1m&#x22; | &#x22;3m&#x22; | &#x22;ytd&#x22; | &#x22;1y&#x22;">
-  The initial reporting window: `7d`, `1m`, `3m`, `ytd`, or `1y`. Defaults to `"1m"`.
+<ResponseField name="hideCreateButton" type="boolean">
+  Hide the create virtual card button. Off by default. Defaults to `false`.
+</ResponseField>
+
+<ResponseField name="showFinancials" type="boolean">
+  Show last month's spend. Turn this off when the viewer may see cards but not account financials. Defaults to `true`.
 </ResponseField>
 
 ## Events
 
 Pass callbacks in the create options or React props.
 
-### `onPeriodChanged`
+### `onCardSelected`
 
-The viewer selected a new reporting window. The chart has already updated itself.
+A row was clicked. Open the host-owned card details experience for this card.
 
-**Signature:** `((payload: { period: "7d" | "1m" | "3m" | "ytd" | "1y"; }) => void)`
+**Signature:** `((payload: { cardId: string; }) => void)`
 
-### `onDateSelected`
+### `onCreateCardRequested`
 
-The viewer selected or cleared a daily bar. Dates use `YYYY-MM-DD` in UTC.
+The create virtual card button was clicked.
 
-**Signature:** `((payload: { date: string | null; }) => void)`
+**Signature:** `((payload: Record<string, never>) => void)`
 
 ### `onLoaderStart`
 
@@ -106,7 +113,7 @@ Call these on the handle returned by `create`, or through a React `ref`.
 
 ### `refresh`
 
-Re-fetch the selected spend window.
+Re-fetch the cards and cardholders after the host creates, freezes, cancels, or renames a card.
 
 **Signature:** `() => Promise<void>`
 
@@ -126,29 +133,29 @@ Removes the element and releases its frame and subscriptions. You can call it mo
 
 Merges new props into the mounted element. In React, change the component props instead.
 
-**Signature:** `(options: Partial<CardsChartElementProps>) => void`
+**Signature:** `(options: Partial<CardsTableElementProps>) => void`
 
 ## Styling
 
 Style these parts through `appearance.classes`. Use camel case or kebab case for property names and include units. Page stylesheets can't reach the element's frame. The framework validates each declaration before injecting it.
 
-| Class                     | Targets                                                      |
-| ------------------------- | ------------------------------------------------------------ |
-| `.whop-CardsChartSurface` | The total card spend headline, period picker, and daily bars |
+| Class                     | Targets                         |
+| ------------------------- | ------------------------------- |
+| `.whop-CardsTableRow`     | One issued card row             |
+| `.whop-CardsTableSurface` | The complete issued-cards table |
 
 ```ts theme={null}
 const wallet = whop.wallet.create({
   appearance: {
     classes: {
-      'whop-CardsChartSurface': { borderRadius: '8px', fontWeight: '600' }
+      'whop-CardsTableRow': { borderRadius: '8px', fontWeight: '600' },
+      'whop-CardsTableSurface': { borderRadius: '8px', fontWeight: '600' }
     }
   }
 });
 
 wallet.update({
-  appearance: {
-    classes: { 'whop-CardsChartSurface': { fontWeight: '700' } }
-  }
+  appearance: { classes: { 'whop-CardsTableRow': { fontWeight: '700' } } }
 });
 ```
 

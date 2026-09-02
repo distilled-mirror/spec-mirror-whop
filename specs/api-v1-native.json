@@ -148,7 +148,7 @@
       "x-whop-summary": "Turn a plan into a shareable, prefilled checkout link."
     },
     {
-      "description": "A Payment Method Domain registers a hostname with a wallet provider so its payment methods can appear at a checkout served from that domain. The domain proves ownership by hosting the provider's association file — for Apple Pay, at `/.well-known/apple-developer-merchantid-domain-association` — and `status` reports whether verification has completed.\n\nUse the Payment Method Domains API to register domains for your account or its connected accounts, retry verification once the association file is hosted, and remove domains that should no longer serve wallet payments. A domain a platform shares with its connected accounts at checkout is listed on the platform's account, not on each connected account.\n",
+      "description": "A Payment Method Domain registers a hostname with a wallet provider so its payment methods can appear at a checkout served from that domain. The domain proves ownership by hosting the provider's association file — for Apple Pay, at `/.well-known/apple-developer-merchantid-domain-association` — and `status` reports whether verification has completed.\n\nUse the Payment Method Domains API to register domains for your account or its connected accounts, retry verification once the association file is hosted, and remove domains that should no longer serve wallet payments. A domain a platform shares with its connected accounts at checkout is listed on the platform's account, not on each connected account.\n\nWallet buttons at checkout depend on this: embedded surfaces like the [Express Checkout element](/elements/beta/checkout/expressCheckout) only render Apple Pay on a `verified` domain (first-party whop.com pages are pre-approved). To verify a domain, [create it](/api-reference/beta/payment-method-domains/create-payment-method-domain), host the association file at the path above, then [retry verification](/api-reference/beta/payment-method-domains/verify-payment-method-domain) until `status` is `verified`.\n",
       "name": "Payment Method Domains",
       "x-whop-summary": "Domains verified to show wallet payment methods like Apple Pay at checkout."
     },
@@ -525,7 +525,6 @@
                     "page_info": {
                       "properties": {
                         "end_cursor": {
-                          "example": "WyJjdXJzb3IiLDFd",
                           "type": [
                             "string",
                             "null"
@@ -4520,7 +4519,7 @@
                   "entity_suffix": "LLC",
                   "entity_type": "llc",
                   "expedite_ein": true,
-                  "formation_state": "TX",
+                  "formation_state": "WY",
                   "founders": [
                     {
                       "address": {
@@ -4665,7 +4664,7 @@
                     "type": "boolean"
                   },
                   "formation_state": {
-                    "description": "Two-letter code of the US state (or `DC`) to form the company in.",
+                    "description": "Two-letter code of the US state (or `DC`) to form the company in. We recommend `WY` because Wyoming formations are completed the same day.",
                     "enum": [
                       "AL",
                       "AK",
@@ -4719,7 +4718,7 @@
                       "WI",
                       "WY"
                     ],
-                    "example": "TX",
+                    "example": "WY",
                     "type": "string"
                   },
                   "founders": {
@@ -5335,7 +5334,6 @@
                     "page_info": {
                       "properties": {
                         "end_cursor": {
-                          "example": "WyJjdXJzb3IiLDFd",
                           "nullable": true,
                           "type": "string"
                         },
@@ -6342,7 +6340,6 @@
                     "page_info": {
                       "properties": {
                         "end_cursor": {
-                          "example": "WyJjdXJzb3IiLDFd",
                           "nullable": true,
                           "type": "string"
                         },
@@ -7863,7 +7860,6 @@
                     "page_info": {
                       "properties": {
                         "end_cursor": {
-                          "example": "WyJjdXJzb3IiLDFd",
                           "nullable": true,
                           "type": "string"
                         },
@@ -9319,7 +9315,6 @@
                     "page_info": {
                       "properties": {
                         "end_cursor": {
-                          "example": "WyJjdXJzb3IiLDFd",
                           "type": [
                             "string",
                             "null"
@@ -10491,7 +10486,6 @@
                     "page_info": {
                       "properties": {
                         "end_cursor": {
-                          "example": "WyJjdXJzb3IiLDFd",
                           "type": [
                             "string",
                             "null"
@@ -11037,7 +11031,7 @@
                     "page_info": {
                       "properties": {
                         "end_cursor": {
-                          "example": "WyJjdXJzb3IiLDFd",
+                          "example": "Mg",
                           "type": [
                             "string",
                             "null"
@@ -12167,7 +12161,6 @@
                     "page_info": {
                       "properties": {
                         "end_cursor": {
-                          "example": "WyJjdXJzb3IiLDFd",
                           "type": [
                             "string",
                             "null"
@@ -12808,7 +12801,6 @@
                     "page_info": {
                       "properties": {
                         "end_cursor": {
-                          "example": "WyJjdXJzb3IiLDFd",
                           "type": [
                             "string",
                             "null"
@@ -13237,7 +13229,6 @@
                     "page_info": {
                       "properties": {
                         "end_cursor": {
-                          "example": "WyJjdXJzb3IiLDFd",
                           "type": [
                             "string",
                             "null"
@@ -13782,7 +13773,6 @@
                     "page_info": {
                       "properties": {
                         "end_cursor": {
-                          "example": "WyJjdXJzb3IiLDFd",
                           "type": [
                             "string",
                             "null"
@@ -14480,7 +14470,6 @@
                     "page_info": {
                       "properties": {
                         "end_cursor": {
-                          "example": "WyJjdXJzb3IiLDFd",
                           "type": [
                             "string",
                             "null"
@@ -16594,7 +16583,6 @@
                     "page_info": {
                       "properties": {
                         "end_cursor": {
-                          "example": "WyJjdXJzb3IiLDFd",
                           "type": [
                             "string",
                             "null"
@@ -18636,7 +18624,6 @@
                     "page_info": {
                       "properties": {
                         "end_cursor": {
-                          "example": "WyJjdXJzb3IiLDFd",
                           "type": [
                             "string",
                             "null"
@@ -18925,7 +18912,6 @@
                     "page_info": {
                       "properties": {
                         "end_cursor": {
-                          "example": "WyJjdXJzb3IiLDFd",
                           "type": [
                             "string",
                             "null"
@@ -21831,7 +21817,6 @@
                     "page_info": {
                       "properties": {
                         "end_cursor": {
-                          "example": "WyJjdXJzb3IiLDFd",
                           "type": [
                             "string",
                             "null"
@@ -22654,7 +22639,6 @@
                     "page_info": {
                       "properties": {
                         "end_cursor": {
-                          "example": "WyJjdXJzb3IiLDFd",
                           "type": [
                             "string",
                             "null"
@@ -23814,7 +23798,6 @@
                               "available",
                               "bad_debt_expense",
                               "bad_debt_offset",
-                              "balance_conversion_fee",
                               "balance_reservation",
                               "balance_reservation_hold",
                               "balance_reservation_release",
@@ -23826,7 +23809,6 @@
                               "card_load_deposit",
                               "card_load_transfer",
                               "card_spend_authorization",
-                              "card_spend_authorization_completed",
                               "card_spend_authorization_hold",
                               "card_spend_authorization_void",
                               "card_spend_authorization_void_release",
@@ -24176,7 +24158,6 @@
                 "transfers",
                 "payments",
                 "card_spend",
-                "card_authorizations",
                 "card_authorization_releases",
                 "withdrawals",
                 "swaps"
@@ -24286,7 +24267,6 @@
                         "transfers",
                         "payments",
                         "card_spend",
-                        "card_authorizations",
                         "card_authorization_releases",
                         "withdrawals",
                         "swaps"
@@ -24828,7 +24808,6 @@
                     "page_info": {
                       "properties": {
                         "end_cursor": {
-                          "example": "WyJjdXJzb3IiLDFd",
                           "type": [
                             "string",
                             "null"
@@ -25081,7 +25060,6 @@
                     "page_info": {
                       "properties": {
                         "end_cursor": {
-                          "example": "WyJjdXJzb3IiLDFd",
                           "type": [
                             "string",
                             "null"
@@ -25329,7 +25307,6 @@
                     "page_info": {
                       "properties": {
                         "end_cursor": {
-                          "example": "WyJjdXJzb3IiLDFd",
                           "type": [
                             "string",
                             "null"
@@ -26640,7 +26617,6 @@
                     "page_info": {
                       "properties": {
                         "end_cursor": {
-                          "example": "WyJjdXJzb3IiLDFd",
                           "type": [
                             "string",
                             "null"
@@ -27429,7 +27405,6 @@
                     "page_info": {
                       "properties": {
                         "end_cursor": {
-                          "example": "WyJjdXJzb3IiLDFd",
                           "type": [
                             "string",
                             "null"
@@ -28547,7 +28522,6 @@
                     "page_info": {
                       "properties": {
                         "end_cursor": {
-                          "example": "WyJjdXJzb3IiLDFd",
                           "type": [
                             "string",
                             "null"
@@ -29057,7 +29031,6 @@
                     "page_info": {
                       "properties": {
                         "end_cursor": {
-                          "example": "WyJjdXJzb3IiLDFd",
                           "type": [
                             "string",
                             "null"
@@ -29288,7 +29261,6 @@
                     "page_info": {
                       "properties": {
                         "end_cursor": {
-                          "example": "WyJjdXJzb3IiLDFd",
                           "type": [
                             "string",
                             "null"
@@ -30267,6 +30239,16 @@
                             "example": "standard",
                             "type": "string"
                           },
+                          "statement_descriptor": {
+                            "description": "Text that appears on the recipient's bank statement, or `null` if no descriptor was set. When set, 5-22 alphanumeric characters (A-Z, a-z, 0-9).",
+                            "example": "MYCOMPANY",
+                            "maxLength": 22,
+                            "minLength": 5,
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
                           "status": {
                             "description": "Current payout status.",
                             "enum": [
@@ -30314,6 +30296,7 @@
                           "payer_name",
                           "trace_code",
                           "notes",
+                          "statement_descriptor",
                           "net_amount",
                           "markup_fee",
                           "fee_paid_by",
@@ -30525,6 +30508,16 @@
                     ],
                     "example": "standard",
                     "type": "string"
+                  },
+                  "statement_descriptor": {
+                    "description": "Text that appears on the recipient's bank statement. Must be 5-22 alphanumeric characters (A-Z, a-z, 0-9). Without a `quote_token`, omit or pass `null` to use the default descriptor. With a `quote_token`, set this value when creating the quote; the payout request may omit it but cannot add or change it.",
+                    "example": "MYCOMPANY",
+                    "maxLength": 22,
+                    "minLength": 5,
+                    "type": [
+                      "string",
+                      "null"
+                    ]
                   },
                   "user_id": {
                     "description": "User to pay out from, prefixed `user_`. Provide exactly one of `account_id` or `user_id`.",
@@ -30740,7 +30733,7 @@
                             },
                             "payer_name": {
                               "description": "Supported payout method display name.",
-                              "example": "Next Day Bank Deposit",
+                              "example": "ACH Bank Deposit",
                               "type": [
                                 "string",
                                 "null"
@@ -30795,8 +30788,18 @@
                         "standard",
                         "instant"
                       ],
-                      "example": "standard",
+                      "example": "instant",
                       "type": "string"
+                    },
+                    "statement_descriptor": {
+                      "description": "Text that appears on the recipient's bank statement, or `null` if no descriptor was set. When set, 5-22 alphanumeric characters (A-Z, a-z, 0-9).",
+                      "example": "MYCOMPANY",
+                      "maxLength": 22,
+                      "minLength": 5,
+                      "type": [
+                        "string",
+                        "null"
+                      ]
                     },
                     "status": {
                       "description": "Current payout status, in the same vocabulary as GET /payouts.",
@@ -30810,7 +30813,7 @@
                         "failed",
                         "denied"
                       ],
-                      "example": "requested",
+                      "example": "in_review",
                       "type": "string"
                     },
                     "status_detail": {
@@ -30844,6 +30847,7 @@
                     "payer_name",
                     "trace_code",
                     "notes",
+                    "statement_descriptor",
                     "net_amount",
                     "markup_fee",
                     "fee_paid_by",
@@ -31554,7 +31558,6 @@
                     "page_info": {
                       "properties": {
                         "end_cursor": {
-                          "example": "WyJjdXJzb3IiLDFd",
                           "type": [
                             "string",
                             "null"
@@ -32430,6 +32433,16 @@
                     ],
                     "example": "standard",
                     "type": "string"
+                  },
+                  "statement_descriptor": {
+                    "description": "Text that appears on the recipient's bank statement. Must be 5-22 alphanumeric characters (A-Z, a-z, 0-9). Omit or pass `null` to use the default descriptor.",
+                    "example": "MYCOMPANY",
+                    "maxLength": 22,
+                    "minLength": 5,
+                    "type": [
+                      "string",
+                      "null"
+                    ]
                   },
                   "user_id": {
                     "description": "User to pay out from, prefixed `user_`. Provide exactly one of `account_id` or `user_id`.",
@@ -33308,6 +33321,16 @@
                       "example": "standard",
                       "type": "string"
                     },
+                    "statement_descriptor": {
+                      "description": "Text that appears on the recipient's bank statement, or `null` if no descriptor was set. When set, 5-22 alphanumeric characters (A-Z, a-z, 0-9).",
+                      "example": "MYCOMPANY",
+                      "maxLength": 22,
+                      "minLength": 5,
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
                     "status": {
                       "description": "Current payout status.",
                       "enum": [
@@ -33355,6 +33378,7 @@
                     "payer_name",
                     "trace_code",
                     "notes",
+                    "statement_descriptor",
                     "net_amount",
                     "markup_fee",
                     "fee_paid_by",
@@ -33725,6 +33749,16 @@
                       "example": "standard",
                       "type": "string"
                     },
+                    "statement_descriptor": {
+                      "description": "Text that appears on the recipient's bank statement, or `null` if no descriptor was set. When set, 5-22 alphanumeric characters (A-Z, a-z, 0-9).",
+                      "example": "MYCOMPANY",
+                      "maxLength": 22,
+                      "minLength": 5,
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
                     "status": {
                       "description": "Current payout status.",
                       "enum": [
@@ -33772,6 +33806,7 @@
                     "payer_name",
                     "trace_code",
                     "notes",
+                    "statement_descriptor",
                     "net_amount",
                     "markup_fee",
                     "fee_paid_by",
@@ -35929,7 +35964,6 @@
                     "page_info": {
                       "properties": {
                         "end_cursor": {
-                          "example": "WyJjdXJzb3IiLDFd",
                           "type": [
                             "string",
                             "null"
@@ -37324,7 +37358,6 @@
                     "page_info": {
                       "properties": {
                         "end_cursor": {
-                          "example": "WyJjdXJzb3IiLDFd",
                           "type": [
                             "string",
                             "null"
@@ -38178,7 +38211,6 @@
                     "page_info": {
                       "properties": {
                         "end_cursor": {
-                          "example": "WyJjdXJzb3IiLDFd",
                           "type": [
                             "string",
                             "null"
@@ -38753,10 +38785,16 @@
                         "$ref": "#/components/schemas/AccountRecommendedActionChain"
                       },
                       "type": "array"
+                    },
+                    "generation_pending": {
+                      "description": "Whether generation was queued because the account has no available action chains yet.",
+                      "example": false,
+                      "type": "boolean"
                     }
                   },
                   "required": [
-                    "data"
+                    "data",
+                    "generation_pending"
                   ],
                   "type": "object"
                 }
@@ -39202,7 +39240,6 @@
                     "page_info": {
                       "properties": {
                         "end_cursor": {
-                          "example": "WyJjdXJzb3IiLDFd",
                           "type": [
                             "string",
                             "null"
@@ -40071,7 +40108,6 @@
                     "page_info": {
                       "properties": {
                         "end_cursor": {
-                          "example": "WyJjdXJzb3IiLDFd",
                           "type": [
                             "string",
                             "null"
@@ -40703,7 +40739,6 @@
                     "page_info": {
                       "properties": {
                         "end_cursor": {
-                          "example": "WyJjdXJzb3IiLDFd",
                           "type": [
                             "string",
                             "null"
@@ -41171,7 +41206,6 @@
                     "page_info": {
                       "properties": {
                         "end_cursor": {
-                          "example": "WyJjdXJzb3IiLDFd",
                           "nullable": true,
                           "type": "string"
                         },
@@ -43289,7 +43323,6 @@
                     "page_info": {
                       "properties": {
                         "end_cursor": {
-                          "example": "Mw",
                           "type": [
                             "string",
                             "null"
@@ -43960,7 +43993,6 @@
                     "page_info": {
                       "properties": {
                         "end_cursor": {
-                          "example": "WyJjdXJzb3IiLDFd",
                           "type": [
                             "string",
                             "null"
@@ -44802,7 +44834,6 @@
                     "page_info": {
                       "properties": {
                         "end_cursor": {
-                          "example": "Mg",
                           "type": [
                             "string",
                             "null"
@@ -45328,7 +45359,6 @@
                     "page_info": {
                       "properties": {
                         "end_cursor": {
-                          "example": "MQ",
                           "type": [
                             "string",
                             "null"
@@ -45496,7 +45526,6 @@
                     "page_info": {
                       "properties": {
                         "end_cursor": {
-                          "example": "WyJjdXJzb3IiLDFd",
                           "type": [
                             "string",
                             "null"
@@ -46484,7 +46513,6 @@
                     "page_info": {
                       "properties": {
                         "end_cursor": {
-                          "example": "WyJjdXJzb3IiLDFd",
                           "type": [
                             "string",
                             "null"
@@ -46643,7 +46671,6 @@
                     "page_info": {
                       "properties": {
                         "end_cursor": {
-                          "example": "WyJjdXJzb3IiLDFd",
                           "type": [
                             "string",
                             "null"
@@ -49606,7 +49633,6 @@
                     "page_info": {
                       "properties": {
                         "end_cursor": {
-                          "example": "WyJjdXJzb3IiLDFd",
                           "type": [
                             "string",
                             "null"
@@ -56013,6 +56039,7 @@
                   "payout_request_id": null,
                   "source": null,
                   "speed": "standard",
+                  "statement_descriptor": null,
                   "status": "in_review",
                   "status_detail": "in_review",
                   "trace_code": null
@@ -56300,6 +56327,16 @@
                         "example": "standard",
                         "type": "string"
                       },
+                      "statement_descriptor": {
+                        "description": "Text that appears on the recipient's bank statement, or `null` if no descriptor was set. When set, 5-22 alphanumeric characters (A-Z, a-z, 0-9).",
+                        "example": "MYCOMPANY",
+                        "maxLength": 22,
+                        "minLength": 5,
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
                       "status": {
                         "description": "Current payout status.",
                         "enum": [
@@ -56347,6 +56384,7 @@
                       "payer_name",
                       "trace_code",
                       "notes",
+                      "statement_descriptor",
                       "net_amount",
                       "markup_fee",
                       "fee_paid_by",
@@ -56471,6 +56509,7 @@
                   "payout_request_id": null,
                   "source": null,
                   "speed": "standard",
+                  "statement_descriptor": null,
                   "status": "reversed",
                   "status_detail": "reversed",
                   "trace_code": null
@@ -56758,6 +56797,16 @@
                         "example": "standard",
                         "type": "string"
                       },
+                      "statement_descriptor": {
+                        "description": "Text that appears on the recipient's bank statement, or `null` if no descriptor was set. When set, 5-22 alphanumeric characters (A-Z, a-z, 0-9).",
+                        "example": "MYCOMPANY",
+                        "maxLength": 22,
+                        "minLength": 5,
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
                       "status": {
                         "description": "Current payout status.",
                         "enum": [
@@ -56805,6 +56854,7 @@
                       "payer_name",
                       "trace_code",
                       "notes",
+                      "statement_descriptor",
                       "net_amount",
                       "markup_fee",
                       "fee_paid_by",
@@ -56925,6 +56975,7 @@
                   "payout_request_id": null,
                   "source": null,
                   "speed": "standard",
+                  "statement_descriptor": null,
                   "status": "completed",
                   "status_detail": "completed",
                   "trace_code": null
@@ -57212,6 +57263,16 @@
                         "example": "standard",
                         "type": "string"
                       },
+                      "statement_descriptor": {
+                        "description": "Text that appears on the recipient's bank statement, or `null` if no descriptor was set. When set, 5-22 alphanumeric characters (A-Z, a-z, 0-9).",
+                        "example": "MYCOMPANY",
+                        "maxLength": 22,
+                        "minLength": 5,
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
                       "status": {
                         "description": "Current payout status.",
                         "enum": [
@@ -57259,6 +57320,7 @@
                       "payer_name",
                       "trace_code",
                       "notes",
+                      "statement_descriptor",
                       "net_amount",
                       "markup_fee",
                       "fee_paid_by",

@@ -120,7 +120,7 @@ The viewer moved a filter or the identifier search. Carries the entire filter st
 
 ### `onPersonOpened`
 
-The viewer clicked a person cell and the handle has no `links.person` to follow — open your own person view with it (`personId` is the stable per-person key; `identifier` is the most human-meaningful one the surface has), or pass `links.person` on the handle to turn the cells into real anchors instead.
+The viewer clicked a person cell and the handle has no `links.person` to follow. Present the `person` element with it, e.g. `createOverlay("person", { identifier: payload.personId })` (`personId` is the stable per-person key; `identifier` is the most human-meaningful one the surface has), or pass `links.person` on the handle to turn the cells into real anchors instead.
 
 **Signature:** `((payload: { identifier: string; personId: string; }) => void)`
 

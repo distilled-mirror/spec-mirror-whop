@@ -144,4 +144,8 @@ The elements this group mounts. Each has its own page:
   <Card title="CapabilitiesElement" href="/elements/upcoming/verifications/capabilities">
     The account's verification standing: whether individual and business verification are done, and which capabilities that unlocks. Read-only — pressing a verify button reports `verificationRequested` and stays put, so the host mounts its own flow, such as this namespace's `kyc` element. Both halves can be hidden, so a host that only wants the capability list, or only the two verification rows, can drop the other.
   </Card>
+
+  <Card title="RfiElement" href="/elements/upcoming/verifications/rfi">
+    Everything the account still owes compliance, and the forms to answer it. Each row is one group of requirements — grouped by the system that asked, because each relays to its provider once its own items are answered — and pressing it opens that group’s form in place. Rows already with a reviewer are shown but not answerable. Renders an all-clear once nothing is outstanding, so it can sit permanently in a settings page.
+  </Card>
 </CardGroup>

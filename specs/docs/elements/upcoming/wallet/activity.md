@@ -100,6 +100,10 @@
     A scoped token for the read. An account needs `company:balance:read`, and a user needs `user:balance:read`. Mint it on your server with `POST /api/v1/access_tokens`. Without it the read uses the viewer's own session, which only works same-origin.
   </ResponseField>
 
+  <ResponseField name="maxItems" type="number">
+    Show at most this many rows and stop paging, for a preview of recent activity. The list gains a See all activity control that reports `seeAllRequested` instead of navigating.
+  </ResponseField>
+
   <ResponseField name="canOpenCardTransactionDetails" type="boolean">
     When off, card transaction rows render inert (no click, no hover) instead of firing `activitySelected`. Use it when you know the viewer isn't allowed to see those details. Defaults to `true`.
   </ResponseField>
@@ -110,10 +114,6 @@
 
   <ResponseField name="hideFilters" type="boolean">
     Hide the filter chips, for a compact list that the viewer does not filter. Defaults to `false`.
-  </ResponseField>
-
-  <ResponseField name="maxItems" type="number">
-    Show at most this many rows and stop paging, for a preview of recent activity. The list gains a See all activity control that reports `seeAllRequested` instead of navigating.
   </ResponseField>
 
   ## Events

@@ -4,7 +4,7 @@
 
 # Wallet
 
-> Drives an account's money surfaces. `required-actions` is the outstanding-action bar from Whop's balance dashboard. `actions` renders the Deposit, Accept, Send, and Convert controls: Deposit, Send, and Convert open their Wallet overlays, while Accept opens Whop's checkout-link creator for a business account or company creation for a personal account. `deposit` returns live funding rails; `convert` swaps USD with Gold or Bitcoin and exposes FX currencies only to gated first-party users; `send` moves money to a recipient or creates a public claim link; `withdraw` lists payout methods and creates the payout when the host does not already drive that API; `balances` holds two faces — the holdings list, and the balance block drawing value over a window; `cards` is the compact issued-card list; `cardsTable` renders the full sortable card roster; `cardsChart` plots card spend; `whopCard` renders one revealable card; `activity` lists ledger movements; `activityDetail` renders a prefetched movement or retrieves one by activity ID in a standalone drawer; and `verification` is the identity-only nudge. Every data-backed surface can use the viewer's session when no token is provided.
+> Drives an account's money surfaces. `required-actions` is the outstanding-action bar from Whop's balance dashboard. `actions` renders the Deposit, Accept, Send, and Convert controls: Deposit, Send, and Convert open their Wallet overlays, while Accept opens Whop's checkout-link creator for a business account or company creation for a personal account. `deposit` returns live funding rails; `convert` swaps USD with Gold or Bitcoin and exposes FX currencies only to gated first-party users; `send` moves money to a recipient or creates a public claim link; `withdraw` lists payout methods and creates the payout when the host does not already drive that API; `balances` holds two faces — the holdings list, and the balance block drawing value over a window; `cards` is the compact issued-card list; `cardsTable` renders the full sortable card roster; `cardsChart` plots card spend; `whopCard` renders one revealable card; `activity` lists ledger movements; `activityDetail` renders a prefetched movement, or retrieves one by activity ID or card transaction ID, in a standalone drawer; and `verification` is the identity-only nudge. Every data-backed surface can use the viewer's session when no token is provided.
 
 ## Playground
 
@@ -642,6 +642,46 @@ Fields on `SendRecipient`.
 
 **Signature:** `"business" | "user" | "email"`
 
+## `Billing`
+
+The billing address.
+
+### `city`
+
+Billing city.
+
+**Signature:** `string | null`
+
+### `country_code`
+
+Billing country code.
+
+**Signature:** `string | null`
+
+### `line1`
+
+Street address line 1.
+
+**Signature:** `string | null`
+
+### `line2`
+
+Street address line 2.
+
+**Signature:** `string | null`
+
+### `postal_code`
+
+Billing postal code.
+
+**Signature:** `string | null`
+
+### `region`
+
+Billing region or state.
+
+**Signature:** `string | null`
+
 ## Elements
 
 The elements this group mounts. Each has its own page:
@@ -664,7 +704,7 @@ The elements this group mounts. Each has its own page:
   </Card>
 
   <Card title="ActivityDetailElement" href="/elements/upcoming/wallet/activityDetail">
-    A standalone detail drawer for one ledger activity. Pass either a prefetched financial-activity row or its activity ID. A prefetched row takes precedence; otherwise the element retrieves the row from the Financial Activity REST API.
+    A standalone detail drawer for one movement. Point it at a prefetched financial-activity row, a ledger activity ID, or a card transaction ID — a prefetched row takes precedence, otherwise the element retrieves the record itself. A card transaction opens the card receipt: merchant, amount, status, the card it was charged to, its cardholder on a company account, the settlement date, category, currency conversion and cashback.
   </Card>
 
   <Card title="DepositElement" href="/elements/upcoming/wallet/deposit">
@@ -683,20 +723,12 @@ The elements this group mounts. Each has its own page:
     Sends money from an account to a recipient — a user, another account, or a public claim link anyone can redeem. Direct transfers use the source account's configured fiat or crypto rail. Renders its own recipient search resolved from the account ID with no credentials beyond the account's own token. Needs an `accessToken` scoped to `payout:transfer_funds` for direct transfers and `payout:withdraw_funds` for recipient lists; account recipient search additionally needs `company:authorized_user:read` and `member:basic:read`, and account claim links need `airdrop_link:manage` — a host without one of those scopes should turn off the matching prop rather than leave a row that will 403.
   </Card>
 
-  <Card title="CardsElement" href="/elements/upcoming/wallet/cards">
-    Lists the account's active issued cards, most recently issued first. Needs an `accessToken`. The title and rows are click targets that emit events instead of navigating — a host wires up its own routing and card-detail UI.
+  <Card title="CardDetailsElement" href="/elements/upcoming/wallet/cardDetails">
+    One card and what has been spent on it: the card itself, what it has spent against its limit, and its latest transactions. Opens as a drawer. The card face, its reveal and its lock come from the `whopCard` element composed inside, so a host gets one surface rather than assembling three. Pressing a transaction, or asking for the full list, reports the request — the drawer never navigates.
   </Card>
 
-  <Card title="CardsTableElement" href="/elements/upcoming/wallet/cardsTable">
-    A sortable table of every issued card on an account, including cardholder, last month's spend, limit, and creation date. Rows and the create button emit events so the host owns card details and issuance flows.
-  </Card>
-
-  <Card title="CardsChartElement" href="/elements/upcoming/wallet/cardsChart">
-    A business account's card spend over time, using the same interactive bar chart as Whop's cards dashboard. The period picker changes the mounted chart and emits an event so the host can persist the selection.
-  </Card>
-
-  <Card title="WhopCardElement" href="/elements/upcoming/wallet/whopCard">
-    Renders one issued Whop Card. The element prefetches authorized secrets immediately after it mounts with a card ID, but keeps them masked until the viewer clicks it or selects `View details`. The API remains the permission authority. Includes lock and unlock controls by default.
+  <Card title="Cards" href="/elements/upcoming/wallet/cards">
+    An account's card surfaces, mounted from one place: the compact issued-card list, the full sortable roster, the spend chart, and a single revealable card. Mount the faces the page needs — they share the account and the credential this unit is minted with, so a page showing a chart above a roster wires them once. *(sub-controller, 5 elements)*
   </Card>
 
   <Card title="VerificationElement" href="/elements/upcoming/wallet/verification">

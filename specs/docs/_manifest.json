@@ -3,7 +3,7 @@
     "https://docs.whop.com/llms.txt",
     "https://docs.whop.com/sitemap.xml"
   ],
-  "count": 974,
+  "count": 979,
   "pages": [
     {
       "page": "https://docs.whop.com/account-settings/account-security/delete-your-account",
@@ -7328,6 +7328,14 @@
       ]
     },
     {
+      "page": "https://docs.whop.com/elements/upcoming/tracking/person",
+      "markdown": "https://docs.whop.com/elements/upcoming/tracking/person.md",
+      "file": "elements/upcoming/tracking/person.md",
+      "indexes": [
+        "llms.txt"
+      ]
+    },
+    {
       "page": "https://docs.whop.com/elements/upcoming/verifications/capabilities",
       "markdown": "https://docs.whop.com/elements/upcoming/verifications/capabilities.md",
       "file": "elements/upcoming/verifications/capabilities.md",
@@ -7347,6 +7355,14 @@
       "page": "https://docs.whop.com/elements/upcoming/verifications/overview",
       "markdown": "https://docs.whop.com/elements/upcoming/verifications/overview.md",
       "file": "elements/upcoming/verifications/overview.md",
+      "indexes": [
+        "llms.txt"
+      ]
+    },
+    {
+      "page": "https://docs.whop.com/elements/upcoming/verifications/rfi",
+      "markdown": "https://docs.whop.com/elements/upcoming/verifications/rfi.md",
+      "file": "elements/upcoming/verifications/rfi.md",
       "indexes": [
         "llms.txt"
       ]
@@ -7416,6 +7432,14 @@
       ]
     },
     {
+      "page": "https://docs.whop.com/elements/upcoming/wallet/cardDetails",
+      "markdown": "https://docs.whop.com/elements/upcoming/wallet/cardDetails.md",
+      "file": "elements/upcoming/wallet/cardDetails.md",
+      "indexes": [
+        "llms.txt"
+      ]
+    },
+    {
       "page": "https://docs.whop.com/elements/upcoming/wallet/cards",
       "markdown": "https://docs.whop.com/elements/upcoming/wallet/cards.md",
       "file": "elements/upcoming/wallet/cards.md",
@@ -7424,17 +7448,41 @@
       ]
     },
     {
-      "page": "https://docs.whop.com/elements/upcoming/wallet/cardsChart",
-      "markdown": "https://docs.whop.com/elements/upcoming/wallet/cardsChart.md",
-      "file": "elements/upcoming/wallet/cardsChart.md",
+      "page": "https://docs.whop.com/elements/upcoming/wallet/cards-cardTransactions",
+      "markdown": "https://docs.whop.com/elements/upcoming/wallet/cards-cardTransactions.md",
+      "file": "elements/upcoming/wallet/cards-cardTransactions.md",
       "indexes": [
         "llms.txt"
       ]
     },
     {
-      "page": "https://docs.whop.com/elements/upcoming/wallet/cardsTable",
-      "markdown": "https://docs.whop.com/elements/upcoming/wallet/cardsTable.md",
-      "file": "elements/upcoming/wallet/cardsTable.md",
+      "page": "https://docs.whop.com/elements/upcoming/wallet/cards-cards",
+      "markdown": "https://docs.whop.com/elements/upcoming/wallet/cards-cards.md",
+      "file": "elements/upcoming/wallet/cards-cards.md",
+      "indexes": [
+        "llms.txt"
+      ]
+    },
+    {
+      "page": "https://docs.whop.com/elements/upcoming/wallet/cards-cardsChart",
+      "markdown": "https://docs.whop.com/elements/upcoming/wallet/cards-cardsChart.md",
+      "file": "elements/upcoming/wallet/cards-cardsChart.md",
+      "indexes": [
+        "llms.txt"
+      ]
+    },
+    {
+      "page": "https://docs.whop.com/elements/upcoming/wallet/cards-cardsTable",
+      "markdown": "https://docs.whop.com/elements/upcoming/wallet/cards-cardsTable.md",
+      "file": "elements/upcoming/wallet/cards-cardsTable.md",
+      "indexes": [
+        "llms.txt"
+      ]
+    },
+    {
+      "page": "https://docs.whop.com/elements/upcoming/wallet/cards-whopCard",
+      "markdown": "https://docs.whop.com/elements/upcoming/wallet/cards-whopCard.md",
+      "file": "elements/upcoming/wallet/cards-whopCard.md",
       "indexes": [
         "llms.txt"
       ]
@@ -7483,14 +7531,6 @@
       "page": "https://docs.whop.com/elements/upcoming/wallet/verification",
       "markdown": "https://docs.whop.com/elements/upcoming/wallet/verification.md",
       "file": "elements/upcoming/wallet/verification.md",
-      "indexes": [
-        "llms.txt"
-      ]
-    },
-    {
-      "page": "https://docs.whop.com/elements/upcoming/wallet/whopCard",
-      "markdown": "https://docs.whop.com/elements/upcoming/wallet/whopCard.md",
-      "file": "elements/upcoming/wallet/whopCard.md",
       "indexes": [
         "llms.txt"
       ]

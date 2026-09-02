@@ -4,7 +4,7 @@
 
 # Tracking
 
-> An account's tracked audience: everyone its pixel has seen, and every event they performed. Scope it to an account with `accountId`, then mount `people`, `events`, or both — they read the same window and the same credit rule, so two surfaces side by side can never disagree about what they are showing. `links` wires their person links to your own pages.
+> An account's tracked audience: everyone its pixel has seen, and every event they performed. Scope it to an account with `accountId`, then mount `people`, `events`, or both. They read the same window and the same credit rule, so two surfaces side by side can never disagree about what they are showing. `person` is where a click on either of them leads: one person's whole record, mountable inline or presentable over your page. `links` wires their person links to your own pages.
 
 ## Playground
 
@@ -55,7 +55,7 @@ Pass these to `whop.tracking.create({ … })`, or as props on `<Tracking>` in Re
 </ResponseField>
 
 <ResponseField name="links" type="CrossLinksConfig">
-  Where person links lead on your site. `person` is an absolute-URL template with two placeholders, each replaced URL-encoded per row: `{personId}` is the stable `prsn_…` ID, identical for the same person on every surface — key your page on it; `{identifier}` is the most human-meaningful identifier the surface has (a user ID or email where known), so it can differ across surfaces. It must be absolute (`https://…`) — inside an element frame a relative URL would resolve against the frame, so one is treated as unset. Unset, a person click raises `personOpened` on its element instead. `people` and `events` base URLs are accepted for symmetry with the ads handle but nothing under this handle renders them. Defaults to `{}`.
+  Where person links lead on your site. `person` is an absolute-URL template with two placeholders, each replaced URL-encoded per row: `{personId}` is the stable `prsn_…` ID, identical for the same person on every surface, so key your page on it and mount the `person` element there; `{identifier}` is the most human-meaningful identifier the surface has (a user ID or email where known), so it can differ across surfaces. It must be absolute (`https://…`); a relative URL would resolve against the element frame, so one is treated as unset. Unset, a person click raises `personOpened` on its element instead, which is the cue to present `person` over your page. `people` and `events` base URLs are accepted for symmetry with the ads handle but nothing under this handle renders them. Defaults to `{}`.
 </ResponseField>
 
 <ResponseField name="period" type="&#x22;today&#x22; | &#x22;yesterday&#x22; | &#x22;last_7_days&#x22; | &#x22;last_14_days&#x22; | &#x22;last_30_days&#x22; | &#x22;last_90_days&#x22; | &#x22;all_time&#x22; | &#x22;custom&#x22;">
@@ -239,5 +239,9 @@ The elements this group mounts. Each has its own page:
 
   <Card title="EventsElement" href="/elements/upcoming/tracking/events">
     Every event the account measured — page views, leads, purchases, and custom pixel events — as a raw, filterable stream. The rows behind any metric: filter by event, source, geography, or device over the handle’s window, or search one person’s identifier to read their whole journey. A person cell follows `links.person` when the handle configures it, and otherwise comes back to you as `personOpened`.
+  </Card>
+
+  <Card title="PersonElement" href="/elements/upcoming/tracking/person">
+    Everything the account knows about one person: who they are, where they came from, what they have spent, and every event they have performed, in order. The view a person click leads to: mount it on the page `links.person` points at, or present it over your own page when `people` or `events` raise `personOpened`. `identifier` takes any identifier a person has been seen under, so a `personOpened` payload resolves here unchanged.
   </Card>
 </CardGroup>

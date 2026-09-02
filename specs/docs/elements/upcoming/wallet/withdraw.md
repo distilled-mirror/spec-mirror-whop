@@ -6,7 +6,7 @@
 
 > Collects a payout amount and saved payout method, groups standard and instant delivery choices with live fees and arrival estimates, and collects a new payout method when needed. When the host does not drive the flow, the element lists methods and creates the payout itself — pass `accessToken` (or rely on the viewer's same-origin session). A host that already talks to the payouts API can still supply methods, limits, and loading flags; confirming then emits `withdrawalRequested` for that host to create.
 
-Mounts inside [`Wallet`](/elements/upcoming/wallet/overview). `accountId` and `currency` come from there. Pass props and callbacks through the create options or React props. Keep the created handle, or React `ref`, to call `refresh()`.
+Mounts inside [`Wallet`](/elements/upcoming/wallet/overview). `accountId` and `accessToken` come from there. Pass props and callbacks through the create options or React props. Keep the created handle, or React `ref`, to call `refresh()`.
 
 <Note>You can mount this element **inline** (`create`) or open it as a **modal** overlay (`createOverlay`).</Note>
 

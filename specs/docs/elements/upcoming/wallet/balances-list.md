@@ -110,6 +110,10 @@
     Keep the personal row when `includeOwnedAccounts` is on. Turn it off if your app has no personal account to open. Defaults to `true`.
   </ResponseField>
 
+  <ResponseField name="maxItems" type="number">
+    Show at most this many holding rows, largest first. When there are more, the list gains a Show all balances control that expands the rest in place. Without it every holding is listed.
+  </ResponseField>
+
   ## Events
 
   Pass callbacks in the create options or React props.

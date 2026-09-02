@@ -6,18 +6,34 @@
 
 > Three separately mountable, PCI-isolated card fields for custom layouts: number, expiration, and security code. Create with `payments.create("cardFields")`, place each field, enable your payment button from `onChange`, and confirm with `payments.createConfirmationToken()`. Card numbers remain in hosted fields.
 
-Mounts inside [`Payments`](/elements/upcoming/payments/overview). Create it to get a handle, then mount its elements on that handle. Call `destroy()` to remove the sub-controller and free its slot. Create it again to get a fresh handle.
+<div data-whop-platform="web">
+  Mounts inside [`Payments`](/elements/upcoming/payments/overview). Create it to get a handle, then mount its elements on that handle. Call `destroy()` to remove the sub-controller and free its slot. Create it again to get a fresh handle.
 
-<Note>**Exclusive.** `CardFields` is an alternative to `PaymentElement` or `CardElement` in this Payments handle. Mount one at a time. Destroy it before mounting another.</Note>
+  <Note>**Exclusive.** `CardFields` is an alternative to `PaymentElement` or `CardElement` in this Payments handle. Mount one at a time. Destroy it before mounting another.</Note>
 
-## Preview
+  ## Preview
 
-A live, interactive demo of this sub-controller's default arrangement with example data:
+  A live, interactive demo of this sub-controller's default arrangement with example data:
 
-<div data-whop-demo-shell style={{ position: "relative", minHeight: "480px", transition: "min-height 200ms ease" }}>
-  <div data-whop-demo-skeleton style={{ position: "absolute", inset: "0", borderRadius: "12px", background: "rgba(140, 140, 140, 0.12)", pointerEvents: "none", transition: "opacity 200ms ease" }} />
+  <div data-whop-demo-shell style={{ position: "relative", minHeight: "480px", transition: "min-height 200ms ease" }}>
+    <div data-whop-demo-skeleton style={{ position: "absolute", inset: "0", borderRadius: "12px", background: "rgba(140, 140, 140, 0.12)", pointerEvents: "none", transition: "opacity 200ms ease" }} />
 
-  <div data-whop-demo-native="unit:card-fields" data-whop-elements-version="" style={{ position: "relative" }} />
+    <div data-whop-demo-native="unit:card-fields" data-whop-elements-version="" style={{ position: "relative" }} />
+  </div>
+</div>
+
+<div data-whop-platform="react-native" style={{ display: "none" }}>
+  The provider for individually placed card fields. Wrap the part of your form that holds them, then put `CardNumberElement`, `CardExpiryElement` and `CardCvcElement` wherever your layout wants them.
+
+  ## Preview
+
+  Running in the React Native example app:
+
+  <div style={{ width: "22rem", maxWidth: "100%" }}>
+    <div data-whop-simulator-shell className="whop-ios-simulator" style={{ position: "relative", aspectRatio: "390 / 800", overflow: "hidden" }}>
+      <iframe src={"https://app.revyl.ai/embed/4a22f507-3667-4162-b83f-1d7a7d4fa900?controls=0"} title="CardFields running on Android, in the React Native example app" loading="lazy" allow="fullscreen; clipboard-read; clipboard-write" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", border: 0, background: "transparent", display: "block" }} />
+    </div>
+  </div>
 </div>
 
 <div data-whop-usage="payments/cardFields">
@@ -41,6 +57,31 @@ A live, interactive demo of this sub-controller's default arrangement with examp
     }
     ```
 
+    ```tsx React Native theme={null}
+    import { View } from 'react-native';
+    import {
+      CardCvcElement,
+      CardExpiryElement,
+      CardFields,
+      CardNumberElement,
+      Payments,
+    } from '@whop/elements-react-native';
+
+    export function CardForm() {
+      return (
+        <Payments accountId="biz_xxxxxxxx" plan="plan_xxxxxxxx">
+          <CardFields onChange={({ complete }) => console.log(complete)}>
+            <CardNumberElement />
+            <View style={{ flexDirection: 'row', gap: 8 }}>
+              <CardExpiryElement style={{ flex: 1 }} />
+              <CardCvcElement style={{ flex: 1 }} />
+            </View>
+          </CardFields>
+        </Payments>
+      );
+    }
+    ```
+
     ```html JavaScript theme={null}
     <script src="https://js.whop.cloud/elements/amber/elements.js" data-whop-elements></script>
     <script type="module">
@@ -54,59 +95,103 @@ A live, interactive demo of this sub-controller's default arrangement with examp
   </CodeGroup>
 </div>
 
-## Options
+<div data-whop-platform="web">
+  ## Options
 
-Pass these to `payments.create('cardFields', { … })`, or as props on `<CardFields>` in React. Parent-injected props never appear here.
+  Pass these to `payments.create('cardFields', { … })`, or as props on `<CardFields>` in React. Parent-injected props never appear here.
 
-<ResponseField name="layout" type="&#x22;compact&#x22; | &#x22;stacked&#x22;">
-  `stacked` (default) shapes composed fields as a number row above expiration and security code. `compact` shapes one row. Separately mounted fields ignore this layout and render with full borders and rounded corners. Defaults to `"stacked"`.
-</ResponseField>
+  <ResponseField name="layout" type="&#x22;compact&#x22; | &#x22;stacked&#x22;">
+    `stacked` (default) shapes composed fields as a number row above expiration and security code. `compact` shapes one row. Separately mounted fields ignore this layout and render with full borders and rounded corners. Defaults to `"stacked"`.
+  </ResponseField>
 
-<ResponseField name="publicKey" type="string">
-  Advanced Basis Theory publishable key. Omit it to fetch the key automatically.
-</ResponseField>
+  <ResponseField name="publicKey" type="string">
+    Advanced Basis Theory publishable key. Omit it to fetch the key automatically.
+  </ResponseField>
 
-<ResponseField name="networks" type="CardNetworkArt[]">
-  The seller's accepted card networks in display order — the matrix card entry's `networks` objects, whose API-served icons drive the number field's brand art. Omit it to fetch alongside the key.
-</ResponseField>
+  <ResponseField name="networks" type="CardNetworkArt[]">
+    The seller's accepted card networks in display order — the matrix card entry's `networks` objects, whose API-served icons drive the number field's brand art. Omit it to fetch alongside the key.
+  </ResponseField>
 
-## Events
+  ## Events
 
-Pass callbacks in the create options or React props.
+  Pass callbacks in the create options or React props.
 
-### `onChange`
+  ### `onChange`
 
-Fires when completeness changes. `complete` becomes true after the buyer fills all three fields. Use it to enable confirmation. `brand` is the detected card network. `funding` is the detected funding type (`credit`, `debit`, or `prepaid`), `null` until the number identifies one. `issuingCountry` is the lowercase two-letter code of the country the card was issued in, `null` until the number identifies one.
+  Fires when completeness changes. `complete` becomes true after the buyer fills all three fields. Use it to enable confirmation. `brand` is the detected card network. `funding` is the detected funding type (`credit`, `debit`, or `prepaid`), `null` until the number identifies one. `issuingCountry` is the lowercase two-letter code of the country the card was issued in, `null` until the number identifies one.
 
-**Signature:** `((payload: { complete: boolean; brand: string; funding: string | null; issuingCountry: string | null; }) => void)`
+  **Signature:** `((payload: { complete: boolean; brand: string; funding: string | null; issuingCountry: string | null; }) => void)`
 
-## Methods
+  ## Methods
 
-Call these on the sub handle from `payments.create('cardFields', { … })`.
+  Call these on the sub handle from `payments.create('cardFields', { … })`.
 
-### `tokenize`
+  ### `tokenize`
 
-Advanced method that tokenizes the three fields without creating a confirmation token. It emits `tokenized` to the payments controller. Validation errors appear on the failing field, and the method throws. Use `payments.createConfirmationToken()` to confirm a payment.
+  Advanced method that tokenizes the three fields without creating a confirmation token. It emits `tokenized` to the payments controller. Validation errors appear on the failing field, and the method throws. Use `payments.createConfirmationToken()` to confirm a payment.
 
-**Signature:** `(input: { accountId?: string | undefined; }) => Promise<{ token: string; }>`
+  **Signature:** `(input: { accountId?: string | undefined; }) => Promise<{ token: string; }>`
 
-### `collect`
+  ### `collect`
 
-`payments.createConfirmationToken()` calls this action for `cardFields`. Don't call it directly. It tokenizes the fields and returns the data used to create the confirmation token.
+  `payments.createConfirmationToken()` calls this action for `cardFields`. Don't call it directly. It tokenizes the fields and returns the data used to create the confirmation token.
 
-**Signature:** `(input: { billingDetails?: { email?: string | undefined; name?: string | undefined; address?: { country?: string | undefined; line1?: string | undefined; city?: string | undefined; postal_code?: string | undefined; } | undefined; } | undefined; }) => Promise<{ paymentMethod: { type: string; category: string; card: { token: string; }; }; billingDetails: { email: string; name?: string | undefined; address?: { country?: string | undefined; line1?: string | undefined; city?: string | undefined; postal_code?: string | undefined; } | undefined; }; }>`
+  **Signature:** `(input: { billingDetails?: { email?: string | undefined; name?: string | undefined; address?: { country?: string | undefined; line1?: string | undefined; city?: string | undefined; postal_code?: string | undefined; } | undefined; } | undefined; }) => Promise<{ paymentMethod: { type: string; category: string; card: { token: string; }; }; billingDetails: { email: string; name?: string | undefined; address?: { country?: string | undefined; line1?: string | undefined; city?: string | undefined; postal_code?: string | undefined; } | undefined; }; }>`
 
-### `update`
+  ### `update`
 
-Merges new props and callbacks into the sub-controller.
+  Merges new props and callbacks into the sub-controller.
 
-**Signature:** `(options: Partial<CardFieldsSubOptions>) => void`
+  **Signature:** `(options: Partial<CardFieldsSubOptions>) => void`
 
-### `destroy`
+  ### `destroy`
 
-Destroys the sub-controller and its elements, then frees its exclusive slot. A later `create("cardFields")` starts fresh.
+  Destroys the sub-controller and its elements, then frees its exclusive slot. A later `create("cardFields")` starts fresh.
 
-**Signature:** `() => void`
+  **Signature:** `() => void`
+</div>
+
+<div data-whop-platform="react-native" style={{ display: "none" }}>
+  ## Props
+
+  <ResponseField name="children" type="ReactNode" required>
+    Your layout, with the three field elements somewhere inside it.
+  </ResponseField>
+
+  <ResponseField name="publicKey" type="string">
+    An Advanced tokenizer publishable key. Omit it and the SDK fetches the account's key itself.
+  </ResponseField>
+
+  <ResponseField name="layout" type="'stacked' | 'compact'">
+    Shapes fields that are composed together. Separately mounted fields ignore it and render with full borders. Defaults to `stacked`.
+  </ResponseField>
+
+  <ResponseField name="onChange" type="(payload: CardFieldsChangePayload) => void">
+    Fires on every edit with the combined state of the mounted fields.
+  </ResponseField>
+
+  ## `CardFieldsChangePayload`
+
+  What `onChange` hands back:
+
+  * `complete: boolean`: every mounted field is filled and valid
+  * `errors: Record<string, string>`: per-field messages, keyed `cardNumber`, `cardExpiry`, `cardCvc`
+
+  ## States
+
+  Its children render once the publishable key resolves. `onChange` reports the combined state of every mounted field, so one handler covers the whole card.
+
+  ## Good to know
+
+  * Card numbers never pass through your code. The fields are PCI-isolated native inputs, and the SDK hands Whop a token, so your app stays out of PCI scope.
+  * Every field must be inside the same `CardFields`. They share one tokenization, so a field mounted outside it collects nothing.
+  * `CardFields` registers the collection surface, so `createConfirmationToken` tokenizes the card with no extra wiring.
+  * Fetching the publishable key is automatic. Pass `publicKey` only if you already hold one.
+
+  <Note>
+    Wrap your app in `<WhopElements getToken={…}>` once, then mount `<Payments>` around the elements. See [Getting started](/elements/upcoming/getting-started) and [Appearance](/elements/upcoming/appearance).
+  </Note>
+</div>
 
 ## Elements
 
