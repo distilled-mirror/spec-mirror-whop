@@ -178,13 +178,19 @@ Ledger activity ID.
 
 The ledger line category this activity was posted under.
 
-**Signature:** `"platform_balance_transfer_outgoing" | "payment_gross" | "withdrawal" | "topup" | "payment_dispute" | "payment_revshare" | "card_spend_authorization" | "airdrop" | "onchain_swap_target" | "payment_gross_reversal" | "payment_refund" | "payment_refund_reversal" | "payment_dispute_reversal" | "payment_dispute_adjustment" | "dispute_hold_adjustment" | "topup_reversal" | "platform_balance_payment" | "platform_balance_payment_refund" | "platform_balance_transfer_incoming" | "internal_balance_transfer_incoming" | "internal_balance_transfer_outgoing" | "onchain_wallet_transfer_incoming" | "onchain_wallet_transfer_outgoing" | "withdrawal_reversal" | "withdrawal_clawback" | "withdrawal_clawback_reversal" | "payment_revshare_refund" | "payment_revshare_reversal" | "payment_referral" | "payment_referral_reversal" | "application_fee_payout" | "airdrop_reversal" | "airdrop_link_created" | "airdrop_link_returned" | "card_spend_authorization_void" | "card_spend_refund" | "onchain_deposit" | "bank_transfer" | "currency_conversion_outgoing" | "currency_conversion_incoming" | "airdrop_link_redeemed" | "resolution_center_refund" | "withdrawal_reclassification" | "payment_revshare_payout" | "platform_affiliate_payment" | "platform_affiliate_payment_reversal" | "platform_covered_dispute" | "treasury_payin" | "passthrough_gmv" | "promo_reversal" | "misc_reversal" | "ad_spend_charge" | "ad_campaign_budget" | "ad_budget_release" | "ad_publisher_payout" | "ad_publisher_payout_received" | "affiliate_fee" | "application_fee" | "billing_percentage_fee" | "buyer_fee" | "cross_border_percentage_fee" | "dispute_alert_fee" | "fraud_prevention_fee" | "fx_percentage_fee" | "high_risk_merchant_fee" | "orchestration_percentage_fee" | "payment_dispute_fee" | "payment_processing_fixed_fee" | "payment_processing_percentage_fee" | "payout_fee" | "revshare_percentage_fee" | "sales_tax_fee" | "sales_tax_remittance" | "sales_tax_remittance_reversal" | "stripe_domestic_processing_fee" | "stripe_international_processing_fee" | "three_ds_fixed_fee" | "whop_processing_fee" | "balance_reservation" | "balance_reservation_reversal" | "card_interchange" | "card_load_deposit" | "card_load_transfer" | "card_unload_deposit" | "card_unload_transfer" | "company_referral" | "connected_account_negative_balance" | "dispute_representment_fee" | "external_card_load_deposit" | "installment_default" | "internal_withdrawal" | "internal_withdrawal_complete" | "internal_withdrawal_fee" | "internal_withdrawal_fee_reversal" | "internal_withdrawal_in_transit" | "internal_withdrawal_in_transit_reversal" | "internal_withdrawal_markup_fee" | "internal_withdrawal_markup_fee_payout" | "internal_withdrawal_markup_fee_payout_reversal" | "internal_withdrawal_markup_fee_reversal" | "internal_withdrawal_reversal" | "legacy_crypto_payment" | "legacy_payment" | "legacy_payment_refund" | "license_sale" | "license_sale_commission" | "license_sale_revenue" | "marketplace_affiliate_fee" | "misc_purchase" | "misc_refund" | "onchain_swap_source" | "onchain_withdrawal" | "payment_referral_refund" | "platform_balance_transfer_fee" | "platform_earning" | "referral_bonus" | "software_rental_revshare" | "software_rental_transaction" | "swap_fee" | "topup_fee" | "withdrawal_fee" | "withdrawal_fee_reversal" | "withdrawal_markup_fee" | "withdrawal_markup_fee_payout" | "withdrawal_markup_fee_payout_reversal" | "withdrawal_markup_fee_reversal" | "withdrawal_topup_adjustment"`
+**Signature:** `"platform_balance_transfer_outgoing" | "payment_gross" | "withdrawal" | "topup" | "payment_dispute" | "payment_revshare" | "card_spend_authorization" | "airdrop" | "onchain_swap_target" | "payment_gross_reversal" | "payment_refund" | "payment_refund_reversal" | "payment_dispute_reversal" | "payment_dispute_adjustment" | "dispute_hold_adjustment" | "topup_reversal" | "platform_balance_payment" | "platform_balance_payment_refund" | "platform_balance_transfer_incoming" | "internal_balance_transfer_incoming" | "internal_balance_transfer_outgoing" | "onchain_wallet_transfer_incoming" | "onchain_wallet_transfer_outgoing" | "withdrawal_reversal" | "withdrawal_clawback" | "withdrawal_clawback_reversal" | "payment_revshare_refund" | "payment_revshare_reversal" | "payment_referral" | "payment_referral_reversal" | "application_fee_payout" | "airdrop_reversal" | "airdrop_link_created" | "airdrop_link_returned" | "card_spend_authorization_void" | "card_spend_refund" | "onchain_deposit" | "bank_transfer" | "currency_conversion_outgoing" | "currency_conversion_incoming" | "airdrop_link_redeemed" | "resolution_center_refund" | "withdrawal_reclassification" | "payment_revshare_payout" | "platform_affiliate_payment" | "platform_affiliate_payment_reversal" | "onboarding_reward" | "platform_covered_dispute" | "treasury_payin" | "passthrough_gmv" | "promo_reversal" | "misc_reversal" | "ad_spend_charge" | "ad_campaign_budget" | "ad_budget_release" | "ad_publisher_payout" | "ad_publisher_payout_received" | "affiliate_fee" | "application_fee" | "billing_percentage_fee" | "buyer_fee" | "cross_border_percentage_fee" | "dispute_alert_fee" | "fraud_prevention_fee" | "fx_percentage_fee" | "high_risk_merchant_fee" | "orchestration_percentage_fee" | "payment_dispute_fee" | "payment_processing_fixed_fee" | "payment_processing_percentage_fee" | "payout_fee" | "revshare_percentage_fee" | "sales_tax_fee" | "sales_tax_remittance" | "sales_tax_remittance_reversal" | "stripe_domestic_processing_fee" | "stripe_international_processing_fee" | "three_ds_fixed_fee" | "whop_processing_fee" | "balance_reservation" | "balance_reservation_reversal" | "card_interchange" | "card_load_deposit" | "card_load_transfer" | "card_unload_deposit" | "card_unload_transfer" | "company_referral" | "connected_account_negative_balance" | "dispute_representment_fee" | "external_card_load_deposit" | "installment_default" | "internal_withdrawal" | "internal_withdrawal_complete" | "internal_withdrawal_fee" | "internal_withdrawal_fee_reversal" | "internal_withdrawal_in_transit" | "internal_withdrawal_in_transit_reversal" | "internal_withdrawal_markup_fee" | "internal_withdrawal_markup_fee_payout" | "internal_withdrawal_markup_fee_payout_reversal" | "internal_withdrawal_markup_fee_reversal" | "internal_withdrawal_reversal" | "legacy_crypto_payment" | "legacy_payment" | "legacy_payment_refund" | "license_sale" | "license_sale_commission" | "license_sale_revenue" | "marketplace_affiliate_fee" | "misc_purchase" | "misc_refund" | "onchain_swap_source" | "onchain_withdrawal" | "payment_referral_refund" | "platform_balance_transfer_fee" | "platform_earning" | "referral_bonus" | "software_rental_revshare" | "software_rental_transaction" | "swap_fee" | "topup_fee" | "withdrawal_fee" | "withdrawal_fee_reversal" | "withdrawal_markup_fee" | "withdrawal_markup_fee_payout" | "withdrawal_markup_fee_payout_reversal" | "withdrawal_markup_fee_reversal" | "withdrawal_topup_adjustment"`
 
 ### `amount`
 
 Signed amount in the currency's smallest precision units.
 
 **Signature:** `string`
+
+### `usd_amount`
+
+Dollar value of this movement as a decimal string, signed like `amount`. Converted from the posted amount at the rate that was live when the line posted — the same pricing the wallet balance chart and the financial reports use — so a crypto row carries its dollar value too. `null` for a currency Whop holds no exchange rate for.
+
+**Signature:** `string | null`
 
 ### `currency`
 
@@ -214,7 +220,7 @@ Resource associated with this ledger activity.
 
 Source of this ledger activity.
 
-**Signature:** `{ object: string; id: string; status?: string | null | undefined; payment_amount?: Money | null | undefined; payment_method_type?: string | null | undefined; payment_processor?: string | null | undefined; card_brand?: string | null | undefined; reason?: string | null | undefined; risk_review_hold?: boolean | null | undefined; claim_url?: string | null | undefined; amount_float?: number | null | undefined; created_at?: string | null | undefined; estimated_arrival?: string | null | undefined; payer_name?: string | null | undefined; payout_token_nickname?: string | null | undefined; tx_hash?: string | null | undefined; sender_address?: string | null | undefined; chain?: string | null | undefined; from_amount?: string | null | undefined; from_currency?: string | null | undefined; to_amount?: string | null | undefined; to_currency?: string | null | undefined; payout_destination?: { payer_name?: string | null | undefined; icon_url?: string | null | undefined; } | null | undefined; [key: string]: unknown; } | null`
+**Signature:** `{ object: string; id: string; status?: string | null | undefined; payment_amount?: Money | null | undefined; payment_method_type?: string | null | undefined; payment_processor?: string | null | undefined; card_brand?: string | null | undefined; reason?: string | null | undefined; notes?: string | null | undefined; risk_review_hold?: boolean | null | undefined; claim_url?: string | null | undefined; amount_float?: number | null | undefined; created_at?: string | null | undefined; estimated_arrival?: string | null | undefined; payer_name?: string | null | undefined; payout_token_nickname?: string | null | undefined; tx_hash?: string | null | undefined; sender_address?: string | null | undefined; chain?: string | null | undefined; from_amount?: string | null | undefined; from_currency?: string | null | undefined; to_amount?: string | null | undefined; to_currency?: string | null | undefined; payout_destination?: { payer_name?: string | null | undefined; icon_url?: string | null | undefined; } | null | undefined; [key: string]: unknown; } | null`
 
 ### `payment`
 
@@ -438,6 +444,10 @@ Fields on `WithdrawalMethod`.
 
 **Signature:** `string | null | undefined`
 
+### `name`
+
+**Signature:** `string | null | undefined`
+
 ### `deliveryType`
 
 **Signature:** `string`
@@ -562,6 +572,114 @@ Fields on `WithdrawalLimits`.
 
 **Signature:** `{ maxAmount: number; dailyAmountRemaining?: number | null | undefined; errorCode?: string | null | undefined; errorMessage?: string | null | undefined; }`
 
+## `WithdrawalMoney`
+
+Fields on `WithdrawalMoney`.
+
+### `currency`
+
+**Signature:** `string`
+
+### `amount`
+
+**Signature:** `string`
+
+### `decimals`
+
+**Signature:** `number`
+
+### `display_decimals`
+
+**Signature:** `number`
+
+## `WithdrawalPayoutQuote`
+
+Fields on `WithdrawalPayoutQuote`.
+
+### `requestId`
+
+**Signature:** `string`
+
+### `payoutMethodId`
+
+**Signature:** `string`
+
+### `speed`
+
+**Signature:** `"standard" | "instant"`
+
+### `id`
+
+**Signature:** `string`
+
+### `amount`
+
+**Signature:** `WithdrawalMoney`
+
+### `fee`
+
+**Signature:** `WithdrawalMoney`
+
+### `netAmount`
+
+**Signature:** `WithdrawalMoney`
+
+### `destinationAmount`
+
+**Signature:** `WithdrawalMoney`
+
+### `exchangeRate`
+
+**Signature:** `number`
+
+### `expiresAt`
+
+**Signature:** `string`
+
+### `quoteToken`
+
+**Signature:** `string`
+
+## `WithdrawalRequest`
+
+Fields on `WithdrawalRequest`.
+
+### `amount`
+
+**Signature:** `number`
+
+### `currency`
+
+**Signature:** `string`
+
+### `payoutMethodId`
+
+**Signature:** `string`
+
+### `presentedFee`
+
+**Signature:** `number`
+
+### `quoteId`
+
+**Signature:** `string | undefined`
+
+### `quoteToken`
+
+**Signature:** `string | undefined`
+
+### `speed`
+
+**Signature:** `"standard" | "instant"`
+
+### `notes`
+
+**Signature:** `string | undefined`
+
+### `acknowledgeBankWarning`
+
+**Signature:** `boolean | undefined`
+
 ## `WithdrawalCreateMethodInput`
 
 Fields on `WithdrawalCreateMethodInput`.
@@ -586,9 +704,13 @@ Fields on `WithdrawalCreateMethodInput`.
 
 **Signature:** `Record<string, string>`
 
-## `WithdrawalRequest`
+## `WithdrawalPayoutQuoteRequest`
 
-Fields on `WithdrawalRequest`.
+Fields on `WithdrawalPayoutQuoteRequest`.
+
+### `requestId`
+
+**Signature:** `string`
 
 ### `amount`
 
@@ -602,21 +724,9 @@ Fields on `WithdrawalRequest`.
 
 **Signature:** `string`
 
-### `presentedFee`
-
-**Signature:** `number`
-
 ### `speed`
 
 **Signature:** `"standard" | "instant"`
-
-### `notes`
-
-**Signature:** `string | undefined`
-
-### `acknowledgeBankWarning`
-
-**Signature:** `boolean | undefined`
 
 ## `SendRecipient`
 

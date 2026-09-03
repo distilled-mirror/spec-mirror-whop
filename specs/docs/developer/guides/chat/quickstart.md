@@ -91,9 +91,8 @@ Enroll your own users as connected accounts before minting chat tokens. This cre
 
     const client = new WhopClient({ token: process.env.WHOP_API_KEY });
 
-    const account = await client.companies.create({
+    const account = await client.accounts.create({
       email: "user@example.com",
-      parent_company_id: "biz_XXXXXXXXXXXXX", // your platform's account ID
       title: "Jane Doe",
       metadata: {
         internal_user_id: "user_12345", // your platform's user ID
@@ -108,9 +107,8 @@ Enroll your own users as connected accounts before minting chat tokens. This cre
 
     const client = new WhopClient({ token: process.env.WHOP_API_KEY });
 
-    const account = await client.companies.create({
+    const account = await client.accounts.create({
       email: "user@example.com",
-      parent_company_id: "biz_XXXXXXXXXXXXX", // your platform's account ID
       title: "Jane Doe",
       metadata: {
         internal_user_id: "user_12345", // your platform's user ID
@@ -121,12 +119,11 @@ Enroll your own users as connected accounts before minting chat tokens. This cre
 
   <Tab title="cURL">
     ```bash theme={null}
-    curl -X POST https://api.whop.com/api/v1/companies \
+    curl -X POST https://api.whop.com/api/v1/accounts \
       -H "Authorization: Bearer $WHOP_API_KEY" \
       -H "Content-Type: application/json" \
       -d '{
         "email": "user@example.com",
-        "parent_company_id": "biz_XXXXXXXXXXXXX",
         "title": "Jane Doe",
         "metadata": {
           "internal_user_id": "user_12345"

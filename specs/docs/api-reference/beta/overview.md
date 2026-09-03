@@ -96,7 +96,8 @@ Accept payments from buyers and handle what comes after.
 
 | Resource                                                                                            | What it's for                                                              |
 | --------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
-| [Payments](/api-reference/beta/payments/capture-payment)                                            | A charge against a buyer, and the step they still owe.                     |
+| [Payments](/api-reference/beta/payments/list-payments)                                              | A charge against a buyer, and the step they still owe.                     |
+| [Refunds](/api-reference/beta/refunds/list-refunds)                                                 | Money returned to a buyer from a payment.                                  |
 | [Confirmation Tokens](/api-reference/beta/confirmation-tokens/confirmation-token)                   | A short-lived reference to payment details collected from a buyer.         |
 | [Setup Intents](/api-reference/beta/setup-intents/update-setup-return-url)                          | Saving a buyer's payment method without charging it.                       |
 | [Disputes](/api-reference/beta/disputes/dispute)                                                    | Chargebacks filed against an account, with evidence and outcomes.          |

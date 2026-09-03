@@ -401,7 +401,7 @@ export async function POST() {
 		where: { id: session.user.id },
 		select: { email: true, name: true },
 	});
-	const res = await fetch("https://api.whop.com/api/v1/companies", {
+	const res = await fetch("https://api.whop.com/api/v1/accounts", {
 		method: "POST",
 		headers: {
 			Authorization: `Bearer ${process.env.WHOP_API_KEY!}`,
@@ -409,7 +409,6 @@ export async function POST() {
 		},
 		body: JSON.stringify({
 			email: user!.email,
-			parent_company_id: process.env.PLATFORM_ACCOUNT_ID,
 			title: user!.name || user!.email.split("@")[0],
 		}),
 	});

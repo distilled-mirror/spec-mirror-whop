@@ -22,7 +22,7 @@ Mounts inside [`Wallet`](/elements/upcoming/wallet/overview). `accountId` and `a
           return (
             <WhopElements elements={loadWhop()}>
               <Wallet /* options */>
-                <WithdrawElement onAmountChanged={(e) => console.log(e)} onCountryChanged={(e) => console.log(e)} onSupportedMethodChanged={(e) => console.log(e)} onAddMethodRequested={(e) => console.log(e)} onPlaidLinkRequested={(e) => console.log(e)} onMethodVerificationCompleted={(e) => console.log(e)} onRenameMethodRequested={(e) => console.log(e)} onRemoveMethodRequested={(e) => console.log(e)} onWithdrawalRequested={(e) => console.log(e)} onDone={(e) => console.log(e)} />
+                <WithdrawElement onAmountChanged={(e) => console.log(e)} onCountryChanged={(e) => console.log(e)} onSupportedMethodChanged={(e) => console.log(e)} onAddMethodRequested={(e) => console.log(e)} onPlaidLinkRequested={(e) => console.log(e)} onMethodVerificationCompleted={(e) => console.log(e)} onRenameMethodRequested={(e) => console.log(e)} onRemoveMethodRequested={(e) => console.log(e)} onPayoutQuoteRequested={(e) => console.log(e)} onWithdrawalRequested={(e) => console.log(e)} onDone={(e) => console.log(e)} />
               </Wallet>
             </WhopElements>
           );
@@ -42,6 +42,7 @@ Mounts inside [`Wallet`](/elements/upcoming/wallet/overview). `accountId` and `a
             onMethodVerificationCompleted: (e) => console.log(e),
             onRenameMethodRequested: (e) => console.log(e),
             onRemoveMethodRequested: (e) => console.log(e),
+            onPayoutQuoteRequested: (e) => console.log(e),
             onWithdrawalRequested: (e) => console.log(e),
             onDone: (e) => console.log(e)
           }).mount('#wallet-withdraw');
@@ -106,6 +107,34 @@ Mounts inside [`Wallet`](/elements/upcoming/wallet/overview). `accountId` and `a
 
 <ResponseField name="quoteLoading" type="boolean">
   Whether the current amount is being repriced. Defaults to `false`.
+</ResponseField>
+
+<ResponseField name="payoutQuoteRequired" type="boolean">
+  Whether this payout must use an exact provider-backed quote before confirmation. Defaults to `false`.
+</ResponseField>
+
+<ResponseField name="payoutQuote" type="WithdrawalPayoutQuote | null">
+  The exact short-lived payout quote returned for the current confirmation request. Defaults to `null`.
+</ResponseField>
+
+<ResponseField name="payoutQuoteLoading" type="boolean">
+  Whether an exact payout quote is being created. Defaults to `false`.
+</ResponseField>
+
+<ResponseField name="payoutQuoteError" type="string">
+  The error from the current exact payout quote request, if any. Defaults to `""`.
+</ResponseField>
+
+<ResponseField name="payoutQuoteRetryRequired" type="boolean">
+  Whether the last quote request was inconclusive and must be retried with the same request ID. Defaults to `false`.
+</ResponseField>
+
+<ResponseField name="withdrawalRetryRequired" type="boolean">
+  Whether the last payout result was inconclusive and must be retried exactly. Defaults to `false`.
+</ResponseField>
+
+<ResponseField name="unresolvedWithdrawalRequest" type="WithdrawalRequest | null">
+  The exact unresolved payout request to retry after the element remounts. Defaults to `null`.
 </ResponseField>
 
 <ResponseField name="savingMethod" type="boolean">
@@ -187,6 +216,12 @@ The payer requested to rename a saved payout method.
 The payer requested to remove a saved payout method.
 
 **Signature:** `((payload: { methodId: string; }) => void)`
+
+### `onPayoutQuoteRequested`
+
+The payer requested an exact short-lived quote before confirming a payout.
+
+**Signature:** `((payload: WithdrawalPayoutQuoteRequest) => void)`
 
 ### `onWithdrawalRequested`
 

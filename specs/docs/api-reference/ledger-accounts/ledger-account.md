@@ -53,6 +53,7 @@
   		"phone": "<string>",
   		"status": "connected"
   	},
+  	"payout_quote_required": true,
   	"settlement_time_at": "2023-12-01T05:00:00.401Z",
   	"transfer_fee": 6.9,
   	"treasury_balance": {
@@ -278,6 +279,12 @@
       Available options: `connected`, `disabled`, `action_required`, `pending_verification`, `verification_failed`, `manual_review`, `denied`, `not_started`, `blocked_by_parent`
     </ResponseField>
   </Expandable>
+</ResponseField>
+
+<ResponseField name="payout_quote_required" type="boolean" required>
+  Whether a payout from this account must be confirmed against a provider-backed
+  quote first. When true, create a quote with POST /payouts/quotes and send its
+  quote\_token when creating the payout.
 </ResponseField>
 
 <ResponseField name="settlement_time_at" type="string<date-time> | null" required>

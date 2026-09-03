@@ -5,7 +5,7 @@
     "termsOfService": "https://whop.com/tos-developer-api/",
     "title": "Whop API",
     "version": "1.0.0",
-    "x-api-version-date": "2026-08-31"
+    "x-api-version-date": "2026-09-02-2"
   },
   "servers": [
     {
@@ -66,6 +66,11 @@
       "description": "A Payment is one charge against a buyer. Create an on-session payment with a `confirmation_token` for the method the buyer selected, or an off-session payment with an existing member's stored payment method.\n\nCollection runs in the background, so the create response is not the outcome. Poll [Retrieve status](/api-reference/beta/payments/retrieve-status) for how far the payment has got and, while it is `requires_action`, what the buyer must do next — follow a redirect, complete 3D Secure, display transfer instructions, or link a bank account. Use the return_url operation to change where they land afterwards, up until they come back.\n",
       "name": "Payments",
       "x-whop-summary": "A charge against a buyer, and the step they still owe."
+    },
+    {
+      "description": "A Refund is one reversal of a payment, full or partial. Refunds are issued with `POST /payments/{id}/refund`; this resource is the record of each one — how much moved, through which provider, and where it stands (`pending`, `succeeded`, `failed`).\n\nList a payment's refunds with `?payment_id=`, or every refund an account issued with `?account_id=`. `amount` is stated in the payment's settlement currency so it nets against the payment's `total`; `original_amount` is what the processor moved.\n",
+      "name": "Refunds",
+      "x-whop-summary": "Money returned to a buyer from a payment."
     },
     {
       "description": "A Confirmation Token is a single-use, short-lived reference to a payment method and billing details collected from a buyer. Its response contains only a display-safe preview and never returns the underlying payment credential.\n\nCreate a confirmation token in a buyer-facing collection flow, then send its `ctok_` ID to the Payments API from your server. Retrieve a token to display its payment method and billing preview or check whether it is still usable.\n",
@@ -275,6 +280,7 @@
       "name": "Payments",
       "tags": [
         "Payments",
+        "Refunds",
         "Confirmation Tokens",
         "Setup Intents",
         "Disputes",
@@ -7991,7 +7997,7 @@
                     "type": "string"
                   },
                   "creatives": {
-                    "description": "The ad's creative assets. Each entry is an uploaded file id with an optional format; omit format for the original asset. Two or more entries with no format become a carousel (2-10 attachments), in order, sharing the ad's copy.",
+                    "description": "The ad's creative assets. Each entry is an uploaded file id with an optional format; omit format for the original asset. Entries with no format become a carousel's ordered cards, sharing the ad's copy — 2-10 of them on Meta, while TikTok runs even a single image as a one-card carousel.",
                     "items": {
                       "properties": {
                         "crop": {
@@ -8279,6 +8285,20 @@
                     "description": "Whether the ad can appear alongside other advertisers' ads in the same unit. Defaults to true.",
                     "example": false,
                     "type": "boolean"
+                  },
+                  "music": {
+                    "description": "The looping track a TikTok carousel ad plays — an MP3 you uploaded, no larger than 10MB. Required for TikTok carousels (image creatives); TikTok-only.",
+                    "nullable": true,
+                    "properties": {
+                      "id": {
+                        "description": "Uploaded MP3 file ID, prefixed `file_`.",
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "id"
+                    ],
+                    "type": "object"
                   },
                   "post_source": {
                     "description": "Identifies the network that owns `existing_post_id`. The source is inferred from the ID shape when omitted.",
@@ -8578,7 +8598,7 @@
                     "type": "string"
                   },
                   "creatives": {
-                    "description": "The ad's creative assets. Each entry is an uploaded file id with an optional format; omit format for the original asset. Replaces a live ad's creative on the platform. Two or more entries with no format replace it with a carousel (2-10 attachments), in order, sharing the ad's copy.",
+                    "description": "The ad's creative assets. Each entry is an uploaded file id with an optional format; omit format for the original asset. Replaces a live ad's creative on the platform. Entries with no format replace it with a carousel's ordered cards — 2-10 of them on Meta, while TikTok runs even a single image as a one-card carousel.",
                     "items": {
                       "properties": {
                         "crop": {
@@ -8866,6 +8886,20 @@
                     "description": "Whether the ad can appear alongside other advertisers' ads in the same unit. Defaults to true.",
                     "example": false,
                     "type": "boolean"
+                  },
+                  "music": {
+                    "description": "The looping track a TikTok carousel ad plays — an MP3 you uploaded, no larger than 10MB. Omitted leaves the ad's music untouched. Null removes it before launch; a submitted carousel takes a replacement track instead. TikTok-only.",
+                    "nullable": true,
+                    "properties": {
+                      "id": {
+                        "description": "Uploaded MP3 file ID, prefixed `file_`.",
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "id"
+                    ],
+                    "type": "object"
                   },
                   "post_source": {
                     "description": "Identifies the network that owns `existing_post_id`. The source is inferred from the ID shape when omitted.",
@@ -9445,9 +9479,12 @@
                       "2026-08-25",
                       "2026-08-25-1",
                       "2026-08-25-2",
-                      "2026-08-31"
+                      "2026-08-31",
+                      "2026-09-02",
+                      "2026-09-02-1",
+                      "2026-09-02-2"
                     ],
-                    "example": "2026-08-31",
+                    "example": "2026-09-02-2",
                     "type": "string"
                   },
                   "expires_at": {
@@ -9869,9 +9906,12 @@
                       "2026-08-25",
                       "2026-08-25-1",
                       "2026-08-25-2",
-                      "2026-08-31"
+                      "2026-08-31",
+                      "2026-09-02",
+                      "2026-09-02-1",
+                      "2026-09-02-2"
                     ],
-                    "example": "2026-08-31",
+                    "example": "2026-09-02-2",
                     "type": "string"
                   },
                   "expires_at": {
@@ -18117,61 +18157,9 @@
                     "type": "number"
                   },
                   "destination": {
-                    "description": "Destination account ID or wallet address. Object form is supported for compatibility. Any business resolves by its account ID without authentication; a user account resolves only for that same authenticated user.",
-                    "oneOf": [
-                      {
-                        "type": "string"
-                      },
-                      {
-                        "properties": {
-                          "account_id": {
-                            "description": "Destination account ID.",
-                            "example": "biz_xxxxxxxxxxxxxx",
-                            "type": "string"
-                          },
-                          "address": {
-                            "description": "Destination wallet address.",
-                            "example": "0x6f1c0a3d5b2e4f8a9c7d1e0b3a5f7c9d2e4b6a80",
-                            "type": "string"
-                          },
-                          "network": {
-                            "description": "Destination wallet network.",
-                            "enum": [
-                              "ethereum",
-                              "polygon",
-                              "base",
-                              "solana"
-                            ],
-                            "example": "ethereum",
-                            "type": "string"
-                          }
-                        },
-                        "type": "object"
-                      }
-                    ]
-                  },
-                  "metadata": {
-                    "additionalProperties": true,
-                    "description": "Metadata to include with the deposit response.",
-                    "example": {
-                      "invoice": "SHINE-1042"
-                    },
-                    "type": "object"
-                  },
-                  "network": {
-                    "description": "Destination network override. Defaults to the destination wallet's own network.",
-                    "enum": [
-                      "ethereum",
-                      "polygon",
-                      "base",
-                      "solana",
-                      null
-                    ],
-                    "example": "ethereum",
-                    "type": [
-                      "string",
-                      "null"
-                    ]
+                    "description": "Account ID to fund, `biz_` or `user_`. Any business resolves without authentication; a user account resolves only for that same authenticated user.",
+                    "example": "biz_xxxxxxxxxxxxxx",
+                    "type": "string"
                   }
                 },
                 "required": [
@@ -18190,7 +18178,7 @@
                 "schema": {
                   "properties": {
                     "account_id": {
-                      "description": "Account ID of the destination owner. Null for raw wallet address destinations.",
+                      "description": "Account ID of the destination owner.",
                       "example": "biz_xxxxxxxxxxxxxx",
                       "type": [
                         "string",
@@ -18209,14 +18197,6 @@
                         "string",
                         "null"
                       ]
-                    },
-                    "metadata": {
-                      "additionalProperties": true,
-                      "description": "Metadata from the request.",
-                      "example": {
-                        "invoice": "SHINE-1042"
-                      },
-                      "type": "object"
                     },
                     "methods": {
                       "description": "Available deposit methods for destination.",
@@ -18443,8 +18423,7 @@
                     "object",
                     "account_id",
                     "hosted_url",
-                    "methods",
-                    "metadata"
+                    "methods"
                   ],
                   "type": "object"
                 }
@@ -22072,7 +22051,7 @@
                     "type": "array"
                   },
                   "filters": {
-                    "description": "Resource-specific filters. For native REST resources (`payouts`, `transfers`, `products`) these are the resource's own list query params; for dashboard tables they mirror the dashboard table filters.\n\n<details>\n<summary>Filters by resource (25)</summary>\n\n<details>\n<summary>ad_campaigns (4)</summary>\n\nMirrors the filtering query params of `GET /api/v1/ad_campaigns`.\n\n- `created_after` `string` — Only return campaigns created after this timestamp.\n- `created_before` `string` — Only return campaigns created before this timestamp.\n- `query` `string` — Filter campaigns by a title or ID substring.\n- `status` `string` — Only return campaigns with this status. One of `draft`, `active`, `paused`, `payment_failed`.\n\n</details>\n<details>\n<summary>ad_groups (6)</summary>\n\nMirrors the filtering query params of `GET /api/v1/ad_groups`.\n\n- `ad_campaign_id` `string` — Filter to ad groups in this campaign.\n- `ad_campaign_ids` `string[]` — Filter to ad groups in these campaigns (max 100). Repeat the parameter for each id (ad_campaign_ids=a&ad_campaign_ids=b).\n- `created_after` `string` — Only return ad groups created after this timestamp.\n- `created_before` `string` — Only return ad groups created before this timestamp.\n- `query` `string` — Filter ad groups by a title or ID substring.\n- `status` `string` — Filter to ad groups with this status. One of `active`, `paused`, `rejected`, `duplicating`.\n\n</details>\n<details>\n<summary>ads (8)</summary>\n\nMirrors the filtering query params of `GET /api/v1/ads`.\n\n- `ad_campaign_id` `string` — Only return ads in this ad campaign.\n- `ad_campaign_ids` `string[]` — Only return ads in these ad campaigns (max 100). Repeat the parameter for each id (ad_campaign_ids=a&ad_campaign_ids=b).\n- `ad_group_id` `string` — Only return ads in this ad group.\n- `ad_group_ids` `string[]` — Only return ads in these ad groups (max 100). Repeat the parameter for each id (ad_group_ids=a&ad_group_ids=b).\n- `created_after` `string` — Only return ads created after this timestamp.\n- `created_before` `string` — Only return ads created before this timestamp.\n- `query` `string` — Filter ads by a title or ID substring.\n- `status` `string` — Only return ads with this status. One of `active`, `paused`, `in_review`, `rejected`.\n\n</details>\n<details>\n<summary>apps (6)</summary>\n\nMirrors the filtering query params of `GET /api/v1/apps`.\n\n- `app_type` `string` — Filter apps by the type of end-user they are built for. Apps of type `website` are left out unless you ask for them by name. One of `b2b_app`, `b2c_app`, `company_app`, `component`, `website`.\n- `query` `string` — A search string matched against app names.\n- `recommended` `boolean` — Only return apps Whop recommends (or, with `false`, only those it does not), independently of verification status.\n- `verified` `boolean` — Only return apps whose Whop verification status matches this value. Omit this filter to include every verification status the caller can see.\n- `verified_apps_only` `boolean` — Legacy compatibility filter. Use `verified` for field equality. `true` returns verified apps; clients pinned before `2026-08-25-2` retain the earlier public website discovery behavior.\n- `view_type` `string` — Only return apps supporting this view type, such as `dashboard` or `hub`. One of `hub`, `discover`, `dash`, `dashboard`, `analytics`, `skills`, `openapi`.\n\n</details>\n<details>\n<summary>audiences (3)</summary>\n\nMirrors the filtering query params of `GET /api/v1/audiences`.\n\n- `audience_id` `string` — Audience ID, prefixed `adaud_`, used to filter the response to one audience.\n- `audience_type` `string` — Filter by audience type: `custom` (uploaded lists) or `lookalike`. One of `custom`, `lookalike`.\n- `source_type` `string` — Filter by member source: `csv_upload` (uploaded lists) or `people_filter` (automatic audiences built from saved People filters). One of `csv_upload`, `people_filter`.\n\n</details>\n<details>\n<summary>bounties (8)</summary>\n\nMirrors the filtering query params of `GET /api/v1/bounties`.\n\n- `business_goal_type` `string` — Filter by the poster's declared goal. Bounties created before the goal taxonomy carry no goal and never match this filter. One of `clipping`, `post_engagement`, `owned_account_growth`, `ugc_content`, `local_activation`, `data_capture`, `other`.\n- `country` `string` — Only bounties workable from this country, as an ISO 3166-1 alpha-2 code. Bounties with no country targeting are workable worldwide and always match.\n- `created_after` `string` — Only bounties created after this ISO 8601 timestamp.\n- `created_before` `string` — Only bounties created before this ISO 8601 timestamp.\n- `experience_id` `string` — Only bounties posted to this forum experience, prefixed `exp_`. An unknown experience, or one outside the caller's scope, matches nothing.\n- `query` `string` — Substring match on the bounty title or ID.\n- `status` `string` — Filter by lifecycle state. One of `scheduled`, `open`, `closed`, `completed`, `canceled`.\n- `user_id` `string` — List the bounties this user participated in (`user_` tag). Must be the authenticated user.\n\n</details>\n<details>\n<summary>bounty_submissions (4)</summary>\n\nMirrors the filtering query params of `GET /api/v1/bounty_submissions`.\n\n- `bounty_id` `string` — Only submissions on this bounty (`bnty_` tag).\n- `created_after` `string` — Only submissions created after this ISO 8601 timestamp.\n- `created_before` `string` — Only submissions created before this ISO 8601 timestamp.\n- `status` `string` — Filter by lifecycle state. One of `in_progress`, `submitted`, `approved`, `denied`.\n\n</details>\n<details>\n<summary>card_transactions (6)</summary>\n\nMirrors the filtering query params of `GET /api/v1/card_transactions`.\n\n- `card_id` `string[]` — Return only transactions charged to these cards, each prefixed `icrd_`.\n- `cardholder_id` `string[]` — Return only transactions on cards assigned to these users, each prefixed `user_`.\n- `created_after` `string` — Return only transactions authorized at or after this ISO 8601 timestamp.\n- `created_before` `string` — Return only transactions authorized at or before this ISO 8601 timestamp.\n- `status` `string` — Return only transactions with this status. One of `pending`, `completed`, `reversed`, `declined`.\n- `transaction_ids` `string[]` — Return only these card transactions, each prefixed `citx_`. Repeat the parameter, or pass one comma-separated value.\n\n</details>\n<details>\n<summary>checkout_configurations (3)</summary>\n\nMirrors the filtering query params of `GET /api/v1/checkout_configurations`.\n\n- `created_after` `string` — Only return checkout configurations created after this ISO 8601 timestamp.\n- `created_before` `string` — Only return checkout configurations created before this ISO 8601 timestamp.\n- `plan_id` `string` — Only return checkout configurations for this plan ID, prefixed `plan_`.\n\n</details>\n<details>\n<summary>disputes (4)</summary>\n\nMirrors the filtering query params of `GET /api/v1/disputes`.\n\n- `created_after` `string` — Only disputes opened after this ISO 8601 timestamp.\n- `created_before` `string` — Only disputes opened before this ISO 8601 timestamp.\n- `currency` `string` — Only disputes in this three-letter ISO currency.\n- `status` `string[]` — Only disputes in these statuses. Repeat the parameter to pass several — one paginated list covers all of them. Covers both chargebacks and inquiries at each stage. A `needs_response` dispute whose evidence deadline has passed reports and filters as `under_review` instead.\n\n</details>\n<details>\n<summary>events (14)</summary>\n\nMirrors the filtering query params of `GET /api/v1/events`.\n\n- `attribution_model` `string` — Attribution model for the source filter (defaults to last_touch). One of `last_touch`, `first_touch`.\n- `browser` `string` — Browser families to filter by, comma-separated (e.g. Chrome, Mobile Safari).\n- `city` `string` — Cities to filter by, comma-separated.\n- `country` `string` — Country codes to filter by, comma-separated.\n- `device` `string` — Device families to filter by, comma-separated (e.g. iPhone, Mac).\n- `event` `string` — Full event names to filter by, comma-separated (payment.completed, pixel.lead, pixel.page, pixel.custom:<name>) — the same vocabulary the events / people metrics use.\n- `from` `string` — Start of the time range as an ISO 8601 timestamp. Required when identifier is omitted.\n- `hostname` `string` — Page hostnames to filter by, comma-separated.\n- `identifier` `string` — Any hard identifier of the person: a person ID (prsn_*), user ID, email, phone number, or a tracking cookie value (wuid, anonymous ID, fbp/fbc/ttp/ga). Omit to list recent events for the account.\n- `os` `string` — Operating system families to filter by, comma-separated (e.g. iOS, Windows).\n- `page` `string` — Page paths to filter by, comma-separated.\n- `source` `string` — Canonical source path, exact or with a trailing :* prefix (whop:<campaign>:*, ext:meta:*, referrer:<domain>, direct). Restricts the list to conversion targets attributed to that source — the debuggability twin of a metric cell's source parameter. A whop:... source combined with non-conversion event names (event=pixel.page) instead lists the events whose ad click resolved to that entity — the page views an ad drove.\n- `to` `string` — End of the time range as an ISO 8601 timestamp. Required when identifier is omitted; otherwise defaults to now.\n- `utm_source` `string` — utm_source values to filter by, comma-separated.\n\n</details>\n<details>\n<summary>financial-activity (11)</summary>\n\nMirrors the filtering query params of `GET /api/v1/financial-activity`.\n\n- `activity_id` `string` — Optional ledger activity ID (for example `line_3`). Returns at most that one activity.\n- `available_after` `string` — Only include rows whose funds became withdrawable on or after this `YYYY-MM-DD` settlement date (UTC), distinct from posted_at. Requires currency.\n- `available_before` `string` — Only include rows whose funds became withdrawable on or before this `YYYY-MM-DD` settlement date (UTC). Set equal to available_after for a single day. Requires currency.\n- `currency` `string` — Optional currency code filter, for example `usd`.\n- `include_owned_accounts` `boolean` — When true, aggregates the authenticated user's personal ledger with the businesses they own (owner role with balance read) into one feed. Requires user_id to be the authenticated user; cannot be combined with account_id or the settlement-date filters. Each returned row includes the owning `account`.\n- `include_resource` `boolean` — Whether to include the `resource` field in the response or not. Consider passing `false` if you need a fast response without as many rich details.\n- `line_types` `string[]` — Optional ledger line categories to include. Some categories (for example `onchain_deposit`, which covers inbound crypto deposits such as MoonPay onramps) are only returned when explicitly requested here.\n- `posted_after` `string` — Only include rows posted after this ISO 8601 timestamp.\n- `posted_before` `string` — Only include rows posted before this ISO 8601 timestamp.\n- `resource_id` `string` — Optional prefixed resource ID. Returns activity associated with that resource.\n- `user_id` `string` — The owning user ID (a user_ identifier). Provide this or account_id.\n\n</details>\n<details>\n<summary>members (6)</summary>\n\nMirrors the filtering query params of `GET /api/v1/members`.\n\n- `access_level` `string` — Filter by what the member can reach on the account. One of `no_access`, `admin`, `customer`.\n- `created_after` `string` — Only members who joined after this ISO 8601 timestamp.\n- `created_before` `string` — Only members who joined before this ISO 8601 timestamp.\n- `query` `string` — Search members by name or username. An exact email address also matches when the credential holds the member:email:read scope.\n- `status` `string` — Filter by whether the member is still part of the account. One of `joined`, `left`.\n- `user_ids` `string[]` — Only return members whose users match these `user_` identifiers.\n\n</details>\n<details>\n<summary>memberships (6)</summary>\n\nMirrors the filtering query params of `GET /api/v1/memberships`.\n\n- `created_after` `string` — Only memberships created after this ISO 8601 timestamp.\n- `created_before` `string` — Only memberships created before this ISO 8601 timestamp.\n- `plan_id` `string` — Filter to memberships of this plan (`plan_` tag). Repeat as plan_ids[] for several.\n- `product_id` `string` — Filter to memberships of this product (`prod_` tag). Repeat as product_ids[] for several.\n- `status` `string` — Filter by billing state. `canceling` matches active memberships set to cancel at period end; `paused` matches memberships with payment collection paused. One of `active`, `trialing`, `past_due`, `completed`, `canceled`, `expired`, `canceling`, `paused`.\n- `user_id` `string` — Narrow to one user's memberships (`user_` tag, or `me` for the caller). A user outside the caller's visible set returns an empty list.\n\n</details>\n<details>\n<summary>payouts (7)</summary>\n\nMirrors the filtering query params of `GET /api/v1/payouts`.\n\n- `created_after` `string` — Only payouts created at or after this ISO 8601 time (inclusive).\n- `created_before` `string` — Only payouts created before this ISO 8601 time (exclusive).\n- `currency` `string` — Optional currency code filter, for example `usd`.\n- `payout_method_id` `string` — Filter to payouts sent to one saved payout method (a pytk_ identifier). An unknown id matches nothing.\n- `source` `string` — Filter by how the payout was created. Payouts created before source tracking or through internal tooling carry no source and never match. One of `api`, `dashboard`, `automatic`.\n- `status` `string` — Filter to payouts whose `status` reads this word, matching exactly what this version displays — `reversed` finds settled payouts the bank later returned. Requires Api-Version-Date 2026-08-21 or later. One of `requested`, `in_review`, `processing`, `completed`, `reversed`, `canceled`, `failed`, `denied`.\n- `user_id` `string` — The owning user ID (a user_ identifier). Provide this or account_id.\n\n</details>\n<details>\n<summary>people (20)</summary>\n\nMirrors the filtering query params of `GET /api/v1/people`.\n\n- `attribution_model` `string` — Attribution model the source filter matches against (defaults to last_touch). One of `last_touch`, `first_touch`.\n- `audience_id` `string` — Only include people in this audience. An audience that keeps itself up to date resolves to the People filters that define it, so this always reflects who matches now; uploaded lists and point-in-time snapshots match their recorded members.\n- `contactable` `boolean` — true for people who have an email address or phone number — the ones an ad platform can match.\n- `country` `string` — Only include people whose most recent visit came from this ISO 3166-1 alpha-2 country code.\n- `custom_event` `string` — Only include people who fired this custom pixel event.\n- `email` `string` — Only include the person linked to this email address.\n- `event_from` `string` — With event_to plus an event or source filter, switches to exact-population mode: person ids are resolved and paginated on the events side within this window (the same query the people metric counts), then hydrated per page.\n- `event_name` `string[]` — Only include people who fired any of these events, e.g. payment.completed or page.checkout.view.\n- `event_to` `string` — The inclusive end of the event window for exact-population mode.\n- `first_seen_after` `string` — Only include people first seen at or after this ISO 8601 timestamp.\n- `first_seen_before` `string` — Only include people first seen before this ISO 8601 timestamp.\n- `first_seen_within_days` `integer` — Only include people first seen within this many days, as a rolling window.\n- `has_purchased` `boolean` — true for customers only, false for people who have never purchased.\n- `last_seen_after` `string` — Only include people last seen at or after this ISO 8601 timestamp.\n- `last_seen_before` `string` — Only include people last seen before this ISO 8601 timestamp.\n- `last_seen_within_days` `integer` — Only include people last seen within this many days, as a rolling window.\n- `phone` `string` — Only include the person linked to this phone number.\n- `query` `string` — Search people by name, email, phone, or whop user ID (case-insensitive substring match).\n- `source` `string[]` — Only include people acquired from any of these sources — canonical paths (whop:<campaign>:<group>:<ad>, ext:<platform>:..., referrer:<domain>, direct, other), exact or with a trailing :* prefix. The same vocabulary the events / people metrics use.\n- `user_id` `string` — Only include the person linked to this whop user ID.\n\n</details>\n<details>\n<summary>plans (6)</summary>\n\nMirrors the filtering query params of `GET /api/v1/plans`.\n\n- `created_after` `string` — Only return plans created after this timestamp.\n- `created_before` `string` — Only return plans created before this timestamp.\n- `plan_types` `string[]` — Filter to only plans matching these billing types.\n- `product_ids` `string[]` — Filter to only plans belonging to these product identifiers. When `account_id` is omitted, this is required and the response is publicly readable: only visible, non-invoice plans are returned.\n- `release_methods` `string[]` — Filter to only plans matching these release methods.\n- `visibilities` `string[]` — Filter to only plans matching these visibility states.\n\n</details>\n<details>\n<summary>products (10)</summary>\n\nMirrors the filtering query params of `GET /api/v1/products`.\n\n- `access_pass_types` `string[]` — Filter to only products matching these types.\n- `created_after` `string` — Only return products created after this ISO 8601 timestamp.\n- `created_before` `string` — Only return products created before this ISO 8601 timestamp.\n- `labels` `string[]` — Filter to only products carrying all of these labels. Labels are matched lowercased.\n- `marketplace_category_route` `string` — Only return marketplace products assigned to this category route, such as `trading`.\n- `plan_types` `string[]` — Filter to products with a buyable plan of these billing models, such as `one_time` or `renewal`.\n- `price_maximum` `number` — Only return products whose advertised buyable plan has a displayed price of at most this amount. Recurring plans use renewal price.\n- `price_minimum` `number` — Only return products whose advertised buyable plan has a displayed price of at least this amount. Recurring plans use renewal price.\n- `query` `string` — Ranked search against product title and headline. Omit to browse by recency.\n- `visibilities` `string[]` — Filter to only products matching these visibility states. Ignored on the public marketplace list, which only returns visible products.\n\n</details>\n<details>\n<summary>promo_codes (5)</summary>\n\nMirrors the filtering query params of `GET /api/v1/promo_codes`.\n\n- `created_after` `string` — Only promo codes created after this ISO 8601 timestamp.\n- `created_before` `string` — Only promo codes created before this ISO 8601 timestamp.\n- `plan_ids` `string[]` — Only promo codes scoped to these plan IDs.\n- `product_ids` `string[]` — Only promo codes scoped to these product IDs.\n- `status` `string` — Promo-code status. `expired` groups inactive and archived codes. One of `active`, `inactive`, `archived`, `expired`.\n\n</details>\n<details>\n<summary>resolution_center_cases (6)</summary>\n\nMirrors the filtering query params of `GET /api/v1/resolution_center_cases`.\n\n- `created_after` `string` — Only cases created after this ISO 8601 timestamp.\n- `created_before` `string` — Only cases created before this ISO 8601 timestamp.\n- `outcome` `string[]` — Only closed cases that ended these ways. Repeat the parameter to pass several.\n- `reason` `string[]` — Only cases opened for these reasons. Repeat the parameter to pass several.\n- `status` `string[]` — Only cases in these statuses. Repeat the parameter to pass several — one paginated list covers all of them.\n- `user_id` `string` — Only cases opened by this customer — a `user_` tag, or `me` for the calling user. It narrows what you can already read, so `me` lists the cases you opened without the ones on accounts you are a team member of.\n\n</details>\n<details>\n<summary>shipments (4)</summary>\n\nMirrors the filtering query params of `GET /api/v1/shipments`.\n\n- `created_after` `string` — Return shipments created after this ISO 8601 timestamp.\n- `created_before` `string` — Return shipments created before this ISO 8601 timestamp.\n- `payment_id` `string[]` — Only shipments fulfilling these payments, each prefixed `pay_`. Repeat the parameter to pass several, up to 100 per request — one paginated list covers all of them.\n- `status` `string` — Filter to shipments with this delivery status. One of `unknown`, `pre_transit`, `in_transit`, `out_for_delivery`, `delivered`, `available_for_pickup`, `return_to_sender`, `failure`, `cancelled`, `error`.\n\n</details>\n<details>\n<summary>social_accounts (4)</summary>\n\nMirrors the filtering query params of `GET /api/v1/social_accounts`.\n\n- `platform` `string` — Only return social accounts for the platform that is specified. One of `x`, `instagram`, `youtube`, `tiktok`, `facebook`, `discord`, `telegram`.\n- `scopes` `string[]` — Only return social accounts that have these scopes.\n- `user_id` `string` — The User that the social accounts are connected to. Provide either this or account_id.\n- `verified` `boolean` — Only return social accounts that are verified on the platform.\n\n</details>\n<details>\n<summary>team_members (5)</summary>\n\nMirrors the filtering query params of `GET /api/v1/team_members`.\n\n- `created_after` `string` — Only return members added after this ISO 8601 timestamp.\n- `created_before` `string` — Only return members added before this ISO 8601 timestamp.\n- `role` `string` — Only return members with this role. `custom` matches members on a dashboard-managed custom role. One of `owner`, `admin`, `sales_manager`, `moderator`, `advertiser`, `app_manager`, `support`, `manager`, `workforce`, `custom`.\n- `status` `string` — Only return members with this status: `joined` (accepted members) or `pending` (pending invites). Both are returned by default. One of `joined`, `pending`.\n- `user_id` `string` — Only return the membership for this user ID, prefixed `user_`.\n\n</details>\n<details>\n<summary>transfers (4)</summary>\n\nMirrors the filtering query params of `GET /api/v1/transfers`.\n\n- `created_after` `string` — Only transfers created strictly after this ISO 8601 timestamp.\n- `created_before` `string` — Only transfers created strictly before this ISO 8601 timestamp.\n- `destination_id` `string` — Filter to transfers received by this account. Provide this or origin_id.\n- `origin_id` `string` — Filter to transfers sent from this account. Provide this or destination_id.\n\n</details>\n<details>\n<summary>webhooks (3)</summary>\n\nMirrors the filtering query params of `GET /api/v1/webhooks`.\n\n- `app_id` `string` — Only return webhooks attached to this app. Omit to list the account's own webhooks.\n- `has_failures` `boolean` — Only return webhooks whose endpoint is currently failing — every delivery since the current failure streak began has been rejected. Clears as soon as a delivery succeeds.\n- `include_app_webhooks` `boolean` — Also return webhooks attached to the account's apps, not just the account's own. Cannot be combined with `app_id`.\n\n</details>\n</details>",
+                    "description": "Resource-specific filters. For native REST resources (`payouts`, `transfers`, `products`) these are the resource's own list query params; for dashboard tables they mirror the dashboard table filters.\n\n<details>\n<summary>Filters by resource (25)</summary>\n\n<details>\n<summary>ad_campaigns (4)</summary>\n\nMirrors the filtering query params of `GET /api/v1/ad_campaigns`.\n\n- `created_after` `string` — Only return campaigns created after this timestamp.\n- `created_before` `string` — Only return campaigns created before this timestamp.\n- `query` `string` — Filter campaigns by a title or ID substring.\n- `status` `string` — Only return campaigns with this status. One of `draft`, `active`, `paused`, `payment_failed`.\n\n</details>\n<details>\n<summary>ad_groups (6)</summary>\n\nMirrors the filtering query params of `GET /api/v1/ad_groups`.\n\n- `ad_campaign_id` `string` — Filter to ad groups in this campaign.\n- `ad_campaign_ids` `string[]` — Filter to ad groups in these campaigns (max 100). Repeat the parameter for each id (ad_campaign_ids=a&ad_campaign_ids=b).\n- `created_after` `string` — Only return ad groups created after this timestamp.\n- `created_before` `string` — Only return ad groups created before this timestamp.\n- `query` `string` — Filter ad groups by a title or ID substring.\n- `status` `string` — Filter to ad groups with this status. One of `active`, `paused`, `rejected`, `duplicating`.\n\n</details>\n<details>\n<summary>ads (8)</summary>\n\nMirrors the filtering query params of `GET /api/v1/ads`.\n\n- `ad_campaign_id` `string` — Only return ads in this ad campaign.\n- `ad_campaign_ids` `string[]` — Only return ads in these ad campaigns (max 100). Repeat the parameter for each id (ad_campaign_ids=a&ad_campaign_ids=b).\n- `ad_group_id` `string` — Only return ads in this ad group.\n- `ad_group_ids` `string[]` — Only return ads in these ad groups (max 100). Repeat the parameter for each id (ad_group_ids=a&ad_group_ids=b).\n- `created_after` `string` — Only return ads created after this timestamp.\n- `created_before` `string` — Only return ads created before this timestamp.\n- `query` `string` — Filter ads by a title or ID substring.\n- `status` `string` — Only return ads with this status. One of `active`, `paused`, `in_review`, `rejected`.\n\n</details>\n<details>\n<summary>apps (6)</summary>\n\nMirrors the filtering query params of `GET /api/v1/apps`.\n\n- `app_type` `string` — Filter apps by the type of end-user they are built for. Apps of type `website` are left out unless you ask for them by name. One of `b2b_app`, `b2c_app`, `company_app`, `component`, `website`.\n- `query` `string` — A search string matched against app names.\n- `recommended` `boolean` — Only return apps Whop recommends (or, with `false`, only those it does not), independently of verification status.\n- `verified` `boolean` — Only return apps whose Whop verification status matches this value. Omit this filter to include every verification status the caller can see.\n- `verified_apps_only` `boolean` — Legacy compatibility filter. Use `verified` for field equality. `true` returns verified apps; clients pinned before `2026-08-25-2` retain the earlier public website discovery behavior.\n- `view_type` `string` — Only return apps supporting this view type, such as `dashboard` or `hub`. One of `hub`, `discover`, `dash`, `dashboard`, `analytics`, `skills`, `openapi`.\n\n</details>\n<details>\n<summary>audiences (3)</summary>\n\nMirrors the filtering query params of `GET /api/v1/audiences`.\n\n- `audience_id` `string` — Audience ID, prefixed `adaud_`, used to filter the response to one audience.\n- `audience_type` `string` — Filter by audience type: `custom` (uploaded lists) or `lookalike`. One of `custom`, `lookalike`.\n- `source_type` `string` — Filter by member source: `csv_upload` (uploaded lists) or `people_filter` (automatic audiences built from saved People filters). One of `csv_upload`, `people_filter`.\n\n</details>\n<details>\n<summary>bounties (8)</summary>\n\nMirrors the filtering query params of `GET /api/v1/bounties`.\n\n- `business_goal_type` `string` — Filter by the poster's declared goal. Bounties created before the goal taxonomy carry no goal and never match this filter. One of `clipping`, `post_engagement`, `owned_account_growth`, `ugc_content`, `local_activation`, `data_capture`, `other`.\n- `country` `string` — Only bounties workable from this country, as an ISO 3166-1 alpha-2 code. Bounties with no country targeting are workable worldwide and always match.\n- `created_after` `string` — Only bounties created after this ISO 8601 timestamp.\n- `created_before` `string` — Only bounties created before this ISO 8601 timestamp.\n- `experience_id` `string` — Only bounties posted to this forum experience, prefixed `exp_`. An unknown experience, or one outside the caller's scope, matches nothing.\n- `query` `string` — Substring match on the bounty title or ID.\n- `status` `string` — Filter by lifecycle state. One of `scheduled`, `open`, `closed`, `completed`, `canceled`.\n- `user_id` `string` — List the bounties this user participated in (`user_` tag). Must be the authenticated user.\n\n</details>\n<details>\n<summary>bounty_submissions (4)</summary>\n\nMirrors the filtering query params of `GET /api/v1/bounty_submissions`.\n\n- `bounty_id` `string` — Only submissions on this bounty (`bnty_` tag).\n- `created_after` `string` — Only submissions created after this ISO 8601 timestamp.\n- `created_before` `string` — Only submissions created before this ISO 8601 timestamp.\n- `status` `string` — Filter by lifecycle state. One of `in_progress`, `submitted`, `approved`, `denied`.\n\n</details>\n<details>\n<summary>card_transactions (6)</summary>\n\nMirrors the filtering query params of `GET /api/v1/card_transactions`.\n\n- `card_id` `string[]` — Return only transactions charged to these cards, each prefixed `icrd_`.\n- `cardholder_id` `string[]` — Return only transactions on cards assigned to these users, each prefixed `user_`.\n- `created_after` `string` — Return only transactions authorized at or after this ISO 8601 timestamp.\n- `created_before` `string` — Return only transactions authorized at or before this ISO 8601 timestamp.\n- `status` `string` — Return only transactions with this status. One of `pending`, `completed`, `reversed`, `declined`.\n- `transaction_ids` `string[]` — Return only these card transactions, each prefixed `citx_`. Repeat the parameter, or pass one comma-separated value.\n\n</details>\n<details>\n<summary>checkout_configurations (3)</summary>\n\nMirrors the filtering query params of `GET /api/v1/checkout_configurations`.\n\n- `created_after` `string` — Only return checkout configurations created after this ISO 8601 timestamp.\n- `created_before` `string` — Only return checkout configurations created before this ISO 8601 timestamp.\n- `plan_id` `string` — Only return checkout configurations for this plan ID, prefixed `plan_`.\n\n</details>\n<details>\n<summary>disputes (4)</summary>\n\nMirrors the filtering query params of `GET /api/v1/disputes`.\n\n- `created_after` `string` — Only disputes opened after this ISO 8601 timestamp.\n- `created_before` `string` — Only disputes opened before this ISO 8601 timestamp.\n- `currency` `string` — Only disputes in this three-letter ISO currency.\n- `status` `string[]` — Only disputes in these statuses. Repeat the parameter to pass several — one paginated list covers all of them. Covers both chargebacks and inquiries at each stage. A `needs_response` dispute whose evidence deadline has passed reports and filters as `under_review` instead.\n\n</details>\n<details>\n<summary>events (14)</summary>\n\nMirrors the filtering query params of `GET /api/v1/events`.\n\n- `attribution_model` `string` — Attribution model for the source filter (defaults to last_touch). One of `last_touch`, `first_touch`.\n- `browser` `string` — Browser families to filter by, comma-separated (e.g. Chrome, Mobile Safari).\n- `city` `string` — Cities to filter by, comma-separated.\n- `country` `string` — Country codes to filter by, comma-separated.\n- `device` `string` — Device families to filter by, comma-separated (e.g. iPhone, Mac).\n- `event` `string` — Full event names to filter by, comma-separated (payment.completed, pixel.lead, pixel.page, pixel.custom:<name>) — the same vocabulary the events / people metrics use.\n- `from` `string` — Start of the time range as an ISO 8601 timestamp. Required when identifier is omitted.\n- `hostname` `string` — Page hostnames to filter by, comma-separated.\n- `identifier` `string` — Any hard identifier of the person: a person ID (prsn_*), user ID, email, phone number, or a tracking cookie value (wuid, anonymous ID, fbp/fbc/ttp/ga). Omit to list recent events for the account.\n- `os` `string` — Operating system families to filter by, comma-separated (e.g. iOS, Windows).\n- `page` `string` — Page paths to filter by, comma-separated.\n- `source` `string` — Canonical source path, exact or with a trailing :* prefix (whop:<campaign>:*, ext:meta:*, referrer:<domain>, direct). Restricts the list to conversion targets attributed to that source — the debuggability twin of a metric cell's source parameter. A whop:... source combined with non-conversion event names (event=pixel.page) instead lists the events whose ad click resolved to that entity — the page views an ad drove.\n- `to` `string` — End of the time range as an ISO 8601 timestamp. Required when identifier is omitted; otherwise defaults to now.\n- `utm_source` `string` — utm_source values to filter by, comma-separated.\n\n</details>\n<details>\n<summary>financial-activity (12)</summary>\n\nMirrors the filtering query params of `GET /api/v1/financial-activity`.\n\n- `activity_id` `string` — Optional ledger activity ID (for example `line_3`). Returns at most that one activity.\n- `available_after` `string` — Only include rows whose funds became withdrawable on or after this `YYYY-MM-DD` settlement date (UTC), distinct from posted_at. Requires currency.\n- `available_before` `string` — Only include rows whose funds became withdrawable on or before this `YYYY-MM-DD` settlement date (UTC). Set equal to available_after for a single day. Requires currency.\n- `currency` `string` — Optional currency code filter, for example `usd`.\n- `exclude_internal_movements` `boolean` — Whether to exclude balance reservations and balanced movements between the account's own balances.\n- `include_owned_accounts` `boolean` — When true, aggregates the authenticated user's personal ledger with the businesses they own (owner role with balance read) into one feed. Requires user_id to be the authenticated user; cannot be combined with account_id or the settlement-date filters. Each returned row includes the owning `account`.\n- `include_resource` `boolean` — Whether to include the `resource` field in the response or not. Consider passing `false` if you need a fast response without as many rich details.\n- `line_types` `string[]` — Optional ledger line categories to include. Some categories (for example `onchain_deposit`, which covers inbound crypto deposits such as MoonPay onramps) are only returned when explicitly requested here.\n- `posted_after` `string` — Only include rows posted after this ISO 8601 timestamp.\n- `posted_before` `string` — Only include rows posted before this ISO 8601 timestamp.\n- `resource_id` `string` — Optional prefixed resource ID. Returns activity associated with that resource.\n- `user_id` `string` — The owning user ID (a user_ identifier). Provide this or account_id.\n\n</details>\n<details>\n<summary>members (6)</summary>\n\nMirrors the filtering query params of `GET /api/v1/members`.\n\n- `access_level` `string` — Filter by what the member can reach on the account. One of `no_access`, `admin`, `customer`.\n- `created_after` `string` — Only members who joined after this ISO 8601 timestamp.\n- `created_before` `string` — Only members who joined before this ISO 8601 timestamp.\n- `query` `string` — Search members by name or username. An exact email address also matches when the credential holds the member:email:read scope.\n- `status` `string` — Filter by whether the member is still part of the account. One of `joined`, `left`.\n- `user_ids` `string[]` — Only return members whose users match these `user_` identifiers.\n\n</details>\n<details>\n<summary>memberships (6)</summary>\n\nMirrors the filtering query params of `GET /api/v1/memberships`.\n\n- `created_after` `string` — Only memberships created after this ISO 8601 timestamp.\n- `created_before` `string` — Only memberships created before this ISO 8601 timestamp.\n- `plan_id` `string` — Filter to memberships of this plan (`plan_` tag). Repeat as plan_ids[] for several.\n- `product_id` `string` — Filter to memberships of this product (`prod_` tag). Repeat as product_ids[] for several.\n- `status` `string` — Filter by billing state. `canceling` matches active memberships set to cancel at period end; `paused` matches memberships with payment collection paused. One of `active`, `trialing`, `past_due`, `completed`, `canceled`, `expired`, `canceling`, `paused`.\n- `user_id` `string` — Narrow to one user's memberships (`user_` tag, or `me` for the caller). A user outside the caller's visible set returns an empty list.\n\n</details>\n<details>\n<summary>payouts (7)</summary>\n\nMirrors the filtering query params of `GET /api/v1/payouts`.\n\n- `created_after` `string` — Only payouts created at or after this ISO 8601 time (inclusive).\n- `created_before` `string` — Only payouts created before this ISO 8601 time (exclusive).\n- `currency` `string` — Optional currency code filter, for example `usd`.\n- `payout_method_id` `string` — Filter to payouts sent to one saved payout method (a pytk_ identifier). An unknown id matches nothing.\n- `source` `string` — Filter by how the payout was created. Payouts created before source tracking or through internal tooling carry no source and never match. One of `api`, `dashboard`, `automatic`.\n- `status` `string` — Filter to payouts whose `status` reads this word, matching exactly what this version displays — `reversed` finds settled payouts the bank later returned. Requires Api-Version-Date 2026-08-21 or later. One of `requested`, `in_review`, `processing`, `completed`, `reversed`, `canceled`, `failed`, `denied`.\n- `user_id` `string` — The owning user ID (a user_ identifier). Provide this or account_id.\n\n</details>\n<details>\n<summary>people (20)</summary>\n\nMirrors the filtering query params of `GET /api/v1/people`.\n\n- `attribution_model` `string` — Attribution model the source filter matches against (defaults to last_touch). One of `last_touch`, `first_touch`.\n- `audience_id` `string` — Only include people in this audience. An audience that keeps itself up to date resolves to the People filters that define it, so this always reflects who matches now; uploaded lists and point-in-time snapshots match their recorded members.\n- `contactable` `boolean` — true for people who have an email address or phone number — the ones an ad platform can match.\n- `country` `string` — Only include people whose most recent visit came from this ISO 3166-1 alpha-2 country code.\n- `custom_event` `string` — Only include people who fired this custom pixel event.\n- `email` `string` — Only include the person linked to this email address.\n- `event_from` `string` — With event_to plus an event or source filter, switches to exact-population mode: person ids are resolved and paginated on the events side within this window (the same query the people metric counts), then hydrated per page.\n- `event_name` `string[]` — Only include people who fired any of these events, e.g. payment.completed or page.checkout.view.\n- `event_to` `string` — The inclusive end of the event window for exact-population mode.\n- `first_seen_after` `string` — Only include people first seen at or after this ISO 8601 timestamp.\n- `first_seen_before` `string` — Only include people first seen before this ISO 8601 timestamp.\n- `first_seen_within_days` `integer` — Only include people first seen within this many days, as a rolling window.\n- `has_purchased` `boolean` — true for customers only, false for people who have never purchased.\n- `last_seen_after` `string` — Only include people last seen at or after this ISO 8601 timestamp.\n- `last_seen_before` `string` — Only include people last seen before this ISO 8601 timestamp.\n- `last_seen_within_days` `integer` — Only include people last seen within this many days, as a rolling window.\n- `phone` `string` — Only include the person linked to this phone number.\n- `query` `string` — Search people by name, email, phone, or whop user ID (case-insensitive substring match).\n- `source` `string[]` — Only include people acquired from any of these sources — canonical paths (whop:<campaign>:<group>:<ad>, ext:<platform>:..., referrer:<domain>, direct, other), exact or with a trailing :* prefix. The same vocabulary the events / people metrics use.\n- `user_id` `string` — Only include the person linked to this whop user ID.\n\n</details>\n<details>\n<summary>plans (6)</summary>\n\nMirrors the filtering query params of `GET /api/v1/plans`.\n\n- `created_after` `string` — Only return plans created after this timestamp.\n- `created_before` `string` — Only return plans created before this timestamp.\n- `plan_types` `string[]` — Filter to only plans matching these billing types.\n- `product_ids` `string[]` — Filter to only plans belonging to these product identifiers. When `account_id` is omitted, this is required and the response is publicly readable: only visible, non-invoice plans are returned.\n- `release_methods` `string[]` — Filter to only plans matching these release methods.\n- `visibilities` `string[]` — Filter to only plans matching these visibility states.\n\n</details>\n<details>\n<summary>products (10)</summary>\n\nMirrors the filtering query params of `GET /api/v1/products`.\n\n- `access_pass_types` `string[]` — Filter to only products matching these types.\n- `created_after` `string` — Only return products created after this ISO 8601 timestamp.\n- `created_before` `string` — Only return products created before this ISO 8601 timestamp.\n- `labels` `string[]` — Filter to only products carrying all of these labels. Labels are matched lowercased.\n- `marketplace_category_route` `string` — Only return marketplace products assigned to this category route, such as `trading`.\n- `plan_types` `string[]` — Filter to products with a buyable plan of these billing models, such as `one_time` or `renewal`.\n- `price_maximum` `number` — Only return products whose advertised buyable plan has a displayed price of at most this amount. Recurring plans use renewal price.\n- `price_minimum` `number` — Only return products whose advertised buyable plan has a displayed price of at least this amount. Recurring plans use renewal price.\n- `query` `string` — Ranked search against product title and headline. Omit to browse by recency.\n- `visibilities` `string[]` — Filter to only products matching these visibility states. Ignored on the public marketplace list, which only returns visible products.\n\n</details>\n<details>\n<summary>promo_codes (5)</summary>\n\nMirrors the filtering query params of `GET /api/v1/promo_codes`.\n\n- `created_after` `string` — Only promo codes created after this ISO 8601 timestamp.\n- `created_before` `string` — Only promo codes created before this ISO 8601 timestamp.\n- `plan_ids` `string[]` — Only promo codes scoped to these plan IDs.\n- `product_ids` `string[]` — Only promo codes scoped to these product IDs.\n- `status` `string` — Promo-code status. `expired` groups inactive and archived codes. One of `active`, `inactive`, `archived`, `expired`.\n\n</details>\n<details>\n<summary>resolution_center_cases (6)</summary>\n\nMirrors the filtering query params of `GET /api/v1/resolution_center_cases`.\n\n- `created_after` `string` — Only cases created after this ISO 8601 timestamp.\n- `created_before` `string` — Only cases created before this ISO 8601 timestamp.\n- `outcome` `string[]` — Only closed cases that ended these ways. Repeat the parameter to pass several.\n- `reason` `string[]` — Only cases opened for these reasons. Repeat the parameter to pass several.\n- `status` `string[]` — Only cases in these statuses. Repeat the parameter to pass several — one paginated list covers all of them.\n- `user_id` `string` — Only cases opened by this customer — a `user_` tag, or `me` for the calling user. It narrows what you can already read, so `me` lists the cases you opened without the ones on accounts you are a team member of.\n\n</details>\n<details>\n<summary>shipments (4)</summary>\n\nMirrors the filtering query params of `GET /api/v1/shipments`.\n\n- `created_after` `string` — Return shipments created after this ISO 8601 timestamp.\n- `created_before` `string` — Return shipments created before this ISO 8601 timestamp.\n- `payment_id` `string[]` — Only shipments fulfilling these payments, each prefixed `pay_`. Repeat the parameter to pass several, up to 100 per request — one paginated list covers all of them.\n- `status` `string` — Filter to shipments with this delivery status. One of `unknown`, `pre_transit`, `in_transit`, `out_for_delivery`, `delivered`, `available_for_pickup`, `return_to_sender`, `failure`, `cancelled`, `error`.\n\n</details>\n<details>\n<summary>social_accounts (4)</summary>\n\nMirrors the filtering query params of `GET /api/v1/social_accounts`.\n\n- `platform` `string` — Only return social accounts for the platform that is specified. One of `x`, `instagram`, `youtube`, `tiktok`, `facebook`, `discord`, `telegram`.\n- `scopes` `string[]` — Only return social accounts that have these scopes.\n- `user_id` `string` — The User that the social accounts are connected to. Provide either this or account_id.\n- `verified` `boolean` — Only return social accounts that are verified on the platform.\n\n</details>\n<details>\n<summary>team_members (5)</summary>\n\nMirrors the filtering query params of `GET /api/v1/team_members`.\n\n- `created_after` `string` — Only return members added after this ISO 8601 timestamp.\n- `created_before` `string` — Only return members added before this ISO 8601 timestamp.\n- `role` `string` — Only return members with this role. `custom` matches members on a dashboard-managed custom role. One of `owner`, `admin`, `sales_manager`, `moderator`, `advertiser`, `app_manager`, `support`, `manager`, `workforce`, `custom`.\n- `status` `string` — Only return members with this status: `joined` (accepted members) or `pending` (pending invites). Both are returned by default. One of `joined`, `pending`.\n- `user_id` `string` — Only return the membership for this user ID, prefixed `user_`.\n\n</details>\n<details>\n<summary>transfers (4)</summary>\n\nMirrors the filtering query params of `GET /api/v1/transfers`.\n\n- `created_after` `string` — Only transfers created strictly after this ISO 8601 timestamp.\n- `created_before` `string` — Only transfers created strictly before this ISO 8601 timestamp.\n- `destination_id` `string` — Filter to transfers received by this account. Provide this or origin_id.\n- `origin_id` `string` — Filter to transfers sent from this account. Provide this or destination_id.\n\n</details>\n<details>\n<summary>webhooks (3)</summary>\n\nMirrors the filtering query params of `GET /api/v1/webhooks`.\n\n- `app_id` `string` — Only return webhooks attached to this app. Omit to list the account's own webhooks.\n- `has_failures` `boolean` — Only return webhooks whose endpoint is currently failing — every delivery since the current failure streak began has been rejected. Clears as soon as a delivery succeeds.\n- `include_app_webhooks` `boolean` — Also return webhooks attached to the account's apps, not just the account's own. Cannot be combined with `app_id`.\n\n</details>\n</details>",
                     "example": {
                       "origin_id": "ldgr_x"
                     },
@@ -23065,6 +23044,7 @@
                   "misc_purchase",
                   "misc_refund",
                   "misc_reversal",
+                  "onboarding_reward",
                   "onchain_deposit",
                   "onchain_swap_source",
                   "onchain_swap_target",
@@ -23167,6 +23147,16 @@
             "required": false,
             "schema": {
               "type": "string"
+            }
+          },
+          {
+            "description": "Whether to exclude balance reservations and balanced movements between the account's own balances.",
+            "in": "query",
+            "name": "exclude_internal_movements",
+            "required": false,
+            "schema": {
+              "default": false,
+              "type": "boolean"
             }
           },
           {
@@ -23501,6 +23491,7 @@
                   "misc_purchase",
                   "misc_refund",
                   "misc_reversal",
+                  "onboarding_reward",
                   "onchain_deposit",
                   "onchain_swap_source",
                   "onchain_swap_target",
@@ -23779,6 +23770,7 @@
                               "ad_publisher_payout_received",
                               "ad_spend_charge",
                               "ad_spend_margin",
+                              "ad_spend_purchase",
                               "ads_card_spread",
                               "affiliate_fee",
                               "aggregated_fee",
@@ -23878,6 +23870,7 @@
                               "misc_purchase",
                               "misc_refund",
                               "misc_reversal",
+                              "onboarding_reward",
                               "onchain_deposit",
                               "onchain_deposit_offset",
                               "onchain_swap_offset",
@@ -24157,6 +24150,9 @@
               "enum": [
                 "transfers",
                 "payments",
+                "refunds",
+                "ads",
+                "application_fees",
                 "card_spend",
                 "card_authorization_releases",
                 "withdrawals",
@@ -24266,6 +24262,9 @@
                       "enum": [
                         "transfers",
                         "payments",
+                        "refunds",
+                        "ads",
+                        "application_fees",
                         "card_spend",
                         "card_authorization_releases",
                         "withdrawals",
@@ -24292,6 +24291,38 @@
                           "amount": {
                             "$ref": "#/components/schemas/Money"
                           },
+                          "avatar": {
+                            "description": "How to draw the row's icon. `null` when the row has nothing to show (balances, adjustments, ad campaigns), so clients render no icon rather than a placeholder.",
+                            "oneOf": [
+                              {
+                                "properties": {
+                                  "shape": {
+                                    "enum": [
+                                      "circle",
+                                      "square"
+                                    ],
+                                    "example": "circle",
+                                    "type": "string"
+                                  },
+                                  "url": {
+                                    "description": "The image to show, or `null` to fall back to the row's initials.",
+                                    "type": [
+                                      "string",
+                                      "null"
+                                    ]
+                                  }
+                                },
+                                "required": [
+                                  "url",
+                                  "shape"
+                                ],
+                                "type": "object"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
                           "image_url": {
                             "type": [
                               "string",
@@ -24312,7 +24343,8 @@
                               "merchant",
                               "payout_destination",
                               "balance",
-                              "withdrawal_adjustment"
+                              "withdrawal_adjustment",
+                              "ad_campaign"
                             ],
                             "example": "user",
                             "type": "string"
@@ -24331,6 +24363,7 @@
                           "object",
                           "name",
                           "image_url",
+                          "avatar",
                           "amount"
                         ],
                         "type": "object"
@@ -29636,6 +29669,512 @@
         ]
       }
     },
+    "/payments": {
+      "get": {
+        "description": "Lists payments, newest first. Without filters this is every payment the caller can read: a company credential's own account, or for a user every account they can read payments for. Filters narrow by account, buyer, product, plan, membership, status, billing reason, currency, and creation window. Filtering by `billing_reason=subscription_cycle` also matches renewals recorded as `subscription_update`. `settlement_time_at` is null on list rows — retrieve the payment for it.",
+        "operationId": "listPayments",
+        "parameters": [
+          {
+            "description": "Only payments charged by this account, prefixed `biz_`.",
+            "in": "query",
+            "name": "account_id",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Only payments in this lifecycle state.",
+            "in": "query",
+            "name": "status",
+            "required": false,
+            "schema": {
+              "enum": [
+                "open",
+                "authorized",
+                "paid",
+                "pending",
+                "uncollectible",
+                "unresolved",
+                "void"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "description": "Only payments charged for this reason.",
+            "in": "query",
+            "name": "billing_reason",
+            "required": false,
+            "schema": {
+              "enum": [
+                "subscription_create",
+                "subscription_cycle",
+                "subscription_update",
+                "one_time",
+                "manual",
+                "subscription"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "description": "Only payments presented in this three-letter currency, such as `usd`.",
+            "in": "query",
+            "name": "currency",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Only payments made by this buyer, prefixed `user_`.",
+            "in": "query",
+            "name": "user_id",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Search payments by user ID, membership ID, user email, name, or username. Email filtering requires the member:email:read permission.",
+            "in": "query",
+            "name": "query",
+            "required": false,
+            "schema": {
+              "description": "Search payments by user ID, membership ID, user email, name, or username. Email filtering requires the member:email:read permission.",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Only payments made by this member, prefixed `mber_`.",
+            "in": "query",
+            "name": "member_id",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Only payments billed under this membership, prefixed `mem_`.",
+            "in": "query",
+            "name": "membership_id",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Only payments for this product, prefixed `prod_`.",
+            "in": "query",
+            "name": "product_id",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Only payments priced by this plan, prefixed `plan_`.",
+            "in": "query",
+            "name": "plan_id",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Only payments created before this ISO 8601 timestamp.",
+            "in": "query",
+            "name": "created_before",
+            "required": false,
+            "schema": {
+              "format": "date-time",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Only payments created after this ISO 8601 timestamp.",
+            "in": "query",
+            "name": "created_after",
+            "required": false,
+            "schema": {
+              "format": "date-time",
+              "type": "string"
+            }
+          },
+          {
+            "description": "The field to sort by.",
+            "in": "query",
+            "name": "order",
+            "required": false,
+            "schema": {
+              "enum": [
+                "created_at",
+                "paid_at"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "description": "The sort direction.",
+            "in": "query",
+            "name": "direction",
+            "required": false,
+            "schema": {
+              "enum": [
+                "asc",
+                "desc"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "description": "The number of payments to return.",
+            "in": "query",
+            "name": "first",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "description": "A cursor; returns payments after this position.",
+            "in": "query",
+            "name": "after",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "The number of payments to return from the end of the range.",
+            "in": "query",
+            "name": "last",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "description": "A cursor; returns payments before this position.",
+            "in": "query",
+            "name": "before",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "data": {
+                      "items": {
+                        "$ref": "#/components/schemas/Payment"
+                      },
+                      "type": "array"
+                    },
+                    "page_info": {
+                      "properties": {
+                        "end_cursor": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "has_next_page": {
+                          "example": false,
+                          "type": "boolean"
+                        },
+                        "has_previous_page": {
+                          "example": false,
+                          "type": "boolean"
+                        },
+                        "start_cursor": {
+                          "example": "WyJjdXJzb3IiLDFd",
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "end_cursor",
+                        "start_cursor",
+                        "has_next_page",
+                        "has_previous_page"
+                      ],
+                      "type": "object"
+                    }
+                  },
+                  "required": [
+                    "data",
+                    "page_info"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "payments listed"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V1ErrorResponse"
+                }
+              }
+            },
+            "description": "unknown status filter"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized",
+            "description": "unauthenticated"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": [
+              "payment:basic:read"
+            ]
+          }
+        ],
+        "summary": "List Payments",
+        "tags": [
+          "Payments"
+        ],
+        "x-mint": {
+          "metadata": {
+            "sidebarTitle": "List"
+          }
+        }
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/ApiVersionDate"
+        }
+      ],
+      "post": {
+        "description": "Charges a buyer for a plan. Pass a payment method already on file (`member_id` and `payment_method_id`), or a `confirmation_token` describing a method the buyer just supplied. Collection runs in the background: the response is the payment as created, not its outcome — poll Retrieve status for how far it has got and, for a confirmation-token payment, what the buyer must still do. `plan_id` names the plan to charge for.",
+        "operationId": "createPayment",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/IdempotencyKey"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "account_id": {
+                    "description": "The account to charge for, prefixed `biz_`.",
+                    "example": "biz_xxxxxxxxxxxxxx",
+                    "type": "string"
+                  },
+                  "capture": {
+                    "description": "Whether to capture a card payment immediately. Defaults to true. Pass false to place an authorization hold that must be captured in full within five days via the capture endpoint.",
+                    "example": false,
+                    "type": [
+                      "boolean",
+                      "null"
+                    ]
+                  },
+                  "confirmation_token": {
+                    "description": "A confirmation token describing a payment method the buyer just supplied. Provide this instead of `member_id` and `payment_method_id`; the buyer is resolved from the token's billing email, or from `email`. The buyer may still have a step to complete — poll the payment's status for what to do next.",
+                    "example": "ctok_xxxxxxxxxxxxxx",
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "email": {
+                    "description": "Overrides the buyer email carried on the confirmation token, resolving or creating the user the payment belongs to. Ignored unless `confirmation_token` is provided, and when the token was created by a signed-in buyer.",
+                    "example": "dana@shinetime.example",
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "member_id": {
+                    "description": "The member to charge, prefixed `mber_`. Required with `payment_method_id` unless `confirmation_token` is provided.",
+                    "example": "mber_xxxxxxxxxxxxxx",
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "metadata": {
+                    "additionalProperties": {
+                      "type": "string"
+                    },
+                    "description": "Custom metadata to attach to the payment.",
+                    "example": {
+                      "order_ref": "SHINE-4417"
+                    },
+                    "type": [
+                      "object",
+                      "null"
+                    ]
+                  },
+                  "payment_method_id": {
+                    "description": "The stored payment method to charge, prefixed `payt_`. It must belong to the member. Required unless `confirmation_token` is provided.",
+                    "example": "payt_xxxxxxxxxxxxxx",
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "plan_id": {
+                    "description": "The plan to charge for, prefixed `plan_`. It must belong to the account.",
+                    "example": "plan_xxxxxxxxxxxxxx",
+                    "type": "string"
+                  },
+                  "promo_code_id": {
+                    "description": "An active promo code to apply, prefixed `promo_`. It must belong to the account and be valid for the plan.",
+                    "example": "promo_xxxxxxxxxxxxxx",
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "return_url": {
+                    "description": "Where the buyer continues after completing an off-site step. An absolute https URL without credentials, at most 2,048 characters. Ignored unless `confirmation_token` is provided.",
+                    "example": "https://shinetime.example/checkout/done",
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                },
+                "required": [
+                  "account_id",
+                  "plan_id"
+                ],
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Payment"
+                }
+              }
+            },
+            "description": "payment created from a stored payment method"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V1ErrorResponse"
+                }
+              }
+            },
+            "description": "confirmation_token combined with a stored method"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized",
+            "description": "unauthenticated"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden",
+            "description": "credential without payment:charge"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound",
+            "description": "payment method not on file for the member"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": [
+              "payment:charge"
+            ]
+          }
+        ],
+        "summary": "Create Payment",
+        "tags": [
+          "Payments"
+        ],
+        "x-mint": {
+          "metadata": {
+            "sidebarTitle": "Create"
+          }
+        }
+      }
+    },
+    "/payments/{id}": {
+      "get": {
+        "description": "Returns one payment. Related records are ids — resolve a plan, membership, member or shipment on its own endpoint, and list this payment's refunds, disputes or Resolution Center cases with `?payment_id=`.",
+        "operationId": "retrievePayment",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Payment"
+                }
+              }
+            },
+            "description": "payment retrieved"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized",
+            "description": "unauthenticated"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden",
+            "description": "credential without payment:basic:read"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound",
+            "description": "unknown payment"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": [
+              "payment:basic:read"
+            ]
+          }
+        ],
+        "summary": "Retrieve Payment",
+        "tags": [
+          "Payments"
+        ],
+        "x-mint": {
+          "metadata": {
+            "sidebarTitle": "Retrieve"
+          }
+        }
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/ApiVersionDate"
+        },
+        {
+          "description": "The payment to retrieve, prefixed `pay_`.",
+          "in": "path",
+          "name": "id",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
     "/payments/{id}/capture": {
       "parameters": [
         {
@@ -29701,6 +30240,315 @@
             "sidebarTitle": "Capture Payment"
           }
         }
+      }
+    },
+    "/payments/{id}/fees": {
+      "get": {
+        "description": "Returns the fee breakdown of one payment — Whop's fee, processing, affiliate and other lines — each in the currency it was collected in and converted to the payment's settlement currency. The list is complete in one page.",
+        "operationId": "listPaymentFees",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "data": {
+                      "items": {
+                        "$ref": "#/components/schemas/PaymentFee"
+                      },
+                      "type": "array"
+                    },
+                    "page_info": {
+                      "properties": {
+                        "end_cursor": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "has_next_page": {
+                          "example": false,
+                          "type": "boolean"
+                        },
+                        "has_previous_page": {
+                          "example": false,
+                          "type": "boolean"
+                        },
+                        "start_cursor": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "end_cursor",
+                        "start_cursor",
+                        "has_next_page",
+                        "has_previous_page"
+                      ],
+                      "type": "object"
+                    }
+                  },
+                  "required": [
+                    "data",
+                    "page_info"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "fees listed"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized",
+            "description": "unauthenticated"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound",
+            "description": "unknown payment"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": [
+              "payment:basic:read"
+            ]
+          }
+        ],
+        "summary": "List Payment Fees",
+        "tags": [
+          "Payments"
+        ],
+        "x-mint": {
+          "metadata": {
+            "sidebarTitle": "List Fees"
+          }
+        }
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/ApiVersionDate"
+        },
+        {
+          "description": "The payment whose fees to list, prefixed `pay_`.",
+          "in": "path",
+          "name": "id",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    "/payments/{id}/refund": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/ApiVersionDate"
+        },
+        {
+          "description": "The payment to refund, prefixed `pay_`.",
+          "in": "path",
+          "name": "id",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "post": {
+        "description": "Issues a full or partial refund for a payment. The refund is processed through the original payment processor and the membership status is updated accordingly.",
+        "operationId": "refundPayment",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/IdempotencyKey"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "partial_amount": {
+                    "description": "The amount to refund. For multi-currency payments, this is in the charge currency (what the buyer paid). For single-currency, this is in the payment currency. If omitted, the full payment amount is refunded.",
+                    "example": 49,
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  }
+                },
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Payment"
+                }
+              }
+            },
+            "description": "payment refunded"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V1ErrorResponse"
+                }
+              }
+            },
+            "description": "partial_amount is not a number"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized",
+            "description": "unauthenticated"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden",
+            "description": "credential without payment:manage"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound",
+            "description": "payment not found"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": [
+              "payment:manage"
+            ]
+          }
+        ],
+        "summary": "Refund Payment",
+        "tags": [
+          "Payments"
+        ]
+      }
+    },
+    "/payments/{id}/retry": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/ApiVersionDate"
+        },
+        {
+          "description": "The payment to retry, prefixed `pay_`.",
+          "in": "path",
+          "name": "id",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "post": {
+        "description": "Retries a failed or pending payment. This re-attempts the charge using the original payment method and plan details.",
+        "operationId": "retryPayment",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/IdempotencyKey"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Payment"
+                }
+              }
+            },
+            "description": "payment retried"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized",
+            "description": "unauthenticated"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound",
+            "description": "payment not found"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": [
+              "payment:manage"
+            ]
+          }
+        ],
+        "summary": "Retry Payment",
+        "tags": [
+          "Payments"
+        ]
+      }
+    },
+    "/payments/{id}/void": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/ApiVersionDate"
+        },
+        {
+          "description": "The payment to void, prefixed `pay_`.",
+          "in": "path",
+          "name": "id",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "post": {
+        "description": "Voids a payment that has not yet been settled. Voiding cancels the payment before it is captured by the payment processor.",
+        "operationId": "voidPayment",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/IdempotencyKey"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Payment"
+                }
+              }
+            },
+            "description": "payment voided"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized",
+            "description": "unauthenticated"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound",
+            "description": "payment not found"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": [
+              "payment:manage"
+            ]
+          }
+        ],
+        "summary": "Void Payment",
+        "tags": [
+          "Payments"
+        ]
       }
     },
     "/payments/{payment_id}/return_url": {
@@ -30456,7 +31304,7 @@
                     "type": "number"
                   },
                   "currency": {
-                    "description": "The currency to pay out. Balances are held per currency and the payout draws only from the balance in this currency, so match the currency the funds arrived in — for example `cad` for an account funded by CAD transfers. Defaults to `usd`.",
+                    "description": "The currency to pay out. Balances are held per currency and the payout draws only from the balance in this currency, so match the currency the funds arrived in — for example `cad` for an account funded by CAD transfers. When omitted, uses `usd` if that balance can cover a withdrawal, otherwise the account's only other funded currency.",
                     "example": "usd",
                     "type": "string"
                   },
@@ -30495,7 +31343,7 @@
                     "type": "boolean"
                   },
                   "quote_token": {
-                    "description": "The server-signed quote_token returned by POST /payouts/quotes. When provided, Whop will not commit a provider payout below the destination amount the quote showed.",
+                    "description": "The server-signed quote_token returned by POST /payouts/quotes. Required when the ledger account's payout_quote_required is true; a payout without it is refused with the invalid_payout_quote error type. When provided, Whop will not commit a provider payout below the destination amount the quote showed.",
                     "example": "signed-payout-quote",
                     "type": "string"
                   },
@@ -32390,7 +33238,15 @@
         "operationId": "createPayoutQuote",
         "parameters": [
           {
-            "$ref": "#/components/parameters/IdempotencyKey"
+            "description": "A unique key that makes this quote request safe to retry.",
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "example": "payout-quote-aed-20260824",
+              "maxLength": 255,
+              "type": "string"
+            }
           }
         ],
         "requestBody": {
@@ -32410,8 +33266,7 @@
                     "type": "number"
                   },
                   "currency": {
-                    "default": "usd",
-                    "description": "The balance currency to pay out.",
+                    "description": "The currency to pay out. When omitted, uses `usd` if that balance can cover a withdrawal, otherwise the account's only other funded currency.",
                     "example": "eur",
                     "type": "string"
                   },
@@ -38901,7 +39756,7 @@
         }
       ],
       "post": {
-        "description": "Records that the caller ran a recommended action chain. Nothing is executed server-side yet — the client follows the chain's step CTAs itself; this writes the `recommended_action_chain.executed` analytics event.",
+        "description": "Records that the caller ran a recommended action chain. Nothing is executed server-side yet — the client follows the chain's step CTAs itself; this writes the `recommended_action_chain.executed` analytics event and a `redirected` execution per step.",
         "operationId": "runRecommendedAction",
         "parameters": [
           {
@@ -39056,6 +39911,277 @@
       "parameters": [
         {
           "$ref": "#/components/parameters/ApiVersionDate"
+        }
+      ]
+    },
+    "/refunds": {
+      "get": {
+        "description": "Lists refunds, newest first. Without filters this is every refund the caller can read; narrow it to one payment with `payment_id`, one account with `account_id`, or one buyer with `user_id`.",
+        "operationId": "listRefunds",
+        "parameters": [
+          {
+            "description": "Only refunds issued by this account, prefixed `biz_`.",
+            "in": "query",
+            "name": "account_id",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Only refunds of this payment, prefixed `pay_`.",
+            "in": "query",
+            "name": "payment_id",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Only refunds to this buyer, prefixed `user_`.",
+            "in": "query",
+            "name": "user_id",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Only refunds requested before this ISO 8601 timestamp.",
+            "in": "query",
+            "name": "created_before",
+            "required": false,
+            "schema": {
+              "format": "date-time",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Only refunds requested after this ISO 8601 timestamp.",
+            "in": "query",
+            "name": "created_after",
+            "required": false,
+            "schema": {
+              "format": "date-time",
+              "type": "string"
+            }
+          },
+          {
+            "description": "The field to sort by.",
+            "in": "query",
+            "name": "order",
+            "required": false,
+            "schema": {
+              "enum": [
+                "created_at"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "description": "The sort direction.",
+            "in": "query",
+            "name": "direction",
+            "required": false,
+            "schema": {
+              "enum": [
+                "asc",
+                "desc"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "description": "The number of refunds to return.",
+            "in": "query",
+            "name": "first",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "description": "A cursor; returns refunds after this position.",
+            "in": "query",
+            "name": "after",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "The number of refunds to return from the end of the range.",
+            "in": "query",
+            "name": "last",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "description": "A cursor; returns refunds before this position.",
+            "in": "query",
+            "name": "before",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "data": {
+                      "items": {
+                        "$ref": "#/components/schemas/Refund"
+                      },
+                      "type": "array"
+                    },
+                    "page_info": {
+                      "properties": {
+                        "end_cursor": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "has_next_page": {
+                          "example": false,
+                          "type": "boolean"
+                        },
+                        "has_previous_page": {
+                          "example": false,
+                          "type": "boolean"
+                        },
+                        "start_cursor": {
+                          "example": "WyJjdXJzb3IiLDFd",
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "end_cursor",
+                        "start_cursor",
+                        "has_next_page",
+                        "has_previous_page"
+                      ],
+                      "type": "object"
+                    }
+                  },
+                  "required": [
+                    "data",
+                    "page_info"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "refunds listed"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V1ErrorResponse"
+                }
+              }
+            },
+            "description": "unsupported sort field"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized",
+            "description": "unauthenticated"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound",
+            "description": "unknown payment filter"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": [
+              "payment:basic:read"
+            ]
+          }
+        ],
+        "summary": "List Refunds",
+        "tags": [
+          "Refunds"
+        ],
+        "x-mint": {
+          "metadata": {
+            "sidebarTitle": "List"
+          }
+        }
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/ApiVersionDate"
+        }
+      ]
+    },
+    "/refunds/{id}": {
+      "get": {
+        "description": "Returns one refund.",
+        "operationId": "retrieveRefund",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Refund"
+                }
+              }
+            },
+            "description": "refund retrieved"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized",
+            "description": "unauthenticated"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden",
+            "description": "credential without payment:basic:read"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound",
+            "description": "unknown refund"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": [
+              "payment:basic:read"
+            ]
+          }
+        ],
+        "summary": "Retrieve Refund",
+        "tags": [
+          "Refunds"
+        ],
+        "x-mint": {
+          "metadata": {
+            "sidebarTitle": "Retrieve"
+          }
+        }
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/ApiVersionDate"
+        },
+        {
+          "description": "The refund to retrieve, prefixed `rf_`.",
+          "in": "path",
+          "name": "id",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
         }
       ]
     },
@@ -49733,7 +50859,7 @@
                 "properties": {
                   "api_version_date": {
                     "description": "The dated API version (Api-Version-Date) to pin this webhook's payloads to. Omit to leave the webhook unpinned, tracking the current payload shape.",
-                    "example": "2026-01-01",
+                    "example": "2026-09-02-2",
                     "type": [
                       "string",
                       "null"
@@ -50096,7 +51222,7 @@
                 "properties": {
                   "api_version_date": {
                     "description": "The dated API version (Api-Version-Date) to pin this webhook's payloads to. Only valid for `v1` webhooks. Omit to leave the current pin unchanged, or pass `null` to unpin and track the current payload shape.",
-                    "example": "2026-01-01",
+                    "example": "2026-09-02-2",
                     "type": [
                       "string",
                       "null"
@@ -50837,7 +51963,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-08-31",
+                "api_version_date": "2026-09-02-2",
                 "data": {
                   "balances": [],
                   "banner_image_url": null,
@@ -51155,7 +52281,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-08-31",
+                "api_version_date": "2026-09-02-2",
                 "data": {
                   "added_to_cart_value": 0,
                   "added_to_carts": 0,
@@ -51342,7 +52468,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-08-31",
+                "api_version_date": "2026-09-02-2",
                 "data": {
                   "billing": null,
                   "canceled_at": null,
@@ -51738,7 +52864,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-08-31",
+                "api_version_date": "2026-09-02-2",
                 "data": {
                   "billing": null,
                   "canceled_at": null,
@@ -52134,7 +53260,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-08-31",
+                "api_version_date": "2026-09-02-2",
                 "data": {
                   "billing": null,
                   "canceled_at": null,
@@ -52530,7 +53656,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-08-31",
+                "api_version_date": "2026-09-02-2",
                 "data": {
                   "billing": null,
                   "canceled_at": null,
@@ -52926,7 +54052,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-08-31",
+                "api_version_date": "2026-09-02-2",
                 "data": {
                   "hosted_url": null,
                   "id": "ciac_xxxxxxxxxxxxxx",
@@ -53094,7 +54220,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-08-31",
+                "api_version_date": "2026-09-02-2",
                 "data": {
                   "hosted_url": null,
                   "id": "ciac_xxxxxxxxxxxxxx",
@@ -53262,7 +54388,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-08-31",
+                "api_version_date": "2026-09-02-2",
                 "data": {
                   "hosted_url": null,
                   "id": "ciac_xxxxxxxxxxxxxx",
@@ -53430,7 +54556,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-08-31",
+                "api_version_date": "2026-09-02-2",
                 "data": {
                   "hosted_url": null,
                   "id": "ciac_xxxxxxxxxxxxxx",
@@ -53598,7 +54724,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-08-31",
+                "api_version_date": "2026-09-02-2",
                 "data": {
                   "card_id": "icrd_xxxxxxxxxxxxxx",
                   "cardholder_id": null,
@@ -53736,7 +54862,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-08-31",
+                "api_version_date": "2026-09-02-2",
                 "data": {
                   "card_id": "icrd_xxxxxxxxxxxxxx",
                   "cardholder_id": null,
@@ -53874,7 +55000,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-08-31",
+                "api_version_date": "2026-09-02-2",
                 "data": {
                   "card_id": "icrd_xxxxxxxxxxxxxx",
                   "cardholder_id": null,
@@ -54012,7 +55138,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-08-31",
+                "api_version_date": "2026-09-02-2",
                 "data": {
                   "card_id": "icrd_xxxxxxxxxxxxxx",
                   "cardholder_id": null,
@@ -54150,7 +55276,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-08-31",
+                "api_version_date": "2026-09-02-2",
                 "data": {
                   "card_id": "icrd_xxxxxxxxxxxxxx",
                   "cardholder_id": null,
@@ -54288,13 +55414,13 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-08-31",
+                "api_version_date": "2026-09-02-2",
                 "data": {
-                  "amount": "750000000",
+                  "amount": "75000000000",
                   "available_at": null,
                   "currency": {
                     "code": "usdc",
-                    "precision": "1000000"
+                    "precision": "100000000"
                   },
                   "id": "line_5",
                   "line_type": "onchain_deposit",
@@ -54307,7 +55433,8 @@
                     "object": "onchain_transaction",
                     "sender_address": "0xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
                     "tx_hash": "0xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-                  }
+                  },
+                  "usd_amount": "750.0"
                 },
                 "id": "msg_xxxxxxxxxxxxxxxxxxxxxxxx",
                 "timestamp": "2025-01-01T00:00:00.000Z",
@@ -54427,7 +55554,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-08-31",
+                "api_version_date": "2026-09-02-2",
                 "data": {
                   "account_id": "biz_xxxxxxxxxxxxxx",
                   "amount": 150,
@@ -54602,7 +55729,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-08-31",
+                "api_version_date": "2026-09-02-2",
                 "data": {
                   "account_id": "biz_xxxxxxxxxxxxxx",
                   "amount": 150,
@@ -54777,7 +55904,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-08-31",
+                "api_version_date": "2026-09-02-2",
                 "data": {
                   "account_id": null,
                   "actionable": false,
@@ -54914,7 +56041,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-08-31",
+                "api_version_date": "2026-09-02-2",
                 "data": {
                   "created_at": "2026-01-01T12:00:00.000Z",
                   "download_url": "https://s3.amazonaws.com/uploads/exports/members-export.csv",
@@ -55043,7 +56170,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-08-31",
+                "api_version_date": "2026-09-02-2",
                 "data": {
                   "created_at": "2026-01-01T12:00:00.000Z",
                   "download_url": null,
@@ -55172,7 +56299,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-08-31",
+                "api_version_date": "2026-09-02-2",
                 "data": {
                   "id": "idpf_xxxxxxxxxxxxxx"
                 },
@@ -55303,7 +56430,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-08-31",
+                "api_version_date": "2026-09-02-2",
                 "data": {
                   "access_level": "customer",
                   "account_id": "biz_xxxxxxxxxxxxxx",
@@ -55441,7 +56568,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-08-31",
+                "api_version_date": "2026-09-02-2",
                 "data": {
                   "account": {
                     "id": "biz_xxxxxxxxxxxxxx",
@@ -55580,7 +56707,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-08-31",
+                "api_version_date": "2026-09-02-2",
                 "data": {
                   "account": {
                     "id": "biz_xxxxxxxxxxxxxx",
@@ -55725,7 +56852,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-08-31",
+                "api_version_date": "2026-09-02-2",
                 "data": {
                   "account": {
                     "id": "biz_xxxxxxxxxxxxxx",
@@ -55864,7 +56991,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-08-31",
+                "api_version_date": "2026-09-02-2",
                 "data": {
                   "account": {
                     "id": "biz_xxxxxxxxxxxxxx",
@@ -56009,7 +57136,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-08-31",
+                "api_version_date": "2026-09-02-2",
                 "data": {
                   "amount": "10.0",
                   "created_at": "2026-01-01T12:00:00.000Z",
@@ -56482,7 +57609,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-08-31",
+                "api_version_date": "2026-09-02-2",
                 "data": {
                   "amount": "10.0",
                   "created_at": "2026-01-01T12:00:00.000Z",
@@ -56952,7 +58079,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-08-31",
+                "api_version_date": "2026-09-02-2",
                 "data": {
                   "amount": "10.0",
                   "created_at": "2026-01-01T12:00:00.000Z",
@@ -57418,7 +58545,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-08-31",
+                "api_version_date": "2026-09-02-2",
                 "data": {
                   "account_reference": "4483",
                   "bank_verification_state": "no_data",
@@ -57968,7 +59095,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-08-31",
+                "api_version_date": "2026-09-02-2",
                 "data": {
                   "account": {
                     "id": "biz_xxxxxxxxxxxxxx",
@@ -58254,7 +59381,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-08-31",
+                "api_version_date": "2026-09-02-2",
                 "data": {
                   "account": {
                     "id": "biz_xxxxxxxxxxxxxx",
@@ -58540,7 +59667,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-08-31",
+                "api_version_date": "2026-09-02-2",
                 "data": {
                   "account": {
                     "id": "biz_xxxxxxxxxxxxxx",
@@ -58826,7 +59953,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-08-31",
+                "api_version_date": "2026-09-02-2",
                 "data": {
                   "account": {
                     "id": "biz_xxxxxxxxxxxxxx",
@@ -58982,7 +60109,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-08-31",
+                "api_version_date": "2026-09-02-2",
                 "data": {
                   "account": {
                     "id": "biz_xxxxxxxxxxxxxx",
@@ -59138,7 +60265,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-08-31",
+                "api_version_date": "2026-09-02-2",
                 "data": {
                   "account": {
                     "id": "biz_xxxxxxxxxxxxxx",
@@ -59294,7 +60421,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-08-31",
+                "api_version_date": "2026-09-02-2",
                 "data": {
                   "account": {
                     "id": "biz_xxxxxxxxxxxxxx",
@@ -59450,7 +60577,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-08-31",
+                "api_version_date": "2026-09-02-2",
                 "data": {
                   "account": {
                     "id": "biz_xxxxxxxxxxxxxx",
@@ -59606,7 +60733,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-08-31",
+                "api_version_date": "2026-09-02-2",
                 "data": {
                   "account": {
                     "id": "biz_xxxxxxxxxxxxxx",
@@ -59764,7 +60891,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-08-31",
+                "api_version_date": "2026-09-02-2",
                 "data": {
                   "account": {
                     "id": "biz_xxxxxxxxxxxxxx",
@@ -59918,7 +61045,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-08-31",
+                "api_version_date": "2026-09-02-2",
                 "data": {
                   "account": {
                     "id": "biz_xxxxxxxxxxxxxx",
@@ -60072,7 +61199,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-08-31",
+                "api_version_date": "2026-09-02-2",
                 "data": {
                   "account_id": "biz_xxxxxxxxxxxxxx",
                   "carrier": "ups",
@@ -60203,7 +61330,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-08-31",
+                "api_version_date": "2026-09-02-2",
                 "data": {
                   "account_id": "biz_xxxxxxxxxxxxxx",
                   "carrier": "ups",
@@ -60334,7 +61461,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-08-31",
+                "api_version_date": "2026-09-02-2",
                 "data": {
                   "account": {
                     "id": "biz_xxxxxxxxxxxxxx",
@@ -60404,6 +61531,7 @@
                     "from_amount": "502.51",
                     "from_currency": "usdt",
                     "id": "airdrp_xxxxxxxxxxxxxx",
+                    "notes": "some_string",
                     "object": "airdrop_link",
                     "payer_name": "MassPay",
                     "payment_amount": {
@@ -60427,6 +61555,7 @@
                     "to_currency": "usd",
                     "tx_hash": "0x5d84a1c7e2f9b036d48c5a7e1b9f2d6c3a8e0b4f7c1d9e5a2b6f8c0d3e7a1b52"
                   },
+                  "usd_amount": "23.75",
                   "user_email": "some_string",
                   "user_id": "some_string",
                   "user_name": "some_string"
@@ -60549,7 +61678,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-08-31",
+                "api_version_date": "2026-09-02-2",
                 "data": {
                   "amount": 250,
                   "created_at": "2026-01-01T12:00:00.000Z",
@@ -61012,7 +62141,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-08-31",
+                "api_version_date": "2026-09-02-2",
                 "data": {
                   "amount": 250,
                   "created_at": "2026-01-01T12:00:00.000Z",
@@ -61475,7 +62604,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-08-31",
+                "api_version_date": "2026-09-02-2",
                 "data": {
                   "amount": 10,
                   "created_at": "2026-01-01T12:00:00.000Z",
@@ -61904,7 +63033,7 @@
         "name": "Api-Version-Date",
         "required": false,
         "schema": {
-          "example": "2026-08-31",
+          "example": "2026-09-02-2",
           "type": "string"
         }
       },
@@ -65432,10 +66561,11 @@
             ]
           },
           "execution_type": {
-            "description": "Whether the client should navigate to the CTA or open the programmatic execution dialog",
+            "description": "Whether the client should navigate to the CTA, open the programmatic execution dialog, or run the CTA as a Whop AI prompt",
             "enum": [
               "redirect",
-              "programatic"
+              "programatic",
+              "whop_ai"
             ],
             "example": "redirect",
             "type": "string"
@@ -66430,6 +67560,17 @@
             "description": "Whether the ad can appear alongside other advertisers' ads in the same unit. Defaults to true.",
             "example": true,
             "type": "boolean"
+          },
+          "music": {
+            "description": "The advertiser-uploaded MP3 a TikTok carousel ad plays. TikTok-only; `null` elsewhere and for non-carousel ads.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/AdMusic"
+              },
+              {
+                "type": "null"
+              }
+            ]
           },
           "post_id": {
             "description": "The post the ad network serves for this ad, as `pageID_postID` on Meta — the post Meta created for an uploaded creative, or the post being promoted. Use it to open the live post, or to promote the same post from another ad. `null` until the network has created the post.",
@@ -69041,6 +70182,34 @@
         ],
         "type": "object"
       },
+      "AdMusic": {
+        "properties": {
+          "id": {
+            "description": "The music attachment's file id.",
+            "type": "string"
+          },
+          "name": {
+            "description": "The uploaded file's name.",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "url": {
+            "description": "CDN url of the MP3.",
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "url",
+          "name"
+        ],
+        "type": "object"
+      },
       "AdPlatformIssue": {
         "properties": {
           "id": {
@@ -69114,9 +70283,12 @@
               "2026-08-25",
               "2026-08-25-1",
               "2026-08-25-2",
-              "2026-08-31"
+              "2026-08-31",
+              "2026-09-02",
+              "2026-09-02-1",
+              "2026-09-02-2"
             ],
-            "example": "2026-08-31",
+            "example": "2026-09-02-2",
             "type": "string"
           },
           "created_at": {
@@ -69506,6 +70678,14 @@
               "null"
             ]
           },
+          "previous_hosted_urls": {
+            "items": {
+              "description": "URLs the hosted web build was previously served at, most recent first. Populated when the route is changed; the old URL stops serving and is not redirected, but traffic recorded against it still belongs to this app.",
+              "example": "https://shine-time-booking.whop.site",
+              "type": "string"
+            },
+            "type": "array"
+          },
           "product_id": {
             "description": "ID of the app's product listing on the Whop app store, or `null` when the app has no associated product.",
             "example": "prod_xxxxxxxxxxxxxx",
@@ -69624,6 +70804,7 @@
           "domain_id",
           "route",
           "hosted_url",
+          "previous_hosted_urls",
           "verified",
           "app_type",
           "origin",
@@ -70114,6 +71295,13 @@
               "null"
             ]
           },
+          "previous_hosted_urls": {
+            "items": {
+              "description": "URLs the hosted web build was previously served at, most recent first. Populated when the route is changed; the old URL stops serving and is not redirected, but traffic recorded against it still belongs to this app.",
+              "type": "string"
+            },
+            "type": "array"
+          },
           "route": {
             "description": "Claimed subdomain route where hosted web builds are served (`myapp` for myapp.whop.site), or `null` if no route is claimed.",
             "example": "shine-time-booking",
@@ -70155,6 +71343,7 @@
           "domain_id",
           "route",
           "hosted_url",
+          "previous_hosted_urls",
           "verified",
           "app_type",
           "origin",
@@ -70486,6 +71675,19 @@
           "upper_bound"
         ],
         "type": "object"
+      },
+      "BillingReasons": {
+        "description": "The reason why a specific payment was billed",
+        "enum": [
+          "subscription_create",
+          "subscription_cycle",
+          "subscription_update",
+          "one_time",
+          "manual",
+          "subscription"
+        ],
+        "example": "subscription_create",
+        "type": "string"
       },
       "Bounty": {
         "properties": {
@@ -72164,6 +73366,103 @@
         ],
         "description": "The pixel event optimized for. A standard event, or any custom pixel event name."
       },
+      "Currencies": {
+        "description": "The available currencies on the platform",
+        "enum": [
+          "usd",
+          "sgd",
+          "inr",
+          "aud",
+          "brl",
+          "cad",
+          "dkk",
+          "eur",
+          "nok",
+          "gbp",
+          "sek",
+          "chf",
+          "hkd",
+          "huf",
+          "jpy",
+          "mxn",
+          "myr",
+          "pln",
+          "czk",
+          "nzd",
+          "aed",
+          "eth",
+          "ape",
+          "cop",
+          "ron",
+          "thb",
+          "bgn",
+          "idr",
+          "dop",
+          "php",
+          "try",
+          "krw",
+          "twd",
+          "vnd",
+          "pkr",
+          "clp",
+          "uyu",
+          "ars",
+          "zar",
+          "dzd",
+          "tnd",
+          "mad",
+          "kes",
+          "kwd",
+          "jod",
+          "all",
+          "xcd",
+          "amd",
+          "bsd",
+          "bhd",
+          "bob",
+          "bam",
+          "khr",
+          "crc",
+          "xof",
+          "egp",
+          "etb",
+          "gmd",
+          "ghs",
+          "gtq",
+          "gyd",
+          "ils",
+          "jmd",
+          "mop",
+          "mga",
+          "mur",
+          "mdl",
+          "mnt",
+          "nad",
+          "ngn",
+          "mkd",
+          "omr",
+          "pyg",
+          "pen",
+          "qar",
+          "rwf",
+          "sar",
+          "rsd",
+          "lkr",
+          "tzs",
+          "ttd",
+          "uzs",
+          "rub",
+          "btc",
+          "cny",
+          "usdt",
+          "kzt",
+          "awg",
+          "whop_usd",
+          "xau"
+        ],
+        "example": "usd",
+        "type": "string"
+      },
       "DetailedTargetingOption": {
         "properties": {
           "audience_size_lower_bound": {
@@ -73371,6 +74670,42 @@
         ],
         "type": "object"
       },
+      "FriendlyReceiptStatus": {
+        "description": "The friendly status of a payment. This is a derived status that provides a human-readable summary of the payment state, combining the underlying status and substatus fields.",
+        "enum": [
+          "succeeded",
+          "requires_capture",
+          "pending",
+          "failed",
+          "past_due",
+          "canceled",
+          "price_too_low",
+          "uncollectible",
+          "refunded",
+          "auto_refunded",
+          "partially_refunded",
+          "dispute_warning",
+          "dispute_needs_response",
+          "dispute_warning_needs_response",
+          "resolution_needs_response",
+          "dispute_under_review",
+          "dispute_warning_under_review",
+          "resolution_under_review",
+          "dispute_won",
+          "dispute_warning_closed",
+          "resolution_won",
+          "dispute_lost",
+          "dispute_closed",
+          "resolution_lost",
+          "drafted",
+          "incomplete",
+          "unresolved",
+          "open_dispute",
+          "open_resolution"
+        ],
+        "example": "succeeded",
+        "type": "string"
+      },
       "LanguageTargetingOption": {
         "properties": {
           "code": {
@@ -73615,6 +74950,7 @@
               "misc_purchase",
               "misc_refund",
               "misc_reversal",
+              "onboarding_reward",
               "onchain_deposit",
               "onchain_swap_source",
               "onchain_swap_target",
@@ -74561,6 +75897,13 @@
                 "example": "airdrp_xxxxxxxxxxxxxx",
                 "type": "string"
               },
+              "notes": {
+                "description": "Memo attached to the transfer source, or null when none was provided.",
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
               "object": {
                 "example": "airdrop_link",
                 "type": "string"
@@ -74695,6 +76038,14 @@
               "null"
             ]
           },
+          "usd_amount": {
+            "description": "Dollar value of this movement as a decimal string, signed like `amount`. Converted from the posted amount at the rate that was live when the line posted — the same pricing the wallet balance chart and the financial reports use — so a crypto row carries its dollar value too. `null` for a currency Whop holds no exchange rate for.",
+            "example": "23.75",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
           "user_email": {
             "description": "Email of the customer associated with the payment. Requires member:email:read.",
             "type": [
@@ -74722,6 +76073,7 @@
           "id",
           "line_type",
           "amount",
+          "usd_amount",
           "currency",
           "posted_at",
           "available_at",
@@ -75815,6 +77167,527 @@
         ],
         "type": "object"
       },
+      "Payment": {
+        "properties": {
+          "account_id": {
+            "description": "The account that received the payment, prefixed `biz_`.",
+            "example": "biz_xxxxxxxxxxxxxx",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "amount_after_fees": {
+            "$ref": "#/components/schemas/Money",
+            "description": "What the account keeps: the total less Whop's fees."
+          },
+          "auto_refunded": {
+            "description": "True when Whop refunded the payment automatically, for example on a dispute alert.",
+            "example": false,
+            "type": "boolean"
+          },
+          "billing_address": {
+            "description": "The billing address the buyer entered, or null.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/PaymentAddress"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "billing_reason": {
+            "description": "Why the charge was created: a first purchase, a renewal, a one-time payment, or a manual charge.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/BillingReasons"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "checkout_configuration_id": {
+            "description": "The checkout configuration the buyer paid through, prefixed `ch_`, or null.",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "client_secret": {
+            "description": "The credential a buyer's surface presents to poll this payment and set its return URL. Only on payments created from a confirmation token, and always null in list responses — retrieve the payment for it.",
+            "example": "pay_xxxxxxxxxxxxxx_secret_vdefault_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "created_at": {
+            "description": "When the payment was created, as an ISO 8601 timestamp.",
+            "example": "2026-01-01T12:00:00.000Z",
+            "type": "string"
+          },
+          "currency": {
+            "$ref": "#/components/schemas/Currencies",
+            "description": "The currency the payment settles in, lowercase ISO 4217. Every money field below is stated in it unless it says otherwise."
+          },
+          "customer_phone": {
+            "description": "The phone number the buyer gave at checkout, when one was collected.",
+            "example": "+xxxxxxxxxxx",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "decline_code": {
+            "description": "The normalized decline reason of the most recent failed attempt, or null.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/PaymentDeclineCodes"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "dispute_alerted_at": {
+            "description": "When an issuer warned that this payment will be disputed, or null.",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "failure_message": {
+            "description": "Why the most recent attempt failed, in plain words, or null.",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "financing_installments_count": {
+            "description": "For installment methods, how many payments the charge splits into.",
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "id": {
+            "description": "Payment ID, prefixed `pay_`.",
+            "example": "pay_xxxxxxxxxxxxxx",
+            "type": "string"
+          },
+          "last_payment_attempt_at": {
+            "description": "When the most recent charge attempt ran, or null.",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "member_id": {
+            "description": "The buyer's member record on the account, prefixed `mber_`. Null without the member:basic:read permission.",
+            "example": "mber_xxxxxxxxxxxxxx",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "membership_id": {
+            "description": "The membership this payment is billed against, prefixed `mem_`. Null for one-off purchases or without the member:basic:read permission.",
+            "example": "mem_xxxxxxxxxxxxxx",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "metadata": {
+            "description": "Your own key-value data attached when the payment was created.",
+            "example": {
+              "order_ref": "SHINE-4417"
+            },
+            "type": [
+              "object",
+              "null"
+            ]
+          },
+          "needs_tracking": {
+            "description": "True when funds are held until the order ships and no tracking number has been added yet. Null without the shipment:basic:read permission.",
+            "example": false,
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "next_payment_attempt_at": {
+            "description": "When the next automatic retry is scheduled, or null.",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "paid_at": {
+            "description": "When the money was collected, or null while it has not been.",
+            "example": "2026-01-01T12:00:00.000Z",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "payment_instrument": {
+            "description": "The instrument shaped for display: a buyer-facing name, the standard icon set, and the card's brand and last four when it was a card.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/PaymentInstrument"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "payment_method_id": {
+            "description": "The stored payment method that was charged, prefixed `payt_`. Null when the method was not saved.",
+            "example": "payt_xxxxxxxxxxxxxx",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "payment_method_type": {
+            "description": "The kind of instrument used, for example `card`, `apple_pay`, `klarna`, or `us_bank_account`.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/PaymentMethodTypes"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "payments_failed": {
+            "description": "How many charge attempts have failed on this payment.",
+            "example": 0,
+            "type": "number"
+          },
+          "plan_id": {
+            "description": "The plan that was charged, prefixed `plan_`.",
+            "example": "plan_xxxxxxxxxxxxxx",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "product_id": {
+            "description": "The product the plan belongs to, prefixed `prod_`. Null for a plan with no product.",
+            "example": "prod_xxxxxxxxxxxxxx",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "promo_code_id": {
+            "description": "The promo code applied at checkout, prefixed `promo_`, or null.",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "refundable": {
+            "description": "True when the payment is `paid`, not yet fully refunded, and its processor supports refunds.",
+            "example": false,
+            "type": "boolean"
+          },
+          "refunded_amount": {
+            "description": "How much has been refunded so far, as it settled — refunds convert at the rate in force when each one was issued, not the payment's original rate.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/Money"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "refunded_at": {
+            "description": "When the payment was refunded, or null.",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "retryable": {
+            "description": "True when the payment is `open` and Whop can attempt the charge again — see `POST /payments/{id}/retry`.",
+            "example": true,
+            "type": "boolean"
+          },
+          "risk_score": {
+            "description": "Whop's fraud risk score from 0 (lowest) to 100 (highest), or null when the payment was not scored.",
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "risk_signals": {
+            "description": "The factors behind `risk_score`, grouped by category, or null.",
+            "type": [
+              "object",
+              "null"
+            ]
+          },
+          "settlement_time_at": {
+            "description": "When the funds post to the account's available balance, at midnight UTC. The `ledger_account.funds_available` webhook carries the same value. Null until the payment is paid, and always null in list responses — retrieve the payment for it.",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "shipment_id": {
+            "description": "The shipment fulfilling this payment, prefixed `ship_`. Null when nothing ships or without the shipment:basic:read permission.",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "shipping_address": {
+            "description": "The shipping address for physical goods, or null.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/PaymentAddress"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "status": {
+            "$ref": "#/components/schemas/ReceiptStatus",
+            "description": "The lifecycle state of the charge: `open` while collection is outstanding, `paid` once the money moved, `pending` while a settlement rail clears, `void`/`uncollectible` when it ended without collecting."
+          },
+          "substatus": {
+            "$ref": "#/components/schemas/FriendlyReceiptStatus",
+            "description": "The dashboard's finer-grained reading of the payment, folding in refunds, disputes and Resolution Center cases."
+          },
+          "subtotal": {
+            "description": "The price before discounts, tax and fees.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/Money"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "tax_amount": {
+            "description": "The sales tax or VAT collected. Null when no tax applied.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/Money"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "tax_behavior": {
+            "description": "Whether `tax_amount` was added on top of the price (`exclusive`) or was already inside it (`inclusive`).",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/ReceiptTaxBehaviors"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "tax_refunded_amount": {
+            "$ref": "#/components/schemas/Money",
+            "description": "How much of the collected tax has been returned to the buyer so far. Zero when the payment carried no tax, or when nothing has been refunded."
+          },
+          "three_ds_verified": {
+            "description": "True when the buyer completed 3D Secure for this payment.",
+            "example": false,
+            "type": "boolean"
+          },
+          "total": {
+            "description": "The account-facing total: the price after discounts, plus any tax added on top. Excludes buyer fees, which the buyer pays above this amount — so this is not necessarily what the buyer's statement shows.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/Money"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "updated_at": {
+            "description": "When the payment last changed, as an ISO 8601 timestamp.",
+            "example": "2026-01-01T12:00:00.000Z",
+            "type": "string"
+          },
+          "usd_total": {
+            "description": "The total converted to USD at the time of the charge, for reporting across currencies. Excludes the adaptive pricing FX markup, which the account does not keep.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/Money"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "user": {
+            "description": "The buyer. Null when the payment belongs to a company buyer rather than a user.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/UserSummary"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "verification_checks": {
+            "description": "The issuer's address and security code check results, or null when the processor returned none.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/PaymentVerificationChecks"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "voidable": {
+            "description": "True when the payment is `open` on a past-due membership and its processor supports voiding — see `POST /payments/{id}/void`.",
+            "example": false,
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "status",
+          "substatus",
+          "billing_reason",
+          "refundable",
+          "retryable",
+          "voidable",
+          "account_id",
+          "user",
+          "member_id",
+          "membership_id",
+          "plan_id",
+          "product_id",
+          "promo_code_id",
+          "checkout_configuration_id",
+          "shipment_id",
+          "currency",
+          "total",
+          "subtotal",
+          "tax_amount",
+          "tax_behavior",
+          "refunded_amount",
+          "tax_refunded_amount",
+          "auto_refunded",
+          "amount_after_fees",
+          "usd_total",
+          "payment_method_type",
+          "payment_method_id",
+          "payment_instrument",
+          "customer_phone",
+          "billing_address",
+          "shipping_address",
+          "needs_tracking",
+          "payments_failed",
+          "failure_message",
+          "decline_code",
+          "three_ds_verified",
+          "verification_checks",
+          "risk_score",
+          "risk_signals",
+          "financing_installments_count",
+          "metadata",
+          "created_at",
+          "updated_at",
+          "paid_at",
+          "last_payment_attempt_at",
+          "next_payment_attempt_at",
+          "refunded_at",
+          "dispute_alerted_at",
+          "settlement_time_at",
+          "client_secret"
+        ],
+        "type": "object"
+      },
+      "PaymentAddress": {
+        "properties": {
+          "city": {
+            "description": "The city.",
+            "example": "Austin",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "country": {
+            "description": "The ISO 3166-1 alpha-2 country code.",
+            "example": "US",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "line1": {
+            "description": "The first street address line.",
+            "example": "1114 Bouldin Ave",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "line2": {
+            "description": "The second street address line.",
+            "example": "Unit B",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "name": {
+            "description": "The name on the address.",
+            "example": "Dana Whitfield",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "postal_code": {
+            "description": "The postal or ZIP code.",
+            "example": "78704",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "state": {
+            "description": "The state, province or region.",
+            "example": "TX",
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "name",
+          "line1",
+          "line2",
+          "city",
+          "state",
+          "postal_code",
+          "country"
+        ],
+        "type": "object"
+      },
       "PaymentBankTransfer": {
         "properties": {
           "account_number": {
@@ -75972,6 +77845,192 @@
           "name",
           "country",
           "postal_code"
+        ],
+        "type": "object"
+      },
+      "PaymentDeclineCodes": {
+        "description": "The reason a payment was declined.",
+        "enum": [
+          "insufficient_funds",
+          "lost_card",
+          "stolen_card",
+          "expired_card",
+          "suspected_fraud",
+          "invalid_card_number",
+          "invalid_cvc",
+          "invalid_cvc_or_expiration",
+          "incorrect_pin",
+          "authentication_required",
+          "card_not_supported",
+          "currency_not_supported",
+          "duplicate_transaction",
+          "generic_decline",
+          "invalid_account",
+          "invalid_amount",
+          "processing_error",
+          "restricted_card",
+          "card_velocity_exceeded",
+          "contact_issuer",
+          "bank_declined",
+          "regulatory_blocked",
+          "transaction_not_permitted",
+          "transaction_stopped",
+          "card_type_not_supported",
+          "issuer_not_found",
+          "closed_account",
+          "issuer_unavailable",
+          "invalid_zip",
+          "invalid_expiry_month",
+          "invalid_expiry_year",
+          "invalid_expiry",
+          "invalid_transaction",
+          "cannot_authorize",
+          "pin_required",
+          "pin_try_exceeded",
+          "provider_declined",
+          "high_risk",
+          "test_mode_decline",
+          "merchant_blacklist",
+          "reenter_transaction",
+          "invalid_pin",
+          "pin_required_as",
+          "withdrawal_count_limit_exceeded",
+          "invalid_country",
+          "issuer_error",
+          "invalid_card_holder_name",
+          "no_accounts",
+          "transaction_cancelled",
+          "three_d_secure_success",
+          "three_d_secure_canceled",
+          "three_d_secure_invalid_card_number",
+          "three_d_secure_generic_error",
+          "three_d_secure_timeout",
+          "three_d_secure_failed",
+          "three_d_secure_card_not_enrolled",
+          "three_d_secure_fraud",
+          "three_d_secure_too_many_attempts",
+          "three_d_secure_rejected_by_bank",
+          "three_d_secure_reported_lost_or_stolen",
+          "blocked_by_cardholder",
+          "test_mode_test_card",
+          "try_again_later",
+          "transaction_not_allowed",
+          "bank_insufficient_funds",
+          "bank_account_not_found",
+          "bank_account_closed",
+          "bank_account_frozen",
+          "bank_invalid_routing_number",
+          "bank_non_transaction_account",
+          "bank_authorization_revoked",
+          "bank_payment_stopped",
+          "bank_not_authorized",
+          "bank_account_holder_deceased",
+          "bank_duplicate",
+          "bank_amount_error",
+          "bank_regulatory_blocked",
+          "bank_details_invalid",
+          "bank_processing_error",
+          "bank_generic_decline",
+          "sepa_invalid_iban",
+          "sepa_no_mandate",
+          "sepa_mandate_data_invalid",
+          "sepa_disputed",
+          "sepa_refused_by_customer",
+          "sepa_generic_decline"
+        ],
+        "example": "insufficient_funds",
+        "type": "string"
+      },
+      "PaymentFee": {
+        "properties": {
+          "amount": {
+            "$ref": "#/components/schemas/Money",
+            "description": "The fee in the currency it was collected in."
+          },
+          "collected_at": {
+            "description": "When the fee was collected, as an ISO 8601 timestamp, or null when it has not been.",
+            "example": "2026-01-01T12:00:00.000Z",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "description": {
+            "description": "A longer explanation of the fee, when there is one.",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "label": {
+            "description": "The name the dashboard shows for this fee.",
+            "example": "Processing fee",
+            "type": "string"
+          },
+          "origin": {
+            "description": "The specific fee this line is, such as `payment_processing_percentage_fee` or `revshare_percentage_fee`.",
+            "enum": [
+              "stripe_domestic_processing_fee",
+              "stripe_international_processing_fee",
+              "stripe_fixed_processing_fee",
+              "stripe_billing_fee",
+              "stripe_radar_fee",
+              "sales_tax_remittance",
+              "sales_tax_remittance_reversal",
+              "stripe_sales_tax_fee",
+              "whop_processing_fee",
+              "marketplace_affiliate_fee",
+              "affiliate_fee",
+              "crypto_fee",
+              "stripe_standard_processing_fee",
+              "paypal_fee",
+              "stripe_payout_fee",
+              "dispute_fee",
+              "dispute_alert_fee",
+              "dispute_representment_fee",
+              "apple_processing_fee",
+              "buyer_fee",
+              "sezzle_processing_fee",
+              "splitit_processing_fee",
+              "platform_balance_processing_fee",
+              "payment_processing_percentage_fee",
+              "payment_processing_fixed_fee",
+              "cross_border_percentage_fee",
+              "fx_percentage_fee",
+              "orchestration_percentage_fee",
+              "three_ds_fixed_fee",
+              "billing_percentage_fee",
+              "revshare_percentage_fee",
+              "application_fee",
+              "high_risk_merchant_fee"
+            ],
+            "example": "whop_processing_fee",
+            "type": "string"
+          },
+          "settlement_amount": {
+            "$ref": "#/components/schemas/Money",
+            "description": "The fee converted to the payment's settlement currency, so lines can be totalled against the payment."
+          },
+          "type": {
+            "description": "The family the fee belongs to: `whop_fee`, `processing_fee`, `affiliate_program_fee`, or `other_fee`.",
+            "enum": [
+              "whop_fee",
+              "processing_fee",
+              "affiliate_program_fee",
+              "other_fee"
+            ],
+            "example": "whop_fee",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type",
+          "origin",
+          "label",
+          "description",
+          "amount",
+          "settlement_amount",
+          "collected_at"
         ],
         "type": "object"
       },
@@ -76388,6 +78447,132 @@
         ],
         "type": "object"
       },
+      "PaymentMethodTypes": {
+        "description": "The different types of payment methods that can be used.",
+        "enum": [
+          "acss_debit",
+          "addi",
+          "affirm",
+          "afterpay_clearpay",
+          "alipay",
+          "alma",
+          "amazon_pay",
+          "apple",
+          "apple_pay",
+          "au_bank_transfer",
+          "au_becs_debit",
+          "bacs_debit",
+          "bancolombia",
+          "bancontact",
+          "bank_wire",
+          "billie",
+          "bizum",
+          "blik",
+          "boleto",
+          "bre_b",
+          "ca_bank_transfer",
+          "capchase_pay",
+          "card",
+          "card_installments_three",
+          "card_installments_six",
+          "card_installments_twelve",
+          "cashapp",
+          "claritypay",
+          "coinbase",
+          "crypto",
+          "custom",
+          "customer_balance",
+          "demo_pay",
+          "efecty",
+          "eps",
+          "eu_bank_transfer",
+          "fpx",
+          "flex_pay",
+          "gb_bank_transfer",
+          "gcash",
+          "giropay",
+          "google_pay",
+          "gopay",
+          "grabpay",
+          "id_bank_transfer",
+          "ideal",
+          "interac",
+          "kakao_pay",
+          "klarna",
+          "klarna_pay_now",
+          "konbini",
+          "kr_card",
+          "kr_market",
+          "kriya",
+          "kueski",
+          "link",
+          "mb_way",
+          "m_pesa",
+          "mercado_pago",
+          "mobilepay",
+          "modo",
+          "mondu",
+          "multibanco",
+          "naver_pay",
+          "nequi",
+          "netbanking",
+          "ng_bank",
+          "ng_bank_transfer",
+          "ng_card",
+          "ng_market",
+          "ng_ussd",
+          "ng_wallet",
+          "nz_bank_account",
+          "oxxo",
+          "p24",
+          "pago_efectivo",
+          "pse",
+          "pay_by_bank",
+          "payco",
+          "paynow",
+          "paypal",
+          "paypay",
+          "payto",
+          "pix",
+          "platform_balance",
+          "promptpay",
+          "qris",
+          "rapipago",
+          "rechnung",
+          "revolut_pay",
+          "samsung_pay",
+          "satispay",
+          "scalapay",
+          "sencillito",
+          "sepa_debit",
+          "sequra",
+          "servipag",
+          "sezzle",
+          "shop_pay",
+          "shopeepay",
+          "sofort",
+          "south_korea_market",
+          "spei",
+          "splitit",
+          "sunbit",
+          "swish",
+          "tamara",
+          "twint",
+          "upi",
+          "us_bank_account",
+          "us_bank_transfer",
+          "venmo",
+          "vipps",
+          "webpay",
+          "wechat_pay",
+          "yape",
+          "zip",
+          "coinflow",
+          "unknown"
+        ],
+        "example": "acss_debit",
+        "type": "string"
+      },
       "PaymentNextAction": {
         "description": "What the buyer must do to finish. `type` picks the shape and each type carries only its own `data`, so switching on `type` gives you exactly that step's payload.",
         "discriminator": {
@@ -76708,6 +78893,49 @@
           "last_payment_error",
           "return_url",
           "capture_expires_at"
+        ],
+        "type": "object"
+      },
+      "PaymentVerificationChecks": {
+        "properties": {
+          "address_line1": {
+            "description": "Whether the billing street address the customer entered matched the issuer's records.",
+            "example": "PASS",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "card_holder_name": {
+            "description": "Whether the cardholder name matched the issuer's records.",
+            "example": "PASS",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "card_security_code": {
+            "description": "Whether the CVV / CVC matched the card.",
+            "example": "PASS",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "zip_code": {
+            "description": "Whether the billing postal code matched the issuer's records.",
+            "example": "PASS",
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "address_line1",
+          "zip_code",
+          "card_holder_name",
+          "card_security_code"
         ],
         "type": "object"
       },
@@ -79465,6 +81693,32 @@
         ],
         "type": "object"
       },
+      "ReceiptStatus": {
+        "description": "The status of a receipt",
+        "enum": [
+          "draft",
+          "open",
+          "authorized",
+          "paid",
+          "pending",
+          "uncollectible",
+          "unresolved",
+          "void"
+        ],
+        "example": "draft",
+        "type": "string"
+      },
+      "ReceiptTaxBehaviors": {
+        "description": "The type of tax inclusivity applied to the receipt, for determining whether the tax is included in the final price, or paid on top.",
+        "enum": [
+          "exclusive",
+          "inclusive",
+          "unspecified",
+          "unable_to_collect"
+        ],
+        "example": "exclusive",
+        "type": "string"
+      },
       "RecommendedActionExecution": {
         "properties": {
           "action": {
@@ -79528,6 +81782,180 @@
           "output",
           "error",
           "completed_at"
+        ],
+        "type": "object"
+      },
+      "Refund": {
+        "properties": {
+          "account_id": {
+            "description": "The account that issued the refund, prefixed `biz_`.",
+            "example": "biz_xxxxxxxxxxxxxx",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "amount": {
+            "description": "The refunded amount as it settled, in the payment's settlement currency, so pages of refunds net against the payment's `refunded_amount`. Converted at the rate in force when the refund was issued, not the payment's original rate. Null only when no exchange rate is recorded for a legacy multi-currency payment.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/Money"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "created_at": {
+            "description": "When the refund was requested, as an ISO 8601 timestamp.",
+            "example": "2026-01-01T12:00:00.000Z",
+            "type": "string"
+          },
+          "failure_message": {
+            "description": "The provider's own explanation of the failure, or null.",
+            "example": "Insufficient funds on the merchant balance.",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "failure_reason": {
+            "description": "Why the refund failed, normalized across providers. Null unless the refund failed or was canceled.",
+            "enum": [
+              "bank_declined",
+              "expired_or_canceled_card",
+              "lost_or_stolen_card",
+              "insufficient_funds",
+              "charge_disputed",
+              "not_refundable",
+              "merchant_request",
+              "unknown",
+              null
+            ],
+            "example": "insufficient_funds",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "id": {
+            "description": "Refund ID, prefixed `rf_`.",
+            "example": "rf_xxxxxxxxxxxxxx",
+            "type": "string"
+          },
+          "original_amount": {
+            "$ref": "#/components/schemas/Money",
+            "description": "The refunded amount in the currency the processor moved."
+          },
+          "payment_id": {
+            "description": "The payment this refund reverses, prefixed `pay_`.",
+            "example": "pay_xxxxxxxxxxxxxx",
+            "type": "string"
+          },
+          "provider": {
+            "description": "The payment provider that processed the refund, such as `paypal` or `coinbase`.",
+            "example": "stripe",
+            "type": "string"
+          },
+          "provider_created_at": {
+            "description": "When the provider created the refund, as an ISO 8601 timestamp.",
+            "example": "2026-01-01T12:00:00.000Z",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "reason": {
+            "description": "Why the refund was issued, when recorded.",
+            "enum": [
+              "duplicate",
+              "fraudulent",
+              "requested_by_customer",
+              "expired_uncaptured_charge",
+              null
+            ],
+            "example": "duplicate",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "reference_status": {
+            "description": "Whether a banking-network tracking reference is available for this refund.",
+            "enum": [
+              "available",
+              "pending",
+              "unavailable",
+              null
+            ],
+            "example": "available",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "reference_type": {
+            "description": "The kind of tracking reference, such as an acquirer reference number.",
+            "enum": [
+              "acquirer_reference_number",
+              "retrieval_reference_number",
+              "system_trace_audit_number",
+              null
+            ],
+            "example": "acquirer_reference_number",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "reference_value": {
+            "description": "The tracking reference the buyer's bank can trace the refund by.",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "status": {
+            "description": "Where the refund stands with the processor: `pending`, `requires_action`, `succeeded`, `failed`, or `canceled`.",
+            "enum": [
+              "pending",
+              "requires_action",
+              "succeeded",
+              "failed",
+              "canceled"
+            ],
+            "example": "failed",
+            "type": "string"
+          },
+          "updated_at": {
+            "description": "When the refund last changed, as an ISO 8601 timestamp.",
+            "example": "2026-01-01T12:00:00.000Z",
+            "type": "string"
+          },
+          "visa_rdr": {
+            "description": "True when the card network initiated the refund through Rapid Dispute Resolution.",
+            "example": false,
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "payment_id",
+          "account_id",
+          "status",
+          "amount",
+          "original_amount",
+          "provider",
+          "reason",
+          "failure_reason",
+          "failure_message",
+          "reference_status",
+          "reference_type",
+          "reference_value",
+          "visa_rdr",
+          "provider_created_at",
+          "created_at",
+          "updated_at"
         ],
         "type": "object"
       },
@@ -81558,7 +83986,7 @@
           },
           "api_version_date": {
             "description": "The dated API version (Api-Version-Date) that v1 payloads for this endpoint are pinned to: events serialize exactly like a REST read at this version (the native serializer where the resource has one). Null when unpinned — legacy (v2/v5) webhooks, and v1 webhooks on the legacy payload shape.",
-            "example": "2026-01-01",
+            "example": "2026-09-02-2",
             "type": [
               "string",
               "null"
@@ -81972,7 +84400,7 @@
           },
           "api_version_date": {
             "description": "The dated API version (Api-Version-Date) that v1 payloads for this endpoint are pinned to: events serialize exactly like a REST read at this version (the native serializer where the resource has one). Null when unpinned — legacy (v2/v5) webhooks, and v1 webhooks on the legacy payload shape.",
-            "example": "2026-01-01",
+            "example": "2026-09-02-2",
             "type": [
               "string",
               "null"

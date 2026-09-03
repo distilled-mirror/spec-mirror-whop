@@ -22,17 +22,17 @@ Set up the business account the CLI should use. Choose or create interactively, 
 
 Build and deploy fully hosted web apps on Whop (`*.whop.site`).
 
-| Command                                        | Description                                                                  |
-| ---------------------------------------------- | ---------------------------------------------------------------------------- |
-| `whop apps init`                               | Start a new app: register, scaffold, and link a project                      |
-| `whop apps dev`                                | Run the local dev server for this app                                        |
-| `whop apps deploy`                             | Build, upload and ship this app live (`--preview` uploads without promoting) |
-| `whop apps pull`                               | Fetch the app's deployed source and merge it into this directory             |
-| `whop apps create` / `get` / `list` / `update` | Manage app records                                                           |
-| `whop apps builds get` / `list` / `promote`    | Manage app builds, promoting an older build is how you roll back             |
-| `whop apps secrets list` / `set` / `unset`     | Manage app secrets, injected as environment bindings into the hosted runtime |
-| `whop apps logs`                               | List app logs                                                                |
-| `whop apps permissions`                        | Update requested permissions                                                 |
+| Command                                                   | Description                                                                  |
+| --------------------------------------------------------- | ---------------------------------------------------------------------------- |
+| `whop apps init`                                          | Start a new app: register, scaffold, and link a project                      |
+| `whop apps dev`                                           | Run the local dev server for this app                                        |
+| `whop apps deploy`                                        | Build, upload and ship this app live (`--preview` uploads without promoting) |
+| `whop apps pull`                                          | Fetch the app's deployed source and merge it into this directory             |
+| `whop apps create` / `get` / `list` / `update` / `delete` | Manage app records                                                           |
+| `whop apps builds get` / `list` / `promote`               | Manage app builds, promoting an older build is how you roll back             |
+| `whop apps secrets list` / `set` / `unset`                | Manage app secrets, injected as environment bindings into the hosted runtime |
+| `whop apps logs`                                          | List app logs                                                                |
+| `whop apps permissions`                                   | Update requested permissions                                                 |
 
 ### `upgrade`
 
@@ -308,7 +308,7 @@ What your credential can do on a resource.
 
 Create file uploads and retrieve uploaded file details.
 
-`create` · `get`
+`create` · `get` · `list` · `complete` (finish a multipart upload)
 
 ## Notifications
 

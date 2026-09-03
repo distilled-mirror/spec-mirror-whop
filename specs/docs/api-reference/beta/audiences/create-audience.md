@@ -47,7 +47,7 @@ info:
   termsOfService: https://whop.com/tos-developer-api/
   title: Whop API
   version: 1.0.0
-  x-api-version-date: '2026-08-31'
+  x-api-version-date: 2026-09-02-2
 servers:
   - description: Production Whop API
     url: https://api.whop.com/api/v1
@@ -184,6 +184,19 @@ tags:
       change where they land afterwards, up until they come back.
     name: Payments
     x-whop-summary: A charge against a buyer, and the step they still owe.
+  - description: >
+      A Refund is one reversal of a payment, full or partial. Refunds are issued
+      with `POST /payments/{id}/refund`; this resource is the record of each one
+      — how much moved, through which provider, and where it stands (`pending`,
+      `succeeded`, `failed`).
+
+
+      List a payment's refunds with `?payment_id=`, or every refund an account
+      issued with `?account_id=`. `amount` is stated in the payment's settlement
+      currency so it nets against the payment's `total`; `original_amount` is
+      what the processor moved.
+    name: Refunds
+    x-whop-summary: Money returned to a buyer from a payment.
   - description: >
       A Confirmation Token is a single-use, short-lived reference to a payment
       method and billing details collected from a buyer. Its response contains

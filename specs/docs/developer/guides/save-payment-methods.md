@@ -232,8 +232,8 @@ The rest of this page covers setup mode end-to-end, then shows how to charge a s
     <CodeGroup>
       ```typescript TypeScript theme={null}
       const payment = await whopsdk.payments.create({
-        plan: { initial_price: 40.00, currency: "usd", plan_type: "one_time" },
-        company_id: "biz_XXXXXXXX",
+        account_id: "biz_XXXXXXXX",
+        plan_id: "plan_XXXXXXXX",
         member_id: "mber_XXXXXXXX",
         payment_method_id: "payt_XXXXXXXXX",
       });
@@ -244,8 +244,8 @@ The rest of this page covers setup mode end-to-end, then shows how to charge a s
       ```python Python theme={null}
       payment = whopsdk.payments.create(
           request={
-              "plan": {"initial_price": 40.00, "currency": "usd", "plan_type": "one_time"},
-              "company_id": "biz_XXXXXXXX",
+              "account_id": "biz_XXXXXXXX",
+              "plan_id": "plan_XXXXXXXX",
               "member_id": "mber_XXXXXXXX",
               "payment_method_id": "payt_XXXXXXXXX",
           },
@@ -256,8 +256,8 @@ The rest of this page covers setup mode end-to-end, then shows how to charge a s
 
       ```ruby Ruby theme={null}
       payment = whopsdk.payments.create(
-        plan: { initial_price: 40.00, currency: "usd", plan_type: "one_time" },
-        company_id: "biz_XXXXXXXX",
+        account_id: "biz_XXXXXXXX",
+        plan_id: "plan_XXXXXXXX",
         member_id: "mber_XXXXXXXX",
         payment_method_id: "payt_XXXXXXXXX",
       )
@@ -271,17 +271,10 @@ The rest of this page covers setup mode end-to-end, then shows how to charge a s
           .create(
               &CreatePaymentsRequestBody::CreatePaymentsRequestBodyOne(
                   CreatePaymentsRequestBodyOne::builder()
-                      .company_id("biz_XXXXXXXX")
+                      .account_id("biz_XXXXXXXX")
+                      .plan_id("plan_XXXXXXXX")
                       .member_id("mber_XXXXXXXX")
                       .payment_method_id("payt_XXXXXXXXX")
-                      .plan(
-                          CreatePaymentsRequestBodyOnePlan::builder()
-                              .initial_price(40.00)
-                              .currency(Currencies::Usd)
-                              .plan_type(PlanTypes::OneTime)
-                              .build()
-                              .unwrap(),
-                      )
                       .build()
                       .unwrap(),
               ),
@@ -295,12 +288,8 @@ The rest of this page covers setup mode end-to-end, then shows how to charge a s
       ```go Go theme={null}
       payment, err := client.Payments.Create(context.TODO(), &whopsdk.CreatePaymentsRequest{
           CreatePaymentsRequestOne: &whopsdk.CreatePaymentsRequestOne{
-              Plan: &whopsdk.CreatePaymentsRequestOnePlan{
-                  InitialPrice: whopsdk.Float64(40.00),
-                  Currency:     whopsdk.CurrenciesUsd,
-                  PlanType:     whopsdk.PlanTypesOneTime.Ptr(),
-              },
-              CompanyID:       "biz_XXXXXXXX",
+              AccountID:       "biz_XXXXXXXX",
+              PlanID:          "plan_XXXXXXXX",
               MemberID:        "mber_XXXXXXXX",
               PaymentMethodID: whopsdk.String("payt_XXXXXXXXX"),
           },

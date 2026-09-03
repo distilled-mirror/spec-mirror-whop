@@ -602,7 +602,7 @@ Three account fields control how Whop presents the affiliate program to users. U
 
 <CodeGroup>
   ```typescript TypeScript theme={null}
-  await client.companies.update({
+  await client.accounts.update({
     id: "biz_xxxxxxxxxxxxx",
     affiliate_instructions: "Share your link on social. 30-day cookie window.",
     affiliate_application_required: true,
@@ -611,7 +611,7 @@ Three account fields control how Whop presents the affiliate program to users. U
   ```
 
   ```python Python theme={null}
-  client.companies.update(
+  client.accounts.update(
       "biz_xxxxxxxxxxxxx",
       affiliate_instructions="Share your link on social. 30-day cookie window.",
       affiliate_application_required=True,
@@ -621,10 +621,10 @@ Three account fields control how Whop presents the affiliate program to users. U
 
   ```rust Rust theme={null}
   client
-      .companies
+      .accounts
       .update(
           &"biz_xxxxxxxxxxxxx".to_string(),
-          &UpdateCompaniesRequest {
+          &UpdateAccountsRequest {
               affiliate_instructions: Some(
                   "Share your link on social. 30-day cookie window.".to_string(),
               ),
@@ -638,7 +638,7 @@ Three account fields control how Whop presents the affiliate program to users. U
   ```
 
   ```go Go theme={null}
-  _, err := client.Companies.Update(context.TODO(), &whopsdk.UpdateCompaniesRequest{
+  _, err := client.Accounts.Update(context.TODO(), &whopsdk.UpdateAccountsRequest{
       ID:                           "biz_xxxxxxxxxxxxx",
       AffiliateInstructions:        whopsdk.String("Share your link on social. 30-day cookie window."),
       AffiliateApplicationRequired: whopsdk.Bool(true),

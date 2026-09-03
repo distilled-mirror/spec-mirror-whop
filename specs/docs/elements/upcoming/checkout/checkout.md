@@ -249,6 +249,7 @@ Style these parts through `appearance.classes`. Use camel case or kebab case for
 | `.whop-PaymentCardFields`               | The inline card fields panel                                                                                                                                                    |
 | `.whop-PaymentCompactBalance`           | The selected balance on a compact direct checkout                                                                                                                               |
 | `.whop-PaymentCompactSavedMethod`       | The selected saved method on a compact direct checkout                                                                                                                          |
+| `.whop-PaymentCurrencyFallback`         | The switch to the fallback currency when nothing is offered                                                                                                                     |
 | `.whop-PaymentDetailIcon`               | The template icon beside the detail region's explainer                                                                                                                          |
 | `.whop-PaymentDetailRegion`             | The expanded detail region for a selected method — collection surfaces first (inline card fields, declared inputs), then the explainer and disclosure lines as the bottom block |
 | `.whop-PaymentDetailSubtext`            | The consent subtext under the explainer on wallet methods                                                                                                                       |
@@ -342,7 +343,7 @@ const checkout = whop.checkout.create({
   }
 });
 
-// 225 classes use this shape
+// 226 classes use this shape
 checkout.update({
   appearance: { classes: { 'whop-Address': { fontWeight: '700' } } }
 });

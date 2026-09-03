@@ -468,6 +468,24 @@ Use the Ads API to list ads for an account, create ads inside ad groups, retriev
       Defaults to true.
     </ResponseField>
 
+    <ResponseField name="music" type="object | null">
+      The advertiser-uploaded MP3 a TikTok carousel ad plays. TikTok-only; `null` elsewhere and for non-carousel ads.
+
+      <Accordion title="Properties" defaultOpen={true}>
+        <ResponseField name="id" type="string" required>
+          The music attachment's file id.
+        </ResponseField>
+
+        <ResponseField name="name" type="string | null" required>
+          The uploaded file's name.
+        </ResponseField>
+
+        <ResponseField name="url" type="string | null" required>
+          CDN url of the MP3.
+        </ResponseField>
+      </Accordion>
+    </ResponseField>
+
     <ResponseField name="post_id" type="string | null" required>
       The post the ad network serves for this ad, as `pageID_postID` on Meta — the
       post Meta created for an uploaded creative, or the post being promoted. Use it
@@ -686,6 +704,7 @@ Use the Ads API to list ads for an account, create ads inside ad groups, retriev
       	"link_clicks": 336,
       	"messaging_config": null,
       	"multi_advertiser_ads": true,
+      	"music": null,
       	"post_id": "102938475601928_5647382910",
       	"existing_post_id": null,
       	"post_source": null,

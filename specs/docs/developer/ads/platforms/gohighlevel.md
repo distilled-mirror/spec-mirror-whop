@@ -36,12 +36,12 @@
   <Step title="Confirm it's tracking" iconType="regular" titleSize="h2">
     Visit a live page, then check the [Websites page](https://whop.com/dashboard/websites) in your Whop dashboard. Your domain appears there once a page view comes through.
   </Step>
+
+  <Step title="Track leads and other funnel events" iconType="regular" titleSize="h2">
+    If your funnel has a form, application, or booking step, add a `whop.track` call for it — see [Track events](/developer/ads/pixel#track-events) in the main pixel guide.
+
+    <Note>
+      **Don't track purchases, subscriptions, or trials.** Whop records every checkout view, purchase, subscription, and trial start server-side with zero configuration. Only send events Whop can't see: leads and bookings.
+    </Note>
+  </Step>
 </Steps>
-
-## Track leads and other funnel events
-
-If your funnel has a form, application, or booking step, add a `whop.track` call for it — see [Track events](/developer/ads/pixel#track-events) in the main pixel guide.
-
-<Note>
-  **Don't track purchases, subscriptions, or trials.** Whop records every checkout view, purchase, subscription, and trial start server-side with zero configuration. Only send events Whop can't see, such as leads and bookings.
-</Note>

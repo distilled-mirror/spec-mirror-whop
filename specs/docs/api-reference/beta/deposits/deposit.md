@@ -19,7 +19,7 @@ Use the Deposits API to create deposit instructions for an account.
 <Columns cols={2}>
   <Column>
     <ResponseField name="account_id" type="string | null" required>
-      Account ID of the destination owner. Null for raw wallet address destinations.
+      Account ID of the destination owner.
     </ResponseField>
 
     <ResponseField name="amount" type="string">
@@ -28,10 +28,6 @@ Use the Deposits API to create deposit instructions for an account.
 
     <ResponseField name="hosted_url" type="string | null" required>
       URL of the hosted deposit page. Only present for business destinations.
-    </ResponseField>
-
-    <ResponseField name="metadata" type="object" required>
-      Metadata from the request.
     </ResponseField>
 
     <ResponseField name="methods" type="object" required>
@@ -137,7 +133,6 @@ Use the Deposits API to create deposit instructions for an account.
       	"account_id": "biz_xxxxxxxxxxxxxx",
       	"amount": "250.00",
       	"hosted_url": "https://whop.com/deposit/example/?amount=250.00",
-      	"metadata": {},
       	"methods": {
       		"bank": {
       			"currencies": [

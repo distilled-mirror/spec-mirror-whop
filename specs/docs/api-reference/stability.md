@@ -25,7 +25,7 @@ These exist on the Legacy API and the Current API. Build new integrations agains
 | Bounties                                                                                 | [Bounties](/api-reference/beta/bounties/bounty)                                               |
 | [Card transactions](/api-reference/card-transactions/card-transaction)                   | [Cards](/api-reference/beta/cards/card)                                                       |
 | [Checkout configurations](/api-reference/checkout-configurations/checkout-configuration) | [Checkout configurations](/api-reference/beta/checkout-configurations/checkout-configuration) |
-| [Companies](/api-reference/companies/company)                                            | [Accounts](/api-reference/beta/accounts/account), same object, renamed                        |
+| Companies                                                                                | [Accounts](/api-reference/beta/accounts/account), same object, renamed                        |
 | [Dispute alerts](/api-reference/dispute-alerts/dispute-alert)                            | [Dispute alerts](/api-reference/beta/dispute-alerts/dispute-alert)                            |
 | [Files](/api-reference/files/file)                                                       | Files                                                                                         |
 | [Disputes](/api-reference/disputes/dispute)                                              | [Disputes](/api-reference/beta/disputes/dispute)                                              |

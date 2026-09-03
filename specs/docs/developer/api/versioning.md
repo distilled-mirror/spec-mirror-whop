@@ -35,7 +35,42 @@ Every version automatically gets new endpoints and optional fields. Breaking cha
 
 ## Changelog
 
-<Update label="2026-08-31" description="Financial report timestamp ranges" tags={["Latest"]}>
+<Update label="2026-09-02-2" description="Deposit destinations are an account ID" tags={["Latest"]}>
+  `POST /deposits` takes a `destination` account ID string — `biz_…` or `user_…` — and nothing else.
+
+  * Raw wallet addresses are no longer accepted. Fund an account and read its addresses from `methods.crypto`.
+  * The object form of `destination` (`{ account_id }` / `{ address, network }`) is removed. Send the account ID on its own.
+  * The top-level `network` override is removed. It never changed the response: every deposit already returns an address for every supported network, so pick the one you want from `methods.crypto`.
+  * `metadata` is removed from both the request and the response. It was echoed back and never stored, so it couldn't be used to reconcile a later deposit.
+  * `account_id` on the response is no longer null, because every destination now names an account.
+
+  Pinned callers on an earlier version keep sending the object form and the removed inputs, and their responses still carry `metadata` — as an empty object rather than the value they sent. A wallet address is refused at every version: it never identified an account, so there is no older shape to keep serving.
+</Update>
+
+<Update label="2026-09-02-1" description="Payments become a native resource">
+  `POST /payments`, `GET /payments` and `GET /payments/{id}` are now served by the native Payments API, and the Payment object takes the shape of every other native resource.
+
+  * Related records are foreign-key ids instead of embedded objects: `account_id` (was `company`), `plan_id`, `product_id`, `membership_id`, `member_id`, `promo_code_id`, `shipment_id`, `payment_method_id`. The buyer is a `user` summary (`id`, `username`, `name`, `profile_picture`).
+  * Amounts are money objects (`{ amount, currency, decimals, display_decimals }`) instead of bare numbers: `total`, `subtotal`, `tax_amount`, `refunded_amount`, `tax_refunded_amount`, `amount_after_fees`, `usd_total`. `settlement_amount`, `settlement_currency` and `settlement_exchange_rate` are folded into `total` and `currency`. `refunded_amount` and `tax_refunded_amount` are stated as they settled, at the rate in force when each refund was issued, and `tax_refunded_amount` is now on list responses as well as retrieve.
+  * Disputes, refunds and Resolution Center cases are no longer embedded — list them from their own endpoints with `?payment_id=`. Embedded financing transactions and the application fee aren't carried over to the native shape.
+  * `last_payment_attempt` / `next_payment_attempt` are `last_payment_attempt_at` / `next_payment_attempt_at`. Card facts live on `payment_instrument`.
+  * Creating a payment takes `account_id` (was `company_id`), answers `201 Created`, honours `Idempotency-Key`, and accepts `capture: false` to place an authorization hold.
+  * Native payment reads are account-scoped: the credential must be able to read the account's payments (a team member's token or the account's API key). A buyer's own user token, which the pinned proxy versions accept for reading their own payment, isn't served natively yet — buyers keep working on their pinned version.
+  * `GET /payments/{id}/fees` rows are `{ type, origin, label, description, amount, settlement_amount, collected_at }` with money objects (were `name`/`amount`/`currency`/`type`).
+  * `GET /refunds` and `GET /refunds/{id}` return the native Refund: `payment_id` and `account_id` instead of an embedded payment, `amount` as a money object in the payment's settlement currency, `original_amount` in the processor's currency. The `company_id` filter is `account_id`, and sending `company_id` is a 400.
+  * `POST /payments/{id}/refund`, `POST /payments/{id}/retry` and `POST /payments/{id}/void` are native too, returning the same Payment object. Refund still takes an optional `partial_amount`.
+  * `GET /payments` lists with the standard `{ data, page_info }` envelope and cursor pagination. Filters are singular equality params (`status`, `billing_reason`, `currency`, `plan_id`, `product_id`, `membership_id`, `member_id`, `user_id`, `account_id`) instead of the proxy's plural arrays. As on the proxy, `billing_reason=subscription_cycle` also matches renewals recorded as `subscription_update`. Zero-amount payments are included, so the proxy's `include_free` is gone. An invalid `status` is a `400`, as is any proxy-only filter (`substatuses`, `updated_before`/`updated_after`, `checkout_configuration_ids`, plural arrays), rather than an unfiltered page. The `query` buyer search works as before. The `created_before`/`created_after` window covers the payment's creation time alone. The proxy filtered on paid-at where one existed. On list rows `settlement_time_at` is null — retrieve the payment for it.
+</Update>
+
+<Update label="2026-09-02" description="Legacy ad reports endpoint retired">
+  The legacy `GET /ad_reports` endpoint is deprecated in favor of the native [Stats](/api-reference/beta/stats/stats) metrics and the ad entity endpoints. It's no longer served at this version.
+
+  * `GET /ad_reports` returns `410 Gone` with an `error.type` of `gone`. Use `GET /stats/ad_delivery` for `spend`, `impressions`, and `clicks` over time, scoped with a `source` path such as `whop:adcamp_xxx:*`. Use `GET /stats/events` for attributed conversions.
+  * Per-entity performance for a window is on the entity endpoints. `GET /ad_campaigns`, `GET /ad_groups`, and `GET /ads` accept `stats_from` and `stats_to` and return `spend`, `results`, and `return_on_ad_spend` on each row.
+  * Every response from the legacy endpoint, at any version, now carries `Deprecation` and `Link: <…/stats/ad_delivery>; rel="successor-version"` headers. Requests pinned to earlier versions, and requests without a version, keep working unchanged until a `Sunset` header announces the date it stops responding for every version.
+</Update>
+
+<Update label="2026-08-31" description="Financial report timestamp ranges">
   `GET /financial_reports` and `GET /financial_reports/breakdown` now use `from` and `to` ISO 8601 timestamps for report windows.
 
   * `from_date` and `to_date` are renamed to `from` and `to`.

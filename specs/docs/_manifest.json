@@ -3,7 +3,7 @@
     "https://docs.whop.com/llms.txt",
     "https://docs.whop.com/sitemap.xml"
   ],
-  "count": 979,
+  "count": 981,
   "pages": [
     {
       "page": "https://docs.whop.com/account-settings/account-security/delete-your-account",
@@ -162,24 +162,6 @@
       "page": "https://docs.whop.com/api-reference/ad-groups/ad-group",
       "markdown": "https://docs.whop.com/api-reference/ad-groups/ad-group.md",
       "file": "api-reference/ad-groups/ad-group.md",
-      "indexes": [
-        "llms.txt",
-        "sitemap"
-      ]
-    },
-    {
-      "page": "https://docs.whop.com/api-reference/ad-reports/ad-report",
-      "markdown": "https://docs.whop.com/api-reference/ad-reports/ad-report.md",
-      "file": "api-reference/ad-reports/ad-report.md",
-      "indexes": [
-        "llms.txt",
-        "sitemap"
-      ]
-    },
-    {
-      "page": "https://docs.whop.com/api-reference/ad-reports/retrieve-ad-report",
-      "markdown": "https://docs.whop.com/api-reference/ad-reports/retrieve-ad-report.md",
-      "file": "api-reference/ad-reports/retrieve-ad-report.md",
       "indexes": [
         "llms.txt",
         "sitemap"
@@ -2236,6 +2218,51 @@
       ]
     },
     {
+      "page": "https://docs.whop.com/api-reference/beta/payments/create-payment",
+      "markdown": "https://docs.whop.com/api-reference/beta/payments/create-payment.md",
+      "file": "api-reference/beta/payments/create-payment.md",
+      "indexes": [
+        "llms.txt",
+        "sitemap"
+      ]
+    },
+    {
+      "page": "https://docs.whop.com/api-reference/beta/payments/list-payment-fees",
+      "markdown": "https://docs.whop.com/api-reference/beta/payments/list-payment-fees.md",
+      "file": "api-reference/beta/payments/list-payment-fees.md",
+      "indexes": [
+        "llms.txt",
+        "sitemap"
+      ]
+    },
+    {
+      "page": "https://docs.whop.com/api-reference/beta/payments/list-payments",
+      "markdown": "https://docs.whop.com/api-reference/beta/payments/list-payments.md",
+      "file": "api-reference/beta/payments/list-payments.md",
+      "indexes": [
+        "llms.txt",
+        "sitemap"
+      ]
+    },
+    {
+      "page": "https://docs.whop.com/api-reference/beta/payments/refund-payment",
+      "markdown": "https://docs.whop.com/api-reference/beta/payments/refund-payment.md",
+      "file": "api-reference/beta/payments/refund-payment.md",
+      "indexes": [
+        "llms.txt",
+        "sitemap"
+      ]
+    },
+    {
+      "page": "https://docs.whop.com/api-reference/beta/payments/retrieve-payment",
+      "markdown": "https://docs.whop.com/api-reference/beta/payments/retrieve-payment.md",
+      "file": "api-reference/beta/payments/retrieve-payment.md",
+      "indexes": [
+        "llms.txt",
+        "sitemap"
+      ]
+    },
+    {
       "page": "https://docs.whop.com/api-reference/beta/payments/retrieve-payment-status",
       "markdown": "https://docs.whop.com/api-reference/beta/payments/retrieve-payment-status.md",
       "file": "api-reference/beta/payments/retrieve-payment-status.md",
@@ -2245,9 +2272,27 @@
       ]
     },
     {
+      "page": "https://docs.whop.com/api-reference/beta/payments/retry-payment",
+      "markdown": "https://docs.whop.com/api-reference/beta/payments/retry-payment.md",
+      "file": "api-reference/beta/payments/retry-payment.md",
+      "indexes": [
+        "llms.txt",
+        "sitemap"
+      ]
+    },
+    {
       "page": "https://docs.whop.com/api-reference/beta/payments/update-payment-return-url",
       "markdown": "https://docs.whop.com/api-reference/beta/payments/update-payment-return-url.md",
       "file": "api-reference/beta/payments/update-payment-return-url.md",
+      "indexes": [
+        "llms.txt",
+        "sitemap"
+      ]
+    },
+    {
+      "page": "https://docs.whop.com/api-reference/beta/payments/void-payment",
+      "markdown": "https://docs.whop.com/api-reference/beta/payments/void-payment.md",
+      "file": "api-reference/beta/payments/void-payment.md",
       "indexes": [
         "llms.txt",
         "sitemap"
@@ -2725,6 +2770,24 @@
       "page": "https://docs.whop.com/api-reference/beta/recommended-actions/retrieve-action-chain",
       "markdown": "https://docs.whop.com/api-reference/beta/recommended-actions/retrieve-action-chain.md",
       "file": "api-reference/beta/recommended-actions/retrieve-action-chain.md",
+      "indexes": [
+        "llms.txt",
+        "sitemap"
+      ]
+    },
+    {
+      "page": "https://docs.whop.com/api-reference/beta/refunds/list-refunds",
+      "markdown": "https://docs.whop.com/api-reference/beta/refunds/list-refunds.md",
+      "file": "api-reference/beta/refunds/list-refunds.md",
+      "indexes": [
+        "llms.txt",
+        "sitemap"
+      ]
+    },
+    {
+      "page": "https://docs.whop.com/api-reference/beta/refunds/retrieve-refund",
+      "markdown": "https://docs.whop.com/api-reference/beta/refunds/retrieve-refund.md",
+      "file": "api-reference/beta/refunds/retrieve-refund.md",
       "indexes": [
         "llms.txt",
         "sitemap"
@@ -3672,60 +3735,6 @@
       "markdown": "https://docs.whop.com/api-reference/checkout-configurations/retrieve-checkout-configuration.md",
       "file": "api-reference/checkout-configurations/retrieve-checkout-configuration.md",
       "indexes": [
-        "sitemap"
-      ]
-    },
-    {
-      "page": "https://docs.whop.com/api-reference/companies/company",
-      "markdown": "https://docs.whop.com/api-reference/companies/company.md",
-      "file": "api-reference/companies/company.md",
-      "indexes": [
-        "llms.txt",
-        "sitemap"
-      ]
-    },
-    {
-      "page": "https://docs.whop.com/api-reference/companies/create-child-company-api-key",
-      "markdown": "https://docs.whop.com/api-reference/companies/create-child-company-api-key.md",
-      "file": "api-reference/companies/create-child-company-api-key.md",
-      "indexes": [
-        "llms.txt",
-        "sitemap"
-      ]
-    },
-    {
-      "page": "https://docs.whop.com/api-reference/companies/create-company",
-      "markdown": "https://docs.whop.com/api-reference/companies/create-company.md",
-      "file": "api-reference/companies/create-company.md",
-      "indexes": [
-        "llms.txt",
-        "sitemap"
-      ]
-    },
-    {
-      "page": "https://docs.whop.com/api-reference/companies/list-companies",
-      "markdown": "https://docs.whop.com/api-reference/companies/list-companies.md",
-      "file": "api-reference/companies/list-companies.md",
-      "indexes": [
-        "llms.txt",
-        "sitemap"
-      ]
-    },
-    {
-      "page": "https://docs.whop.com/api-reference/companies/retrieve-company",
-      "markdown": "https://docs.whop.com/api-reference/companies/retrieve-company.md",
-      "file": "api-reference/companies/retrieve-company.md",
-      "indexes": [
-        "llms.txt",
-        "sitemap"
-      ]
-    },
-    {
-      "page": "https://docs.whop.com/api-reference/companies/update-company",
-      "markdown": "https://docs.whop.com/api-reference/companies/update-company.md",
-      "file": "api-reference/companies/update-company.md",
-      "indexes": [
-        "llms.txt",
         "sitemap"
       ]
     },
@@ -5082,8 +5091,15 @@
       "markdown": "https://docs.whop.com/api-reference/payments/list-fees.md",
       "file": "api-reference/payments/list-fees.md",
       "indexes": [
-        "llms.txt",
         "sitemap"
+      ]
+    },
+    {
+      "page": "https://docs.whop.com/api-reference/payments/list-payment-fees",
+      "markdown": "https://docs.whop.com/api-reference/payments/list-payment-fees.md",
+      "file": "api-reference/payments/list-payment-fees.md",
+      "indexes": [
+        "llms.txt"
       ]
     },
     {

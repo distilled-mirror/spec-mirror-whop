@@ -46,15 +46,34 @@ The Whop Pixel is a JavaScript snippet that you add to your website. It measures
   <Step title="Track events" iconType="regular" titleSize="h2">
     If your funnel has important steps outside Whop checkout, like a lead form, call booking, or application, add `whop.track` calls to track those events.
 
-    The most common setup is to fire events either:
-
-    * when a form submits successfully
-    * on the thank-you page or confirmation page the visitor sees after submitting
-
     ```javascript Tracking events theme={null}
     whop.track("lead");                                      // a standard event
     whop.track("schedule", { value: 50, currency: "USD" });  // optionally with a value
     whop.track("quiz_completed");                            // or your own event name
+    ```
+
+    Where to put the call depends on what happens after the action:
+
+    **a. The action redirects** (a form that sends the visitor to a thank-you page)
+
+    Fire the event on the page they land on. The call goes in that page's HTML — or a page builder's code field — so wrap it in `<script>` tags. The pixel snippet must be installed on that page too.
+
+    ```html Track on a thank-you page theme={null}
+    <script>
+      whop.track("lead");
+    </script>
+    ```
+
+    **b. The action stays on the same page** (a form that shows an inline success message)
+
+    Fire the event in the action's success handler. You're already inside JavaScript, so no `<script>` tags.
+
+    ```javascript Track on submit (no redirect) theme={null}
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      await submitForm();
+      whop.track("lead");
+    });
     ```
 
     **It's important to include any information you have about the customer at every stage of the funnel.** If you accept a lead with a name, email and phone number, include those in the event fired to Whop.
@@ -91,19 +110,7 @@ whop.track("quiz_completed", { value: 25, currency: "USD" });
 
 Keep names short and stable, and reuse a small set. Whop stores names up to 250 characters.
 
-### Where to put the tracking call depends on what happens after the action
-
-* **The action doesn't redirect** (e.g. a form that submits in place and shows an inline success message). Fire the event in the action's success handler, such as the form's `onSubmit` callback, after it succeeds:
-
-```javascript Track on submit (no redirect) theme={null}
-form.addEventListener("submit", async (e) => {
-	e.preventDefault();
-	await submitForm();
-	whop.track("watched_vsl");
-});
-```
-
-* **The action redirects** (e.g. a form that sends the visitor to a new page on submit). Fire the event on the page they land on, such as the thank-you or confirmation page. Make sure the pixel snippet is installed on that page too.
+Custom events follow the same placement rules as standard events — see [Track events](#track-events).
 
 ## Track sales on your own checkout
 

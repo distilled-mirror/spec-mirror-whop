@@ -36,13 +36,14 @@ Run these inside a linked project, or pass `--app app_xxxxxxxx`. `whop apps dev`
 
 The runtime also sets:
 
-| Binding           | Purpose                                       |
-| ----------------- | --------------------------------------------- |
-| `APP_ID`          | The app being served                          |
-| `BUILD_ID`        | The build currently promoted                  |
-| `WHOP_API_ORIGIN` | The Whop API origin to build requests against |
-| `ASSETS`          | Serves your static assets                     |
-| `REALTIME`        | Backs realtime connections                    |
+| Binding           | Purpose                                                                                   |
+| ----------------- | ----------------------------------------------------------------------------------------- |
+| `APP_ID`          | The app being served                                                                      |
+| `BUILD_ID`        | The build currently promoted                                                              |
+| `WHOP_API_ORIGIN` | The Whop API origin to build requests against                                             |
+| `WHOP_ACCOUNT_ID` | The `biz_` id of the account that owns the app, for scoping API reads to your own catalog |
+| `ASSETS`          | Serves your static assets                                                                 |
+| `REALTIME`        | Backs realtime connections                                                                |
 
 <Note>
   These names are reserved — a secret of the same name is ignored.

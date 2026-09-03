@@ -20,9 +20,8 @@ Create an account for the connected account:
   	token: "Account API Key",
   });
 
-  const account = await client.companies.create({
+  const account = await client.accounts.create({
   	email: "merchant@example.com",
-  	parent_company_id: "biz_xxxxxxxxxxxxx",
   	title: "Acme Merchant Store",
   	metadata: {
   		internal_user_id: "user_12345",
@@ -40,9 +39,8 @@ Create an account for the connected account:
       token="Account API Key",
   )
 
-  account = client.companies.create(
+  account = client.accounts.create(
       email="merchant@example.com",
-      parent_company_id="biz_xxxxxxxxxxxxx",
       title="Acme Merchant Store",
       metadata={
           "internal_user_id": "user_12345",
@@ -63,11 +61,10 @@ Create an account for the connected account:
   let client = Whop::new(config).expect("Failed to build client");
 
   let account = client
-      .companies
+      .accounts
       .create(
-          &CreateCompaniesRequest {
+          &CreateAccountsRequest {
               email: Some("merchant@example.com".to_string()),
-              parent_company_id: Some("biz_xxxxxxxxxxxxx".to_string()),
               title: "Acme Merchant Store".to_string(),
               metadata: Some(HashMap::from([
                   ("internal_user_id".to_string(), json!("user_12345")),
@@ -95,10 +92,9 @@ Create an account for the connected account:
 
   client := client.NewWhop(option.WithToken("Account API Key"))
 
-  account, err := client.Companies.Create(context.TODO(), &whopsdk.CreateCompaniesRequest{
-      Email:           whopsdk.String("merchant@example.com"),
-      ParentCompanyID: whopsdk.String("biz_xxxxxxxxxxxxx"),
-      Title:           "Acme Merchant Store",
+  account, err := client.Accounts.Create(context.TODO(), &whopsdk.CreateAccountsRequest{
+      Email: whopsdk.String("merchant@example.com"),
+      Title: "Acme Merchant Store",
       Metadata: map[string]any{
           "internal_user_id": "user_12345",
           "seller_tier":      "gold",
@@ -115,7 +111,7 @@ Create an account for the connected account:
 In this example:
 
 * `email` is the connected account's email address. Whop uses it to identify the connected account and send important notifications.
-* `parent_company_id` is your platform's account ID (the parent account)
+* The Account API key determines which platform account owns the connected account.
 * `title` is the required display name for the connected account.
 * `metadata` contains custom key-value pairs:
   * `internal_user_id`: Your platform's internal identifier for this connected account
@@ -215,7 +211,7 @@ Whop stores metadata on the Account object. You can retrieve it later for report
 
 ## API reference
 
-<Card title="Create Account API" icon="code" href="/api-reference/companies/create-company">
+<Card title="Create Account API" icon="code" href="/api-reference/beta/accounts/create-account">
   See the full API reference for creating accounts and all available parameters
 </Card>
 

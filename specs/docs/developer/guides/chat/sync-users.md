@@ -21,9 +21,8 @@ import { WhopClient } from "@whop/sdk";
 
 const client = new WhopClient({ token: process.env.WHOP_API_KEY });
 
-const account = await client.companies.create({
+const account = await client.accounts.create({
   email: "user@example.com",
-  parent_company_id: "biz_XXXXXXXXXXXXX", // your platform's account ID
   title: "Jane Doe",
   metadata: {
     internal_user_id: "user_12345", // your platform's user ID
