@@ -4,7 +4,7 @@
 
 # Update ai chat
 
-> Update an AI chat's title, notification preferences, or associated company context.
+> Update an AI chat's title, notification preferences, or associated account context.
 
 Required permissions:
  - `ai_chat:update`

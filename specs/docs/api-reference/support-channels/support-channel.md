@@ -9,6 +9,7 @@
 <ResponseExample>
   ```json Example theme={null}
   {
+  	"account_id": "<string>",
   	"company_id": "<string>",
   	"custom_name": "Project Alpha Team",
   	"customer_user": {
@@ -23,9 +24,14 @@
   ```
 </ResponseExample>
 
+<ResponseField name="account_id" type="string | null" required>
+  The unique identifier of the account associated with this channel. Null if
+  this is not a support or account-scoped conversation.
+</ResponseField>
+
 <ResponseField name="company_id" type="string | null" required>
-  The unique identifier of the company associated with this channel. Null if
-  this is not a support or company-scoped conversation.
+  The unique identifier of the account associated with this channel. Null if
+  this is not a support or account-scoped conversation.
 </ResponseField>
 
 <ResponseField name="custom_name" type="string | null" required>

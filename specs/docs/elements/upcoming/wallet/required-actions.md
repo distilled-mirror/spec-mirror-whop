@@ -71,7 +71,7 @@ Pass callbacks in the create options or React props.
 
 The viewer pressed a banner button. Fires for every action, including ones the element also handles itself.
 
-**Signature:** `((payload: { action: "deposit_funds" | "submit_information_request" | "reauthorize_payout_methods" | "update_payout_profile" | "card_usage_review" | "verify_identity" | "sign_formation_documents" | "connect_fulfillment_tracker" | "setup_apple_pay_domains" | "configure_tax_remitter" | "add_vat_registration"; accountId: string; }) => void)`
+**Signature:** `((payload: { action: "deposit_funds" | "submit_information_request" | "update_automatic_withdrawal_method" | "reauthorize_payout_methods" | "update_payout_profile" | "card_usage_review" | "verify_identity" | "sign_formation_documents" | "connect_fulfillment_tracker" | "setup_apple_pay_domains" | "configure_tax_remitter" | "add_vat_registration"; accountId: string; }) => void)`
 
 ### `onIdentityVerificationRequested`
 

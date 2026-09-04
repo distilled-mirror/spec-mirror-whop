@@ -3,7 +3,7 @@
     "https://docs.whop.com/llms.txt",
     "https://docs.whop.com/sitemap.xml"
   ],
-  "count": 981,
+  "count": 990,
   "pages": [
     {
       "page": "https://docs.whop.com/account-settings/account-security/delete-your-account",
@@ -2002,6 +2002,15 @@
       ]
     },
     {
+      "page": "https://docs.whop.com/api-reference/beta/memberships/resync-membership-access",
+      "markdown": "https://docs.whop.com/api-reference/beta/memberships/resync-membership-access.md",
+      "file": "api-reference/beta/memberships/resync-membership-access.md",
+      "indexes": [
+        "llms.txt",
+        "sitemap"
+      ]
+    },
+    {
       "page": "https://docs.whop.com/api-reference/beta/memberships/retrieve-membership",
       "markdown": "https://docs.whop.com/api-reference/beta/memberships/retrieve-membership.md",
       "file": "api-reference/beta/memberships/retrieve-membership.md",
@@ -2137,6 +2146,15 @@
       ]
     },
     {
+      "page": "https://docs.whop.com/api-reference/beta/partners/retrieve-a-partner-reward-link",
+      "markdown": "https://docs.whop.com/api-reference/beta/partners/retrieve-a-partner-reward-link.md",
+      "file": "api-reference/beta/partners/retrieve-a-partner-reward-link.md",
+      "indexes": [
+        "llms.txt",
+        "sitemap"
+      ]
+    },
+    {
       "page": "https://docs.whop.com/api-reference/beta/partners/retrieve-a-referred-business",
       "markdown": "https://docs.whop.com/api-reference/beta/partners/retrieve-a-referred-business.md",
       "file": "api-reference/beta/partners/retrieve-a-referred-business.md",
@@ -2241,6 +2259,54 @@
       "file": "api-reference/beta/payments/list-payments.md",
       "indexes": [
         "llms.txt",
+        "sitemap"
+      ]
+    },
+    {
+      "page": "https://docs.whop.com/api-reference/beta/payments/payment-authorized",
+      "markdown": "https://docs.whop.com/api-reference/beta/payments/payment-authorized.md",
+      "file": "api-reference/beta/payments/payment-authorized.md",
+      "indexes": [
+        "sitemap"
+      ]
+    },
+    {
+      "page": "https://docs.whop.com/api-reference/beta/payments/payment-canceled",
+      "markdown": "https://docs.whop.com/api-reference/beta/payments/payment-canceled.md",
+      "file": "api-reference/beta/payments/payment-canceled.md",
+      "indexes": [
+        "sitemap"
+      ]
+    },
+    {
+      "page": "https://docs.whop.com/api-reference/beta/payments/payment-created",
+      "markdown": "https://docs.whop.com/api-reference/beta/payments/payment-created.md",
+      "file": "api-reference/beta/payments/payment-created.md",
+      "indexes": [
+        "sitemap"
+      ]
+    },
+    {
+      "page": "https://docs.whop.com/api-reference/beta/payments/payment-failed",
+      "markdown": "https://docs.whop.com/api-reference/beta/payments/payment-failed.md",
+      "file": "api-reference/beta/payments/payment-failed.md",
+      "indexes": [
+        "sitemap"
+      ]
+    },
+    {
+      "page": "https://docs.whop.com/api-reference/beta/payments/payment-pending",
+      "markdown": "https://docs.whop.com/api-reference/beta/payments/payment-pending.md",
+      "file": "api-reference/beta/payments/payment-pending.md",
+      "indexes": [
+        "sitemap"
+      ]
+    },
+    {
+      "page": "https://docs.whop.com/api-reference/beta/payments/payment-succeeded",
+      "markdown": "https://docs.whop.com/api-reference/beta/payments/payment-succeeded.md",
+      "file": "api-reference/beta/payments/payment-succeeded.md",
+      "indexes": [
         "sitemap"
       ]
     },
@@ -4931,8 +4997,15 @@
       "markdown": "https://docs.whop.com/api-reference/memberships/resync-access-membership.md",
       "file": "api-reference/memberships/resync-access-membership.md",
       "indexes": [
-        "llms.txt",
         "sitemap"
+      ]
+    },
+    {
+      "page": "https://docs.whop.com/api-reference/memberships/resync-membership-access",
+      "markdown": "https://docs.whop.com/api-reference/memberships/resync-membership-access.md",
+      "file": "api-reference/memberships/resync-membership-access.md",
+      "indexes": [
+        "llms.txt"
       ]
     },
     {

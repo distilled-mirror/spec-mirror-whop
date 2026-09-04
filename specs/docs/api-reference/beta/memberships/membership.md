@@ -16,17 +16,18 @@ Use the Memberships API to list an account's memberships or the caller's own, re
 
 ## Endpoints
 
-| Endpoint                                                                         | Request                                                                         |
-| -------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
-| [List Memberships](/api-reference/beta/memberships/list-memberships)             | <Badge color="blue" size="sm" stroke>GET</Badge> `/memberships`                 |
-| [Retrieve Membership](/api-reference/beta/memberships/retrieve-membership)       | <Badge color="blue" size="sm" stroke>GET</Badge> `/memberships/{id}`            |
-| [Update Membership](/api-reference/beta/memberships/update-membership)           | <Badge color="orange" size="sm" stroke>PATCH</Badge> `/memberships/{id}`        |
-| [Cancel Membership](/api-reference/beta/memberships/cancel-membership)           | <Badge color="green" size="sm" stroke>POST</Badge> `/memberships/{id}/cancel`   |
-| [Extend Membership](/api-reference/beta/memberships/extend-membership)           | <Badge color="green" size="sm" stroke>POST</Badge> `/memberships/{id}/extend`   |
-| [Pause Membership](/api-reference/beta/memberships/pause-membership)             | <Badge color="green" size="sm" stroke>POST</Badge> `/memberships/{id}/pause`    |
-| [Resume Membership](/api-reference/beta/memberships/resume-membership)           | <Badge color="green" size="sm" stroke>POST</Badge> `/memberships/{id}/resume`   |
-| [Transfer Membership](/api-reference/beta/memberships/transfer-membership)       | <Badge color="green" size="sm" stroke>POST</Badge> `/memberships/{id}/transfer` |
-| [Invite to a Membership](/api-reference/beta/memberships/invite-to-a-membership) | <Badge color="green" size="sm" stroke>POST</Badge> `/memberships/invite`        |
+| Endpoint                                                                             | Request                                                                              |
+| ------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------ |
+| [List Memberships](/api-reference/beta/memberships/list-memberships)                 | <Badge color="blue" size="sm" stroke>GET</Badge> `/memberships`                      |
+| [Retrieve Membership](/api-reference/beta/memberships/retrieve-membership)           | <Badge color="blue" size="sm" stroke>GET</Badge> `/memberships/{id}`                 |
+| [Update Membership](/api-reference/beta/memberships/update-membership)               | <Badge color="orange" size="sm" stroke>PATCH</Badge> `/memberships/{id}`             |
+| [Cancel Membership](/api-reference/beta/memberships/cancel-membership)               | <Badge color="green" size="sm" stroke>POST</Badge> `/memberships/{id}/cancel`        |
+| [Extend Membership](/api-reference/beta/memberships/extend-membership)               | <Badge color="green" size="sm" stroke>POST</Badge> `/memberships/{id}/extend`        |
+| [Pause Membership](/api-reference/beta/memberships/pause-membership)                 | <Badge color="green" size="sm" stroke>POST</Badge> `/memberships/{id}/pause`         |
+| [Resume Membership](/api-reference/beta/memberships/resume-membership)               | <Badge color="green" size="sm" stroke>POST</Badge> `/memberships/{id}/resume`        |
+| [Resync Membership Access](/api-reference/beta/memberships/resync-membership-access) | <Badge color="green" size="sm" stroke>POST</Badge> `/memberships/{id}/resync_access` |
+| [Transfer Membership](/api-reference/beta/memberships/transfer-membership)           | <Badge color="green" size="sm" stroke>POST</Badge> `/memberships/{id}/transfer`      |
+| [Invite to a Membership](/api-reference/beta/memberships/invite-to-a-membership)     | <Badge color="green" size="sm" stroke>POST</Badge> `/memberships/invite`             |
 
 ## Attributes
 

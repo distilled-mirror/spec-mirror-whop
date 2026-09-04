@@ -142,6 +142,7 @@ Style these parts through `appearance.classes`. Use camel case or kebab case for
 | `.whop-CheckoutExpressApplePay`            | The Apple Pay express button                                                                                                                                                    |
 | `.whop-CheckoutExpressButtons`             | The wallet button stack — vertical in a narrow container, side by side in a wide one                                                                                            |
 | `.whop-CheckoutExpressComplete`            | The standalone express button’s settled outcome line                                                                                                                            |
+| `.whop-CheckoutExpressContinue`            | The blocked-navigation press on the express row — finishes the trip to the payment’s off-site step                                                                              |
 | `.whop-CheckoutExpressDivider`             | The divider between express checkout and the form                                                                                                                               |
 | `.whop-CheckoutExpressError`               | The retryable error line under the express button                                                                                                                               |
 | `.whop-CheckoutExpressFinishPayment`       | The finish-payment line shown while the payment still needs a step the buyer dismissed                                                                                          |
@@ -209,7 +210,7 @@ Style these parts through `appearance.classes`. Use camel case or kebab case for
 | `.whop-PaymentInstallmentRadio`            | The radio indicator on an installment option row                                                                                                                                |
 | `.whop-PaymentInstallmentRow`              | One installment option row                                                                                                                                                      |
 | `.whop-PaymentInstallmentRowSelected`      | The selected installment option row                                                                                                                                             |
-| `.whop-PaymentInstallments`                | The card pane's installment plan picker                                                                                                                                         |
+| `.whop-PaymentInstallments`                | The payment method installment picker                                                                                                                                           |
 | `.whop-PaymentInstallmentsLabel`           | The installment picker's heading                                                                                                                                                |
 | `.whop-PaymentInstallmentsNotice`          | The issuer-fee disclaimer under a selected tier with no declared fee                                                                                                            |
 | `.whop-PaymentMandateLink`                 | The mandate terms link inside the mandate notice                                                                                                                                |
@@ -287,7 +288,7 @@ const checkout = whop.checkout.create({
   }
 });
 
-// 164 classes use this shape
+// 165 classes use this shape
 checkout.update({
   appearance: { classes: { 'whop-Address': { fontWeight: '700' } } }
 });

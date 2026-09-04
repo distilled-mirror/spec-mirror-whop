@@ -17811,6 +17811,13 @@
                           "string",
                           "null"
                         ]
+                      },
+                      "phone": {
+                        "example": "+xxxxxxxxxxx",
+                        "type": [
+                          "string",
+                          "null"
+                        ]
                       }
                     },
                     "required": [
@@ -17972,6 +17979,11 @@
                           "type",
                           "token"
                         ],
+                        "type": "object"
+                      },
+                      "redirect": {
+                        "description": "Category `redirect` only. Empty unless the method declares redirect-specific fields.",
+                        "properties": {},
                         "type": "object"
                       },
                       "saved": {
@@ -26037,6 +26049,65 @@
         ]
       }
     },
+    "/memberships/{id}/resync_access": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/ApiVersionDate"
+        },
+        {
+          "description": "Membership ID (`mem_` tag).",
+          "in": "path",
+          "name": "id",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "post": {
+        "description": "Re-runs access fulfillment for a membership: recomputes the member's content access on Whop, re-validates their Discord link (re-adding them to the server and re-assigning roles if needed), and re-fulfills TradingView indicator access. Telegram access is invite-based and is not resynced. The work runs in the background and the outcome is written to the membership's logs.",
+        "operationId": "resyncAccessMembership",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/IdempotencyKey"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Membership"
+                }
+              }
+            },
+            "description": "access resync queued"
+          },
+          "400": {
+            "$ref": "#/components/responses/InvalidParameters",
+            "description": "membership has no access to resync"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden",
+            "description": "credential lacks the resync scope"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": [
+              "membership:resync_access"
+            ]
+          }
+        ],
+        "summary": "Resync Membership Access",
+        "tags": [
+          "Memberships"
+        ]
+      }
+    },
     "/memberships/{id}/transfer": {
       "parameters": [
         {
@@ -26949,6 +27020,7 @@
                 "referral_expires_at",
                 "payout_percentage",
                 "volume_usd",
+                "volume_30d_usd",
                 "earnings_usd"
               ],
               "type": "string"
@@ -27400,6 +27472,11 @@
                                 "example": "0.00",
                                 "type": "string"
                               },
+                              "last_30d": {
+                                "description": "Credited GMV from the trailing 30 days (awaiting_settlement + settled), in USD.",
+                                "example": "0.00",
+                                "type": "string"
+                              },
                               "settled": {
                                 "description": "GMV of pending + completed payments, in USD.",
                                 "example": "40.00",
@@ -27409,7 +27486,8 @@
                             "required": [
                               "attributed",
                               "awaiting_settlement",
-                              "settled"
+                              "settled",
+                              "last_30d"
                             ],
                             "type": "object"
                           }
@@ -27935,6 +28013,11 @@
                           "example": "0.00",
                           "type": "string"
                         },
+                        "last_30d": {
+                          "description": "Credited GMV from the trailing 30 days (awaiting_settlement + settled), in USD.",
+                          "example": "0.00",
+                          "type": "string"
+                        },
                         "settled": {
                           "description": "GMV of pending + completed payments, in USD.",
                           "example": "0.00",
@@ -27944,7 +28027,8 @@
                       "required": [
                         "attributed",
                         "awaiting_settlement",
-                        "settled"
+                        "settled",
+                        "last_30d"
                       ],
                       "type": "object"
                     }
@@ -28909,6 +28993,62 @@
       "parameters": [
         {
           "$ref": "#/components/parameters/ApiVersionDate"
+        }
+      ]
+    },
+    "/partners/links": {
+      "get": {
+        "description": "Resolves the public reward terms and whether redemption capacity remains. Immediate rewards claim capacity at business creation; qualified rewards claim it when the business reaches the threshold.",
+        "operationId": "retrievePartnerLink",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OnboardingReward"
+                }
+              }
+            },
+            "description": "reward link verified"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound",
+            "description": "reward link not found"
+          }
+        },
+        "security": [],
+        "summary": "Retrieve a partner reward link",
+        "tags": [
+          "Partners"
+        ],
+        "x-mint": {
+          "metadata": {
+            "title": "Retrieve a Partner Reward Link",
+            "sidebarTitle": "Retrieve a Partner Reward Link"
+          }
+        }
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/ApiVersionDate"
+        },
+        {
+          "description": "Username from the partner link's `a` query parameter.",
+          "in": "query",
+          "name": "partner_username",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "description": "Reward slug from the partner link's `reward` query parameter.",
+          "in": "query",
+          "name": "reward_slug",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
         }
       ]
     },
@@ -45229,6 +45369,31 @@
                       "null"
                     ]
                   },
+                  "feed_id": {
+                    "description": "Ledger transfers only. The feed the transfer was initiated from. Given with `feed_type`, the payment receipt posts into that feed instead of a direct message.",
+                    "example": "feed_shineclub",
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "feed_type": {
+                    "description": "Ledger transfers only. The type of the feed named by `feed_id`.",
+                    "enum": [
+                      "dms_feed",
+                      "chat_feed",
+                      "forum_feed",
+                      "livestream_feed",
+                      "universal_post",
+                      "user",
+                      null
+                    ],
+                    "example": "chat_feed",
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
                   "idempotence_key": {
                     "description": "Ledger transfers and wallet sends. A unique key that makes retries safe. Retrying with the same key returns the original transfer, or attaches to the original wallet send, instead of moving money twice.",
                     "example": "shine-supplies-restock-118",
@@ -57095,6 +57260,1485 @@
         }
       }
     },
+    "payment.authorized": {
+      "post": {
+        "description": "Sent when a payment is authorized\n\nRequired permissions:\n - `payment:basic:read`\n - `plan:basic:read`\n - `access_pass:basic:read`\n - `member:email:read`\n - `member:basic:read`\n - `member:phone:read`\n - `promo_code:basic:read`\n - `shipment:basic:read`\n - `payment:dispute:read`\n - `payment:resolution_center_case:read`\n - `webhook_receive:payments`",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "webhook-id",
+            "required": true,
+            "schema": {
+              "description": "A unique identifier for this webhook request",
+              "example": "msg_xxxxxxxxxxxxxxxxxxxxxxxx",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "webhook-signature",
+            "required": true,
+            "schema": {
+              "description": "The signature of the webhook request with the webhook version prepended",
+              "example": "v1,BASE64ENCODEDSIGNATURE",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "webhook-timestamp",
+            "required": true,
+            "schema": {
+              "description": "The timestamp in seconds since the Unix epoch that the webhook was sent at on the server",
+              "example": "1727606400",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "example": {
+                "account_id": "biz_xxxxxxxxxxxxxx",
+                "api_version": "v1",
+                "api_version_date": "2026-09-02-2",
+                "data": {
+                  "account_id": "biz_xxxxxxxxxxxxxx",
+                  "amount_after_fees": {
+                    "amount": "50.00",
+                    "currency": "usd",
+                    "decimals": 2,
+                    "display_decimals": 2
+                  },
+                  "auto_refunded": false,
+                  "billing_address": null,
+                  "billing_reason": "subscription_cycle",
+                  "checkout_configuration_id": null,
+                  "client_secret": null,
+                  "created_at": "2026-01-01T12:00:00.000Z",
+                  "currency": "usd",
+                  "customer_phone": null,
+                  "decline_code": null,
+                  "dispute_alerted_at": null,
+                  "failure_message": null,
+                  "financing_installments_count": null,
+                  "id": "pay_xxxxxxxxxxxxxx",
+                  "last_payment_attempt_at": null,
+                  "member_id": "mber_xxxxxxxxxxxxxx",
+                  "membership_id": "mem_xxxxxxxxxxxxxx",
+                  "metadata": {},
+                  "needs_tracking": false,
+                  "next_payment_attempt_at": null,
+                  "paid_at": null,
+                  "payment_instrument": {
+                    "card": {
+                      "brand": "visa",
+                      "last4": "4242"
+                    },
+                    "display_name": "Visa •••• 4242",
+                    "icons": {
+                      "card": {
+                        "dark": {
+                          "png_1x": "https://content.whop.com/payment_methods/visa/icons/card_dark_30.png",
+                          "png_2x": "https://content.whop.com/payment_methods/visa/icons/card_dark_60.png",
+                          "png_4x": "https://content.whop.com/payment_methods/visa/icons/card_dark_120.png",
+                          "svg": "https://content.whop.com/payment_methods/visa/icons/card_dark.svg"
+                        },
+                        "light": {
+                          "png_1x": "https://content.whop.com/payment_methods/visa/icons/card_light_30.png",
+                          "png_2x": "https://content.whop.com/payment_methods/visa/icons/card_light_60.png",
+                          "png_4x": "https://content.whop.com/payment_methods/visa/icons/card_light_120.png",
+                          "svg": "https://content.whop.com/payment_methods/visa/icons/card_light.svg"
+                        }
+                      },
+                      "square": {
+                        "dark": {
+                          "png_1x": "https://content.whop.com/payment_methods/visa/icons/square_dark_32.png",
+                          "png_2x": "https://content.whop.com/payment_methods/visa/icons/square_dark_64.png",
+                          "png_4x": "https://content.whop.com/payment_methods/visa/icons/square_dark_128.png",
+                          "svg": "https://content.whop.com/payment_methods/visa/icons/square_dark.svg"
+                        },
+                        "light": {
+                          "png_1x": "https://content.whop.com/payment_methods/visa/icons/square_light_32.png",
+                          "png_2x": "https://content.whop.com/payment_methods/visa/icons/square_light_64.png",
+                          "png_4x": "https://content.whop.com/payment_methods/visa/icons/square_light_128.png",
+                          "svg": "https://content.whop.com/payment_methods/visa/icons/square_light.svg"
+                        }
+                      }
+                    },
+                    "installment_count": null,
+                    "payment_method_type": "card"
+                  },
+                  "payment_method_id": null,
+                  "payment_method_type": "card",
+                  "payments_failed": 0,
+                  "plan_id": "plan_xxxxxxxxxxxxxx",
+                  "product_id": "prod_xxxxxxxxxxxxxx",
+                  "promo_code_id": null,
+                  "refundable": false,
+                  "refunded_amount": {
+                    "amount": "0.00",
+                    "currency": "usd",
+                    "decimals": 2,
+                    "display_decimals": 2
+                  },
+                  "refunded_at": null,
+                  "retryable": false,
+                  "risk_score": null,
+                  "risk_signals": null,
+                  "settlement_time_at": null,
+                  "shipment_id": null,
+                  "shipping_address": null,
+                  "status": "authorized",
+                  "substatus": "requires_capture",
+                  "subtotal": {
+                    "amount": "50.00",
+                    "currency": "usd",
+                    "decimals": 2,
+                    "display_decimals": 2
+                  },
+                  "tax_amount": null,
+                  "tax_behavior": null,
+                  "tax_refunded_amount": {
+                    "amount": "0.00",
+                    "currency": "usd",
+                    "decimals": 2,
+                    "display_decimals": 2
+                  },
+                  "three_ds_verified": false,
+                  "total": {
+                    "amount": "50.00",
+                    "currency": "usd",
+                    "decimals": 2,
+                    "display_decimals": 2
+                  },
+                  "updated_at": "2026-01-01T12:00:00.000Z",
+                  "usd_total": {
+                    "amount": "50.00",
+                    "currency": "usd",
+                    "decimals": 2,
+                    "display_decimals": 2
+                  },
+                  "user": {
+                    "id": "user_xxxxxxxxxxxxxx",
+                    "name": "Marcus Webb",
+                    "profile_picture": {
+                      "url": "https://ui-avatars.com/api/"
+                    },
+                    "username": "marcuswebb"
+                  },
+                  "verification_checks": null,
+                  "voidable": true
+                },
+                "id": "msg_xxxxxxxxxxxxxxxxxxxxxxxx",
+                "timestamp": "2025-01-01T00:00:00.000Z",
+                "type": "payment.authorized"
+              },
+              "schema": {
+                "properties": {
+                  "account_id": {
+                    "description": "The account ID that this webhook event is associated with",
+                    "example": "biz_xxxxxxxxxxxxxx",
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "api_version": {
+                    "const": "v1",
+                    "description": "The API version for this webhook",
+                    "example": "v1",
+                    "type": "string"
+                  },
+                  "api_version_date": {
+                    "description": "The dated API version (Api-Version-Date) the payload is serialized to",
+                    "example": "2026-07-20",
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "data": {
+                    "$ref": "#/components/schemas/Payment"
+                  },
+                  "id": {
+                    "description": "A unique ID for every single webhook request",
+                    "example": "msg_xxxxxxxxxxxxxxxxxxxxxxxx",
+                    "type": "string"
+                  },
+                  "previous_attributes": {
+                    "description": "For some `.updated` events, the old values of the payload fields that changed, keyed by field name. Omitted when no capture is available for the event",
+                    "type": "object"
+                  },
+                  "timestamp": {
+                    "description": "The timestamp in ISO 8601 format that the webhook was sent at on the server",
+                    "example": "2025-01-01T00:00:00.000Z",
+                    "format": "date-time",
+                    "type": "string"
+                  },
+                  "type": {
+                    "const": "payment.authorized",
+                    "description": "The webhook event type",
+                    "example": "payment.authorized",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "id",
+                  "api_version",
+                  "api_version_date",
+                  "timestamp",
+                  "type",
+                  "data"
+                ],
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Return a 200 status to indicate that the data was received successfully"
+          }
+        },
+        "summary": "Payment Authorized",
+        "tags": [
+          "Payments"
+        ]
+      }
+    },
+    "payment.canceled": {
+      "post": {
+        "description": "Sent when a payment is canceled\n\nRequired permissions:\n - `payment:basic:read`\n - `plan:basic:read`\n - `access_pass:basic:read`\n - `member:email:read`\n - `member:basic:read`\n - `member:phone:read`\n - `promo_code:basic:read`\n - `shipment:basic:read`\n - `payment:dispute:read`\n - `payment:resolution_center_case:read`\n - `webhook_receive:payments`",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "webhook-id",
+            "required": true,
+            "schema": {
+              "description": "A unique identifier for this webhook request",
+              "example": "msg_xxxxxxxxxxxxxxxxxxxxxxxx",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "webhook-signature",
+            "required": true,
+            "schema": {
+              "description": "The signature of the webhook request with the webhook version prepended",
+              "example": "v1,BASE64ENCODEDSIGNATURE",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "webhook-timestamp",
+            "required": true,
+            "schema": {
+              "description": "The timestamp in seconds since the Unix epoch that the webhook was sent at on the server",
+              "example": "1727606400",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "example": {
+                "account_id": "biz_xxxxxxxxxxxxxx",
+                "api_version": "v1",
+                "api_version_date": "2026-09-02-2",
+                "data": {
+                  "account_id": "biz_xxxxxxxxxxxxxx",
+                  "amount_after_fees": {
+                    "amount": "50.00",
+                    "currency": "usd",
+                    "decimals": 2,
+                    "display_decimals": 2
+                  },
+                  "auto_refunded": false,
+                  "billing_address": null,
+                  "billing_reason": "subscription_cycle",
+                  "checkout_configuration_id": null,
+                  "client_secret": null,
+                  "created_at": "2026-01-01T12:00:00.000Z",
+                  "currency": "usd",
+                  "customer_phone": null,
+                  "decline_code": null,
+                  "dispute_alerted_at": null,
+                  "failure_message": null,
+                  "financing_installments_count": null,
+                  "id": "pay_xxxxxxxxxxxxxx",
+                  "last_payment_attempt_at": null,
+                  "member_id": "mber_xxxxxxxxxxxxxx",
+                  "membership_id": "mem_xxxxxxxxxxxxxx",
+                  "metadata": {},
+                  "needs_tracking": false,
+                  "next_payment_attempt_at": null,
+                  "paid_at": null,
+                  "payment_instrument": {
+                    "card": {
+                      "brand": "visa",
+                      "last4": "4242"
+                    },
+                    "display_name": "Visa •••• 4242",
+                    "icons": {
+                      "card": {
+                        "dark": {
+                          "png_1x": "https://content.whop.com/payment_methods/visa/icons/card_dark_30.png",
+                          "png_2x": "https://content.whop.com/payment_methods/visa/icons/card_dark_60.png",
+                          "png_4x": "https://content.whop.com/payment_methods/visa/icons/card_dark_120.png",
+                          "svg": "https://content.whop.com/payment_methods/visa/icons/card_dark.svg"
+                        },
+                        "light": {
+                          "png_1x": "https://content.whop.com/payment_methods/visa/icons/card_light_30.png",
+                          "png_2x": "https://content.whop.com/payment_methods/visa/icons/card_light_60.png",
+                          "png_4x": "https://content.whop.com/payment_methods/visa/icons/card_light_120.png",
+                          "svg": "https://content.whop.com/payment_methods/visa/icons/card_light.svg"
+                        }
+                      },
+                      "square": {
+                        "dark": {
+                          "png_1x": "https://content.whop.com/payment_methods/visa/icons/square_dark_32.png",
+                          "png_2x": "https://content.whop.com/payment_methods/visa/icons/square_dark_64.png",
+                          "png_4x": "https://content.whop.com/payment_methods/visa/icons/square_dark_128.png",
+                          "svg": "https://content.whop.com/payment_methods/visa/icons/square_dark.svg"
+                        },
+                        "light": {
+                          "png_1x": "https://content.whop.com/payment_methods/visa/icons/square_light_32.png",
+                          "png_2x": "https://content.whop.com/payment_methods/visa/icons/square_light_64.png",
+                          "png_4x": "https://content.whop.com/payment_methods/visa/icons/square_light_128.png",
+                          "svg": "https://content.whop.com/payment_methods/visa/icons/square_light.svg"
+                        }
+                      }
+                    },
+                    "installment_count": null,
+                    "payment_method_type": "card"
+                  },
+                  "payment_method_id": null,
+                  "payment_method_type": "card",
+                  "payments_failed": 0,
+                  "plan_id": "plan_xxxxxxxxxxxxxx",
+                  "product_id": "prod_xxxxxxxxxxxxxx",
+                  "promo_code_id": null,
+                  "refundable": false,
+                  "refunded_amount": {
+                    "amount": "0.00",
+                    "currency": "usd",
+                    "decimals": 2,
+                    "display_decimals": 2
+                  },
+                  "refunded_at": null,
+                  "retryable": false,
+                  "risk_score": null,
+                  "risk_signals": null,
+                  "settlement_time_at": null,
+                  "shipment_id": null,
+                  "shipping_address": null,
+                  "status": "void",
+                  "substatus": "canceled",
+                  "subtotal": {
+                    "amount": "50.00",
+                    "currency": "usd",
+                    "decimals": 2,
+                    "display_decimals": 2
+                  },
+                  "tax_amount": null,
+                  "tax_behavior": null,
+                  "tax_refunded_amount": {
+                    "amount": "0.00",
+                    "currency": "usd",
+                    "decimals": 2,
+                    "display_decimals": 2
+                  },
+                  "three_ds_verified": false,
+                  "total": {
+                    "amount": "50.00",
+                    "currency": "usd",
+                    "decimals": 2,
+                    "display_decimals": 2
+                  },
+                  "updated_at": "2026-01-01T12:00:00.000Z",
+                  "usd_total": {
+                    "amount": "50.00",
+                    "currency": "usd",
+                    "decimals": 2,
+                    "display_decimals": 2
+                  },
+                  "user": {
+                    "id": "user_xxxxxxxxxxxxxx",
+                    "name": "Marcus Webb",
+                    "profile_picture": {
+                      "url": "https://ui-avatars.com/api/"
+                    },
+                    "username": "marcuswebb"
+                  },
+                  "verification_checks": null,
+                  "voidable": false
+                },
+                "id": "msg_xxxxxxxxxxxxxxxxxxxxxxxx",
+                "timestamp": "2025-01-01T00:00:00.000Z",
+                "type": "payment.canceled"
+              },
+              "schema": {
+                "properties": {
+                  "account_id": {
+                    "description": "The account ID that this webhook event is associated with",
+                    "example": "biz_xxxxxxxxxxxxxx",
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "api_version": {
+                    "const": "v1",
+                    "description": "The API version for this webhook",
+                    "example": "v1",
+                    "type": "string"
+                  },
+                  "api_version_date": {
+                    "description": "The dated API version (Api-Version-Date) the payload is serialized to",
+                    "example": "2026-07-20",
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "data": {
+                    "$ref": "#/components/schemas/Payment"
+                  },
+                  "id": {
+                    "description": "A unique ID for every single webhook request",
+                    "example": "msg_xxxxxxxxxxxxxxxxxxxxxxxx",
+                    "type": "string"
+                  },
+                  "previous_attributes": {
+                    "description": "For some `.updated` events, the old values of the payload fields that changed, keyed by field name. Omitted when no capture is available for the event",
+                    "type": "object"
+                  },
+                  "timestamp": {
+                    "description": "The timestamp in ISO 8601 format that the webhook was sent at on the server",
+                    "example": "2025-01-01T00:00:00.000Z",
+                    "format": "date-time",
+                    "type": "string"
+                  },
+                  "type": {
+                    "const": "payment.canceled",
+                    "description": "The webhook event type",
+                    "example": "payment.canceled",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "id",
+                  "api_version",
+                  "api_version_date",
+                  "timestamp",
+                  "type",
+                  "data"
+                ],
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Return a 200 status to indicate that the data was received successfully"
+          }
+        },
+        "summary": "Payment Canceled",
+        "tags": [
+          "Payments"
+        ]
+      }
+    },
+    "payment.created": {
+      "post": {
+        "description": "Sent when a payment is created\n\nRequired permissions:\n - `payment:basic:read`\n - `plan:basic:read`\n - `access_pass:basic:read`\n - `member:email:read`\n - `member:basic:read`\n - `member:phone:read`\n - `promo_code:basic:read`\n - `shipment:basic:read`\n - `payment:dispute:read`\n - `payment:resolution_center_case:read`\n - `webhook_receive:payments`",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "webhook-id",
+            "required": true,
+            "schema": {
+              "description": "A unique identifier for this webhook request",
+              "example": "msg_xxxxxxxxxxxxxxxxxxxxxxxx",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "webhook-signature",
+            "required": true,
+            "schema": {
+              "description": "The signature of the webhook request with the webhook version prepended",
+              "example": "v1,BASE64ENCODEDSIGNATURE",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "webhook-timestamp",
+            "required": true,
+            "schema": {
+              "description": "The timestamp in seconds since the Unix epoch that the webhook was sent at on the server",
+              "example": "1727606400",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "example": {
+                "account_id": "biz_xxxxxxxxxxxxxx",
+                "api_version": "v1",
+                "api_version_date": "2026-09-02-2",
+                "data": {
+                  "account_id": "biz_xxxxxxxxxxxxxx",
+                  "amount_after_fees": {
+                    "amount": "50.00",
+                    "currency": "usd",
+                    "decimals": 2,
+                    "display_decimals": 2
+                  },
+                  "auto_refunded": false,
+                  "billing_address": null,
+                  "billing_reason": "subscription_cycle",
+                  "checkout_configuration_id": null,
+                  "client_secret": null,
+                  "created_at": "2026-01-01T12:00:00.000Z",
+                  "currency": "usd",
+                  "customer_phone": null,
+                  "decline_code": null,
+                  "dispute_alerted_at": null,
+                  "failure_message": null,
+                  "financing_installments_count": null,
+                  "id": "pay_xxxxxxxxxxxxxx",
+                  "last_payment_attempt_at": null,
+                  "member_id": "mber_xxxxxxxxxxxxxx",
+                  "membership_id": "mem_xxxxxxxxxxxxxx",
+                  "metadata": {},
+                  "needs_tracking": false,
+                  "next_payment_attempt_at": null,
+                  "paid_at": null,
+                  "payment_instrument": {
+                    "card": {
+                      "brand": "visa",
+                      "last4": "4242"
+                    },
+                    "display_name": "Visa •••• 4242",
+                    "icons": {
+                      "card": {
+                        "dark": {
+                          "png_1x": "https://content.whop.com/payment_methods/visa/icons/card_dark_30.png",
+                          "png_2x": "https://content.whop.com/payment_methods/visa/icons/card_dark_60.png",
+                          "png_4x": "https://content.whop.com/payment_methods/visa/icons/card_dark_120.png",
+                          "svg": "https://content.whop.com/payment_methods/visa/icons/card_dark.svg"
+                        },
+                        "light": {
+                          "png_1x": "https://content.whop.com/payment_methods/visa/icons/card_light_30.png",
+                          "png_2x": "https://content.whop.com/payment_methods/visa/icons/card_light_60.png",
+                          "png_4x": "https://content.whop.com/payment_methods/visa/icons/card_light_120.png",
+                          "svg": "https://content.whop.com/payment_methods/visa/icons/card_light.svg"
+                        }
+                      },
+                      "square": {
+                        "dark": {
+                          "png_1x": "https://content.whop.com/payment_methods/visa/icons/square_dark_32.png",
+                          "png_2x": "https://content.whop.com/payment_methods/visa/icons/square_dark_64.png",
+                          "png_4x": "https://content.whop.com/payment_methods/visa/icons/square_dark_128.png",
+                          "svg": "https://content.whop.com/payment_methods/visa/icons/square_dark.svg"
+                        },
+                        "light": {
+                          "png_1x": "https://content.whop.com/payment_methods/visa/icons/square_light_32.png",
+                          "png_2x": "https://content.whop.com/payment_methods/visa/icons/square_light_64.png",
+                          "png_4x": "https://content.whop.com/payment_methods/visa/icons/square_light_128.png",
+                          "svg": "https://content.whop.com/payment_methods/visa/icons/square_light.svg"
+                        }
+                      }
+                    },
+                    "installment_count": null,
+                    "payment_method_type": "card"
+                  },
+                  "payment_method_id": null,
+                  "payment_method_type": "card",
+                  "payments_failed": 0,
+                  "plan_id": "plan_xxxxxxxxxxxxxx",
+                  "product_id": "prod_xxxxxxxxxxxxxx",
+                  "promo_code_id": null,
+                  "refundable": false,
+                  "refunded_amount": {
+                    "amount": "0.00",
+                    "currency": "usd",
+                    "decimals": 2,
+                    "display_decimals": 2
+                  },
+                  "refunded_at": null,
+                  "retryable": true,
+                  "risk_score": null,
+                  "risk_signals": null,
+                  "settlement_time_at": null,
+                  "shipment_id": null,
+                  "shipping_address": null,
+                  "status": "open",
+                  "substatus": "incomplete",
+                  "subtotal": {
+                    "amount": "50.00",
+                    "currency": "usd",
+                    "decimals": 2,
+                    "display_decimals": 2
+                  },
+                  "tax_amount": null,
+                  "tax_behavior": null,
+                  "tax_refunded_amount": {
+                    "amount": "0.00",
+                    "currency": "usd",
+                    "decimals": 2,
+                    "display_decimals": 2
+                  },
+                  "three_ds_verified": false,
+                  "total": {
+                    "amount": "50.00",
+                    "currency": "usd",
+                    "decimals": 2,
+                    "display_decimals": 2
+                  },
+                  "updated_at": "2026-01-01T12:00:00.000Z",
+                  "usd_total": {
+                    "amount": "50.00",
+                    "currency": "usd",
+                    "decimals": 2,
+                    "display_decimals": 2
+                  },
+                  "user": {
+                    "id": "user_xxxxxxxxxxxxxx",
+                    "name": "Marcus Webb",
+                    "profile_picture": {
+                      "url": "https://ui-avatars.com/api/"
+                    },
+                    "username": "marcuswebb"
+                  },
+                  "verification_checks": null,
+                  "voidable": false
+                },
+                "id": "msg_xxxxxxxxxxxxxxxxxxxxxxxx",
+                "timestamp": "2025-01-01T00:00:00.000Z",
+                "type": "payment.created"
+              },
+              "schema": {
+                "properties": {
+                  "account_id": {
+                    "description": "The account ID that this webhook event is associated with",
+                    "example": "biz_xxxxxxxxxxxxxx",
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "api_version": {
+                    "const": "v1",
+                    "description": "The API version for this webhook",
+                    "example": "v1",
+                    "type": "string"
+                  },
+                  "api_version_date": {
+                    "description": "The dated API version (Api-Version-Date) the payload is serialized to",
+                    "example": "2026-07-20",
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "data": {
+                    "$ref": "#/components/schemas/Payment"
+                  },
+                  "id": {
+                    "description": "A unique ID for every single webhook request",
+                    "example": "msg_xxxxxxxxxxxxxxxxxxxxxxxx",
+                    "type": "string"
+                  },
+                  "previous_attributes": {
+                    "description": "For some `.updated` events, the old values of the payload fields that changed, keyed by field name. Omitted when no capture is available for the event",
+                    "type": "object"
+                  },
+                  "timestamp": {
+                    "description": "The timestamp in ISO 8601 format that the webhook was sent at on the server",
+                    "example": "2025-01-01T00:00:00.000Z",
+                    "format": "date-time",
+                    "type": "string"
+                  },
+                  "type": {
+                    "const": "payment.created",
+                    "description": "The webhook event type",
+                    "example": "payment.created",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "id",
+                  "api_version",
+                  "api_version_date",
+                  "timestamp",
+                  "type",
+                  "data"
+                ],
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Return a 200 status to indicate that the data was received successfully"
+          }
+        },
+        "summary": "Payment Created",
+        "tags": [
+          "Payments"
+        ]
+      }
+    },
+    "payment.failed": {
+      "post": {
+        "description": "Sent when a payment is failed\n\nRequired permissions:\n - `payment:basic:read`\n - `plan:basic:read`\n - `access_pass:basic:read`\n - `member:email:read`\n - `member:basic:read`\n - `member:phone:read`\n - `promo_code:basic:read`\n - `shipment:basic:read`\n - `payment:dispute:read`\n - `payment:resolution_center_case:read`\n - `webhook_receive:payments`",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "webhook-id",
+            "required": true,
+            "schema": {
+              "description": "A unique identifier for this webhook request",
+              "example": "msg_xxxxxxxxxxxxxxxxxxxxxxxx",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "webhook-signature",
+            "required": true,
+            "schema": {
+              "description": "The signature of the webhook request with the webhook version prepended",
+              "example": "v1,BASE64ENCODEDSIGNATURE",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "webhook-timestamp",
+            "required": true,
+            "schema": {
+              "description": "The timestamp in seconds since the Unix epoch that the webhook was sent at on the server",
+              "example": "1727606400",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "example": {
+                "account_id": "biz_xxxxxxxxxxxxxx",
+                "api_version": "v1",
+                "api_version_date": "2026-09-02-2",
+                "data": {
+                  "account_id": "biz_xxxxxxxxxxxxxx",
+                  "amount_after_fees": {
+                    "amount": "50.00",
+                    "currency": "usd",
+                    "decimals": 2,
+                    "display_decimals": 2
+                  },
+                  "auto_refunded": false,
+                  "billing_address": null,
+                  "billing_reason": "subscription_cycle",
+                  "checkout_configuration_id": null,
+                  "client_secret": null,
+                  "created_at": "2026-01-01T12:00:00.000Z",
+                  "currency": "usd",
+                  "customer_phone": null,
+                  "decline_code": null,
+                  "dispute_alerted_at": null,
+                  "failure_message": "Your card was declined.",
+                  "financing_installments_count": null,
+                  "id": "pay_xxxxxxxxxxxxxx",
+                  "last_payment_attempt_at": "2026-01-01T12:00:00.000Z",
+                  "member_id": "mber_xxxxxxxxxxxxxx",
+                  "membership_id": "mem_xxxxxxxxxxxxxx",
+                  "metadata": {},
+                  "needs_tracking": false,
+                  "next_payment_attempt_at": "2026-01-01T12:00:00.000Z",
+                  "paid_at": null,
+                  "payment_instrument": {
+                    "card": {
+                      "brand": "visa",
+                      "last4": "4242"
+                    },
+                    "display_name": "Visa •••• 4242",
+                    "icons": {
+                      "card": {
+                        "dark": {
+                          "png_1x": "https://content.whop.com/payment_methods/visa/icons/card_dark_30.png",
+                          "png_2x": "https://content.whop.com/payment_methods/visa/icons/card_dark_60.png",
+                          "png_4x": "https://content.whop.com/payment_methods/visa/icons/card_dark_120.png",
+                          "svg": "https://content.whop.com/payment_methods/visa/icons/card_dark.svg"
+                        },
+                        "light": {
+                          "png_1x": "https://content.whop.com/payment_methods/visa/icons/card_light_30.png",
+                          "png_2x": "https://content.whop.com/payment_methods/visa/icons/card_light_60.png",
+                          "png_4x": "https://content.whop.com/payment_methods/visa/icons/card_light_120.png",
+                          "svg": "https://content.whop.com/payment_methods/visa/icons/card_light.svg"
+                        }
+                      },
+                      "square": {
+                        "dark": {
+                          "png_1x": "https://content.whop.com/payment_methods/visa/icons/square_dark_32.png",
+                          "png_2x": "https://content.whop.com/payment_methods/visa/icons/square_dark_64.png",
+                          "png_4x": "https://content.whop.com/payment_methods/visa/icons/square_dark_128.png",
+                          "svg": "https://content.whop.com/payment_methods/visa/icons/square_dark.svg"
+                        },
+                        "light": {
+                          "png_1x": "https://content.whop.com/payment_methods/visa/icons/square_light_32.png",
+                          "png_2x": "https://content.whop.com/payment_methods/visa/icons/square_light_64.png",
+                          "png_4x": "https://content.whop.com/payment_methods/visa/icons/square_light_128.png",
+                          "svg": "https://content.whop.com/payment_methods/visa/icons/square_light.svg"
+                        }
+                      }
+                    },
+                    "installment_count": null,
+                    "payment_method_type": "card"
+                  },
+                  "payment_method_id": null,
+                  "payment_method_type": "card",
+                  "payments_failed": 1,
+                  "plan_id": "plan_xxxxxxxxxxxxxx",
+                  "product_id": "prod_xxxxxxxxxxxxxx",
+                  "promo_code_id": null,
+                  "refundable": false,
+                  "refunded_amount": {
+                    "amount": "0.00",
+                    "currency": "usd",
+                    "decimals": 2,
+                    "display_decimals": 2
+                  },
+                  "refunded_at": null,
+                  "retryable": true,
+                  "risk_score": null,
+                  "risk_signals": null,
+                  "settlement_time_at": null,
+                  "shipment_id": null,
+                  "shipping_address": null,
+                  "status": "open",
+                  "substatus": "failed",
+                  "subtotal": {
+                    "amount": "50.00",
+                    "currency": "usd",
+                    "decimals": 2,
+                    "display_decimals": 2
+                  },
+                  "tax_amount": null,
+                  "tax_behavior": null,
+                  "tax_refunded_amount": {
+                    "amount": "0.00",
+                    "currency": "usd",
+                    "decimals": 2,
+                    "display_decimals": 2
+                  },
+                  "three_ds_verified": false,
+                  "total": {
+                    "amount": "50.00",
+                    "currency": "usd",
+                    "decimals": 2,
+                    "display_decimals": 2
+                  },
+                  "updated_at": "2026-01-01T12:00:00.000Z",
+                  "usd_total": {
+                    "amount": "50.00",
+                    "currency": "usd",
+                    "decimals": 2,
+                    "display_decimals": 2
+                  },
+                  "user": {
+                    "id": "user_xxxxxxxxxxxxxx",
+                    "name": "Marcus Webb",
+                    "profile_picture": {
+                      "url": "https://ui-avatars.com/api/"
+                    },
+                    "username": "marcuswebb"
+                  },
+                  "verification_checks": null,
+                  "voidable": false
+                },
+                "id": "msg_xxxxxxxxxxxxxxxxxxxxxxxx",
+                "timestamp": "2025-01-01T00:00:00.000Z",
+                "type": "payment.failed"
+              },
+              "schema": {
+                "properties": {
+                  "account_id": {
+                    "description": "The account ID that this webhook event is associated with",
+                    "example": "biz_xxxxxxxxxxxxxx",
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "api_version": {
+                    "const": "v1",
+                    "description": "The API version for this webhook",
+                    "example": "v1",
+                    "type": "string"
+                  },
+                  "api_version_date": {
+                    "description": "The dated API version (Api-Version-Date) the payload is serialized to",
+                    "example": "2026-07-20",
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "data": {
+                    "$ref": "#/components/schemas/Payment"
+                  },
+                  "id": {
+                    "description": "A unique ID for every single webhook request",
+                    "example": "msg_xxxxxxxxxxxxxxxxxxxxxxxx",
+                    "type": "string"
+                  },
+                  "previous_attributes": {
+                    "description": "For some `.updated` events, the old values of the payload fields that changed, keyed by field name. Omitted when no capture is available for the event",
+                    "type": "object"
+                  },
+                  "timestamp": {
+                    "description": "The timestamp in ISO 8601 format that the webhook was sent at on the server",
+                    "example": "2025-01-01T00:00:00.000Z",
+                    "format": "date-time",
+                    "type": "string"
+                  },
+                  "type": {
+                    "const": "payment.failed",
+                    "description": "The webhook event type",
+                    "example": "payment.failed",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "id",
+                  "api_version",
+                  "api_version_date",
+                  "timestamp",
+                  "type",
+                  "data"
+                ],
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Return a 200 status to indicate that the data was received successfully"
+          }
+        },
+        "summary": "Payment Failed",
+        "tags": [
+          "Payments"
+        ]
+      }
+    },
+    "payment.pending": {
+      "post": {
+        "description": "Sent when a payment is pending\n\nRequired permissions:\n - `payment:basic:read`\n - `plan:basic:read`\n - `access_pass:basic:read`\n - `member:email:read`\n - `member:basic:read`\n - `member:phone:read`\n - `promo_code:basic:read`\n - `shipment:basic:read`\n - `payment:dispute:read`\n - `payment:resolution_center_case:read`\n - `webhook_receive:payments`",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "webhook-id",
+            "required": true,
+            "schema": {
+              "description": "A unique identifier for this webhook request",
+              "example": "msg_xxxxxxxxxxxxxxxxxxxxxxxx",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "webhook-signature",
+            "required": true,
+            "schema": {
+              "description": "The signature of the webhook request with the webhook version prepended",
+              "example": "v1,BASE64ENCODEDSIGNATURE",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "webhook-timestamp",
+            "required": true,
+            "schema": {
+              "description": "The timestamp in seconds since the Unix epoch that the webhook was sent at on the server",
+              "example": "1727606400",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "example": {
+                "account_id": "biz_xxxxxxxxxxxxxx",
+                "api_version": "v1",
+                "api_version_date": "2026-09-02-2",
+                "data": {
+                  "account_id": "biz_xxxxxxxxxxxxxx",
+                  "amount_after_fees": {
+                    "amount": "50.00",
+                    "currency": "usd",
+                    "decimals": 2,
+                    "display_decimals": 2
+                  },
+                  "auto_refunded": false,
+                  "billing_address": null,
+                  "billing_reason": "subscription_cycle",
+                  "checkout_configuration_id": null,
+                  "client_secret": null,
+                  "created_at": "2026-01-01T12:00:00.000Z",
+                  "currency": "usd",
+                  "customer_phone": null,
+                  "decline_code": null,
+                  "dispute_alerted_at": null,
+                  "failure_message": null,
+                  "financing_installments_count": null,
+                  "id": "pay_xxxxxxxxxxxxxx",
+                  "last_payment_attempt_at": null,
+                  "member_id": "mber_xxxxxxxxxxxxxx",
+                  "membership_id": "mem_xxxxxxxxxxxxxx",
+                  "metadata": {},
+                  "needs_tracking": false,
+                  "next_payment_attempt_at": null,
+                  "paid_at": null,
+                  "payment_instrument": {
+                    "card": null,
+                    "display_name": "ACH",
+                    "icons": {
+                      "card": {
+                        "dark": {
+                          "png_1x": "https://content.whop.com/payment_methods/ach/icons/card_dark_30.png",
+                          "png_2x": "https://content.whop.com/payment_methods/ach/icons/card_dark_60.png",
+                          "png_4x": "https://content.whop.com/payment_methods/ach/icons/card_dark_120.png",
+                          "svg": "https://content.whop.com/payment_methods/ach/icons/card_dark.svg"
+                        },
+                        "light": {
+                          "png_1x": "https://content.whop.com/payment_methods/ach/icons/card_light_30.png",
+                          "png_2x": "https://content.whop.com/payment_methods/ach/icons/card_light_60.png",
+                          "png_4x": "https://content.whop.com/payment_methods/ach/icons/card_light_120.png",
+                          "svg": "https://content.whop.com/payment_methods/ach/icons/card_light.svg"
+                        }
+                      },
+                      "square": {
+                        "dark": {
+                          "png_1x": "https://content.whop.com/payment_methods/ach/icons/square_dark_32.png",
+                          "png_2x": "https://content.whop.com/payment_methods/ach/icons/square_dark_64.png",
+                          "png_4x": "https://content.whop.com/payment_methods/ach/icons/square_dark_128.png",
+                          "svg": "https://content.whop.com/payment_methods/ach/icons/square_dark.svg"
+                        },
+                        "light": {
+                          "png_1x": "https://content.whop.com/payment_methods/ach/icons/square_light_32.png",
+                          "png_2x": "https://content.whop.com/payment_methods/ach/icons/square_light_64.png",
+                          "png_4x": "https://content.whop.com/payment_methods/ach/icons/square_light_128.png",
+                          "svg": "https://content.whop.com/payment_methods/ach/icons/square_light.svg"
+                        }
+                      }
+                    },
+                    "installment_count": null,
+                    "payment_method_type": "us_bank_account"
+                  },
+                  "payment_method_id": null,
+                  "payment_method_type": "us_bank_account",
+                  "payments_failed": 0,
+                  "plan_id": "plan_xxxxxxxxxxxxxx",
+                  "product_id": "prod_xxxxxxxxxxxxxx",
+                  "promo_code_id": null,
+                  "refundable": false,
+                  "refunded_amount": {
+                    "amount": "0.00",
+                    "currency": "usd",
+                    "decimals": 2,
+                    "display_decimals": 2
+                  },
+                  "refunded_at": null,
+                  "retryable": false,
+                  "risk_score": null,
+                  "risk_signals": null,
+                  "settlement_time_at": null,
+                  "shipment_id": null,
+                  "shipping_address": null,
+                  "status": "pending",
+                  "substatus": "pending",
+                  "subtotal": {
+                    "amount": "50.00",
+                    "currency": "usd",
+                    "decimals": 2,
+                    "display_decimals": 2
+                  },
+                  "tax_amount": null,
+                  "tax_behavior": null,
+                  "tax_refunded_amount": {
+                    "amount": "0.00",
+                    "currency": "usd",
+                    "decimals": 2,
+                    "display_decimals": 2
+                  },
+                  "three_ds_verified": false,
+                  "total": {
+                    "amount": "50.00",
+                    "currency": "usd",
+                    "decimals": 2,
+                    "display_decimals": 2
+                  },
+                  "updated_at": "2026-01-01T12:00:00.000Z",
+                  "usd_total": {
+                    "amount": "50.00",
+                    "currency": "usd",
+                    "decimals": 2,
+                    "display_decimals": 2
+                  },
+                  "user": {
+                    "id": "user_xxxxxxxxxxxxxx",
+                    "name": "Marcus Webb",
+                    "profile_picture": {
+                      "url": "https://ui-avatars.com/api/"
+                    },
+                    "username": "marcuswebb"
+                  },
+                  "verification_checks": null,
+                  "voidable": false
+                },
+                "id": "msg_xxxxxxxxxxxxxxxxxxxxxxxx",
+                "timestamp": "2025-01-01T00:00:00.000Z",
+                "type": "payment.pending"
+              },
+              "schema": {
+                "properties": {
+                  "account_id": {
+                    "description": "The account ID that this webhook event is associated with",
+                    "example": "biz_xxxxxxxxxxxxxx",
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "api_version": {
+                    "const": "v1",
+                    "description": "The API version for this webhook",
+                    "example": "v1",
+                    "type": "string"
+                  },
+                  "api_version_date": {
+                    "description": "The dated API version (Api-Version-Date) the payload is serialized to",
+                    "example": "2026-07-20",
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "data": {
+                    "$ref": "#/components/schemas/Payment"
+                  },
+                  "id": {
+                    "description": "A unique ID for every single webhook request",
+                    "example": "msg_xxxxxxxxxxxxxxxxxxxxxxxx",
+                    "type": "string"
+                  },
+                  "previous_attributes": {
+                    "description": "For some `.updated` events, the old values of the payload fields that changed, keyed by field name. Omitted when no capture is available for the event",
+                    "type": "object"
+                  },
+                  "timestamp": {
+                    "description": "The timestamp in ISO 8601 format that the webhook was sent at on the server",
+                    "example": "2025-01-01T00:00:00.000Z",
+                    "format": "date-time",
+                    "type": "string"
+                  },
+                  "type": {
+                    "const": "payment.pending",
+                    "description": "The webhook event type",
+                    "example": "payment.pending",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "id",
+                  "api_version",
+                  "api_version_date",
+                  "timestamp",
+                  "type",
+                  "data"
+                ],
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Return a 200 status to indicate that the data was received successfully"
+          }
+        },
+        "summary": "Payment Pending",
+        "tags": [
+          "Payments"
+        ]
+      }
+    },
+    "payment.succeeded": {
+      "post": {
+        "description": "Sent when a payment is succeeded\n\nRequired permissions:\n - `payment:basic:read`\n - `plan:basic:read`\n - `access_pass:basic:read`\n - `member:email:read`\n - `member:basic:read`\n - `member:phone:read`\n - `promo_code:basic:read`\n - `shipment:basic:read`\n - `payment:dispute:read`\n - `payment:resolution_center_case:read`\n - `webhook_receive:payments`",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "webhook-id",
+            "required": true,
+            "schema": {
+              "description": "A unique identifier for this webhook request",
+              "example": "msg_xxxxxxxxxxxxxxxxxxxxxxxx",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "webhook-signature",
+            "required": true,
+            "schema": {
+              "description": "The signature of the webhook request with the webhook version prepended",
+              "example": "v1,BASE64ENCODEDSIGNATURE",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "webhook-timestamp",
+            "required": true,
+            "schema": {
+              "description": "The timestamp in seconds since the Unix epoch that the webhook was sent at on the server",
+              "example": "1727606400",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "example": {
+                "account_id": "biz_xxxxxxxxxxxxxx",
+                "api_version": "v1",
+                "api_version_date": "2026-09-02-2",
+                "data": {
+                  "account_id": "biz_xxxxxxxxxxxxxx",
+                  "amount_after_fees": {
+                    "amount": "50.00",
+                    "currency": "usd",
+                    "decimals": 2,
+                    "display_decimals": 2
+                  },
+                  "auto_refunded": false,
+                  "billing_address": null,
+                  "billing_reason": "subscription_cycle",
+                  "checkout_configuration_id": null,
+                  "client_secret": null,
+                  "created_at": "2026-01-01T12:00:00.000Z",
+                  "currency": "usd",
+                  "customer_phone": null,
+                  "decline_code": null,
+                  "dispute_alerted_at": null,
+                  "failure_message": null,
+                  "financing_installments_count": null,
+                  "id": "pay_xxxxxxxxxxxxxx",
+                  "last_payment_attempt_at": null,
+                  "member_id": "mber_xxxxxxxxxxxxxx",
+                  "membership_id": "mem_xxxxxxxxxxxxxx",
+                  "metadata": {},
+                  "needs_tracking": false,
+                  "next_payment_attempt_at": null,
+                  "paid_at": "2026-01-01T12:00:00.000Z",
+                  "payment_instrument": {
+                    "card": {
+                      "brand": "visa",
+                      "last4": "4242"
+                    },
+                    "display_name": "Visa •••• 4242",
+                    "icons": {
+                      "card": {
+                        "dark": {
+                          "png_1x": "https://content.whop.com/payment_methods/visa/icons/card_dark_30.png",
+                          "png_2x": "https://content.whop.com/payment_methods/visa/icons/card_dark_60.png",
+                          "png_4x": "https://content.whop.com/payment_methods/visa/icons/card_dark_120.png",
+                          "svg": "https://content.whop.com/payment_methods/visa/icons/card_dark.svg"
+                        },
+                        "light": {
+                          "png_1x": "https://content.whop.com/payment_methods/visa/icons/card_light_30.png",
+                          "png_2x": "https://content.whop.com/payment_methods/visa/icons/card_light_60.png",
+                          "png_4x": "https://content.whop.com/payment_methods/visa/icons/card_light_120.png",
+                          "svg": "https://content.whop.com/payment_methods/visa/icons/card_light.svg"
+                        }
+                      },
+                      "square": {
+                        "dark": {
+                          "png_1x": "https://content.whop.com/payment_methods/visa/icons/square_dark_32.png",
+                          "png_2x": "https://content.whop.com/payment_methods/visa/icons/square_dark_64.png",
+                          "png_4x": "https://content.whop.com/payment_methods/visa/icons/square_dark_128.png",
+                          "svg": "https://content.whop.com/payment_methods/visa/icons/square_dark.svg"
+                        },
+                        "light": {
+                          "png_1x": "https://content.whop.com/payment_methods/visa/icons/square_light_32.png",
+                          "png_2x": "https://content.whop.com/payment_methods/visa/icons/square_light_64.png",
+                          "png_4x": "https://content.whop.com/payment_methods/visa/icons/square_light_128.png",
+                          "svg": "https://content.whop.com/payment_methods/visa/icons/square_light.svg"
+                        }
+                      }
+                    },
+                    "installment_count": null,
+                    "payment_method_type": "card"
+                  },
+                  "payment_method_id": null,
+                  "payment_method_type": "card",
+                  "payments_failed": 0,
+                  "plan_id": "plan_xxxxxxxxxxxxxx",
+                  "product_id": "prod_xxxxxxxxxxxxxx",
+                  "promo_code_id": null,
+                  "refundable": true,
+                  "refunded_amount": {
+                    "amount": "0.00",
+                    "currency": "usd",
+                    "decimals": 2,
+                    "display_decimals": 2
+                  },
+                  "refunded_at": null,
+                  "retryable": false,
+                  "risk_score": null,
+                  "risk_signals": null,
+                  "settlement_time_at": null,
+                  "shipment_id": null,
+                  "shipping_address": null,
+                  "status": "paid",
+                  "substatus": "succeeded",
+                  "subtotal": {
+                    "amount": "50.00",
+                    "currency": "usd",
+                    "decimals": 2,
+                    "display_decimals": 2
+                  },
+                  "tax_amount": null,
+                  "tax_behavior": null,
+                  "tax_refunded_amount": {
+                    "amount": "0.00",
+                    "currency": "usd",
+                    "decimals": 2,
+                    "display_decimals": 2
+                  },
+                  "three_ds_verified": false,
+                  "total": {
+                    "amount": "50.00",
+                    "currency": "usd",
+                    "decimals": 2,
+                    "display_decimals": 2
+                  },
+                  "updated_at": "2026-01-01T12:00:00.000Z",
+                  "usd_total": {
+                    "amount": "50.00",
+                    "currency": "usd",
+                    "decimals": 2,
+                    "display_decimals": 2
+                  },
+                  "user": {
+                    "id": "user_xxxxxxxxxxxxxx",
+                    "name": "Marcus Webb",
+                    "profile_picture": {
+                      "url": "https://ui-avatars.com/api/"
+                    },
+                    "username": "marcuswebb"
+                  },
+                  "verification_checks": null,
+                  "voidable": false
+                },
+                "id": "msg_xxxxxxxxxxxxxxxxxxxxxxxx",
+                "timestamp": "2025-01-01T00:00:00.000Z",
+                "type": "payment.succeeded"
+              },
+              "schema": {
+                "properties": {
+                  "account_id": {
+                    "description": "The account ID that this webhook event is associated with",
+                    "example": "biz_xxxxxxxxxxxxxx",
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "api_version": {
+                    "const": "v1",
+                    "description": "The API version for this webhook",
+                    "example": "v1",
+                    "type": "string"
+                  },
+                  "api_version_date": {
+                    "description": "The dated API version (Api-Version-Date) the payload is serialized to",
+                    "example": "2026-07-20",
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "data": {
+                    "$ref": "#/components/schemas/Payment"
+                  },
+                  "id": {
+                    "description": "A unique ID for every single webhook request",
+                    "example": "msg_xxxxxxxxxxxxxxxxxxxxxxxx",
+                    "type": "string"
+                  },
+                  "previous_attributes": {
+                    "description": "For some `.updated` events, the old values of the payload fields that changed, keyed by field name. Omitted when no capture is available for the event",
+                    "type": "object"
+                  },
+                  "timestamp": {
+                    "description": "The timestamp in ISO 8601 format that the webhook was sent at on the server",
+                    "example": "2025-01-01T00:00:00.000Z",
+                    "format": "date-time",
+                    "type": "string"
+                  },
+                  "type": {
+                    "const": "payment.succeeded",
+                    "description": "The webhook event type",
+                    "example": "payment.succeeded",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "id",
+                  "api_version",
+                  "api_version_date",
+                  "timestamp",
+                  "type",
+                  "data"
+                ],
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Return a 200 status to indicate that the data was received successfully"
+          }
+        },
+        "summary": "Payment Succeeded",
+        "tags": [
+          "Payments"
+        ]
+      }
+    },
     "payout.created": {
       "post": {
         "description": "Sent when a payout is created (this event family replaces withdrawal.*)\n\nRequired permissions:\n - `webhook_receive:withdrawals`",
@@ -59185,6 +60829,9 @@
                       "ng_ussd",
                       "ng_wallet",
                       "nz_bank_account",
+                      "oney",
+                      "oney_3x",
+                      "oney_4x",
                       "oxxo",
                       "p24",
                       "pago_efectivo",
@@ -59471,6 +61118,9 @@
                       "ng_ussd",
                       "ng_wallet",
                       "nz_bank_account",
+                      "oney",
+                      "oney_3x",
+                      "oney_4x",
                       "oxxo",
                       "p24",
                       "pago_efectivo",
@@ -59757,6 +61407,9 @@
                       "ng_ussd",
                       "ng_wallet",
                       "nz_bank_account",
+                      "oney",
+                      "oney_3x",
+                      "oney_4x",
                       "oxxo",
                       "p24",
                       "pago_efectivo",
@@ -66647,6 +68300,7 @@
             "enum": [
               "deposit_funds",
               "submit_information_request",
+              "update_automatic_withdrawal_method",
               "reauthorize_payout_methods",
               "update_payout_profile",
               "card_usage_review",
@@ -75015,7 +76669,12 @@
               "withdrawal_markup_fee_reversal",
               "withdrawal_reclassification",
               "withdrawal_reversal",
-              "withdrawal_topup_adjustment"
+              "withdrawal_topup_adjustment",
+              "deposit",
+              "wallet_transfer_incoming",
+              "wallet_transfer_outgoing",
+              "swap_source",
+              "swap_target"
             ],
             "example": "payment_gross",
             "type": "string"
@@ -77127,6 +78786,113 @@
         ],
         "type": "object"
       },
+      "OnboardingReward": {
+        "properties": {
+          "expires_at": {
+            "description": "When the reward stops accepting new claims and qualifying volume, as an ISO 8601 timestamp. Null when it does not expire.",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "id": {
+            "description": "Onboarding reward ID, prefixed `onbr_`.",
+            "example": "onbr_xxxxxxxxxxxxxx",
+            "type": "string"
+          },
+          "partner": {
+            "$ref": "#/components/schemas/UserSummary",
+            "description": "Partner whose link attributed this reward."
+          },
+          "qualification_amount": {
+            "description": "Required qualifying volume. Null for an immediate reward.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/Money"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "qualification_income_source": {
+            "description": "Income source whose volume qualifies the business. Null for an immediate reward.",
+            "enum": [
+              "sales",
+              "ad_spend",
+              null
+            ],
+            "example": "sales",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "qualification_met": {
+            "description": "Whether the attributed business met the requirement. Null before a business claims the link.",
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "qualification_progress": {
+            "description": "Qualifying volume accumulated by the attributed business. Null before a business claims the link and for immediate rewards.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/Money"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "reward_amount": {
+            "$ref": "#/components/schemas/Money",
+            "description": "Reward value delivered after qualification."
+          },
+          "reward_type": {
+            "description": "How the reward is delivered.",
+            "enum": [
+              "ad_credit",
+              "balance_credit"
+            ],
+            "example": "balance_credit",
+            "type": "string"
+          },
+          "rewarded": {
+            "description": "Whether the reward was credited to the attributed business. Null before a business claims the link.",
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "status": {
+            "description": "Whether the reward can still be claimed: `available`, `fully_claimed`, `expired`, or `unavailable`.",
+            "enum": [
+              "available",
+              "fully_claimed",
+              "expired",
+              "unavailable"
+            ],
+            "example": "available",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "status",
+          "reward_type",
+          "reward_amount",
+          "qualification_income_source",
+          "qualification_amount",
+          "qualification_progress",
+          "qualification_met",
+          "rewarded",
+          "expires_at",
+          "partner"
+        ],
+        "type": "object"
+      },
       "Passkey": {
         "properties": {
           "created_at": {
@@ -78523,6 +80289,9 @@
           "ng_ussd",
           "ng_wallet",
           "nz_bank_account",
+          "oney",
+          "oney_3x",
+          "oney_4x",
           "oxxo",
           "p24",
           "pago_efectivo",

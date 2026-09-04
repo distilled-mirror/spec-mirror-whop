@@ -17,6 +17,7 @@ Use it to enroll as a Whop partner, list the users you referred, list your refer
 | [Retrieve a referred business](/api-reference/beta/partners/retrieve-a-referred-business)             | <Badge color="blue" size="sm" stroke>GET</Badge> `/partners/businesses/{id}`          |
 | [List referred business earnings](/api-reference/beta/partners/list-referred-business-earnings)       | <Badge color="blue" size="sm" stroke>GET</Badge> `/partners/businesses/{id}/earnings` |
 | [Retrieve the leaderboard](/api-reference/beta/partners/retrieve-the-leaderboard)                     | <Badge color="blue" size="sm" stroke>GET</Badge> `/partners/leaderboard`              |
+| [Retrieve a partner reward link](/api-reference/beta/partners/retrieve-a-partner-reward-link)         | <Badge color="blue" size="sm" stroke>GET</Badge> `/partners/links`                    |
 | [List the users the caller referred](/api-reference/beta/partners/list-the-users-the-caller-referred) | <Badge color="blue" size="sm" stroke>GET</Badge> `/partners/referred_users`           |
 
 ## Attributes
@@ -172,7 +173,7 @@ Use it to enroll as a Whop partner, list the users you referred, list your refer
             <ResponseField name="action" type="string" required>
               What the holder must do; new values may be added, so handle unknown actions gracefully
 
-              Available options: `deposit_funds`, `submit_information_request`, `reauthorize_payout_methods`, `update_payout_profile`, `card_usage_review`, `verify_identity`, `sign_formation_documents`, `connect_fulfillment_tracker`, `setup_apple_pay_domains`, `configure_tax_remitter`, `add_vat_registration`
+              Available options: `deposit_funds`, `submit_information_request`, `update_automatic_withdrawal_method`, `reauthorize_payout_methods`, `update_payout_profile`, `card_usage_review`, `verify_identity`, `sign_formation_documents`, `connect_fulfillment_tracker`, `setup_apple_pay_domains`, `configure_tax_remitter`, `add_vat_registration`
             </ResponseField>
 
             <ResponseField name="blocked_capabilities" type="string[]" required>
@@ -410,6 +411,11 @@ Use it to enroll as a Whop partner, list the users you referred, list your refer
           GMV awaiting settlement (commission not yet computed), in USD.
         </ResponseField>
 
+        <ResponseField name="last_30d" type="string" required>
+          Credited GMV from the trailing 30 days (awaiting\_settlement + settled), in
+          USD.
+        </ResponseField>
+
         <ResponseField name="settled" type="string" required>
           GMV of pending + completed payments, in USD.
         </ResponseField>
@@ -519,7 +525,8 @@ Use it to enroll as a Whop partner, list the users you referred, list your refer
       	"volume_usd": {
       		"attributed": "11050.00",
       		"awaiting_settlement": "250.00",
-      		"settled": "10800.00"
+      		"settled": "10800.00",
+      		"last_30d": "3200.00"
       	}
       }
       ```

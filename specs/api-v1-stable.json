@@ -2191,6 +2191,10 @@
       "CheckoutConfiguration": {
         "description": "A checkout configuration is a reusable configuration for a checkout, including the plan, affiliate, and custom metadata. Payments and memberships created from a checkout session inherit its metadata.",
         "properties": {
+          "account_id": {
+            "description": "The ID of the account to use for the checkout configuration",
+            "type": "string"
+          },
           "affiliate_code": {
             "description": "The affiliate code to use for the checkout configuration",
             "type": [
@@ -2199,7 +2203,7 @@
             ]
           },
           "company_id": {
-            "description": "The ID of the company to use for the checkout configuration",
+            "description": "The ID of the account to use for the checkout configuration",
             "type": "string"
           },
           "currency": {
@@ -2370,6 +2374,7 @@
         "required": [
           "id",
           "company_id",
+          "account_id",
           "mode",
           "currency",
           "plan",
@@ -2384,6 +2389,10 @@
       "CheckoutConfigurationListItem": {
         "description": "A checkout configuration is a reusable configuration for a checkout, including the plan, affiliate, and custom metadata. Payments and memberships created from a checkout session inherit its metadata.",
         "properties": {
+          "account_id": {
+            "description": "The ID of the account to use for the checkout configuration",
+            "type": "string"
+          },
           "affiliate_code": {
             "description": "The affiliate code to use for the checkout configuration",
             "type": [
@@ -2392,7 +2401,7 @@
             ]
           },
           "company_id": {
-            "description": "The ID of the company to use for the checkout configuration",
+            "description": "The ID of the account to use for the checkout configuration",
             "type": "string"
           },
           "currency": {
@@ -2563,6 +2572,7 @@
         "required": [
           "id",
           "company_id",
+          "account_id",
           "mode",
           "currency",
           "plan",
@@ -16178,6 +16188,9 @@
           "ng_ussd",
           "ng_wallet",
           "nz_bank_account",
+          "oney",
+          "oney_3x",
+          "oney_4x",
           "oxxo",
           "p24",
           "pago_efectivo",
@@ -19905,8 +19918,15 @@
       "SupportChannel": {
         "description": "A messaging channel that can be a one-on-one DM, group chat, company support conversation, or platform-level direct message.",
         "properties": {
+          "account_id": {
+            "description": "The unique identifier of the account associated with this channel. Null if this is not a support or account-scoped conversation.",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
           "company_id": {
-            "description": "The unique identifier of the company associated with this channel. Null if this is not a support or company-scoped conversation.",
+            "description": "The unique identifier of the account associated with this channel. Null if this is not a support or account-scoped conversation.",
             "type": [
               "string",
               "null"
@@ -19978,6 +19998,7 @@
         "required": [
           "id",
           "company_id",
+          "account_id",
           "custom_name",
           "customer_user",
           "resolved_at",
@@ -19988,8 +20009,15 @@
       "SupportChannelListItem": {
         "description": "A messaging channel that can be a one-on-one DM, group chat, company support conversation, or platform-level direct message.",
         "properties": {
+          "account_id": {
+            "description": "The unique identifier of the account associated with this channel. Null if this is not a support or account-scoped conversation.",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
           "company_id": {
-            "description": "The unique identifier of the company associated with this channel. Null if this is not a support or company-scoped conversation.",
+            "description": "The unique identifier of the account associated with this channel. Null if this is not a support or account-scoped conversation.",
             "type": [
               "string",
               "null"
@@ -20061,6 +20089,7 @@
         "required": [
           "id",
           "company_id",
+          "account_id",
           "custom_name",
           "customer_user",
           "resolved_at",
@@ -20847,7 +20876,7 @@
   "paths": {
     "/access_tokens": {
       "post": {
-        "description": "Create a short-lived access token for authenticating API requests. When using API key authentication, provide company_id or user_id. When using OAuth, the user is derived from the token. Use this token with Whop's web and mobile embedded components.",
+        "description": "Create a short-lived access token for authenticating API requests. When using API key authentication, provide account_id or user_id. When using OAuth, the user is derived from the token. Use this token with Whop's web and mobile embedded components.",
         "operationId": "createAccessToken",
         "parameters": [],
         "requestBody": {
@@ -26905,8 +26934,8 @@
               "schema": {
                 "description": "Parameters for CreateAiChat",
                 "properties": {
-                  "current_company_id": {
-                    "description": "The unique identifier of the company to set as context for the AI chat (e.g., \"biz_XXXXX\").",
+                  "current_account_id": {
+                    "description": "The unique identifier of the account to set as context for the AI chat (e.g., \"biz_XXXXX\").",
                     "type": [
                       "string",
                       "null"
@@ -28135,7 +28164,7 @@
         ]
       },
       "patch": {
-        "description": "Update an AI chat's title, notification preferences, or associated company context.\n\nRequired permissions:\n - `ai_chat:update`",
+        "description": "Update an AI chat's title, notification preferences, or associated account context.\n\nRequired permissions:\n - `ai_chat:update`",
         "operationId": "updateAiChat",
         "parameters": [
           {
@@ -28155,8 +28184,8 @@
               "schema": {
                 "description": "Parameters for UpdateAiChat",
                 "properties": {
-                  "current_company_id": {
-                    "description": "The unique identifier of the company to set as context for the AI chat (e.g., \"biz_XXXXX\").",
+                  "current_account_id": {
+                    "description": "The unique identifier of the account to set as context for the AI chat (e.g., \"biz_XXXXX\").",
                     "type": [
                       "string",
                       "null"
@@ -66219,7 +66248,7 @@
         ]
       },
       "post": {
-        "description": "Create a new forum post or comment within an experience. Supports text content, attachments, polls, paywalling, and pinning. Pass experience_id 'public' with a company_id to post to a company's public forum.\n\nRequired permissions:\n - `forum:post:create`",
+        "description": "Create a new forum post or comment within an experience. Supports text content, attachments, polls, paywalling, and pinning. Pass experience_id 'public' with an account_id to post to an account's public forum.\n\nRequired permissions:\n - `forum:post:create`",
         "operationId": "createForumPost",
         "parameters": [],
         "requestBody": {
@@ -66265,7 +66294,7 @@
                     ]
                   },
                   "experience_id": {
-                    "description": "The unique identifier of the experience to create this post in. For example, 'exp_xxxxx'. Pass 'public' along with company_id to automatically use the company's public forum.",
+                    "description": "The unique identifier of the experience to create this post in. For example, 'exp_xxxxx'. Pass 'public' along with account_id to automatically use the account's public forum.",
                     "example": "exp_xxxxxxxxxxxxxx",
                     "type": "string"
                   },
@@ -68938,7 +68967,7 @@
     },
     "/identity_profiles": {
       "get": {
-        "description": "Returns a paginated list of identity profiles. When company_id is provided, lists IPs currently linked to that company's ledger. When omitted, lists IPs linked to any ledger the actor can read (including child companies under a parent).\n\nRequired permissions:\n - `identity:read`",
+        "description": "Returns a paginated list of identity profiles. When account_id is provided, lists IPs currently linked to that account's ledger. When omitted, lists IPs linked to any ledger the actor can read (including child accounts under a parent).\n\nRequired permissions:\n - `identity:read`",
         "operationId": "listIdentityProfile",
         "parameters": [
           {
@@ -85656,7 +85685,7 @@
             "name": "member_id",
             "required": false,
             "schema": {
-              "description": "The unique identifier of the member to list payment methods for. Omit this and company_id to list your own saved payment methods.",
+              "description": "The unique identifier of the member to list payment methods for. Omit this and account_id to list your own saved payment methods.",
               "example": "mber_xxxxxxxxxxxxx",
               "type": "string"
             },
@@ -86215,7 +86244,7 @@
             "name": "member_id",
             "required": false,
             "schema": {
-              "description": "The unique identifier of the member. Provide either this or company_id, not both. Omit both to address your own saved payment methods.",
+              "description": "The unique identifier of the member. Provide either this or account_id, not both. Omit both to address your own saved payment methods.",
               "example": "mber_xxxxxxxxxxxxx",
               "type": "string"
             },
@@ -86607,7 +86636,7 @@
         "x-group-title": "Payins"
       },
       "get": {
-        "description": "Retrieves the details of an existing payment method. Addresses a member's wallet when member_id or company_id is given, otherwise your own.\n\nRequired permissions:\n - `member:payment_methods:read`",
+        "description": "Retrieves the details of an existing payment method. Addresses a member's wallet when member_id or account_id is given, otherwise your own.\n\nRequired permissions:\n - `member:payment_methods:read`",
         "operationId": "retrievePaymentMethod",
         "parameters": [
           {
@@ -86626,7 +86655,7 @@
             "name": "member_id",
             "required": false,
             "schema": {
-              "description": "The unique identifier of the member. Provide either this or company_id, not both. Omit both to address your own saved payment methods.",
+              "description": "The unique identifier of the member. Provide either this or account_id, not both. Omit both to address your own saved payment methods.",
               "example": "mber_xxxxxxxxxxxxx",
               "type": "string"
             },
