@@ -4,9 +4,9 @@
 
 # WebsitesElement
 
-> An account's websites in one table: every site built on whop.app — listed from the moment it exists, zeros until traffic arrives — merged by hostname with every domain the Whop Pixel reports. Rows for the whop.app sites carry a Whop mark, so the two sources stay apart even when both have traffic. Each row shows a page-view trend, unique visitors, page views, attributed sales, USD revenue, and the last day an event arrived. Expanding a domain loads its most-viewed pages, and each page-view figure opens the breakdown of which events made it up. Set `showVerify` to add a per-row button that asks the page hosting this element to open the site and confirm the pixel is firing; set `showSettings` to add a settings button on whop.app rows that reports the click through `onSettingsRequested`, and `showEdit` to add a primary edit button reporting through `onEditRequested` — your page owns the actual editing.
+> An account's websites in one table: every site built on whop.site — listed from the moment it exists, zeros until traffic arrives — merged by hostname with every domain the Whop Pixel reports. Rows for the whop.site ones carry a Whop mark, so the two sources stay apart even when both have traffic. Each row shows a page-view trend, unique visitors, page views, attributed sales, USD revenue, and the last day an event arrived. Expanding a domain loads its most-viewed pages, and each page-view figure opens the breakdown of which events made it up. Set `showVerify` to add a per-row button that asks the page hosting this element to open the site and confirm the pixel is firing; set `showSettings` to add a settings button on whop.site rows that reports the click through `onSettingsRequested`, and `showEdit` to add a primary edit button reporting through `onEditRequested` — your page owns the actual editing.
 
-<Info>This page documents `@whop/elements@1.0.0-beta.2` and `@whop/elements-react@1.0.0-beta.2`.</Info>
+<Info>This page documents `@whop/elements@1.0.0-beta.3` and `@whop/elements-react@1.0.0-beta.3`.</Info>
 
 *Pre-release, not yet part of a stable release.*
 
@@ -52,7 +52,7 @@ Mounts inside [`Websites`](/elements/beta/websites/overview). `accountId` and `w
     <div data-whop-demo-shell style={{ position: "relative", minHeight: "320px", transition: "min-height 200ms ease" }}>
       <div data-whop-demo-skeleton style={{ position: "absolute", inset: "0", borderRadius: "12px", background: "rgba(140, 140, 140, 0.12)", pointerEvents: "none", transition: "opacity 200ms ease" }} />
 
-      <div data-whop-demo-native="element:websites/websites" data-whop-elements-version="1.0.0-beta.2" style={{ position: "relative" }} />
+      <div data-whop-demo-native="element:websites/websites" data-whop-elements-version="1.0.0-beta.3" style={{ position: "relative" }} />
     </div>
 
     <p style={{ fontSize: "0.8125rem", opacity: 0.7 }}>Example data. [Open the Playground](/elements/beta/websites/overview#playground).</p>
@@ -87,13 +87,13 @@ The pixel-check button was pressed. Open `url` and watch for pixel events on you
 
 ### `onSettingsRequested`
 
-The settings button on a whop.app row was pressed. The element only reports the click — open your own editing surface for the app.
+The settings button on a whop.site row was pressed. The element only reports the click — open your own editing surface for the app.
 
 **Signature:** `((payload: { appId: string; route: string; domain: string; }) => void)`
 
 ### `onEditRequested`
 
-The edit button on a whop.app row was pressed. The element only reports the click — open your own editing surface for the app.
+The edit button on a whop.site row was pressed. The element only reports the click — open your own editing surface for the app.
 
 **Signature:** `((payload: { appId: string; route: string; domain: string; }) => void)`
 

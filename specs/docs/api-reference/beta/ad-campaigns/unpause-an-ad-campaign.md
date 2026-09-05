@@ -4,7 +4,7 @@
 
 # Unpause an Ad Campaign
 
-> Resumes a paused ad campaign.
+> Resumes a paused ad campaign. Requires an ads payment method on the account.
 
 
 

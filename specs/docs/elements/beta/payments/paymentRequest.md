@@ -6,7 +6,7 @@
 
 > Low-level Apple Pay or Google Pay sheet for custom buttons, express checkout, and shipping callbacks. Wallet tiles automate this flow through `payments.createConfirmationToken`. Await `canMakePayment()` to check availability and prime the sheet, then call `show(type)` synchronously in the user-interaction handler. The resolved `ctok` is a `ctok_`-prefixed confirmation token. Confirm it server-side like an element-minted token.
 
-<Info>This page documents `@whop/elements@1.0.0-beta.2` and `@whop/elements-react@1.0.0-beta.2`.</Info>
+<Info>This page documents `@whop/elements@1.0.0-beta.3` and `@whop/elements-react@1.0.0-beta.3`.</Info>
 
 *Pre-release, not yet part of a stable release.*
 
@@ -60,7 +60,7 @@ Call these on the resource.
 
 ### `canMakePayment`
 
-Returns availability for each wallet when the account offers it, the device supports it, and this page's origin is approved for the account (first-party whop.com pages are pre-approved; a merchant page needs its domain registered as a payment method domain). Apple Pay on non-WebKit browsers is the desktop iPhone-handoff flow, so mobile devices there report it unavailable — native Apple Pay on iOS browsers is unaffected. `order` ranks the wallets by which sheet is native to the browser — Apple Pay first on Safari, Google Pay first elsewhere — so express buttons can stack best-first. This primes `show()`. Always await it first.
+Returns availability for each wallet when the account offers it, the device supports it, and this page's origin is approved for the account (first-party whop.com pages are pre-approved; a merchant page needs its domain registered and verified as a [payment method domain](/api-reference/beta/payment-method-domains/payment-method-domain)). Apple Pay on non-WebKit browsers is the desktop iPhone-handoff flow, so mobile devices there report it unavailable — native Apple Pay on iOS browsers is unaffected. `order` ranks the wallets by which sheet is native to the browser — Apple Pay first on Safari, Google Pay first elsewhere — so express buttons can stack best-first. This primes `show()`. Always await it first.
 
 **Signature:** `() => Promise<WalletAvailability>`
 

@@ -4,13 +4,13 @@
 
 # WithdrawElement
 
-> Collects a payout amount and saved payout method, groups standard and instant delivery choices with live fees and arrival estimates, collects a new payout method when needed, and presents a confirmation screen before emitting the final payout request.
+> Collects a payout amount and saved payout method, groups standard and instant delivery choices with live fees and arrival estimates, and collects a new payout method when needed. When the host does not drive the flow, the element lists methods and creates the payout itself — pass `accessToken` (or rely on the viewer's same-origin session). A host that already talks to the payouts API can still supply methods, limits, and loading flags; confirming then emits `withdrawalRequested` for that host to create.
 
-<Info>This page documents `@whop/elements@1.0.0-beta.2` and `@whop/elements-react@1.0.0-beta.2`.</Info>
+<Info>This page documents `@whop/elements@1.0.0-beta.3` and `@whop/elements-react@1.0.0-beta.3`.</Info>
 
 *Pre-release, not yet part of a stable release.*
 
-Mounts inside [`Wallet`](/elements/beta/wallet/overview). Pass props and callbacks through the create options or React props.
+Mounts inside [`Wallet`](/elements/beta/wallet/overview). `accountId` and `accessToken` come from there. Pass props and callbacks through the create options or React props. Keep the created handle, or React `ref`, to call `refresh()`.
 
 <Note>You can mount this element **inline** (`create`) or open it as a **modal** overlay (`createOverlay`).</Note>
 
@@ -26,7 +26,7 @@ Mounts inside [`Wallet`](/elements/beta/wallet/overview). Pass props and callbac
           return (
             <WhopElements elements={loadWhop()}>
               <Wallet /* options */>
-                <WithdrawElement onAmountChanged={(e) => console.log(e)} onCountryChanged={(e) => console.log(e)} onSupportedMethodChanged={(e) => console.log(e)} onAddMethodRequested={(e) => console.log(e)} onPlaidLinkRequested={(e) => console.log(e)} onMethodVerificationCompleted={(e) => console.log(e)} onRenameMethodRequested={(e) => console.log(e)} onRemoveMethodRequested={(e) => console.log(e)} onWithdrawalRequested={(e) => console.log(e)} onDone={(e) => console.log(e)} />
+                <WithdrawElement onAmountChanged={(e) => console.log(e)} onCountryChanged={(e) => console.log(e)} onSupportedMethodChanged={(e) => console.log(e)} onAddMethodRequested={(e) => console.log(e)} onPlaidLinkRequested={(e) => console.log(e)} onMethodVerificationCompleted={(e) => console.log(e)} onRenameMethodRequested={(e) => console.log(e)} onRemoveMethodRequested={(e) => console.log(e)} onPayoutQuoteRequested={(e) => console.log(e)} onWithdrawalRequested={(e) => console.log(e)} onDone={(e) => console.log(e)} />
               </Wallet>
             </WhopElements>
           );
@@ -46,6 +46,7 @@ Mounts inside [`Wallet`](/elements/beta/wallet/overview). Pass props and callbac
             onMethodVerificationCompleted: (e) => console.log(e),
             onRenameMethodRequested: (e) => console.log(e),
             onRemoveMethodRequested: (e) => console.log(e),
+            onPayoutQuoteRequested: (e) => console.log(e),
             onWithdrawalRequested: (e) => console.log(e),
             onDone: (e) => console.log(e)
           }).mount('#wallet-withdraw');
@@ -59,7 +60,7 @@ Mounts inside [`Wallet`](/elements/beta/wallet/overview). Pass props and callbac
     <div data-whop-demo-shell style={{ position: "relative", minHeight: "320px", transition: "min-height 200ms ease" }}>
       <div data-whop-demo-skeleton style={{ position: "absolute", inset: "0", borderRadius: "12px", background: "rgba(140, 140, 140, 0.12)", pointerEvents: "none", transition: "opacity 200ms ease" }} />
 
-      <div data-whop-demo-native="element:wallet/withdraw" data-whop-elements-version="1.0.0-beta.2" style={{ position: "relative" }} />
+      <div data-whop-demo-native="element:wallet/withdraw" data-whop-elements-version="1.0.0-beta.3" style={{ position: "relative" }} />
     </div>
 
     <p style={{ fontSize: "0.8125rem", opacity: 0.7 }}>Example data. [Open the Playground](/elements/beta/wallet/overview#playground).</p>
@@ -67,6 +68,10 @@ Mounts inside [`Wallet`](/elements/beta/wallet/overview). Pass props and callbac
 </div>
 
 ## Props
+
+<ResponseField name="accessToken" type="string">
+  A scoped token for listing payout methods and creating the payout — needs `payout:withdraw_funds`, `payout:destination:read`, and `payout:create_destination` to add a bank. Omitted, the calls carry the viewer's own session, which only answers same-origin.
+</ResponseField>
 
 <ResponseField name="succeeded" type="boolean">
   Whether the confirmed payout was created successfully. Defaults to `false`.
@@ -106,6 +111,34 @@ Mounts inside [`Wallet`](/elements/beta/wallet/overview). Pass props and callbac
 
 <ResponseField name="quoteLoading" type="boolean">
   Whether the current amount is being repriced. Defaults to `false`.
+</ResponseField>
+
+<ResponseField name="payoutQuoteRequired" type="boolean">
+  Whether this payout must use an exact provider-backed quote before confirmation. Defaults to `false`.
+</ResponseField>
+
+<ResponseField name="payoutQuote" type="WithdrawalPayoutQuote | null">
+  The exact short-lived payout quote returned for the current confirmation request. Defaults to `null`.
+</ResponseField>
+
+<ResponseField name="payoutQuoteLoading" type="boolean">
+  Whether an exact payout quote is being created. Defaults to `false`.
+</ResponseField>
+
+<ResponseField name="payoutQuoteError" type="string">
+  The error from the current exact payout quote request, if any. Defaults to `""`.
+</ResponseField>
+
+<ResponseField name="payoutQuoteRetryRequired" type="boolean">
+  Whether the last quote request was inconclusive and must be retried with the same request ID. Defaults to `false`.
+</ResponseField>
+
+<ResponseField name="withdrawalRetryRequired" type="boolean">
+  Whether the last payout result was inconclusive and must be retried exactly. Defaults to `false`.
+</ResponseField>
+
+<ResponseField name="unresolvedWithdrawalRequest" type="WithdrawalRequest | null">
+  The exact unresolved payout request to retry after the element remounts. Defaults to `null`.
 </ResponseField>
 
 <ResponseField name="savingMethod" type="boolean">
@@ -188,9 +221,15 @@ The payer requested to remove a saved payout method.
 
 **Signature:** `((payload: { methodId: string; }) => void)`
 
+### `onPayoutQuoteRequested`
+
+The payer requested an exact short-lived quote before confirming a payout.
+
+**Signature:** `((payload: WithdrawalPayoutQuoteRequest) => void)`
+
 ### `onWithdrawalRequested`
 
-The payer confirmed the final payout details. Create the payout on receipt.
+The payer confirmed the payout. When the host is driving the flow, create the payout on receipt. When the element created it, this fires after success so the host can refresh balances — do not create a second payout.
 
 **Signature:** `((payload: WithdrawalRequest) => void)`
 
@@ -221,6 +260,12 @@ Runs when the element fails to load or crashes. The fallback remains visible. Us
 ## Methods
 
 Call these on the handle returned by `create`, or through a React `ref`.
+
+### `refresh`
+
+Re-fetch saved payout methods and limits. Call it after anything on your side changes what the account can pay out to.
+
+**Signature:** `() => Promise<void>`
 
 ### `mount`
 

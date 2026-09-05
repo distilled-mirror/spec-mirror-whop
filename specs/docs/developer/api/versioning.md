@@ -35,7 +35,13 @@ Every version automatically gets new endpoints and optional fields. Breaking cha
 
 ## Changelog
 
-<Update label="2026-09-02-2" description="Deposit destinations are an account ID" tags={["Latest"]}>
+<Update label="2026-09-04" description="Ending an experiment requires findings" tags={["Latest"]}>
+  `POST /experiments/{id}/end` requires `findings` in the request body — a short explanation of what was learned and why the experiment ended the way it did.
+
+  Pinned callers on an earlier version may still omit it. A placeholder findings value is recorded on their behalf instead of a `400`.
+</Update>
+
+<Update label="2026-09-02-2" description="Deposit destinations are an account ID">
   `POST /deposits` takes a `destination` account ID string — `biz_…` or `user_…` — and nothing else.
 
   * Raw wallet addresses are no longer accepted. Fund an account and read its addresses from `methods.crypto`.

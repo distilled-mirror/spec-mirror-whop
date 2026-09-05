@@ -4,9 +4,9 @@
 
 # Balances
 
-> Two views of an account's money. The balance view shows the total, a chart of how it changed, and a picker for the time range. The list view shows the holdings that make up that total, valued in dollars.
+> Three views of an account's money. The balance view shows the total, a chart of how it changed, and a picker for the time range. The list view shows the holdings that make up that total, valued in dollars. The breakdown view splits one currency into available, pending, reserve, and negative amounts without money-movement controls. When `openHoldingOnSelect` is on, a list row replaces this unit's canvas — the chart and the list — with that holding's balance page instead of only reporting the click.
 
-<Info>This page documents `@whop/elements@1.0.0-beta.2` and `@whop/elements-react@1.0.0-beta.2`.</Info>
+<Info>This page documents `@whop/elements@1.0.0-beta.3` and `@whop/elements-react@1.0.0-beta.3`.</Info>
 
 *Pre-release, not yet part of a stable release.*
 
@@ -20,7 +20,7 @@
   <div data-whop-demo-shell style={{ position: "relative", minHeight: "480px", transition: "min-height 200ms ease" }}>
     <div data-whop-demo-skeleton style={{ position: "absolute", inset: "0", borderRadius: "12px", background: "rgba(140, 140, 140, 0.12)", pointerEvents: "none", transition: "opacity 200ms ease" }} />
 
-    <div data-whop-demo-native="unit:balances" data-whop-elements-version="1.0.0-beta.2" style={{ position: "relative" }} />
+    <div data-whop-demo-native="unit:balances" data-whop-elements-version="1.0.0-beta.3" style={{ position: "relative" }} />
   </div>
 </div>
 
@@ -41,7 +41,7 @@
 <div data-whop-usage="wallet/balances">
   <CodeGroup>
     ```tsx React theme={null}
-    import { WhopElements, Wallet, Balances, BalanceElement, ListElement } from "@whop/elements-react";
+    import { WhopElements, Wallet, Balances, BalanceElement, BreakdownElement, ListElement } from "@whop/elements-react";
     import { loadWhop } from "@whop/elements";
 
     function Example() {
@@ -50,6 +50,7 @@
           <Wallet /* options */>
             <Balances>
               <BalanceElement />
+              <BreakdownElement />
               <ListElement />
             </Balances>
           </Wallet>
@@ -64,6 +65,7 @@
       const wallet = window.WhopElements().wallet.create({ /* options */ });
       const balances = wallet.create('balances', { /* options */ });
       balances.create('balance').mount('#wallet-balances-balance');
+      balances.create('breakdown').mount('#wallet-balances-breakdown');
       balances.create('list').mount('#wallet-balances-list');
     </script>
     ```
@@ -95,7 +97,13 @@
 
   Pass these to `wallet.create('balances', { … })`, or as props on `<Balances>` in React. Parent-injected props never appear here.
 
-  *Balances takes no options.*
+  <ResponseField name="accessToken" type="string">
+    A scoped token for balance breakdown and settlement reads. An account needs `company:balance:read`. Omitted, the viewer's same-origin session is used.
+  </ResponseField>
+
+  <ResponseField name="openHoldingOnSelect" type="boolean">
+    Show this unit's holding balance page in place of the chart and list when a row is clicked. Off by default so a host that routes on `balanceSelected` is not covered by a second screen. Defaults to `false`.
+  </ResponseField>
 
   ## Methods
 
@@ -144,7 +152,15 @@ The elements this sub-controller mounts. Each has its own page:
     An account's balance and a chart of how it changed. The total and its change sit at the top, the chart below that, and the time range buttons at the bottom. The viewer can read individual points on the chart and switch the time range themselves.
   </Card>
 
+  <Card title="BreakdownElement" href="/elements/beta/wallet/balances-breakdown">
+    One currency's total split into available, pending, reserve, and negative balances. Zero-value rows disappear, and the surface deliberately contains no money-movement buttons so the host owns those actions.
+  </Card>
+
+  <Card title="SettlementElement" href="/elements/beta/wallet/balances-settlement">
+    The account balance details shown by Whop's dashboard: available funds, pending settlement dates, reserve terms, and any negative balance. It opens as a 550px modal and uses the balances handle's account, currency, and credential.
+  </Card>
+
   <Card title="ListElement" href="/elements/beta/wallet/balances-list">
-    The holdings behind an account's balance. Every currency and token gets its own row, showing its name and its value in dollars, largest first. Rows can report which one the viewer tapped, so you can open your own screen for it.
+    The holdings behind an account's balance. Every currency and token gets its own row, showing its name and its value in dollars, largest first. Rows can report which one the viewer tapped, so you can open your own screen for it. When `openHoldingOnSelect` is on, a row click shows that holding's balance page in place of this unit's chart and list.
   </Card>
 </CardGroup>

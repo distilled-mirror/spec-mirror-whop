@@ -6,7 +6,7 @@
 
 > Every event the account measured — page views, leads, purchases, and custom pixel events — as a raw, filterable stream. The rows behind any metric: filter by event, source, geography, or device over the handle’s window, or search one person’s identifier to read their whole journey. A person cell follows `links.person` when the handle configures it, and otherwise comes back to you as `personOpened`.
 
-<Info>This page documents `@whop/elements@1.0.0-beta.2` and `@whop/elements-react@1.0.0-beta.2`.</Info>
+<Info>This page documents `@whop/elements@1.0.0-beta.3` and `@whop/elements-react@1.0.0-beta.3`.</Info>
 
 *Pre-release, not yet part of a stable release.*
 
@@ -51,7 +51,7 @@ Mounts inside [`Tracking`](/elements/beta/tracking/overview). `accountId` and `a
     <div data-whop-demo-shell style={{ position: "relative", minHeight: "320px", transition: "min-height 200ms ease" }}>
       <div data-whop-demo-skeleton style={{ position: "absolute", inset: "0", borderRadius: "12px", background: "rgba(140, 140, 140, 0.12)", pointerEvents: "none", transition: "opacity 200ms ease" }} />
 
-      <div data-whop-demo-native="element:tracking/events" data-whop-elements-version="1.0.0-beta.2" style={{ position: "relative" }} />
+      <div data-whop-demo-native="element:tracking/events" data-whop-elements-version="1.0.0-beta.3" style={{ position: "relative" }} />
     </div>
 
     <p style={{ fontSize: "0.8125rem", opacity: 0.7 }}>Example data. [Open the Playground](/elements/beta/tracking/overview#playground).</p>
@@ -124,7 +124,7 @@ The viewer moved a filter or the identifier search. Carries the entire filter st
 
 ### `onPersonOpened`
 
-The viewer clicked a person cell and the handle has no `links.person` to follow — open your own person view with it (`personId` is the stable per-person key; `identifier` is the most human-meaningful one the surface has), or pass `links.person` on the handle to turn the cells into real anchors instead.
+The viewer clicked a person cell and the handle has no `links.person` to follow. Present the `person` element with it, e.g. `createOverlay("person", { identifier: payload.personId })` (`personId` is the stable per-person key; `identifier` is the most human-meaningful one the surface has), or pass `links.person` on the handle to turn the cells into real anchors instead.
 
 **Signature:** `((payload: { identifier: string; personId: string; }) => void)`
 

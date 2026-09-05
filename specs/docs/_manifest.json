@@ -3,7 +3,7 @@
     "https://docs.whop.com/llms.txt",
     "https://docs.whop.com/sitemap.xml"
   ],
-  "count": 990,
+  "count": 1009,
   "pages": [
     {
       "page": "https://docs.whop.com/account-settings/account-security/delete-your-account",
@@ -424,7 +424,6 @@
       "markdown": "https://docs.whop.com/api-reference/apps/update-requested-permissions.md",
       "file": "api-reference/apps/update-requested-permissions.md",
       "indexes": [
-        "llms.txt",
         "sitemap"
       ]
     },
@@ -2320,6 +2319,15 @@
       ]
     },
     {
+      "page": "https://docs.whop.com/api-reference/beta/payments/resume-a-parked-renewal",
+      "markdown": "https://docs.whop.com/api-reference/beta/payments/resume-a-parked-renewal.md",
+      "file": "api-reference/beta/payments/resume-a-parked-renewal.md",
+      "indexes": [
+        "llms.txt",
+        "sitemap"
+      ]
+    },
+    {
       "page": "https://docs.whop.com/api-reference/beta/payments/retrieve-payment",
       "markdown": "https://docs.whop.com/api-reference/beta/payments/retrieve-payment.md",
       "file": "api-reference/beta/payments/retrieve-payment.md",
@@ -4178,7 +4186,6 @@
       "markdown": "https://docs.whop.com/api-reference/disputes/submit-evidence.md",
       "file": "api-reference/disputes/submit-evidence.md",
       "indexes": [
-        "llms.txt",
         "sitemap"
       ]
     },
@@ -4187,7 +4194,6 @@
       "markdown": "https://docs.whop.com/api-reference/disputes/update-evidence.md",
       "file": "api-reference/disputes/update-evidence.md",
       "indexes": [
-        "llms.txt",
         "sitemap"
       ]
     },
@@ -4907,7 +4913,6 @@
       "markdown": "https://docs.whop.com/api-reference/memberships/add-free-days-membership.md",
       "file": "api-reference/memberships/add-free-days-membership.md",
       "indexes": [
-        "llms.txt",
         "sitemap"
       ]
     },
@@ -5022,7 +5027,6 @@
       "markdown": "https://docs.whop.com/api-reference/memberships/uncancel-membership.md",
       "file": "api-reference/memberships/uncancel-membership.md",
       "indexes": [
-        "llms.txt",
         "sitemap"
       ]
     },
@@ -5971,7 +5975,6 @@
       "markdown": "https://docs.whop.com/api-reference/webhooks/list-deliveries.md",
       "file": "api-reference/webhooks/list-deliveries.md",
       "indexes": [
-        "llms.txt",
         "sitemap"
       ]
     },
@@ -6042,6 +6045,15 @@
       "page": "https://docs.whop.com/cli/overview",
       "markdown": "https://docs.whop.com/cli/overview.md",
       "file": "cli/overview.md",
+      "indexes": [
+        "llms.txt",
+        "sitemap"
+      ]
+    },
+    {
+      "page": "https://docs.whop.com/developer/ads/events-api",
+      "markdown": "https://docs.whop.com/developer/ads/events-api.md",
+      "file": "developer/ads/events-api.md",
       "indexes": [
         "llms.txt",
         "sitemap"
@@ -7092,6 +7104,51 @@
       ]
     },
     {
+      "page": "https://docs.whop.com/elements/beta/tracking/person",
+      "markdown": "https://docs.whop.com/elements/beta/tracking/person.md",
+      "file": "elements/beta/tracking/person.md",
+      "indexes": [
+        "llms.txt",
+        "sitemap"
+      ]
+    },
+    {
+      "page": "https://docs.whop.com/elements/beta/verifications/capabilities",
+      "markdown": "https://docs.whop.com/elements/beta/verifications/capabilities.md",
+      "file": "elements/beta/verifications/capabilities.md",
+      "indexes": [
+        "llms.txt",
+        "sitemap"
+      ]
+    },
+    {
+      "page": "https://docs.whop.com/elements/beta/verifications/kyc",
+      "markdown": "https://docs.whop.com/elements/beta/verifications/kyc.md",
+      "file": "elements/beta/verifications/kyc.md",
+      "indexes": [
+        "llms.txt",
+        "sitemap"
+      ]
+    },
+    {
+      "page": "https://docs.whop.com/elements/beta/verifications/overview",
+      "markdown": "https://docs.whop.com/elements/beta/verifications/overview.md",
+      "file": "elements/beta/verifications/overview.md",
+      "indexes": [
+        "llms.txt",
+        "sitemap"
+      ]
+    },
+    {
+      "page": "https://docs.whop.com/elements/beta/verifications/rfi",
+      "markdown": "https://docs.whop.com/elements/beta/verifications/rfi.md",
+      "file": "elements/beta/verifications/rfi.md",
+      "indexes": [
+        "llms.txt",
+        "sitemap"
+      ]
+    },
+    {
       "page": "https://docs.whop.com/elements/beta/wallet/actions",
       "markdown": "https://docs.whop.com/elements/beta/wallet/actions.md",
       "file": "elements/beta/wallet/actions.md",
@@ -7104,6 +7161,15 @@
       "page": "https://docs.whop.com/elements/beta/wallet/activity",
       "markdown": "https://docs.whop.com/elements/beta/wallet/activity.md",
       "file": "elements/beta/wallet/activity.md",
+      "indexes": [
+        "llms.txt",
+        "sitemap"
+      ]
+    },
+    {
+      "page": "https://docs.whop.com/elements/beta/wallet/activityDetail",
+      "markdown": "https://docs.whop.com/elements/beta/wallet/activityDetail.md",
+      "file": "elements/beta/wallet/activityDetail.md",
       "indexes": [
         "llms.txt",
         "sitemap"
@@ -7128,6 +7194,15 @@
       ]
     },
     {
+      "page": "https://docs.whop.com/elements/beta/wallet/balances-breakdown",
+      "markdown": "https://docs.whop.com/elements/beta/wallet/balances-breakdown.md",
+      "file": "elements/beta/wallet/balances-breakdown.md",
+      "indexes": [
+        "llms.txt",
+        "sitemap"
+      ]
+    },
+    {
       "page": "https://docs.whop.com/elements/beta/wallet/balances-list",
       "markdown": "https://docs.whop.com/elements/beta/wallet/balances-list.md",
       "file": "elements/beta/wallet/balances-list.md",
@@ -7137,9 +7212,81 @@
       ]
     },
     {
+      "page": "https://docs.whop.com/elements/beta/wallet/balances-settlement",
+      "markdown": "https://docs.whop.com/elements/beta/wallet/balances-settlement.md",
+      "file": "elements/beta/wallet/balances-settlement.md",
+      "indexes": [
+        "llms.txt",
+        "sitemap"
+      ]
+    },
+    {
+      "page": "https://docs.whop.com/elements/beta/wallet/cardDetails",
+      "markdown": "https://docs.whop.com/elements/beta/wallet/cardDetails.md",
+      "file": "elements/beta/wallet/cardDetails.md",
+      "indexes": [
+        "llms.txt",
+        "sitemap"
+      ]
+    },
+    {
       "page": "https://docs.whop.com/elements/beta/wallet/cards",
       "markdown": "https://docs.whop.com/elements/beta/wallet/cards.md",
       "file": "elements/beta/wallet/cards.md",
+      "indexes": [
+        "llms.txt",
+        "sitemap"
+      ]
+    },
+    {
+      "page": "https://docs.whop.com/elements/beta/wallet/cards-cardTransactions",
+      "markdown": "https://docs.whop.com/elements/beta/wallet/cards-cardTransactions.md",
+      "file": "elements/beta/wallet/cards-cardTransactions.md",
+      "indexes": [
+        "llms.txt",
+        "sitemap"
+      ]
+    },
+    {
+      "page": "https://docs.whop.com/elements/beta/wallet/cards-cards",
+      "markdown": "https://docs.whop.com/elements/beta/wallet/cards-cards.md",
+      "file": "elements/beta/wallet/cards-cards.md",
+      "indexes": [
+        "llms.txt",
+        "sitemap"
+      ]
+    },
+    {
+      "page": "https://docs.whop.com/elements/beta/wallet/cards-cardsChart",
+      "markdown": "https://docs.whop.com/elements/beta/wallet/cards-cardsChart.md",
+      "file": "elements/beta/wallet/cards-cardsChart.md",
+      "indexes": [
+        "llms.txt",
+        "sitemap"
+      ]
+    },
+    {
+      "page": "https://docs.whop.com/elements/beta/wallet/cards-cardsTable",
+      "markdown": "https://docs.whop.com/elements/beta/wallet/cards-cardsTable.md",
+      "file": "elements/beta/wallet/cards-cardsTable.md",
+      "indexes": [
+        "llms.txt",
+        "sitemap"
+      ]
+    },
+    {
+      "page": "https://docs.whop.com/elements/beta/wallet/cards-whopCard",
+      "markdown": "https://docs.whop.com/elements/beta/wallet/cards-whopCard.md",
+      "file": "elements/beta/wallet/cards-whopCard.md",
+      "indexes": [
+        "llms.txt",
+        "sitemap"
+      ]
+    },
+    {
+      "page": "https://docs.whop.com/elements/beta/wallet/convert",
+      "markdown": "https://docs.whop.com/elements/beta/wallet/convert.md",
+      "file": "elements/beta/wallet/convert.md",
       "indexes": [
         "llms.txt",
         "sitemap"
@@ -7164,9 +7311,27 @@
       ]
     },
     {
+      "page": "https://docs.whop.com/elements/beta/wallet/required-actions",
+      "markdown": "https://docs.whop.com/elements/beta/wallet/required-actions.md",
+      "file": "elements/beta/wallet/required-actions.md",
+      "indexes": [
+        "llms.txt",
+        "sitemap"
+      ]
+    },
+    {
       "page": "https://docs.whop.com/elements/beta/wallet/send",
       "markdown": "https://docs.whop.com/elements/beta/wallet/send.md",
       "file": "elements/beta/wallet/send.md",
+      "indexes": [
+        "llms.txt",
+        "sitemap"
+      ]
+    },
+    {
+      "page": "https://docs.whop.com/elements/beta/wallet/verification",
+      "markdown": "https://docs.whop.com/elements/beta/wallet/verification.md",
+      "file": "elements/beta/wallet/verification.md",
       "indexes": [
         "llms.txt",
         "sitemap"

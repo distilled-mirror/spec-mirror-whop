@@ -46,10 +46,12 @@ The Whop Pixel is a JavaScript snippet that you add to your website. It measures
   <Step title="Track events" iconType="regular" titleSize="h2">
     If your funnel has important steps outside Whop checkout, like a lead form, call booking, or application, add `whop.track` calls to track those events.
 
-    ```javascript Tracking events theme={null}
-    whop.track("lead");                                      // a standard event
-    whop.track("schedule", { value: 50, currency: "USD" });  // optionally with a value
-    whop.track("quiz_completed");                            // or your own event name
+    ```html Tracking events theme={null}
+    <script>
+      whop.track("lead");                                      // a standard event
+      whop.track("schedule", { value: 50, currency: "USD" });  // optionally with a value
+      whop.track("quiz_completed");                            // or your own event name
+    </script>
     ```
 
     Where to put the call depends on what happens after the action:
@@ -78,8 +80,10 @@ The Whop Pixel is a JavaScript snippet that you add to your website. It measures
 
     **It's important to include any information you have about the customer at every stage of the funnel.** If you accept a lead with a name, email and phone number, include those in the event fired to Whop.
 
-    ```javascript theme={null}
-    whop.track("lead", { name: "John Doe", email: "johndoe@example.com", phone: "555-555-1234" });
+    ```html Lead with customer details theme={null}
+    <script>
+      whop.track("lead", { name: "John Doe", email: "johndoe@example.com", phone: "555-555-1234" });
+    </script>
     ```
   </Step>
 </Steps>
@@ -103,9 +107,11 @@ The Whop Pixel includes a set of standard event names for common stages of a fun
 
 If Whop's standard events don't cover your funnel's needs, or you want to track specific stages of the customer journey, you can fire custom events.
 
-```javascript Custom event theme={null}
-whop.track("watched_vsl");
-whop.track("quiz_completed", { value: 25, currency: "USD" });
+```html Custom event theme={null}
+<script>
+  whop.track("watched_vsl");
+  whop.track("quiz_completed", { value: 25, currency: "USD" });
+</script>
 ```
 
 Keep names short and stable, and reuse a small set. Whop stores names up to 250 characters.
@@ -116,13 +122,15 @@ Custom events follow the same placement rules as standard events — see [Track 
 
 If you sell through your own checkout instead of Whop's, fire a `purchase` event when a sale completes. `value` is required — Whop rejects a purchase event that has no positive value, because ad platforms can't optimize toward a sale with no amount. `currency` is optional and defaults to USD.
 
-```javascript Purchase on your own checkout theme={null}
-whop.track("purchase", {
-  value: 149.99,
-  currency: "USD",
-  event_id: "order_8412",
-  email: "visitor@example.com",
-});
+```html Purchase on your own checkout theme={null}
+<script>
+  whop.track("purchase", {
+    value: 149.99,
+    currency: "USD",
+    event_id: "order_8412",
+    email: "visitor@example.com",
+  });
+</script>
 ```
 
 Whop forwards these to the ad platforms as their standard Purchase event, so a purchase-optimized campaign learns from them. In Whop reporting they appear as external purchases, kept separate from purchases — purchases and ROAS count only the payments Whop processes.
@@ -135,9 +143,11 @@ Whop forwards these to the ad platforms as their standard Purchase event, so a p
 
 Pass an `event_id` with any event that could reach Whop more than once. For example, if you fire an event when landing on a thank you page, ensure that event is fired once per real conversion, not once per page view. Whop counts each `event_name` and `event_id` pair once, so a retry, a page refresh, or the same conversion sent from two places collapses into a single event.
 
-```javascript Event with an ID theme={null}
-whop.track("lead", { event_id: "lead_8f21c0" }); // one visitor's form submission
-whop.track("lead", { event_id: "lead_2b94de" }); // a different visitor's
+```html Event with an ID theme={null}
+<script>
+  whop.track("lead", { event_id: "lead_8f21c0" }); // one visitor's form submission
+  whop.track("lead", { event_id: "lead_2b94de" }); // a different visitor's
+</script>
 ```
 
 **The ID identifies one single event, not the type of event.** Every lead needs its own. Send `"lead"` as the ID for every lead and Whop treats them all as one event, so hundreds of leads show up as one.
@@ -152,19 +162,21 @@ Always send as much customer information as you have available. This helps Whop 
 
 These fields can be attached to any event type and are optional. Send only the fields you have.
 
-```javascript Lead with customer fields theme={null}
-whop.track("lead", {
-  email: "visitor@example.com",
-  first_name: "Jane",
-  last_name: "Doe",
-  name: "Jane Doe",
-  phone: "+15551234567",
-  external_id: "customer_123",
-  city: "New York",
-  state: "NY",
-  postal_code: "10001",
-  country: "US",
-});
+```html Lead with customer fields theme={null}
+<script>
+  whop.track("lead", {
+    email: "visitor@example.com",
+    first_name: "Jane",
+    last_name: "Doe",
+    name: "Jane Doe",
+    phone: "+15551234567",
+    external_id: "customer_123",
+    city: "New York",
+    state: "NY",
+    postal_code: "10001",
+    country: "US",
+  });
+</script>
 ```
 
 | Field         | Description                  |

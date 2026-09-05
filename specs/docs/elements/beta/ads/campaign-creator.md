@@ -6,7 +6,7 @@
 
 > The advertising campaign builder: objective and budget, ad groups with their targeting and schedule, and the ads themselves with their creative — the whole flow through to launch. Opens empty to build a new campaign, or on an existing one when you pass `campaignId`. It runs the pixel checker too: a launch is gated on the ad group’s conversion event being live on the destination URL, and the `pixel-setup` wizard opens inside this element to fix an install that is missing. The one token you set on the `ads` handle must carry the pixel scopes alongside the campaign scopes — `ad_campaign:create` and `company:basic:read` — rather than using a separate token per element.
 
-<Info>This page documents `@whop/elements@1.0.0-beta.2` and `@whop/elements-react@1.0.0-beta.2`.</Info>
+<Info>This page documents `@whop/elements@1.0.0-beta.3` and `@whop/elements-react@1.0.0-beta.3`.</Info>
 
 *Pre-release, not yet part of a stable release.*
 
@@ -51,7 +51,7 @@ Opens as a modal from [`Ads`](/elements/beta/ads/overview): `ads.createOverlay('
     <div data-whop-demo-shell style={{ position: "relative", minHeight: "320px", transition: "min-height 200ms ease" }}>
       <div data-whop-demo-skeleton style={{ position: "absolute", inset: "0", borderRadius: "12px", background: "rgba(140, 140, 140, 0.12)", pointerEvents: "none", transition: "opacity 200ms ease" }} />
 
-      <div data-whop-demo-native="element:ads/campaign-creator" data-whop-elements-version="1.0.0-beta.2" style={{ position: "relative" }} />
+      <div data-whop-demo-native="element:ads/campaign-creator" data-whop-elements-version="1.0.0-beta.3" style={{ position: "relative" }} />
     </div>
 
     <p style={{ fontSize: "0.8125rem", opacity: 0.7 }}>Example data. [Open the Playground](/elements/beta/ads/overview#playground).</p>
@@ -74,6 +74,10 @@ Opens as a modal from [`Ads`](/elements/beta/ads/overview): `ads.createOverlay('
 
 <ResponseField name="initialStep" type="&#x22;ads&#x22; | &#x22;ad-groups&#x22; | &#x22;campaign-settings&#x22;">
   Which step to open on: `campaign-settings`, `ad-groups`, or `ads`. The dashboard deep-links this off its own URL; pass it to drop an account owner straight onto the part they came to change. Read once at mount — moving it later will not walk them between steps. Defaults to `"campaign-settings"`.
+</ResponseField>
+
+<ResponseField name="externalMediaIds" type="string[]">
+  File IDs (`file_…`) your app uploaded via `POST /api/v1/files`, offered in the builder's creative library. They show first in the library list, in this order, and while any are set the media pickers open on the library instead of the upload drop zone. Create the files with the same API key that mints the `ads` handle's `accessToken` — the builder reads them back in one batch (`GET /api/v1/files`), and file reads only answer the credential that created them. Pass at most 250 IDs, the batch read's limit. A file appears once its upload has finished processing; an ID that never finishes, or that points at something other than an image or video, is left out. Pass new IDs with `update({ externalMediaIds })` to stream media into a builder that is already open. Defaults to `[]`.
 </ResponseField>
 
 ## Events

@@ -6,7 +6,7 @@
 
 > Collect a payment from a `plan_` ID or inline currency and amount. Mount PaymentElement, CardElement, or CardFields, then call `payments.createConfirmationToken` with billing details. Wallet selections open their sheet automatically. Confirm the token server-side, then pass the payment's `client_secret` to `handleNextAction` for any pending step.
 
-<Info>This page documents `@whop/elements@1.0.0-beta.2` and `@whop/elements-react@1.0.0-beta.2`.</Info>
+<Info>This page documents `@whop/elements@1.0.0-beta.3` and `@whop/elements-react@1.0.0-beta.3`.</Info>
 
 *Pre-release, not yet part of a stable release.*
 
@@ -17,7 +17,7 @@ Assemble the elements with example data. Drive the controls, add and arrange ele
 <div data-whop-demo-shell style={{ position: "relative", minHeight: "480px", transition: "min-height 200ms ease" }}>
   <div data-whop-demo-skeleton style={{ position: "absolute", inset: "0", borderRadius: "12px", background: "rgba(140, 140, 140, 0.12)", pointerEvents: "none", transition: "opacity 200ms ease" }} />
 
-  <div data-whop-demo-native="playground:payments" data-whop-elements-version="1.0.0-beta.2" style={{ position: "relative" }} />
+  <div data-whop-demo-native="playground:payments" data-whop-elements-version="1.0.0-beta.3" style={{ position: "relative" }} />
 </div>
 
 <div data-whop-usage="payments/playground">
@@ -142,7 +142,7 @@ Call these without mounting: `whop.payments.<method>(…)` in vanilla or `useWho
 
 ### `handleNextAction`
 
-Completes a confirmed payment's pending step without mounting an element. `clientSecret` identifies the payment. You don't need a payment ID. Inline steps open in a dialog and resolve with `redirected: false`. Dismissing the dialog returns the payment's current status, which can remain pending. Full-page steps redirect with `redirected: true` to `return_url`, or a hosted receipt when the payment has no return URL. They reject with code `FULL_PAGE_STEP_IN_FRAME` inside subordinate frames. Set `returnUrl` to update the destination before presentation. An update failure rejects before any step runs. Inline steps never navigate to that URL. A payment with no pending step resolves immediately.
+Completes a confirmed payment's pending step without mounting an element. `clientSecret` identifies the payment. You don't need a payment ID. Inline steps open in a dialog and resolve with `redirected: false`. Dismissing the dialog returns the payment's current status, which can remain pending. Full-page steps redirect with `redirected: true` to `return_url`, or a hosted receipt when the payment has no return URL. Inside an iframe they navigate the top-level tab. If the embedding page refuses that navigation, they reject with code `TAB_NAVIGATION_BLOCKED`, and the payment stays pending. Set `returnUrl` to update the destination before presentation. An update failure rejects before any step runs. Inline steps never navigate to that URL. A payment with no pending step resolves immediately.
 
 **Signature:** `(input: { clientSecret: string; returnUrl?: string | undefined; pollIntervalMs?: number | undefined; }) => Promise<{ status: string; redirected: boolean; lastPaymentError: { code?: string | null | undefined; decline_code?: string | null | undefined; message?: string | null | undefined; } | null; }>`
 

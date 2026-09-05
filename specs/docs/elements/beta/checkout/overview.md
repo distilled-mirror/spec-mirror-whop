@@ -6,7 +6,7 @@
 
 > Drives a full hosted checkout for one plan — price summary, promo codes, the currency the buyer pays in, and the whole payment collection surface (the payments elements, composed inside) — against the Whop checkout sessions API. Mount it with a `plan` (or a `checkoutConfiguration` you authored) and the element opens the checkout session itself; the session credential never leaves the element. The buyer pays inside the element, and a finished checkout redirects the current tab to `returnUrl`, including the page that contains the element. Fulfill from webhooks rather than a browser callback. Without a `returnUrl`, the buyer rests on the element’s own success face. The element automatically drives an off-site payment step, such as 3DS or a bank page. On whop.com, it brings the buyer back into the restored checkout; in an embed, the buyer returns to the same `returnUrl`. A failed payment reopens the same checkout with the reason shown, so the buyer can pay again. Every option is set at creation: the element mints a checkout session from these values when it mounts. Changing one later with `update()` or new React props fails instead of changing the existing order. Mount a new checkout to change the purchase.
 
-<Info>This page documents `@whop/elements@1.0.0-beta.2` and `@whop/elements-react@1.0.0-beta.2`.</Info>
+<Info>This page documents `@whop/elements@1.0.0-beta.3` and `@whop/elements-react@1.0.0-beta.3`.</Info>
 
 *Pre-release, not yet part of a stable release.*
 
@@ -17,7 +17,7 @@ Assemble the elements with example data. Drive the controls, add and arrange ele
 <div data-whop-demo-shell style={{ position: "relative", minHeight: "480px", transition: "min-height 200ms ease" }}>
   <div data-whop-demo-skeleton style={{ position: "absolute", inset: "0", borderRadius: "12px", background: "rgba(140, 140, 140, 0.12)", pointerEvents: "none", transition: "opacity 200ms ease" }} />
 
-  <div data-whop-demo-native="playground:checkout" data-whop-elements-version="1.0.0-beta.2" style={{ position: "relative" }} />
+  <div data-whop-demo-native="playground:checkout" data-whop-elements-version="1.0.0-beta.3" style={{ position: "relative" }} />
 </div>
 
 <div data-whop-usage="checkout/playground">
@@ -168,7 +168,7 @@ The elements this group mounts. Each has its own page:
   </Card>
 
   <Card title="ExpressCheckoutElement" href="/elements/beta/checkout/expressCheckout">
-    One-press Apple Pay and Google Pay buttons for a checkout — the OS payment sheet collects whatever the session still needs (the buyer's email, a shipping address for physical goods, a promo code where the seller offers entry) and one press finishes the purchase. It shares the checkout's entry slot with the full checkout element, so a handle mounts exactly one of the two: this button alone where the purchase is simple enough for a sheet to finish, or the full checkout surface for everything else. Renders only the wallets the buyer's device can actually pay with, using the served button art, and renders nothing where no wallet is available. A checkout the sheet cannot honestly finish — a waitlist join, a transfer, a form question only a page can ask — refuses loudly instead of rendering a doomed button.
+    One-press Apple Pay and Google Pay buttons for a checkout — the OS payment sheet collects whatever the session still needs (the buyer's email, a shipping address for physical goods, and in Apple Pay a promo code where the seller offers entry) and one press finishes the purchase. It shares the checkout's entry slot with the full checkout element, so a handle mounts exactly one of the two: this button alone where the purchase is simple enough for a sheet to finish, or the full checkout surface for everything else. Renders only the wallets the buyer's device can actually pay with — and the checkout's own payment method configuration allows — using the served button art, and renders nothing where no wallet is available. Apple Pay additionally requires the page's domain to be a verified payment method domain: first-party whop.com pages are pre-approved, and any other site must register its domain through the Payment Method Domains API before the button renders there. A checkout the sheet cannot honestly finish — a waitlist join, a transfer, a form question only a page can ask — refuses loudly instead of rendering a doomed button.
   </Card>
 </CardGroup>
 
@@ -177,3 +177,4 @@ The elements this group mounts. Each has its own page:
 These internal elements open automatically during guided flows. They aren't part of the consumer API, so you don't mount or configure them.
 
 * **CheckoutDetailsElement** (`checkoutDetails`): The order-details sheet a narrow checkout opens for the promo code, currency, and totals.
+* **PhoneCodeModalElement** (`phoneCodeModal`): The verify\_phone ceremony’s code dialog — the checkout controller opens it while the session holds a texted, unanswered code. The code rides a confirm of its own (the server completes the parked payment on a pass); dismissing the dialog cancels the ceremony with a session write. Internal coordination behind the checkout and express-checkout elements, no consumer surface.

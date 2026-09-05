@@ -6,7 +6,7 @@
 
 > An advertising account. Scope it to a Whop account with `accountId` — the ad account underneath is assigned server-side and never surfaces here — then mount `reporting` for what the account spent and what came back, or `campaign-creator` to build a campaign.
 
-<Info>This page documents `@whop/elements@1.0.0-beta.2` and `@whop/elements-react@1.0.0-beta.2`.</Info>
+<Info>This page documents `@whop/elements@1.0.0-beta.3` and `@whop/elements-react@1.0.0-beta.3`.</Info>
 
 *Pre-release, not yet part of a stable release.*
 
@@ -17,7 +17,7 @@ Assemble the elements with example data. Drive the controls, add and arrange ele
 <div data-whop-demo-shell style={{ position: "relative", minHeight: "480px", transition: "min-height 200ms ease" }}>
   <div data-whop-demo-skeleton style={{ position: "absolute", inset: "0", borderRadius: "12px", background: "rgba(140, 140, 140, 0.12)", pointerEvents: "none", transition: "opacity 200ms ease" }} />
 
-  <div data-whop-demo-native="playground:ads" data-whop-elements-version="1.0.0-beta.2" style={{ position: "relative" }} />
+  <div data-whop-demo-native="playground:ads" data-whop-elements-version="1.0.0-beta.3" style={{ position: "relative" }} />
 </div>
 
 <div data-whop-usage="ads/playground">

@@ -4,9 +4,9 @@
 
 # ExpressCheckoutElement
 
-> One-press Apple Pay and Google Pay buttons for a checkout — the OS payment sheet collects whatever the session still needs (the buyer's email, a shipping address for physical goods, a promo code where the seller offers entry) and one press finishes the purchase. It shares the checkout's entry slot with the full checkout element, so a handle mounts exactly one of the two: this button alone where the purchase is simple enough for a sheet to finish, or the full checkout surface for everything else. Renders only the wallets the buyer's device can actually pay with, using the served button art, and renders nothing where no wallet is available. A checkout the sheet cannot honestly finish — a waitlist join, a transfer, a form question only a page can ask — refuses loudly instead of rendering a doomed button.
+> One-press Apple Pay and Google Pay buttons for a checkout — the OS payment sheet collects whatever the session still needs (the buyer's email, a shipping address for physical goods, and in Apple Pay a promo code where the seller offers entry) and one press finishes the purchase. It shares the checkout's entry slot with the full checkout element, so a handle mounts exactly one of the two: this button alone where the purchase is simple enough for a sheet to finish, or the full checkout surface for everything else. Renders only the wallets the buyer's device can actually pay with — and the checkout's own payment method configuration allows — using the served button art, and renders nothing where no wallet is available. Apple Pay additionally requires the page's domain to be a verified payment method domain: first-party whop.com pages are pre-approved, and any other site must register its domain through the Payment Method Domains API before the button renders there. A checkout the sheet cannot honestly finish — a waitlist join, a transfer, a form question only a page can ask — refuses loudly instead of rendering a doomed button.
 
-<Info>This page documents `@whop/elements@1.0.0-beta.2` and `@whop/elements-react@1.0.0-beta.2`.</Info>
+<Info>This page documents `@whop/elements@1.0.0-beta.3` and `@whop/elements-react@1.0.0-beta.3`.</Info>
 
 *Pre-release, not yet part of a stable release.*
 
@@ -48,7 +48,7 @@ Mounts inside [`Checkout`](/elements/beta/checkout/overview). Pass props and cal
     <div data-whop-demo-shell style={{ position: "relative", minHeight: "320px", transition: "min-height 200ms ease" }}>
       <div data-whop-demo-skeleton style={{ position: "absolute", inset: "0", borderRadius: "12px", background: "rgba(140, 140, 140, 0.12)", pointerEvents: "none", transition: "opacity 200ms ease" }} />
 
-      <div data-whop-demo-native="element:checkout/expressCheckout" data-whop-elements-version="1.0.0-beta.2" style={{ position: "relative" }} />
+      <div data-whop-demo-native="element:checkout/expressCheckout" data-whop-elements-version="1.0.0-beta.3" style={{ position: "relative" }} />
     </div>
 
     <p style={{ fontSize: "0.8125rem", opacity: 0.7 }}>Example data. [Open the Playground](/elements/beta/checkout/overview#playground).</p>
@@ -58,7 +58,7 @@ Mounts inside [`Checkout`](/elements/beta/checkout/overview). Pass props and cal
 ## Props
 
 <ResponseField name="wallets" type="(&#x22;apple_pay&#x22; | &#x22;google_pay&#x22;)[]">
-  Which wallets may render — a filter over what the buyer’s device actually offers. The element never shows a wallet the device or the served matrix cannot back, and the render order stays best-native-first whatever order this lists. An empty list renders nothing (warned in dev builds). Defaults to `["apple_pay","google_pay"]`.
+  Which wallets may render — a filter over what the buyer’s device actually offers. The element never shows a wallet the device, the served matrix, or the checkout’s payment method configuration cannot back, and the render order stays best-native-first whatever order this lists. An empty list renders nothing (warned in dev builds). Apple Pay also needs the page’s domain verified as a [payment method domain](/api-reference/beta/payment-method-domains/payment-method-domain) — first-party whop.com pages are pre-approved; on any other site, register and verify the domain or the Apple Pay button stays hidden. Defaults to `["apple_pay","google_pay"]`.
 </ResponseField>
 
 <ResponseField name="layout" type="&#x22;auto&#x22; | &#x22;horizontal&#x22; | &#x22;vertical&#x22;">
@@ -146,13 +146,21 @@ Style these parts through `appearance.classes`. Use camel case or kebab case for
 | `.whop-CheckoutExpressApplePay`            | The Apple Pay express button                                                                                                                                                    |
 | `.whop-CheckoutExpressButtons`             | The wallet button stack — vertical in a narrow container, side by side in a wide one                                                                                            |
 | `.whop-CheckoutExpressComplete`            | The standalone express button’s settled outcome line                                                                                                                            |
+| `.whop-CheckoutExpressContinue`            | The blocked-navigation press on the express row — finishes the trip to the payment’s off-site step                                                                              |
 | `.whop-CheckoutExpressDivider`             | The divider between express checkout and the form                                                                                                                               |
 | `.whop-CheckoutExpressError`               | The retryable error line under the express button                                                                                                                               |
 | `.whop-CheckoutExpressFinishPayment`       | The finish-payment line shown while the payment still needs a step the buyer dismissed                                                                                          |
 | `.whop-CheckoutExpressFinishPaymentButton` | The re-entry button that re-runs the payment’s pending step                                                                                                                     |
 | `.whop-CheckoutExpressGooglePay`           | The Google Pay express button                                                                                                                                                   |
+| `.whop-CheckoutExpressPhoneHeading`        | The standalone express button’s verify-to-pay heading                                                                                                                           |
 | `.whop-CheckoutExpressRetry`               | The failed rest’s button — re-reads the reopened session so the buyer can pay again                                                                                             |
 | `.whop-CheckoutExpressUnavailable`         | The face shown when an express button cannot serve this checkout                                                                                                                |
+| `.whop-CheckoutPhoneVerification`          | The phone-verification ceremony — number entry, then the texted code                                                                                                            |
+| `.whop-CheckoutPhoneVerificationError`     | The ceremony’s refusal line — a wrong code, a bad number                                                                                                                        |
+| `.whop-CheckoutPhoneVerificationHint`      | The line explaining why the seller asks for a verified number                                                                                                                   |
+| `.whop-CheckoutPhoneVerificationInput`     | The phone number’s input                                                                                                                                                        |
+| `.whop-CheckoutRequirementLabel`           | A collected value’s label                                                                                                                                                       |
+| `.whop-CheckoutRequirementRequired`        | The marker beside a value an answer is required for                                                                                                                             |
 | `.whop-CompletePayment`                    | Completion surface root                                                                                                                                                         |
 | `.whop-CompletePaymentAmount`              | The amount the buyer must pay                                                                                                                                                   |
 | `.whop-CompletePaymentBarcode`             | The scannable barcode card                                                                                                                                                      |
@@ -190,6 +198,7 @@ Style these parts through `appearance.classes`. Use camel case or kebab case for
 | `.whop-PaymentCardFields`                  | The inline card fields panel                                                                                                                                                    |
 | `.whop-PaymentCompactBalance`              | The selected balance on a compact direct checkout                                                                                                                               |
 | `.whop-PaymentCompactSavedMethod`          | The selected saved method on a compact direct checkout                                                                                                                          |
+| `.whop-PaymentCurrencyFallback`            | The switch to the fallback currency when nothing is offered                                                                                                                     |
 | `.whop-PaymentDetailIcon`                  | The template icon beside the detail region's explainer                                                                                                                          |
 | `.whop-PaymentDetailRegion`                | The expanded detail region for a selected method — collection surfaces first (inline card fields, declared inputs), then the explainer and disclosure lines as the bottom block |
 | `.whop-PaymentDetailSubtext`               | The consent subtext under the explainer on wallet methods                                                                                                                       |
@@ -205,7 +214,7 @@ Style these parts through `appearance.classes`. Use camel case or kebab case for
 | `.whop-PaymentInstallmentRadio`            | The radio indicator on an installment option row                                                                                                                                |
 | `.whop-PaymentInstallmentRow`              | One installment option row                                                                                                                                                      |
 | `.whop-PaymentInstallmentRowSelected`      | The selected installment option row                                                                                                                                             |
-| `.whop-PaymentInstallments`                | The card pane's installment plan picker                                                                                                                                         |
+| `.whop-PaymentInstallments`                | The payment method installment picker                                                                                                                                           |
 | `.whop-PaymentInstallmentsLabel`           | The installment picker's heading                                                                                                                                                |
 | `.whop-PaymentInstallmentsNotice`          | The issuer-fee disclaimer under a selected tier with no declared fee                                                                                                            |
 | `.whop-PaymentMandateLink`                 | The mandate terms link inside the mandate notice                                                                                                                                |
@@ -283,7 +292,7 @@ const checkout = whop.checkout.create({
   }
 });
 
-// 156 classes use this shape
+// 165 classes use this shape
 checkout.update({
   appearance: { classes: { 'whop-Address': { fontWeight: '700' } } }
 });

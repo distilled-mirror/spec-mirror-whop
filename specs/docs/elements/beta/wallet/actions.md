@@ -4,9 +4,9 @@
 
 # ActionsElement
 
-> The account action row from Whop's balance dashboard. Deposit and Send open the Wallet controller's built-in overlays. Accept opens Whop's checkout-link creator for a business account or company creation for a personal account. Each button also emits its requested event so the embedding page can observe the action.
+> The account action row from Whop's balance dashboard. Deposit, Send, Withdraw, and Convert open the Wallet controller's built-in overlays. Accept opens Whop's checkout-link creator for a business account or company creation for a personal account. Each button also emits its requested event so the embedding page can observe the action.
 
-<Info>This page documents `@whop/elements@1.0.0-beta.2` and `@whop/elements-react@1.0.0-beta.2`.</Info>
+<Info>This page documents `@whop/elements@1.0.0-beta.3` and `@whop/elements-react@1.0.0-beta.3`.</Info>
 
 *Pre-release, not yet part of a stable release.*
 
@@ -24,7 +24,7 @@ Mounts inside [`Wallet`](/elements/beta/wallet/overview). Pass props and callbac
           return (
             <WhopElements elements={loadWhop()}>
               <Wallet /* options */>
-                <ActionsElement onDepositRequested={(e) => console.log(e)} onAcceptRequested={(e) => console.log(e)} onSendRequested={(e) => console.log(e)} />
+                <ActionsElement onDepositRequested={(e) => console.log(e)} onAcceptRequested={(e) => console.log(e)} onSendRequested={(e) => console.log(e)} onWithdrawRequested={(e) => console.log(e)} onConvertRequested={(e) => console.log(e)} />
               </Wallet>
             </WhopElements>
           );
@@ -38,7 +38,9 @@ Mounts inside [`Wallet`](/elements/beta/wallet/overview). Pass props and callbac
           wallet.create('actions', {
             onDepositRequested: (e) => console.log(e),
             onAcceptRequested: (e) => console.log(e),
-            onSendRequested: (e) => console.log(e)
+            onSendRequested: (e) => console.log(e),
+            onWithdrawRequested: (e) => console.log(e),
+            onConvertRequested: (e) => console.log(e)
           }).mount('#wallet-actions');
         </script>
         ```
@@ -50,7 +52,7 @@ Mounts inside [`Wallet`](/elements/beta/wallet/overview). Pass props and callbac
     <div data-whop-demo-shell style={{ position: "relative", minHeight: "320px", transition: "min-height 200ms ease" }}>
       <div data-whop-demo-skeleton style={{ position: "absolute", inset: "0", borderRadius: "12px", background: "rgba(140, 140, 140, 0.12)", pointerEvents: "none", transition: "opacity 200ms ease" }} />
 
-      <div data-whop-demo-native="element:wallet/actions" data-whop-elements-version="1.0.0-beta.2" style={{ position: "relative" }} />
+      <div data-whop-demo-native="element:wallet/actions" data-whop-elements-version="1.0.0-beta.3" style={{ position: "relative" }} />
     </div>
 
     <p style={{ fontSize: "0.8125rem", opacity: 0.7 }}>Example data. [Open the Playground](/elements/beta/wallet/overview#playground).</p>
@@ -71,6 +73,14 @@ Mounts inside [`Wallet`](/elements/beta/wallet/overview). Pass props and callbac
   Show the Send button. Defaults to `true`.
 </ResponseField>
 
+<ResponseField name="showWithdraw" type="boolean">
+  Show the Withdraw button. Off by default so an existing row keeps the buttons it already had. Defaults to `false`.
+</ResponseField>
+
+<ResponseField name="showConvert" type="boolean">
+  Show the Convert button. Defaults to `true`.
+</ResponseField>
+
 <ResponseField name="depositDisabled" type="boolean">
   Disable the Deposit button while keeping it visible. Defaults to `false`.
 </ResponseField>
@@ -81,6 +91,14 @@ Mounts inside [`Wallet`](/elements/beta/wallet/overview). Pass props and callbac
 
 <ResponseField name="sendDisabled" type="boolean">
   Disable the Send button while keeping it visible. Defaults to `false`.
+</ResponseField>
+
+<ResponseField name="withdrawDisabled" type="boolean">
+  Disable the Withdraw button while keeping it visible. Defaults to `false`.
+</ResponseField>
+
+<ResponseField name="convertDisabled" type="boolean">
+  Disable the Convert button while keeping it visible. Defaults to `false`.
 </ResponseField>
 
 ## Events
@@ -102,6 +120,18 @@ The Accept button was pressed and the Wallet controller opened the corresponding
 ### `onSendRequested`
 
 The Send button was pressed and the Wallet controller opened its send overlay.
+
+**Signature:** `((payload: Record<string, never>) => void)`
+
+### `onWithdrawRequested`
+
+The Withdraw button was pressed and the Wallet controller opened its withdraw overlay.
+
+**Signature:** `((payload: Record<string, never>) => void)`
+
+### `onConvertRequested`
+
+The Convert button was pressed and the Wallet controller opened its convert overlay.
 
 **Signature:** `((payload: Record<string, never>) => void)`
 
@@ -149,9 +179,9 @@ Merges new props into the mounted element. In React, change the component props 
 
 Style these parts through `appearance.classes`. Use camel case or kebab case for property names and include units. Page stylesheets can't reach the element's frame. The framework validates each declaration before injecting it.
 
-| Class           | Targets                                                   |
-| --------------- | --------------------------------------------------------- |
-| `.whop-Actions` | The row containing the Deposit, Accept, and Send buttons. |
+| Class           | Targets                                                                      |
+| --------------- | ---------------------------------------------------------------------------- |
+| `.whop-Actions` | The row containing the Deposit, Accept, Send, Convert, and Withdraw buttons. |
 
 ```ts theme={null}
 const wallet = whop.wallet.create({

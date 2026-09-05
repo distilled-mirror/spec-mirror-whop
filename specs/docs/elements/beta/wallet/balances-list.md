@@ -4,14 +4,14 @@
 
 # ListElement
 
-> The holdings behind an account's balance. Every currency and token gets its own row, showing its name and its value in dollars, largest first. Rows can report which one the viewer tapped, so you can open your own screen for it.
+> The holdings behind an account's balance. Every currency and token gets its own row, showing its name and its value in dollars, largest first. Rows can report which one the viewer tapped, so you can open your own screen for it. When `openHoldingOnSelect` is on, a row click shows that holding's balance page in place of this unit's chart and list.
 
-<Info>This page documents `@whop/elements@1.0.0-beta.2` and `@whop/elements-react@1.0.0-beta.2`.</Info>
+<Info>This page documents `@whop/elements@1.0.0-beta.3` and `@whop/elements-react@1.0.0-beta.3`.</Info>
 
 *Pre-release, not yet part of a stable release.*
 
 <div data-whop-platform="web">
-  Mounts inside [`Balances`](/elements/beta/wallet/balances), in [`Wallet`](/elements/beta/wallet/overview). `accountId` comes from `Wallet`. Pass props and callbacks through the create options or React props.
+  Mounts inside [`Balances`](/elements/beta/wallet/balances), in [`Wallet`](/elements/beta/wallet/overview). `accountId` and `openHoldingOnSelect` come from `Wallet`. Pass props and callbacks through the create options or React props.
 </div>
 
 <div data-whop-platform="swift" style={{ display: "none" }}>
@@ -75,7 +75,7 @@
       <div data-whop-demo-shell style={{ position: "relative", minHeight: "320px", transition: "min-height 200ms ease" }}>
         <div data-whop-demo-skeleton style={{ position: "absolute", inset: "0", borderRadius: "12px", background: "rgba(140, 140, 140, 0.12)", pointerEvents: "none", transition: "opacity 200ms ease" }} />
 
-        <div data-whop-demo-native="element:balances/list" data-whop-elements-version="1.0.0-beta.2" style={{ position: "relative" }} />
+        <div data-whop-demo-native="element:balances/list" data-whop-elements-version="1.0.0-beta.3" style={{ position: "relative" }} />
       </div>
 
       <p style={{ fontSize: "0.8125rem", opacity: 0.7 }}>Example data. [Open the Playground](/elements/beta/wallet/overview#playground).</p>
@@ -114,6 +114,10 @@
     Keep the personal row when `includeOwnedAccounts` is on. Turn it off if your app has no personal account to open. Defaults to `true`.
   </ResponseField>
 
+  <ResponseField name="maxItems" type="number">
+    Show at most this many holding rows, largest first. When there are more, the list gains a Show all balances control that expands the rest in place. Without it every holding is listed.
+  </ResponseField>
+
   ## Events
 
   Pass callbacks in the create options or React props.
@@ -128,7 +132,7 @@
 
   An account row was clicked, with `includeOwnedAccounts` on. `accountId` is the personal `user_…` tag or an owned `biz_…` tag, and `kind` lets you route without inspecting it. The element never navigates.
 
-  **Signature:** `((payload: { accountId: string; kind: "personal" | "business"; }) => void)`
+  **Signature:** `((payload: { accountId: string; kind: "business" | "personal"; }) => void)`
 
   ### `onLoaderStart`
 
@@ -174,23 +178,29 @@
 
   Style these parts through `appearance.classes`. Use camel case or kebab case for property names and include units. Page stylesheets can't reach the element's frame. The framework validates each declaration before injecting it.
 
-  | Class                   | Targets                                             |
-  | ----------------------- | --------------------------------------------------- |
-  | `.whop-BalanceRow`      | One balance row — its icon, name, value and chevron |
-  | `.whop-BalancesSurface` | The balances list — one row per holding or account  |
+  | Class                           | Targets                                                                      |
+  | ------------------------------- | ---------------------------------------------------------------------------- |
+  | `.whop-ActivityRow`             | One ledger activity row — its icon, title, timestamp, and amount             |
+  | `.whop-ActivitySurface`         | The activity feed — title, filters, and up to every fetched row              |
+  | `.whop-BalanceBreakdownSurface` | A currency balance total, segmented bar, and amount rows                     |
+  | `.whop-BalanceRow`              | One balance row — its icon, name, value and chevron                          |
+  | `.whop-BalancesSurface`         | The balances list — one row per holding or account                           |
+  | `.whop-CashBalanceSurface`      | The holding balance page — back, title, amount, split, actions, and activity |
 
   ```ts theme={null}
   const wallet = whop.wallet.create({
     appearance: {
       classes: {
-        'whop-BalanceRow': { borderRadius: '8px', fontWeight: '600' },
-        'whop-BalancesSurface': { borderRadius: '8px', fontWeight: '600' }
+        'whop-ActivityRow': { borderRadius: '8px', fontWeight: '600' },
+        'whop-ActivitySurface': { borderRadius: '8px', fontWeight: '600' },
+        'whop-BalanceBreakdownSurface': { borderRadius: '8px', fontWeight: '600' }
       }
     }
   });
 
+  // 6 classes use this shape
   wallet.update({
-    appearance: { classes: { 'whop-BalanceRow': { fontWeight: '700' } } }
+    appearance: { classes: { 'whop-ActivityRow': { fontWeight: '700' } } }
   });
   ```
 

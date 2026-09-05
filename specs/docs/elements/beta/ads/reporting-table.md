@@ -6,7 +6,7 @@
 
 > An advertising account's campaigns, ad groups, and ads in one table, with the tabs that move between them: pick rows to narrow the level below, search, sort, break the numbers down, choose your columns, and pause, resume, duplicate, or delete straight from a row. The window it reports on and the rows it is filtered to live on the handle, so a chart mounted beside it reports on exactly the same thing.
 
-<Info>This page documents `@whop/elements@1.0.0-beta.2` and `@whop/elements-react@1.0.0-beta.2`.</Info>
+<Info>This page documents `@whop/elements@1.0.0-beta.3` and `@whop/elements-react@1.0.0-beta.3`.</Info>
 
 *Pre-release, not yet part of a stable release.*
 
@@ -57,7 +57,7 @@ Mounts inside [`Reporting`](/elements/beta/ads/reporting), in [`Ads`](/elements/
     <div data-whop-demo-shell style={{ position: "relative", minHeight: "320px", transition: "min-height 200ms ease" }}>
       <div data-whop-demo-skeleton style={{ position: "absolute", inset: "0", borderRadius: "12px", background: "rgba(140, 140, 140, 0.12)", pointerEvents: "none", transition: "opacity 200ms ease" }} />
 
-      <div data-whop-demo-native="element:reporting/table" data-whop-elements-version="1.0.0-beta.2" style={{ position: "relative" }} />
+      <div data-whop-demo-native="element:reporting/table" data-whop-elements-version="1.0.0-beta.3" style={{ position: "relative" }} />
     </div>
 
     <p style={{ fontSize: "0.8125rem", opacity: 0.7 }}>Example data. [Open the Playground](/elements/beta/ads/overview#playground).</p>
@@ -94,6 +94,14 @@ Mounts inside [`Reporting`](/elements/beta/ads/reporting), in [`Ads`](/elements/
   Whether paused campaigns are listed. Defaults to `true`.
 </ResponseField>
 
+<ResponseField name="showPausedAdGroups" type="boolean">
+  Whether paused ad groups are listed. Defaults to `true`.
+</ResponseField>
+
+<ResponseField name="showPausedAds" type="boolean">
+  Whether paused ads are listed. Defaults to `true`.
+</ResponseField>
+
 ## Events
 
 Pass callbacks in the create options or React props.
@@ -124,9 +132,9 @@ The viewer added, edited, or removed a computed column. Carries the entire list 
 
 ### `onViewChanged`
 
-The viewer moved one of the table’s own controls — the All tab’s drill, the breakdown, the search box, the paused toggle. Carries all four whichever moved; store them and pass them back as props, or they reset on the next mount.
+The viewer moved one of the table’s own controls — the All tab’s drill, the breakdown, the search box, the paused toggle on any of the three tabs. Carries all of them whichever moved; store them and pass them back as props, or they reset on the next mount.
 
-**Signature:** `((payload: { sourcesDrill: string | null; breakdown: "age" | "gender" | "age_gender" | "placement" | "publisher_platform" | "device_platform" | "impression_device" | "country" | "region" | "hour" | null; query: string; showPausedCampaigns: boolean; }) => void)`
+**Signature:** `((payload: { sourcesDrill: string | null; breakdown: "age" | "gender" | "age_gender" | "placement" | "publisher_platform" | "device_platform" | "impression_device" | "country" | "region" | "hour" | null; query: string; showPausedCampaigns: boolean; showPausedAdGroups: boolean; showPausedAds: boolean; }) => void)`
 
 ### `onSourcesChanged`
 

@@ -14,14 +14,14 @@ A Membership is the active relationship between a user and a product. It tracks 
 
 ## Lifecycle at a glance
 
-| Action               | Method                                                                                     | What it does                                                |
-| -------------------- | ------------------------------------------------------------------------------------------ | ----------------------------------------------------------- |
-| Pause billing        | [`memberships.pause`](/api-reference/beta/memberships/pause-membership)                    | Stops future renewals until resumed. Existing access stays. |
-| Resume billing       | [`memberships.resume`](/api-reference/beta/memberships/resume-membership)                  | Reverses a pause.                                           |
-| Cancel               | [`memberships.cancel`](/api-reference/beta/memberships/cancel-membership)                  | At period end, or immediate (default).                      |
-| Restore cancellation | [`memberships.uncancelMembership`](/api-reference/memberships/uncancel-membership)         | Reverses a pending `cancel_at_period_end`.                  |
-| Comp time            | [`memberships.addFreeDaysMembership`](/api-reference/memberships/add-free-days-membership) | Extends the next renewal date by N days.                    |
-| Update metadata      | [`memberships.update`](/api-reference/beta/memberships/update-membership)                  | Patch metadata or other writable fields.                    |
+| Action               | Method                                                                    | What it does                                                          |
+| -------------------- | ------------------------------------------------------------------------- | --------------------------------------------------------------------- |
+| Pause billing        | [`memberships.pause`](/api-reference/beta/memberships/pause-membership)   | Stops future renewals until resumed. Existing access stays.           |
+| Resume billing       | [`memberships.resume`](/api-reference/beta/memberships/resume-membership) | Reverses a pause.                                                     |
+| Cancel               | [`memberships.cancel`](/api-reference/beta/memberships/cancel-membership) | At period end, or immediate (default).                                |
+| Restore cancellation | [`memberships.update`](/api-reference/beta/memberships/update-membership) | Send `cancel_at_period_end: false` to reverse a pending cancellation. |
+| Comp time            | [`memberships.extend`](/api-reference/beta/memberships/extend-membership) | Extends the next renewal date by N days.                              |
+| Update metadata      | [`memberships.update`](/api-reference/beta/memberships/update-membership) | Patch metadata or other writable fields.                              |
 
 ## Retrieve and list
 
@@ -279,31 +279,42 @@ Two cancellation modes. `cancel_at_period_end: true` keeps access until the curr
 
 ## Restore a cancellation
 
-If the user changes their mind before the period ends, undo a pending period-end cancellation. Has no effect if the membership wasn't scheduled to cancel.
+If the user changes their mind before the period ends, clear the pending period-end cancellation with an update. Has no effect if the membership wasn't scheduled to cancel.
 
 <CodeGroup>
   ```typescript TypeScript theme={null}
-  await client.memberships.uncancelMembership({ id: "mem_xxxxxxxxxxxxx" });
+  await client.memberships.update({
+    id: "mem_xxxxxxxxxxxxx",
+    cancel_at_period_end: false,
+  });
   ```
 
   ```python Python theme={null}
-  client.memberships.uncancel_membership("mem_xxxxxxxxxxxxx")
+  client.memberships.update("mem_xxxxxxxxxxxxx", cancel_at_period_end=False)
   ```
 
   ```ruby Ruby theme={null}
-  client.memberships.uncancel_membership(id: "mem_xxxxxxxxxxxxx")
+  client.memberships.update(id: "mem_xxxxxxxxxxxxx", cancel_at_period_end: false)
   ```
 
   ```rust Rust theme={null}
   client
       .memberships
-      .uncancel_membership(&"mem_xxxxxxxxxxxxx".to_string(), None)
+      .update(
+          &"mem_xxxxxxxxxxxxx".to_string(),
+          &UpdateMembershipsRequest {
+              cancel_at_period_end: Some(false),
+              ..Default::default()
+          },
+          None,
+      )
       .await?;
   ```
 
   ```go Go theme={null}
-  if _, err := client.Memberships.UncancelMembership(context.TODO(), &whopsdk.UncancelMembershipRequest{
-      ID: "mem_xxxxxxxxxxxxx",
+  if _, err := client.Memberships.Update(context.TODO(), &whopsdk.UpdateMembershipsRequest{
+      ID:                "mem_xxxxxxxxxxxxx",
+      CancelAtPeriodEnd: whopsdk.Bool(false),
   }); err != nil {
       log.Fatal(err)
   }
@@ -312,39 +323,39 @@ If the user changes their mind before the period ends, undo a pending period-end
 
 ## Add free days
 
-Comp the user with extra time on their current period. The next renewal date moves forward by `free_days`. Useful for service interruptions, support gestures, or referral rewards.
+Comp the user with extra time on their current period. The next renewal date moves forward by `days`. Useful for service interruptions, support gestures, or referral rewards.
 
 <CodeGroup>
   ```typescript TypeScript theme={null}
-  await client.memberships.addFreeDaysMembership({
+  await client.memberships.extend({
     id: "mem_xxxxxxxxxxxxx",
-    free_days: 7,
+    days: 7,
   });
   ```
 
   ```python Python theme={null}
-  client.memberships.add_free_days_membership("mem_xxxxxxxxxxxxx", free_days=7)
+  client.memberships.extend("mem_xxxxxxxxxxxxx", days=7)
   ```
 
   ```ruby Ruby theme={null}
-  client.memberships.add_free_days_membership(id: "mem_xxxxxxxxxxxxx", free_days: 7)
+  client.memberships.extend(id: "mem_xxxxxxxxxxxxx", days: 7)
   ```
 
   ```rust Rust theme={null}
   client
       .memberships
-      .add_free_days_membership(
+      .extend(
           &"mem_xxxxxxxxxxxxx".to_string(),
-          &AddFreeDaysMembershipRequest { free_days: 7 },
+          &ExtendMembershipsRequest { days: 7 },
           None,
       )
       .await?;
   ```
 
   ```go Go theme={null}
-  if _, err := client.Memberships.AddFreeDaysMembership(context.TODO(), &whopsdk.AddFreeDaysMembershipRequest{
-      ID:       "mem_xxxxxxxxxxxxx",
-      FreeDays: 7,
+  if _, err := client.Memberships.Extend(context.TODO(), &whopsdk.ExtendMembershipsRequest{
+      ID:   "mem_xxxxxxxxxxxxx",
+      Days: 7,
   }); err != nil {
       log.Fatal(err)
   }
@@ -413,13 +424,13 @@ Patch arbitrary metadata or other writable fields on the membership.
 
 Subscribe via [webhooks](/developer/guides/webhooks). These are the events that fire across the lifecycle:
 
-| Event                                                                                                                | When it fires                                                                                          |
-| -------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
-| [`membership.activated`](/api-reference/beta/memberships/membership-activated)                                       | Membership becomes valid (initial purchase or renewal payment succeeds).                               |
-| [`membership.deactivated`](/api-reference/beta/memberships/membership-deactivated)                                   | Membership goes invalid (failed payment, immediate cancel, period-end cancel landing, or user leaves). |
-| [`membership.cancel_at_period_end_changed`](/api-reference/beta/memberships/membership-cancel-at-period-end-changed) | The user toggled cancellation on or off (pairs with `cancel` and `uncancel`).                          |
+| Event                                                                                                                | When it fires                                                                                                     |
+| -------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| [`membership.activated`](/api-reference/beta/memberships/membership-activated)                                       | Membership becomes valid (initial purchase or renewal payment succeeds).                                          |
+| [`membership.deactivated`](/api-reference/beta/memberships/membership-deactivated)                                   | Membership goes invalid (failed payment, immediate cancel, period-end cancel landing, or user leaves).            |
+| [`membership.cancel_at_period_end_changed`](/api-reference/beta/memberships/membership-cancel-at-period-end-changed) | The user toggled cancellation on or off (pairs with `cancel` and an `update` that clears `cancel_at_period_end`). |
 
-For `pause` / `resume` / `add_free_days`, the membership status doesn't flip, so no activation/deactivation event fires. If you need to confirm the mutation succeeded, retrieve the membership after the call or poll on your own schedule.
+For `pause` / `resume` / `extend`, the membership status doesn't flip, so no activation/deactivation event fires. If you need to confirm the mutation succeeded, retrieve the membership after the call or poll on your own schedule.
 
 ## Next steps
 

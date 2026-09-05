@@ -4,13 +4,13 @@
 
 # SendElement
 
-> Sends money from an account to a recipient — a user, another account, or a public claim link anyone can redeem. Renders its own recipient search resolved from the account ID with no credentials beyond the account's own token. Needs an `accessToken` scoped to `payout:withdraw_funds`; account recipient search additionally needs `company:authorized_user:read` and `member:basic:read`, and account claim links need `airdrop_link:manage` — a host without one of those scopes should turn off the matching prop rather than leave a row that will 403.
+> Sends money from an account to a recipient — a user, another account, or a public claim link anyone can redeem. Direct transfers use the source account's configured fiat or crypto rail. Renders its own recipient search resolved from the account ID with no credentials beyond the account's own token. Needs an `accessToken` scoped to `payout:transfer_funds` for direct transfers and `payout:withdraw_funds` for recipient lists; account recipient search additionally needs `company:authorized_user:read` and `member:basic:read`, and account claim links need `airdrop_link:manage` — a host without one of those scopes should turn off the matching prop rather than leave a row that will 403.
 
-<Info>This page documents `@whop/elements@1.0.0-beta.2` and `@whop/elements-react@1.0.0-beta.2`.</Info>
+<Info>This page documents `@whop/elements@1.0.0-beta.3` and `@whop/elements-react@1.0.0-beta.3`.</Info>
 
 *Pre-release, not yet part of a stable release.*
 
-Mounts inside [`Wallet`](/elements/beta/wallet/overview). Pass props and callbacks through the create options or React props. Keep the created handle, or React `ref`, to call `refresh()`.
+Mounts inside [`Wallet`](/elements/beta/wallet/overview). `accountId` and `accessToken` come from there. Pass props and callbacks through the create options or React props. Keep the created handle, or React `ref`, to call `refresh()`.
 
 <Note>You can mount this element **inline** (`create`) or open it as a **modal** overlay (`createOverlay`).</Note>
 
@@ -53,7 +53,7 @@ Mounts inside [`Wallet`](/elements/beta/wallet/overview). Pass props and callbac
     <div data-whop-demo-shell style={{ position: "relative", minHeight: "320px", transition: "min-height 200ms ease" }}>
       <div data-whop-demo-skeleton style={{ position: "absolute", inset: "0", borderRadius: "12px", background: "rgba(140, 140, 140, 0.12)", pointerEvents: "none", transition: "opacity 200ms ease" }} />
 
-      <div data-whop-demo-native="element:wallet/send" data-whop-elements-version="1.0.0-beta.2" style={{ position: "relative" }} />
+      <div data-whop-demo-native="element:wallet/send" data-whop-elements-version="1.0.0-beta.3" style={{ position: "relative" }} />
     </div>
 
     <p style={{ fontSize: "0.8125rem", opacity: 0.7 }}>Example data. [Open the Playground](/elements/beta/wallet/overview#playground).</p>
@@ -63,7 +63,11 @@ Mounts inside [`Wallet`](/elements/beta/wallet/overview). Pass props and callbac
 ## Props
 
 <ResponseField name="accessToken" type="string">
-  A scoped token for the privileged read/write — needs `payout:withdraw_funds` (plus `company:authorized_user:read` and `member:basic:read` for recipient search, `airdrop_link:manage` for claim links). Omitted, the read carries the viewer's own session, which only answers same-origin.
+  A scoped token for the privileged read/write — needs `payout:transfer_funds` for direct transfers and `payout:withdraw_funds` for recipient lists (plus `company:authorized_user:read` and `member:basic:read` for recipient search, `airdrop_link:manage` for claim links). Omitted, the read carries the viewer's own session, which only answers same-origin.
+</ResponseField>
+
+<ResponseField name="title" type="string">
+  Overrides the recipient-picker header. Omitted, the header is "Choose recipient".
 </ResponseField>
 
 <ResponseField name="canSearchRecipients" type="boolean">

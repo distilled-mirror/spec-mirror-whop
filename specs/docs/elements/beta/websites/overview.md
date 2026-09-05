@@ -4,9 +4,9 @@
 
 # Websites
 
-> An account's websites: every site built on whop.app plus every domain the Whop Pixel reports, with traffic and attributed revenue per domain. Mount `websites` and it lists them with visitors, page views, sales, revenue, trend, and most-viewed pages. Mount `pixel-setup` alongside it and a site whose pixel the wizard just proved live gets a waiting row automatically, because its first events take a few minutes to reach the stats API and the site would otherwise look lost — you wire nothing up for that, and the row is kept on your page so it is still there if the merchant reloads. Reading stats is privileged, so it needs an `accessToken` — except inside Whop's own app, where the viewer's session carries the read.
+> An account's websites: every site built on whop.site plus every domain the Whop Pixel reports, with traffic and attributed revenue per domain. Mount `websites` and it lists them with visitors, page views, sales, revenue, trend, and most-viewed pages. Mount `pixel-setup` alongside it and a site whose pixel the wizard just proved live gets a waiting row automatically, because its first events take a few minutes to reach the stats API and the site would otherwise look lost — you wire nothing up for that, and the row is kept on your page so it is still there if the merchant reloads. Reading stats is privileged, so it needs an `accessToken` — except inside Whop's own app, where the viewer's session carries the read.
 
-<Info>This page documents `@whop/elements@1.0.0-beta.2` and `@whop/elements-react@1.0.0-beta.2`.</Info>
+<Info>This page documents `@whop/elements@1.0.0-beta.3` and `@whop/elements-react@1.0.0-beta.3`.</Info>
 
 *Pre-release, not yet part of a stable release.*
 
@@ -17,7 +17,7 @@ Assemble the elements with example data. Drive the controls, add and arrange ele
 <div data-whop-demo-shell style={{ position: "relative", minHeight: "480px", transition: "min-height 200ms ease" }}>
   <div data-whop-demo-skeleton style={{ position: "absolute", inset: "0", borderRadius: "12px", background: "rgba(140, 140, 140, 0.12)", pointerEvents: "none", transition: "opacity 200ms ease" }} />
 
-  <div data-whop-demo-native="playground:websites" data-whop-elements-version="1.0.0-beta.2" style={{ position: "relative" }} />
+  <div data-whop-demo-native="playground:websites" data-whop-elements-version="1.0.0-beta.3" style={{ position: "relative" }} />
 </div>
 
 <div data-whop-usage="websites/playground">
@@ -55,11 +55,11 @@ Pass these to `whop.websites.create({ … })`, or as props on `<Websites>` in Re
 </ResponseField>
 
 <ResponseField name="includeApps" type="boolean">
-  List websites built on whop.app from the moment they exist, with zeros until traffic arrives. Turn off to show only domains the pixel reports. @default true Defaults to `true`.
+  List websites built on whop.site from the moment they exist, with zeros until traffic arrives. Turn off to show only domains the pixel reports. @default true Defaults to `true`.
 </ResponseField>
 
 <ResponseField name="pendingWebsites" type="PendingWebsite[]">
-  Websites you have just added that are not live yet — `{ domain, kind }`, where `kind` is `deploy` for a whop.app site waiting on its first deploy or `events` for a site waiting on its first pixel events. They render as waiting rows so a site never looks lost right after setup, and the table polls while any is outstanding. Sites the mounted `pixel-setup` wizard proves live are added for you, kept across a reload, and are NOT your job — this is for the waits the handle cannot see for itself, above all a whop.app site you just created, which no element here reports. Entries you add are yours to remove: a row stops being drawn once its domain reaches the table, but the list itself only changes when you change it, so drop an entry when `websitesLoaded` names its domain and give the rest a timeout of your own. Defaults to `[]`.
+  Websites you have just added that are not live yet — `{ domain, kind }`, where `kind` is `deploy` for a site on whop.site waiting on its first deploy or `events` for a site waiting on its first pixel events. They render as waiting rows so a site never looks lost right after setup, and the table polls while any is outstanding. Sites the mounted `pixel-setup` wizard proves live are added for you, kept across a reload, and are NOT your job — this is for the waits the handle cannot see for itself, above all a site on whop.site you just created, which no element here reports. Entries you add are yours to remove: a row stops being drawn once its domain reaches the table, but the list itself only changes when you change it, so drop an entry when `websitesLoaded` names its domain and give the rest a timeout of your own. Defaults to `[]`.
 </ResponseField>
 
 <ResponseField name="showVerify" type="boolean">
@@ -67,11 +67,11 @@ Pass these to `whop.websites.create({ … })`, or as props on `<Websites>` in Re
 </ResponseField>
 
 <ResponseField name="showSettings" type="boolean">
-  Add a settings button to whop.app rows. The element only reports the press through `onSettingsRequested` — the editing surface is yours. Defaults to `false`.
+  Add a settings button to whop.site rows. The element only reports the press through `onSettingsRequested` — the editing surface is yours. Defaults to `false`.
 </ResponseField>
 
 <ResponseField name="showEdit" type="boolean">
-  Add an edit button to whop.app rows, styled as the row’s primary action. The element only reports the press through `onEditRequested` — the editing surface is yours. Defaults to `false`.
+  Add an edit button to whop.site rows, styled as the row’s primary action. The element only reports the press through `onEditRequested` — the editing surface is yours. Defaults to `false`.
 </ResponseField>
 
 <ResponseField name="verifyTarget" type="string">
@@ -83,7 +83,7 @@ Pass these to `whop.websites.create({ … })`, or as props on `<Websites>` in Re
 </ResponseField>
 
 <ResponseField name="accessToken" type="string">
-  A scoped token for the reads — stats need `stats:read`, and the whop.app website list reads apps (rows degrade to traffic-only if the token can’t). Mint it on your server with `POST /api/v1/access_tokens` and set a fresh one before it expires. `pixel-setup` is the one child this is not projected into — it authenticates its own scans from its own `accessToken` — so mint a single token carrying both sets of scopes and pass that same string to both, rather than one token per element. Omitted, the reads carry the viewer’s own session, which only answers same-origin.
+  A scoped token for the reads — stats need `stats:read`, and the whop.site website list reads apps (rows degrade to traffic-only if the token can’t). Mint it on your server with `POST /api/v1/access_tokens` and set a fresh one before it expires. `pixel-setup` is the one child this is not projected into — it authenticates its own scans from its own `accessToken` — so mint a single token carrying both sets of scopes and pass that same string to both, rather than one token per element. Omitted, the reads carry the viewer’s own session, which only answers same-origin.
 </ResponseField>
 
 <ResponseField name="accountId" type="string" required>
@@ -146,7 +146,7 @@ The elements this group mounts. Each has its own page:
 
 <CardGroup cols={2}>
   <Card title="WebsitesElement" href="/elements/beta/websites/websites">
-    An account's websites in one table: every site built on whop.app — listed from the moment it exists, zeros until traffic arrives — merged by hostname with every domain the Whop Pixel reports. Rows for the whop.app sites carry a Whop mark, so the two sources stay apart even when both have traffic. Each row shows a page-view trend, unique visitors, page views, attributed sales, USD revenue, and the last day an event arrived. Expanding a domain loads its most-viewed pages, and each page-view figure opens the breakdown of which events made it up. Set `showVerify` to add a per-row button that asks the page hosting this element to open the site and confirm the pixel is firing; set `showSettings` to add a settings button on whop.app rows that reports the click through `onSettingsRequested`, and `showEdit` to add a primary edit button reporting through `onEditRequested` — your page owns the actual editing.
+    An account's websites in one table: every site built on whop.site — listed from the moment it exists, zeros until traffic arrives — merged by hostname with every domain the Whop Pixel reports. Rows for the whop.site ones carry a Whop mark, so the two sources stay apart even when both have traffic. Each row shows a page-view trend, unique visitors, page views, attributed sales, USD revenue, and the last day an event arrived. Expanding a domain loads its most-viewed pages, and each page-view figure opens the breakdown of which events made it up. Set `showVerify` to add a per-row button that asks the page hosting this element to open the site and confirm the pixel is firing; set `showSettings` to add a settings button on whop.site rows that reports the click through `onSettingsRequested`, and `showEdit` to add a primary edit button reporting through `onEditRequested` — your page owns the actual editing.
   </Card>
 
   <Card title="PixelSetupElement" href="/elements/beta/websites/pixel-setup">

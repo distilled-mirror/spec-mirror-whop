@@ -47,7 +47,7 @@ info:
   termsOfService: https://whop.com/tos-developer-api/
   title: Whop API
   version: 1.0.0
-  x-api-version-date: 2026-09-02-2
+  x-api-version-date: '2026-09-04'
 servers:
   - description: Production Whop API
     url: https://api.whop.com/api/v1

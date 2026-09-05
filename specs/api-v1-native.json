@@ -5,7 +5,7 @@
     "termsOfService": "https://whop.com/tos-developer-api/",
     "title": "Whop API",
     "version": "1.0.0",
-    "x-api-version-date": "2026-09-02-2"
+    "x-api-version-date": "2026-09-04"
   },
   "servers": [
     {
@@ -6088,7 +6088,7 @@
         }
       ],
       "post": {
-        "description": "Resumes a paused ad campaign.",
+        "description": "Resumes a paused ad campaign. Requires an ads payment method on the account.",
         "operationId": "unpauseAdCampaign",
         "parameters": [
           {
@@ -7940,7 +7940,7 @@
         }
       ],
       "post": {
-        "description": "Creates an ad in an ad group.",
+        "description": "Creates an ad in an ad group. Any campaign status other than `draft` launches the campaign, which requires an ads payment method on the account.",
         "operationId": "createAd",
         "parameters": [
           {
@@ -9482,9 +9482,10 @@
                       "2026-08-31",
                       "2026-09-02",
                       "2026-09-02-1",
-                      "2026-09-02-2"
+                      "2026-09-02-2",
+                      "2026-09-04"
                     ],
-                    "example": "2026-09-02-2",
+                    "example": "2026-09-04",
                     "type": "string"
                   },
                   "expires_at": {
@@ -9909,9 +9910,10 @@
                       "2026-08-31",
                       "2026-09-02",
                       "2026-09-02-1",
-                      "2026-09-02-2"
+                      "2026-09-02-2",
+                      "2026-09-04"
                     ],
-                    "example": "2026-09-02-2",
+                    "example": "2026-09-04",
                     "type": "string"
                   },
                   "expires_at": {
@@ -15842,7 +15844,7 @@
                     "type": "string"
                   },
                   "billing": {
-                    "description": "New billing address. Requires line1, city, region, postal_code, and country_code. On an invited card, passing billing alone (as the invited user) completes onboarding and starts card provisioning.",
+                    "description": "The billing address. On an issued card this replaces the card's billing address and region is also required. On an invited card, sending it as the invited user completes onboarding and starts card provisioning.",
                     "properties": {
                       "city": {
                         "description": "Billing city.",
@@ -15870,7 +15872,7 @@
                         "type": "string"
                       },
                       "region": {
-                        "description": "Billing region or state.",
+                        "description": "Billing region or state. Required when updating an issued card's billing address.",
                         "example": "TX",
                         "type": "string"
                       }
@@ -15878,7 +15880,6 @@
                     "required": [
                       "line1",
                       "city",
-                      "region",
                       "postal_code",
                       "country_code"
                     ],
@@ -15888,6 +15889,32 @@
                     "description": "Pass `true` to permanently cancel the card. A canceled card cannot be uncanceled. Cannot be combined with other fields.",
                     "example": true,
                     "type": "boolean"
+                  },
+                  "cardholder": {
+                    "description": "Details for the invited cardholder, accepted only while completing onboarding on an invited card. The legal name comes from an approved identity verification when the invited user has one, and from these fields when they do not.",
+                    "properties": {
+                      "email": {
+                        "description": "Email address for the invited cardholder.",
+                        "example": "marcus@shinetime.example",
+                        "type": "string"
+                      },
+                      "first_name": {
+                        "description": "Legal first name of the invited cardholder.",
+                        "example": "Tanya",
+                        "type": "string"
+                      },
+                      "last_name": {
+                        "description": "Legal last name of the invited cardholder.",
+                        "example": "Cole",
+                        "type": "string"
+                      },
+                      "phone": {
+                        "description": "Phone number for the invited cardholder.",
+                        "example": "+xxxxxxxxxxx",
+                        "type": "string"
+                      }
+                    },
+                    "type": "object"
                   },
                   "frozen": {
                     "description": "Pass `true` to freeze the card, `false` to unfreeze it. The assigned cardholder may freeze their own card without the payout:account:update scope.",
@@ -21904,7 +21931,9 @@
           },
           {
             "bearerAuth": [
-              "company:balance:read"
+              "company:balance:read",
+              "company:balance:export",
+              "member:email:read"
             ]
           },
           {
@@ -22192,7 +22221,9 @@
           },
           {
             "bearerAuth": [
-              "company:balance:read"
+              "company:balance:read",
+              "company:balance:export",
+              "member:email:read"
             ]
           },
           {
@@ -22391,7 +22422,9 @@
           },
           {
             "bearerAuth": [
-              "company:balance:read"
+              "company:balance:read",
+              "company:balance:export",
+              "member:email:read"
             ]
           },
           {
@@ -23754,6 +23787,7 @@
                               "fx",
                               "legacy",
                               "misc",
+                              "operational_costs",
                               "other",
                               "payments",
                               "refunds",
@@ -24019,6 +24053,7 @@
                               "sales_tax_remittance_reversal",
                               "sales_tax_remitted",
                               "settlement_rounding_variance",
+                              "settlement_shortfall_loss",
                               "software_rental_revshare",
                               "software_rental_transaction",
                               "stripe_domestic_processing_fee",
@@ -29533,7 +29568,7 @@
               "schema": {
                 "properties": {
                   "account_id": {
-                    "description": "Account to register the domain for (`biz_` tag). Defaults to the caller's account.",
+                    "description": "Account to register the domain for (`biz_` tag). Required when authenticating as a user; an account API key supplies its own account.",
                     "example": "biz_xxxxxxxxxxxxxx",
                     "type": "string"
                   },
@@ -30689,6 +30724,72 @@
         "tags": [
           "Payments"
         ]
+      }
+    },
+    "/payments/{payment_id}/resume": {
+      "post": {
+        "description": "Starts a fresh on-session attempt with the saved card for a subscription renewal that is waiting on the customer to authenticate; the bank's step then arrives in `next_action` on the following status reads. Only the payment's own customer may call it — with the payment's `client_secret` or their own session — and it is a no-op for any payment that is not a parked renewal.",
+        "operationId": "resumePayment",
+        "parameters": [
+          {
+            "description": "The unique identifier of the payment.",
+            "in": "path",
+            "name": "payment_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "$ref": "#/components/parameters/IdempotencyKey"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaymentStatus"
+                }
+              }
+            },
+            "description": "Resume requested"
+          },
+          "400": {
+            "$ref": "#/components/responses/InvalidParameters",
+            "description": "The resume could not start"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized",
+            "description": "Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden",
+            "description": "A seller cannot charge the buyer's saved card"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound",
+            "description": "Payment not found"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Resume a parked renewal",
+        "tags": [
+          "Payments"
+        ],
+        "x-mint": {
+          "metadata": {
+            "title": "Resume a Parked Renewal",
+            "sidebarTitle": "Resume a Parked Renewal"
+          }
+        }
       }
     },
     "/payments/{payment_id}/return_url": {
@@ -37051,7 +37152,7 @@
               "schema": {
                 "properties": {
                   "account_id": {
-                    "description": "The unique identifier of the account to create this plan for. Defaults to the caller's account.",
+                    "description": "The unique identifier of the account to create this plan for. Required when authenticating as a user; an account API key supplies its own account.",
                     "example": "biz_xxxxxxxxxxxxxx",
                     "type": "string"
                   },
@@ -37171,7 +37272,7 @@
                     ]
                   },
                   "initial_price": {
-                    "description": "Initial amount charged in the plan's currency, e.g. 10.43 for $10.43.",
+                    "description": "Initial amount charged in the plan's currency, e.g. 10.43 for $10.43. A paid fiat plan charges at least 1.00 in its currency; use 0 for free.",
                     "example": 0,
                     "type": [
                       "number",
@@ -37247,7 +37348,7 @@
                     "type": "string"
                   },
                   "renewal_price": {
-                    "description": "The amount charged each billing period for recurring plans, in the plan's currency.",
+                    "description": "The amount charged each billing period for recurring plans, in the plan's currency. A paid fiat plan charges at least 1.00 in its currency.",
                     "example": 59,
                     "type": [
                       "number",
@@ -37622,7 +37723,7 @@
                     ]
                   },
                   "initial_price": {
-                    "description": "Initial amount charged in the plan's currency, e.g. 10.43 for $10.43.",
+                    "description": "Initial amount charged in the plan's currency, e.g. 10.43 for $10.43. A paid fiat plan charges at least 1.00 in its currency; use 0 for free.",
                     "example": 0,
                     "type": [
                       "number",
@@ -37696,7 +37797,7 @@
                     "type": "string"
                   },
                   "renewal_price": {
-                    "description": "The amount charged each billing period for recurring plans, in the plan's currency.",
+                    "description": "The amount charged each billing period for recurring plans, in the plan's currency. A paid fiat plan charges at least 1.00 in its currency.",
                     "example": 59,
                     "type": [
                       "number",
@@ -38935,7 +39036,7 @@
         }
       ],
       "post": {
-        "description": "Submits a product to the whop.com marketplace for review. The product moves to `pending_review`; a Whop reviewer approves it before it goes live.",
+        "description": "Submits a product to the whop.com marketplace for review. The product moves to `pending_review`; a Whop reviewer approves it before it goes live. Requires a logo, a headline, and at least one gallery image or video; the request fails naming whichever is missing.",
         "operationId": "publishProduct",
         "parameters": [
           {
@@ -51024,7 +51125,7 @@
                 "properties": {
                   "api_version_date": {
                     "description": "The dated API version (Api-Version-Date) to pin this webhook's payloads to. Omit to leave the webhook unpinned, tracking the current payload shape.",
-                    "example": "2026-09-02-2",
+                    "example": "2026-01-01",
                     "type": [
                       "string",
                       "null"
@@ -51387,7 +51488,7 @@
                 "properties": {
                   "api_version_date": {
                     "description": "The dated API version (Api-Version-Date) to pin this webhook's payloads to. Only valid for `v1` webhooks. Omit to leave the current pin unchanged, or pass `null` to unpin and track the current payload shape.",
-                    "example": "2026-09-02-2",
+                    "example": "2026-01-01",
                     "type": [
                       "string",
                       "null"
@@ -52128,7 +52229,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-02-2",
+                "api_version_date": "2026-09-04",
                 "data": {
                   "balances": [],
                   "banner_image_url": null,
@@ -52446,7 +52547,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-02-2",
+                "api_version_date": "2026-09-04",
                 "data": {
                   "added_to_cart_value": 0,
                   "added_to_carts": 0,
@@ -52633,7 +52734,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-02-2",
+                "api_version_date": "2026-09-04",
                 "data": {
                   "billing": null,
                   "canceled_at": null,
@@ -53029,7 +53130,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-02-2",
+                "api_version_date": "2026-09-04",
                 "data": {
                   "billing": null,
                   "canceled_at": null,
@@ -53425,7 +53526,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-02-2",
+                "api_version_date": "2026-09-04",
                 "data": {
                   "billing": null,
                   "canceled_at": null,
@@ -53821,7 +53922,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-02-2",
+                "api_version_date": "2026-09-04",
                 "data": {
                   "billing": null,
                   "canceled_at": null,
@@ -54217,7 +54318,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-02-2",
+                "api_version_date": "2026-09-04",
                 "data": {
                   "hosted_url": null,
                   "id": "ciac_xxxxxxxxxxxxxx",
@@ -54385,7 +54486,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-02-2",
+                "api_version_date": "2026-09-04",
                 "data": {
                   "hosted_url": null,
                   "id": "ciac_xxxxxxxxxxxxxx",
@@ -54553,7 +54654,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-02-2",
+                "api_version_date": "2026-09-04",
                 "data": {
                   "hosted_url": null,
                   "id": "ciac_xxxxxxxxxxxxxx",
@@ -54721,7 +54822,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-02-2",
+                "api_version_date": "2026-09-04",
                 "data": {
                   "hosted_url": null,
                   "id": "ciac_xxxxxxxxxxxxxx",
@@ -54889,7 +54990,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-02-2",
+                "api_version_date": "2026-09-04",
                 "data": {
                   "card_id": "icrd_xxxxxxxxxxxxxx",
                   "cardholder_id": null,
@@ -55027,7 +55128,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-02-2",
+                "api_version_date": "2026-09-04",
                 "data": {
                   "card_id": "icrd_xxxxxxxxxxxxxx",
                   "cardholder_id": null,
@@ -55165,7 +55266,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-02-2",
+                "api_version_date": "2026-09-04",
                 "data": {
                   "card_id": "icrd_xxxxxxxxxxxxxx",
                   "cardholder_id": null,
@@ -55303,7 +55404,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-02-2",
+                "api_version_date": "2026-09-04",
                 "data": {
                   "card_id": "icrd_xxxxxxxxxxxxxx",
                   "cardholder_id": null,
@@ -55441,7 +55542,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-02-2",
+                "api_version_date": "2026-09-04",
                 "data": {
                   "card_id": "icrd_xxxxxxxxxxxxxx",
                   "cardholder_id": null,
@@ -55579,7 +55680,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-02-2",
+                "api_version_date": "2026-09-04",
                 "data": {
                   "amount": "75000000000",
                   "available_at": null,
@@ -55719,7 +55820,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-02-2",
+                "api_version_date": "2026-09-04",
                 "data": {
                   "account_id": "biz_xxxxxxxxxxxxxx",
                   "amount": 150,
@@ -55894,7 +55995,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-02-2",
+                "api_version_date": "2026-09-04",
                 "data": {
                   "account_id": "biz_xxxxxxxxxxxxxx",
                   "amount": 150,
@@ -56069,7 +56170,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-02-2",
+                "api_version_date": "2026-09-04",
                 "data": {
                   "account_id": null,
                   "actionable": false,
@@ -56206,7 +56307,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-02-2",
+                "api_version_date": "2026-09-04",
                 "data": {
                   "created_at": "2026-01-01T12:00:00.000Z",
                   "download_url": "https://s3.amazonaws.com/uploads/exports/members-export.csv",
@@ -56335,7 +56436,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-02-2",
+                "api_version_date": "2026-09-04",
                 "data": {
                   "created_at": "2026-01-01T12:00:00.000Z",
                   "download_url": null,
@@ -56464,7 +56565,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-02-2",
+                "api_version_date": "2026-09-04",
                 "data": {
                   "id": "idpf_xxxxxxxxxxxxxx"
                 },
@@ -56595,7 +56696,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-02-2",
+                "api_version_date": "2026-09-04",
                 "data": {
                   "access_level": "customer",
                   "account_id": "biz_xxxxxxxxxxxxxx",
@@ -56733,7 +56834,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-02-2",
+                "api_version_date": "2026-09-04",
                 "data": {
                   "account": {
                     "id": "biz_xxxxxxxxxxxxxx",
@@ -56872,7 +56973,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-02-2",
+                "api_version_date": "2026-09-04",
                 "data": {
                   "account": {
                     "id": "biz_xxxxxxxxxxxxxx",
@@ -57017,7 +57118,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-02-2",
+                "api_version_date": "2026-09-04",
                 "data": {
                   "account": {
                     "id": "biz_xxxxxxxxxxxxxx",
@@ -57156,7 +57257,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-02-2",
+                "api_version_date": "2026-09-04",
                 "data": {
                   "account": {
                     "id": "biz_xxxxxxxxxxxxxx",
@@ -57301,7 +57402,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-02-2",
+                "api_version_date": "2026-09-04",
                 "data": {
                   "account_id": "biz_xxxxxxxxxxxxxx",
                   "amount_after_fees": {
@@ -57548,7 +57649,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-02-2",
+                "api_version_date": "2026-09-04",
                 "data": {
                   "account_id": "biz_xxxxxxxxxxxxxx",
                   "amount_after_fees": {
@@ -57795,7 +57896,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-02-2",
+                "api_version_date": "2026-09-04",
                 "data": {
                   "account_id": "biz_xxxxxxxxxxxxxx",
                   "amount_after_fees": {
@@ -58042,7 +58143,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-02-2",
+                "api_version_date": "2026-09-04",
                 "data": {
                   "account_id": "biz_xxxxxxxxxxxxxx",
                   "amount_after_fees": {
@@ -58289,7 +58390,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-02-2",
+                "api_version_date": "2026-09-04",
                 "data": {
                   "account_id": "biz_xxxxxxxxxxxxxx",
                   "amount_after_fees": {
@@ -58533,7 +58634,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-02-2",
+                "api_version_date": "2026-09-04",
                 "data": {
                   "account_id": "biz_xxxxxxxxxxxxxx",
                   "amount_after_fees": {
@@ -58780,7 +58881,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-02-2",
+                "api_version_date": "2026-09-04",
                 "data": {
                   "amount": "10.0",
                   "created_at": "2026-01-01T12:00:00.000Z",
@@ -59253,7 +59354,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-02-2",
+                "api_version_date": "2026-09-04",
                 "data": {
                   "amount": "10.0",
                   "created_at": "2026-01-01T12:00:00.000Z",
@@ -59723,7 +59824,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-02-2",
+                "api_version_date": "2026-09-04",
                 "data": {
                   "amount": "10.0",
                   "created_at": "2026-01-01T12:00:00.000Z",
@@ -60189,7 +60290,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-02-2",
+                "api_version_date": "2026-09-04",
                 "data": {
                   "account_reference": "4483",
                   "bank_verification_state": "no_data",
@@ -60739,7 +60840,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-02-2",
+                "api_version_date": "2026-09-04",
                 "data": {
                   "account": {
                     "id": "biz_xxxxxxxxxxxxxx",
@@ -61028,7 +61129,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-02-2",
+                "api_version_date": "2026-09-04",
                 "data": {
                   "account": {
                     "id": "biz_xxxxxxxxxxxxxx",
@@ -61317,7 +61418,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-02-2",
+                "api_version_date": "2026-09-04",
                 "data": {
                   "account": {
                     "id": "biz_xxxxxxxxxxxxxx",
@@ -61606,7 +61707,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-02-2",
+                "api_version_date": "2026-09-04",
                 "data": {
                   "account": {
                     "id": "biz_xxxxxxxxxxxxxx",
@@ -61762,7 +61863,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-02-2",
+                "api_version_date": "2026-09-04",
                 "data": {
                   "account": {
                     "id": "biz_xxxxxxxxxxxxxx",
@@ -61918,7 +62019,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-02-2",
+                "api_version_date": "2026-09-04",
                 "data": {
                   "account": {
                     "id": "biz_xxxxxxxxxxxxxx",
@@ -62074,7 +62175,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-02-2",
+                "api_version_date": "2026-09-04",
                 "data": {
                   "account": {
                     "id": "biz_xxxxxxxxxxxxxx",
@@ -62230,7 +62331,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-02-2",
+                "api_version_date": "2026-09-04",
                 "data": {
                   "account": {
                     "id": "biz_xxxxxxxxxxxxxx",
@@ -62386,7 +62487,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-02-2",
+                "api_version_date": "2026-09-04",
                 "data": {
                   "account": {
                     "id": "biz_xxxxxxxxxxxxxx",
@@ -62410,6 +62511,15 @@
                   "customer_appealed": false,
                   "escalated": false,
                   "id": "reso_xxxxxxxxxxxxxx",
+                  "line_items": [
+                    {
+                      "id": null,
+                      "label": "Diverse coherent time-frame",
+                      "plan_id": "plan_xxxxxxxxxxxxxx",
+                      "product_id": "prod_xxxxxxxxxxxxxx",
+                      "quantity": 1
+                    }
+                  ],
                   "outcome": null,
                   "payment": {
                     "card_brand": null,
@@ -62544,7 +62654,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-02-2",
+                "api_version_date": "2026-09-04",
                 "data": {
                   "account": {
                     "id": "biz_xxxxxxxxxxxxxx",
@@ -62564,6 +62674,15 @@
                   "customer_appealed": false,
                   "escalated": false,
                   "id": "reso_xxxxxxxxxxxxxx",
+                  "line_items": [
+                    {
+                      "id": null,
+                      "label": "Cloned human-resource hub",
+                      "plan_id": "plan_xxxxxxxxxxxxxx",
+                      "product_id": "prod_xxxxxxxxxxxxxx",
+                      "quantity": 1
+                    }
+                  ],
                   "outcome": "customer_won",
                   "payment": {
                     "card_brand": null,
@@ -62698,7 +62817,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-02-2",
+                "api_version_date": "2026-09-04",
                 "data": {
                   "account": {
                     "id": "biz_xxxxxxxxxxxxxx",
@@ -62718,6 +62837,15 @@
                   "customer_appealed": false,
                   "escalated": false,
                   "id": "reso_xxxxxxxxxxxxxx",
+                  "line_items": [
+                    {
+                      "id": null,
+                      "label": "Sharable didactic solution",
+                      "plan_id": "plan_xxxxxxxxxxxxxx",
+                      "product_id": "prod_xxxxxxxxxxxxxx",
+                      "quantity": 1
+                    }
+                  ],
                   "outcome": null,
                   "payment": {
                     "card_brand": null,
@@ -62852,7 +62980,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-02-2",
+                "api_version_date": "2026-09-04",
                 "data": {
                   "account_id": "biz_xxxxxxxxxxxxxx",
                   "carrier": "ups",
@@ -62983,7 +63111,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-02-2",
+                "api_version_date": "2026-09-04",
                 "data": {
                   "account_id": "biz_xxxxxxxxxxxxxx",
                   "carrier": "ups",
@@ -63114,7 +63242,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-02-2",
+                "api_version_date": "2026-09-04",
                 "data": {
                   "account": {
                     "id": "biz_xxxxxxxxxxxxxx",
@@ -63331,7 +63459,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-02-2",
+                "api_version_date": "2026-09-04",
                 "data": {
                   "amount": 250,
                   "created_at": "2026-01-01T12:00:00.000Z",
@@ -63794,7 +63922,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-02-2",
+                "api_version_date": "2026-09-04",
                 "data": {
                   "amount": 250,
                   "created_at": "2026-01-01T12:00:00.000Z",
@@ -64257,7 +64385,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-02-2",
+                "api_version_date": "2026-09-04",
                 "data": {
                   "amount": 10,
                   "created_at": "2026-01-01T12:00:00.000Z",
@@ -64686,7 +64814,7 @@
         "name": "Api-Version-Date",
         "required": false,
         "schema": {
-          "example": "2026-09-02-2",
+          "example": "2026-09-04",
           "type": "string"
         }
       },
@@ -71940,9 +72068,10 @@
               "2026-08-31",
               "2026-09-02",
               "2026-09-02-1",
-              "2026-09-02-2"
+              "2026-09-02-2",
+              "2026-09-04"
             ],
-            "example": "2026-09-02-2",
+            "example": "2026-09-04",
             "type": "string"
           },
           "created_at": {
@@ -78800,6 +78929,14 @@
             "example": "onbr_xxxxxxxxxxxxxx",
             "type": "string"
           },
+          "max_redemptions": {
+            "description": "How many businesses can earn this reward in total. Null when unlimited.",
+            "example": 1,
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
           "partner": {
             "$ref": "#/components/schemas/UserSummary",
             "description": "Partner whose link attributed this reward."
@@ -78846,6 +78983,14 @@
               }
             ]
           },
+          "remaining_redemptions": {
+            "description": "How many rewards are still unclaimed. For rewards with a qualification, a business claims one only when it meets the requirement, so this can reach zero while other businesses are still working toward it. Null when unlimited.",
+            "example": 0,
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
           "reward_amount": {
             "$ref": "#/components/schemas/Money",
             "description": "Reward value delivered after qualification."
@@ -78874,7 +79019,7 @@
               "expired",
               "unavailable"
             ],
-            "example": "available",
+            "example": "fully_claimed",
             "type": "string"
           }
         },
@@ -78889,6 +79034,8 @@
           "qualification_met",
           "rewarded",
           "expires_at",
+          "max_redemptions",
+          "remaining_redemptions",
           "partner"
         ],
         "type": "object"
@@ -80649,7 +80796,7 @@
               "succeeded",
               "canceled"
             ],
-            "example": "requires_action",
+            "example": "succeeded",
             "type": "string"
           }
         },
@@ -83886,6 +84033,13 @@
             "example": "reso_xxxxxxxxxxxxxx",
             "type": "string"
           },
+          "line_items": {
+            "items": {
+              "$ref": "#/components/schemas/ResolutionLineItem",
+              "description": "Everything the disputed payment charged for, in purchase order. `product_id` and `plan_id` name the first of these; a cart's later items appear only here. A payment made before items were recorded lists the single item its plan implies. Empty when the payment is not linked to a plan."
+            },
+            "type": "array"
+          },
           "outcome": {
             "description": "Who prevailed on the claim. `null` until the case closes. Read `refund` for whether any money actually moved.",
             "enum": [
@@ -83983,6 +84137,7 @@
           "account",
           "product_id",
           "plan_id",
+          "line_items",
           "customer_appealed",
           "available_actions",
           "response_due_at",
@@ -84069,6 +84224,54 @@
           "viewable_by_merchant",
           "created_at",
           "attachments"
+        ],
+        "type": "object"
+      },
+      "ResolutionLineItem": {
+        "properties": {
+          "id": {
+            "description": "Line item ID, prefixed `li_`. Null when the payment predates item snapshots and the item is read from the payment's plan.",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "label": {
+            "description": "The item's name as shown at checkout — the product title, else the plan title.",
+            "example": "Ceramic Coating Package",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "plan_id": {
+            "description": "The plan bought, prefixed `plan_`. Null when the plan has since been deleted.",
+            "example": "plan_xxxxxxxxxxxxxx",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "product_id": {
+            "description": "The product the plan belongs to, prefixed `prod_`. On a payment that predates item snapshots this falls back to the plan's product, so it can be set where the case's own `product_id` is null. Null for a plan with no product.",
+            "example": "prod_xxxxxxxxxxxxxx",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "quantity": {
+            "description": "How many units were bought.",
+            "example": 1,
+            "type": "number"
+          }
+        },
+        "required": [
+          "id",
+          "plan_id",
+          "product_id",
+          "label",
+          "quantity"
         ],
         "type": "object"
       },
@@ -85755,7 +85958,7 @@
           },
           "api_version_date": {
             "description": "The dated API version (Api-Version-Date) that v1 payloads for this endpoint are pinned to: events serialize exactly like a REST read at this version (the native serializer where the resource has one). Null when unpinned — legacy (v2/v5) webhooks, and v1 webhooks on the legacy payload shape.",
-            "example": "2026-09-02-2",
+            "example": "2026-01-01",
             "type": [
               "string",
               "null"
@@ -86169,7 +86372,7 @@
           },
           "api_version_date": {
             "description": "The dated API version (Api-Version-Date) that v1 payloads for this endpoint are pinned to: events serialize exactly like a REST read at this version (the native serializer where the resource has one). Null when unpinned — legacy (v2/v5) webhooks, and v1 webhooks on the legacy payload shape.",
-            "example": "2026-09-02-2",
+            "example": "2026-01-01",
             "type": [
               "string",
               "null"

@@ -6,7 +6,7 @@
 
 > Installs the Whop Pixel and wires conversion events: copy the snippet, check a page for it, confirm the events fire. Mount it inline, or inside your own overlay.
 
-<Info>This page documents `@whop/elements@1.0.0-beta.2` and `@whop/elements-react@1.0.0-beta.2`.</Info>
+<Info>This page documents `@whop/elements@1.0.0-beta.3` and `@whop/elements-react@1.0.0-beta.3`.</Info>
 
 *Pre-release, not yet part of a stable release.*
 
@@ -26,7 +26,7 @@ Mounts inside [`Websites`](/elements/beta/websites/overview). Pass props and cal
           return (
             <WhopElements elements={loadWhop()}>
               <Websites /* options */>
-                <PixelSetupElement onRedirectUrlChanged={(e) => console.log(e)} onScanned={(e) => console.log(e)} onFinished={(e) => console.log(e)} onEventVerified={(e) => console.log(e)} />
+                <PixelSetupElement onRedirectUrlChanged={(e) => console.log(e)} onScanned={(e) => console.log(e)} onFinished={(e) => console.log(e)} onUrlSubmitted={(e) => console.log(e)} onVerifyLaunched={(e) => console.log(e)} onVerifyConnected={(e) => console.log(e)} onVerdict={(e) => console.log(e)} onEventVerified={(e) => console.log(e)} />
               </Websites>
             </WhopElements>
           );
@@ -41,6 +41,10 @@ Mounts inside [`Websites`](/elements/beta/websites/overview). Pass props and cal
             onRedirectUrlChanged: (e) => console.log(e),
             onScanned: (e) => console.log(e),
             onFinished: (e) => console.log(e),
+            onUrlSubmitted: (e) => console.log(e),
+            onVerifyLaunched: (e) => console.log(e),
+            onVerifyConnected: (e) => console.log(e),
+            onVerdict: (e) => console.log(e),
             onEventVerified: (e) => console.log(e)
           }).mount('#websites-pixel-setup');
         </script>
@@ -53,7 +57,7 @@ Mounts inside [`Websites`](/elements/beta/websites/overview). Pass props and cal
     <div data-whop-demo-shell style={{ position: "relative", minHeight: "320px", transition: "min-height 200ms ease" }}>
       <div data-whop-demo-skeleton style={{ position: "absolute", inset: "0", borderRadius: "12px", background: "rgba(140, 140, 140, 0.12)", pointerEvents: "none", transition: "opacity 200ms ease" }} />
 
-      <div data-whop-demo-native="element:websites/pixel-setup" data-whop-elements-version="1.0.0-beta.2" style={{ position: "relative" }} />
+      <div data-whop-demo-native="element:websites/pixel-setup" data-whop-elements-version="1.0.0-beta.3" style={{ position: "relative" }} />
     </div>
 
     <p style={{ fontSize: "0.8125rem", opacity: 0.7 }}>Example data. [Open the Playground](/elements/beta/websites/overview#playground).</p>
@@ -67,7 +71,7 @@ Mounts inside [`Websites`](/elements/beta/websites/overview). Pass props and cal
 </ResponseField>
 
 <ResponseField name="accessToken" type="string">
-  A scoped token for the scans and the developer invite. The scans need `company:basic:read`; “Invite a developer” additionally needs `authorized_user:create`, and the event presets read the account with `company:balance:read` (without it the wizard still works, on a generic preset list). Mint it on your server with `POST /api/v1/access_tokens` and set a fresh one before it expires. Another element that opens this wizard inside itself — the ads `campaign-creator` does — runs these calls on its own token, so add these scopes to that one token rather than minting a second: this element has no way to read a credential you set elsewhere. Omitted, the calls carry the viewer’s own session, which only answers same-origin.
+  A scoped token for the scans and the developer invite. The scans need `company:basic:read`; “Invite a developer” additionally needs `authorized_user:create`, and the event presets read the account with `company:balance:read` (without it the wizard still works, on a generic preset list). When no `destinationUrl` is passed, the empty URL field also suggests pages from the account’s ads and pixel traffic — those reads need `ad_campaign:basic:read` and `stats:read`, and without them the field is simply bare. Mint it on your server with `POST /api/v1/access_tokens` and set a fresh one before it expires. Another element that opens this wizard inside itself — the ads `campaign-creator` does — runs these calls on its own token, so add these scopes to that one token rather than minting a second: this element has no way to read a credential you set elsewhere. Omitted, the calls carry the viewer’s own session, which only answers same-origin.
 </ResponseField>
 
 <ResponseField name="destinationUrl" type="string">
@@ -98,6 +102,10 @@ Mounts inside [`Websites`](/elements/beta/websites/overview). Pass props and cal
   Show the "your pixel is live" screen after a page checks out, which offers conversion events as the next thing to do. Turn it off where the account owner came for the events themselves — a passing check then goes straight to them instead of pausing on a screen they would click through. Defaults to `true`.
 </ResponseField>
 
+<ResponseField name="verifyFirst" type="boolean">
+  Lead with the page check instead of the install instructions: the URL field (and its suggestions) sits at the top, the install paths fold under a "Pixel not installed yet?" toggle, and the header reads "Verify your pixel". For an account owner who already has a pixel and is here to find out why nothing is being attributed. Pair it with `showIntro: false`. Defaults to `false`.
+</ResponseField>
+
 ## Events
 
 Pass callbacks in the create options or React props.
@@ -119,6 +127,30 @@ A pixel scan settled. Fires for every URL the wizard checks, so your own install
 Done was pressed. Re-check the page yourself — this says the wizard finished, not that your requirements are met.
 
 **Signature:** `((payload: Record<string, never>) => void)`
+
+### `onUrlSubmitted`
+
+The account owner named the page to check from inside the wizard — typed by hand, or picked from the suggested pages. Only reachable when no destination was supplied at mount.
+
+**Signature:** `((payload: { url: string; source: "typed" | "suggested"; }) => void)`
+
+### `onVerifyLaunched`
+
+"Verify live" was pressed. `popupBlocked` means the browser refused the funnel window, so the walk never started.
+
+**Signature:** `((payload: { url: string; popupBlocked: boolean; }) => void)`
+
+### `onVerifyConnected`
+
+The funnel page pinged the wizard back — the pixel is loaded there and the walk is live.
+
+**Signature:** `((payload: { url: string; }) => void)`
+
+### `onVerdict`
+
+The verify-live walk finished. `ok` means no tracking gaps; otherwise `gaps` carries the gap codes the walk found.
+
+**Signature:** `((payload: { url: string; ok: boolean; gaps: string[]; eventsCaptured: number; }) => void)`
 
 ### `onEventVerified`
 

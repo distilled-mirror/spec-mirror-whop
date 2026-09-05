@@ -4,13 +4,13 @@
 
 # DepositElement
 
-> Funds a Whop account. Renders an amount field and the account's live funding rails — crypto (a per-network deposit address with its QR) and bank transfer (the wire fields for each settlement currency) — resolved from the account ID with no credentials, so it works on any page. Cards and platform balance are opt-in: pass `savedCards`, `allowNewCard`, or `showPlatformBalance` and the element collects the amount and the choice, then emits `cardDepositRequested` / `addCardRequested` / `platformBalanceSelected` and waits for you to call `showStep({ step: 'amount' })` when your own screen is done.
+> Funds a Whop account. Renders an amount field and the account's live funding rails — crypto (a per-network deposit address with its QR) and bank transfer (the wire fields for each settlement currency). A business account's rails resolve with no credentials, so they work on any page; a personal (`user_`) account only reveals its rails to itself, so pass `accessToken` for it — omitted, the viewer's own same-origin session covers it. Cards and platform balance are opt-in: pass `savedCards`, `allowNewCard`, or `showPlatformBalance` and the element collects the amount and the choice, then emits `cardDepositRequested` / `addCardRequested` / `platformBalanceSelected` and waits for you to call `showStep({ step: 'amount' })` when your own screen is done.
 
-<Info>This page documents `@whop/elements@1.0.0-beta.2` and `@whop/elements-react@1.0.0-beta.2`.</Info>
+<Info>This page documents `@whop/elements@1.0.0-beta.3` and `@whop/elements-react@1.0.0-beta.3`.</Info>
 
 *Pre-release, not yet part of a stable release.*
 
-Mounts inside [`Wallet`](/elements/beta/wallet/overview). Pass props and callbacks through the create options or React props. Keep the created handle, or React `ref`, to call `showStep()` and `refresh()`.
+Mounts inside [`Wallet`](/elements/beta/wallet/overview). `accountId` and `accessToken` come from there. Pass props and callbacks through the create options or React props. Keep the created handle, or React `ref`, to call `showStep()` and `refresh()`.
 
 <Note>You can mount this element **inline** (`create`) or open it as a **modal** overlay (`createOverlay`).</Note>
 
@@ -26,7 +26,7 @@ Mounts inside [`Wallet`](/elements/beta/wallet/overview). Pass props and callbac
           return (
             <WhopElements elements={loadWhop()}>
               <Wallet /* options */>
-                <DepositElement onDepositInitiated={(e) => console.log(e)} onCardDepositRequested={(e) => console.log(e)} onAddCardRequested={(e) => console.log(e)} onBankSelected={(e) => console.log(e)} onPlatformBalanceSelected={(e) => console.log(e)} onDepositConfirmed={(e) => console.log(e)} onStepChanged={(e) => console.log(e)} onDismissed={(e) => console.log(e)} />
+                <DepositElement onDepositInitiated={(e) => console.log(e)} onCardDepositRequested={(e) => console.log(e)} onAddCardRequested={(e) => console.log(e)} onBankSelected={(e) => console.log(e)} onIdentityVerificationRequested={(e) => console.log(e)} onPlatformBalanceSelected={(e) => console.log(e)} onDepositConfirmed={(e) => console.log(e)} onStepChanged={(e) => console.log(e)} onDismissed={(e) => console.log(e)} />
               </Wallet>
             </WhopElements>
           );
@@ -42,6 +42,7 @@ Mounts inside [`Wallet`](/elements/beta/wallet/overview). Pass props and callbac
             onCardDepositRequested: (e) => console.log(e),
             onAddCardRequested: (e) => console.log(e),
             onBankSelected: (e) => console.log(e),
+            onIdentityVerificationRequested: (e) => console.log(e),
             onPlatformBalanceSelected: (e) => console.log(e),
             onDepositConfirmed: (e) => console.log(e),
             onStepChanged: (e) => console.log(e),
@@ -57,7 +58,7 @@ Mounts inside [`Wallet`](/elements/beta/wallet/overview). Pass props and callbac
     <div data-whop-demo-shell style={{ position: "relative", minHeight: "320px", transition: "min-height 200ms ease" }}>
       <div data-whop-demo-skeleton style={{ position: "absolute", inset: "0", borderRadius: "12px", background: "rgba(140, 140, 140, 0.12)", pointerEvents: "none", transition: "opacity 200ms ease" }} />
 
-      <div data-whop-demo-native="element:wallet/deposit" data-whop-elements-version="1.0.0-beta.2" style={{ position: "relative" }} />
+      <div data-whop-demo-native="element:wallet/deposit" data-whop-elements-version="1.0.0-beta.3" style={{ position: "relative" }} />
     </div>
 
     <p style={{ fontSize: "0.8125rem", opacity: 0.7 }}>Example data. [Open the Playground](/elements/beta/wallet/overview#playground).</p>
@@ -65,6 +66,10 @@ Mounts inside [`Wallet`](/elements/beta/wallet/overview). Pass props and callbac
 </div>
 
 ## Props
+
+<ResponseField name="accessToken" type="string">
+  A scoped token that lets the rails resolution read a personal (`user_`) account — needs `payout:account:read`, plus `payout:account:update` for the bank rail to provision. Mint it on your server with `POST /api/v1/access_tokens`. Omitted, the call carries the viewer's own session, which only answers same-origin; business accounts resolve without any credential.
+</ResponseField>
 
 <ResponseField name="amount" type="string">
   Prefill the amount and make it read-only — for flows that already know what is owed. An amount at or below zero is ignored, as is one longer than 12 whole digits; the rest is rounded to the currency’s decimal places. Defaults to `""`.
@@ -75,7 +80,7 @@ Mounts inside [`Wallet`](/elements/beta/wallet/overview). Pass props and callbac
 </ResponseField>
 
 <ResponseField name="showBank" type="boolean">
-  Offer the bank-transfer rail when the account has wire instructions. Defaults to `true`.
+  Offer the bank-transfer rail. Shown even before the account has bank details — choosing it then asks the viewer to verify their identity when that is what the account still owes, and reports the rail as not available yet when it is not. Defaults to `true`.
 </ResponseField>
 
 <ResponseField name="savedCards" type="DepositSavedCard[]">
@@ -99,7 +104,7 @@ Mounts inside [`Wallet`](/elements/beta/wallet/overview). Pass props and callbac
 </ResponseField>
 
 <ResponseField name="deferBankToHost" type="boolean">
-  Emit `bankSelected` and stay on the amount screen instead of showing the wire fields — for hosts that run their own step (a verification, an onboarding) first. Because that host owns the rail, the row is then offered even before the account has instructions to show. Defaults to `false`.
+  Emit `bankSelected` and stay on the amount screen instead of showing the wire fields — for hosts that run their own step after the account already has a virtual bank account. Defaults to `false`.
 </ResponseField>
 
 <ResponseField name="confirmCryptoDeposit" type="boolean">
@@ -118,7 +123,7 @@ Pass callbacks in the create options or React props.
 
 The payer confirmed an amount and a rail. Fires for every rail, before any instructions render — the analytics/funnel hook.
 
-**Signature:** `((payload: { method: "card" | "bank" | "crypto" | "platform_balance"; amount: number; currency: string; paymentMethodId?: string | undefined; }) => void)`
+**Signature:** `((payload: { method: "bank" | "crypto" | "card" | "platform_balance"; amount: number; currency: string; paymentMethodId?: string | undefined; }) => void)`
 
 ### `onCardDepositRequested`
 
@@ -137,6 +142,12 @@ The "Add card" row was picked — open your card-collection flow.
 The bank rail was chosen while `deferBankToHost` is set — run your step, then show the fields yourself or call `showStep({ step: "bank" })`.
 
 **Signature:** `((payload: Record<string, never>) => void)`
+
+### `onIdentityVerificationRequested`
+
+The viewer chose bank transfer before this account has a virtual bank account. The element stays on the amount screen and never navigates — mount your own verification, such as the `verifications` controller, in answer to this.
+
+**Signature:** `((payload: { accountId: string; }) => void)`
 
 ### `onPlatformBalanceSelected`
 

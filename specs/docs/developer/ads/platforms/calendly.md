@@ -64,13 +64,15 @@ Calendly's booking page can't tell your website when someone books a call, so yo
 
 If you embed Calendly's scheduler directly on a page (**Share > Add to Website**) rather than linking out to `calendly.com`, you can skip the redirect and listen for the booking to complete right there — the pixel snippet from step 3 still needs to be on that same page:
 
-```javascript Track a booking on an embedded calendar theme={null}
+```html Track a booking on an embedded calendar theme={null}
+<script>
 window.addEventListener("message", function (e) {
 	const isCalendlyEvent = e.origin === "https://calendly.com" && e.data.event && e.data.event.indexOf("calendly.") === 0;
 	if (!isCalendlyEvent || e.data.event !== "calendly.event_scheduled") return;
 
 	whop.track("schedule");
 });
+</script>
 ```
 
 <Note>

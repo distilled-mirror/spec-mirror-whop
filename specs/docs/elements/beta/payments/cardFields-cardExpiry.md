@@ -6,11 +6,17 @@
 
 > PCI-isolated hosted card expiration field.
 
-<Info>This page documents `@whop/elements@1.0.0-beta.2` and `@whop/elements-react@1.0.0-beta.2`.</Info>
+<Info>This page documents `@whop/elements@1.0.0-beta.3` and `@whop/elements-react@1.0.0-beta.3`.</Info>
 
 *Pre-release, not yet part of a stable release.*
 
-Mounts inside [`CardFields`](/elements/beta/payments/cardFields), in [`Payments`](/elements/beta/payments/overview). Pass props and callbacks through the create options or React props.
+<div data-whop-platform="web">
+  Mounts inside [`CardFields`](/elements/beta/payments/cardFields), in [`Payments`](/elements/beta/payments/overview). Pass props and callbacks through the create options or React props.
+</div>
+
+<div data-whop-platform="react-native" style={{ display: "none" }}>
+  Mounts inside [`CardFields`](/elements/beta/payments/cardFields). The expiry date on its own, so your layout decides where it sits.
+</div>
 
 <div data-whop-split style={{ display: "flex", gap: "1.5rem", alignItems: "flex-start", flexWrap: "wrap" }}>
   <div style={{ flex: "1 1 26rem", minWidth: 0 }}>
@@ -33,6 +39,14 @@ Mounts inside [`CardFields`](/elements/beta/payments/cardFields), in [`Payments`
         }
         ```
 
+        ```tsx React Native theme={null}
+        import { CardExpiryElement, CardFields } from '@whop/elements-react-native';
+
+        <CardFields>
+          <CardExpiryElement />
+        </CardFields>
+        ```
+
         ```html JavaScript theme={null}
         <script src="https://js.whop.cloud/elements/amber/elements.js" data-whop-elements></script>
         <script type="module">
@@ -46,91 +60,124 @@ Mounts inside [`CardFields`](/elements/beta/payments/cardFields), in [`Payments`
   </div>
 
   <div style={{ flex: "1 1 20rem", minWidth: 0 }}>
-    <div data-whop-demo-shell style={{ position: "relative", minHeight: "320px", transition: "min-height 200ms ease" }}>
-      <div data-whop-demo-skeleton style={{ position: "absolute", inset: "0", borderRadius: "12px", background: "rgba(140, 140, 140, 0.12)", pointerEvents: "none", transition: "opacity 200ms ease" }} />
+    <div data-whop-platform="web">
+      <div data-whop-demo-shell style={{ position: "relative", minHeight: "320px", transition: "min-height 200ms ease" }}>
+        <div data-whop-demo-skeleton style={{ position: "absolute", inset: "0", borderRadius: "12px", background: "rgba(140, 140, 140, 0.12)", pointerEvents: "none", transition: "opacity 200ms ease" }} />
 
-      <div data-whop-demo-native="element:card-fields/cardExpiry" data-whop-elements-version="1.0.0-beta.2" style={{ position: "relative" }} />
+        <div data-whop-demo-native="element:card-fields/cardExpiry" data-whop-elements-version="1.0.0-beta.3" style={{ position: "relative" }} />
+      </div>
+
+      <p style={{ fontSize: "0.8125rem", opacity: 0.7 }}>Example data. [Open the Playground](/elements/beta/payments/overview#playground).</p>
     </div>
 
-    <p style={{ fontSize: "0.8125rem", opacity: 0.7 }}>Example data. [Open the Playground](/elements/beta/payments/overview#playground).</p>
+    <div data-whop-platform="react-native" style={{ display: "none" }}>
+      <div style={{ width: "22rem", maxWidth: "100%" }}>
+        <div data-whop-simulator-shell className="whop-ios-simulator" style={{ position: "relative", aspectRatio: "390 / 800", overflow: "hidden" }}>
+          <iframe src={"https://app.revyl.ai/embed/5a5b9350-768c-4643-bb59-0bb1e50e1b9e?controls=0"} title="CardExpiryElement running on Android, in the React Native example app" loading="lazy" allow="fullscreen; clipboard-read; clipboard-write" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", border: 0, background: "transparent", display: "block" }} />
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
-## Props
+<div data-whop-platform="web">
+  ## Props
 
-*This element takes no consumer props.*
+  *This element takes no consumer props.*
 
-## Events
+  ## Events
 
-Pass callbacks in the create options or React props.
+  Pass callbacks in the create options or React props.
 
-### `onLoaderStart`
+  ### `onLoaderStart`
 
-Runs after the loading skeleton first paints and before `onReady`.
+  Runs after the loading skeleton first paints and before `onReady`.
 
-**Signature:** `(() => void)`
+  **Signature:** `(() => void)`
 
-### `onReady`
+  ### `onReady`
 
-Runs after the element's first complete paint.
+  Runs after the element's first complete paint.
 
-**Signature:** `(() => void)`
+  **Signature:** `(() => void)`
 
-### `onError`
+  ### `onError`
 
-Runs when the element fails to load or crashes. The fallback remains visible. Use `code` for programmatic handling. `sourceKey` identifies a failed host-state source.
+  Runs when the element fails to load or crashes. The fallback remains visible. Use `code` for programmatic handling. `sourceKey` identifies a failed host-state source.
 
-**Signature:** `((e: { message: string; code?: string | undefined; sourceKey?: string | undefined; }) => void)`
+  **Signature:** `((e: { message: string; code?: string | undefined; sourceKey?: string | undefined; }) => void)`
 
-## Methods
+  ## Methods
 
-Call these on the handle returned by `create`, or through a React `ref`.
+  Call these on the handle returned by `create`, or through a React `ref`.
 
-### `mount`
+  ### `mount`
 
-Mounts the element in `target` and starts loading. React components mount themselves.
+  Mounts the element in `target` and starts loading. React components mount themselves.
 
-**Signature:** `(target: string | HTMLElement) => void`
+  **Signature:** `(target: string | HTMLElement) => void`
 
-### `destroy`
+  ### `destroy`
 
-Removes the element and releases its frame and subscriptions. You can call it more than once. React removes the element automatically.
+  Removes the element and releases its frame and subscriptions. You can call it more than once. React removes the element automatically.
 
-**Signature:** `() => void`
+  **Signature:** `() => void`
 
-### `update`
+  ### `update`
 
-Merges new props into the mounted element. In React, change the component props instead.
+  Merges new props into the mounted element. In React, change the component props instead.
 
-**Signature:** `(options: Partial<CardExpiryElementProps>) => void`
+  **Signature:** `(options: Partial<CardExpiryElementProps>) => void`
 
-## Styling
+  ## Styling
 
-Style these parts through `appearance.classes`. Use camel case or kebab case for property names and include units. Page stylesheets can't reach the element's frame. The framework validates each declaration before injecting it.
+  Style these parts through `appearance.classes`. Use camel case or kebab case for property names and include units. Page stylesheets can't reach the element's frame. The framework validates each declaration before injecting it.
 
-| Class                         | Targets                                         |
-| ----------------------------- | ----------------------------------------------- |
-| `.whop-CardField`             | Card number, expiration, or security code field |
-| `.whop-CardFieldError`        | Card validation message                         |
-| `.whop-CardFieldInput`        | Bordered PCI input container                    |
-| `.whop-CardFieldInputFocused` | Focused PCI input container                     |
-| `.whop-CardFieldInputInvalid` | Invalid or incomplete PCI input container       |
+  | Class                         | Targets                                         |
+  | ----------------------------- | ----------------------------------------------- |
+  | `.whop-CardField`             | Card number, expiration, or security code field |
+  | `.whop-CardFieldError`        | Card validation message                         |
+  | `.whop-CardFieldInput`        | Bordered PCI input container                    |
+  | `.whop-CardFieldInputFocused` | Focused PCI input container                     |
+  | `.whop-CardFieldInputInvalid` | Invalid or incomplete PCI input container       |
 
-```ts theme={null}
-const payments = whop.payments.create({
-  appearance: {
-    classes: {
-      'whop-CardField': { borderRadius: '8px', fontWeight: '600' },
-      'whop-CardFieldError': { borderRadius: '8px', fontWeight: '600' },
-      'whop-CardFieldInput': { borderRadius: '8px', fontWeight: '600' }
+  ```ts theme={null}
+  const payments = whop.payments.create({
+    appearance: {
+      classes: {
+        'whop-CardField': { borderRadius: '8px', fontWeight: '600' },
+        'whop-CardFieldError': { borderRadius: '8px', fontWeight: '600' },
+        'whop-CardFieldInput': { borderRadius: '8px', fontWeight: '600' }
+      }
     }
-  }
-});
+  });
 
-// 5 classes use this shape
-payments.update({
-  appearance: { classes: { 'whop-CardField': { fontWeight: '700' } } }
-});
-```
+  // 5 classes use this shape
+  payments.update({
+    appearance: { classes: { 'whop-CardField': { fontWeight: '700' } } }
+  });
+  ```
 
-In React, pass `appearance` to `<Payments>`. Set it globally with `WhopElements({ appearance })`.
+  In React, pass `appearance` to `<Payments>`. Set it globally with `WhopElements({ appearance })`.
+</div>
+
+<div data-whop-platform="react-native" style={{ display: "none" }}>
+  ## Props
+
+  <ResponseField name="style" type="StyleProp<ViewStyle>">
+    Applied to the element's outer `View`. For theming, prefer `appearance.parts` on the provider, which covers every element on this surface. Note the React Native part names are their own set today, not the web's `whop-*` class names, so a web appearance object does not port across unchanged.
+  </ResponseField>
+
+  ## States
+
+  Renders as soon as its `CardFields` provider has a publishable key. Its validation message renders beneath it.
+
+  ## Good to know
+
+  * Card numbers never pass through your code. The fields are PCI-isolated native inputs, and the SDK hands Whop a token, so your app stays out of PCI scope.
+  * Read completeness from the `CardFields` provider's `onChange` rather than per field.
+
+  <Note>
+    Wrap your app in `<WhopElements getToken={…}>` once, then mount `<Payments>` around the elements. See [Getting started](/elements/beta/getting-started) and [Appearance](/elements/beta/appearance).
+  </Note>
+</div>
