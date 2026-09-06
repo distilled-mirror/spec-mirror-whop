@@ -9,6 +9,7 @@
 <ResponseExample>
   ```json Example theme={null}
   {
+  	"agent_identifier": "general",
   	"blended_token_usage": "123.45",
   	"created_at": "2023-12-01T05:00:00.401Z",
   	"id": "aich_xxxxxxxxxxxxx",
@@ -23,6 +24,12 @@
   }
   ```
 </ResponseExample>
+
+<ResponseField name="agent_identifier" type="AiChatAgentIdentifiers" required>
+  The AI agent that handles this chat. Set when the chat is created and fixed for its lifetime.
+
+  Available options: `general`, `support`
+</ResponseField>
 
 <ResponseField name="blended_token_usage" type="string" required>
   The total number of tokens consumed across all messages in this conversation.

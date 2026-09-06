@@ -404,6 +404,10 @@
       "AiChat": {
         "description": "An AI-powered chat conversation belonging to a user, with optional scheduled automation.",
         "properties": {
+          "agent_identifier": {
+            "$ref": "#/components/schemas/AiChatAgentIdentifiers",
+            "description": "The AI agent that handles this chat. Set when the chat is created and fixed for its lifetime."
+          },
           "blended_token_usage": {
             "description": "The total number of tokens consumed across all messages in this conversation.",
             "example": "123.45",
@@ -470,6 +474,7 @@
         "required": [
           "id",
           "title",
+          "agent_identifier",
           "notification_preference",
           "message_count",
           "blended_token_usage",
@@ -480,9 +485,21 @@
         ],
         "type": "object"
       },
+      "AiChatAgentIdentifiers": {
+        "description": "The AI agent that handles an AI chat.",
+        "enum": [
+          "general",
+          "support"
+        ],
+        "type": "string"
+      },
       "AiChatListItem": {
         "description": "An AI-powered chat conversation belonging to a user, with optional scheduled automation.",
         "properties": {
+          "agent_identifier": {
+            "$ref": "#/components/schemas/AiChatAgentIdentifiers",
+            "description": "The AI agent that handles this chat. Set when the chat is created and fixed for its lifetime."
+          },
           "blended_token_usage": {
             "description": "The total number of tokens consumed across all messages in this conversation.",
             "example": "123.45",
@@ -549,6 +566,7 @@
         "required": [
           "id",
           "title",
+          "agent_identifier",
           "notification_preference",
           "message_count",
           "blended_token_usage",
@@ -16174,6 +16192,8 @@
           "mb_way",
           "m_pesa",
           "mercado_pago",
+          "mercado_pago_ar",
+          "mercado_pago_mx",
           "mobilepay",
           "modo",
           "mondu",
@@ -16187,10 +16207,12 @@
           "ng_market",
           "ng_ussd",
           "ng_wallet",
+          "nupay",
           "nz_bank_account",
           "oney",
           "oney_3x",
           "oney_4x",
+          "opay",
           "oxxo",
           "p24",
           "pago_efectivo",
@@ -16230,6 +16252,7 @@
           "us_bank_account",
           "us_bank_transfer",
           "venmo",
+          "verve",
           "vipps",
           "webpay",
           "wechat_pay",
@@ -26522,6 +26545,17 @@
           {
             "explode": true,
             "in": "query",
+            "name": "agent_identifier",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/AiChatAgentIdentifiers",
+              "description": "Only return chats handled by this agent."
+            },
+            "style": "form"
+          },
+          {
+            "explode": true,
+            "in": "query",
             "name": "only_active_crons",
             "required": false,
             "schema": {
@@ -26934,6 +26968,17 @@
               "schema": {
                 "description": "Parameters for CreateAiChat",
                 "properties": {
+                  "agent_identifier": {
+                    "description": "The AI agent that handles the chat. Defaults to `support`.",
+                    "oneOf": [
+                      {
+                        "$ref": "#/components/schemas/AiChatAgentIdentifiers"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
                   "current_account_id": {
                     "description": "The unique identifier of the account to set as context for the AI chat (e.g., \"biz_XXXXX\").",
                     "type": [
