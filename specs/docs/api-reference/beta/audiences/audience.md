@@ -4,9 +4,9 @@
 
 # Audience
 
-An Audience represents a customer list uploaded to Whop for ad targeting. Audiences belong to an account and sync to supported ad platforms as custom audiences.
+An Audience is a reusable group of people to include or exclude when targeting ads. Build custom audiences from customer lists, Whop People data, or social engagement, and create lookalikes to reach people similar to an existing audience.
 
-Use the Audiences API to create audiences from CSV uploads, monitor processing status, and list or delete audiences for an account. Created audiences are usable for targeting after processing reaches `ready` or `partial`.
+Use the Audiences API to create, list, and delete audiences and monitor asynchronous processing. Meta engagement sources include videos, lead forms, Instagram profiles, and Facebook pages. Engagement membership updates on Meta; Whop People audiences can refresh automatically or keep a snapshot.
 
 ## Endpoints
 
@@ -27,20 +27,42 @@ Use the Audiences API to create audiences from CSV uploads, monitor processing s
     </ResponseField>
 
     <ResponseField name="audience_type" type="string" required>
-      `custom` = a customer list (uploaded, or built from saved People filters); `lookalike` = Meta lookalike built from a custom audience.
+      Whether the audience targets a defined group of people or people similar to an existing audience.
 
       Available options: `custom`, `lookalike`
     </ResponseField>
 
     <ResponseField name="auto_refresh" type="boolean" required>
-      Whether membership keeps updating. `true` rebuilds it from the saved filters
-      twice a day, so people join and leave as they start and stop matching. `false`
-      keeps whoever matched when it was built and never rebuilds. Always `false` for
-      uploaded lists and lookalikes.
+      Whether Whop rebuilds membership from saved People filters twice a day. When
+      `false`, People audiences keep the members matched at creation. Always `false`
+      for uploaded lists, lookalikes, and engagement audiences. Engagement
+      membership is maintained by Meta.
     </ResponseField>
 
     <ResponseField name="created_at" type="string" required>
       When the audience was created, as an ISO 8601 timestamp.
+    </ResponseField>
+
+    <ResponseField name="engagement" type="object | null" required>
+      Social engagement rules maintained by the ad platform. `null` for other audience sources.
+
+      <Accordion title="Properties" defaultOpen={true}>
+        <ResponseField name="exclude" type="video or lead_form or instagram_profile or facebook_page[]" required>
+          Exclude anyone matching any exclusion rule. Supply 0–10 rules. Video audiences
+          do not support exclusions; use a separate audience in ad-group exclusions.
+        </ResponseField>
+
+        <ResponseField name="include" type="video or lead_form or instagram_profile or facebook_page[]" required>
+          Match any inclusion rule. Supply 1–10 rules. Video rules must share a
+          retention window and cannot be combined with other sources.
+        </ResponseField>
+
+        <ResponseField name="platform" type="string" required>
+          Ad platform that maintains membership.
+
+          Available options: `meta`
+        </ResponseField>
+      </Accordion>
     </ResponseField>
 
     <ResponseField name="error_message" type="string | null" required>
@@ -48,7 +70,8 @@ Use the Audiences API to create audiences from CSV uploads, monitor processing s
     </ResponseField>
 
     <ResponseField name="filters" type="object | null" required>
-      For audiences built from People filters: the filters that define membership, keyed exactly as `GET /people` accepts them — for example `\{"os": "iOS", "country": "US"}`. `null` for uploaded lists and lookalikes.
+      Saved Whop People filters that define membership, using the same keys as `GET
+            	/people`. `null` for uploaded lists, engagement audiences, and lookalikes.
     </ResponseField>
 
     <ResponseField name="last_refreshed_at" type="string | null" required>
@@ -67,7 +90,7 @@ Use the Audiences API to create audiences from CSV uploads, monitor processing s
     </ResponseField>
 
     <ResponseField name="match_rates" type="object[]" required>
-      Estimated match rates by ad platform. Empty when the audience was not sent to a supported platform.
+      Estimated match rates by ad platform. Empty for engagement audiences and audiences not sent to a supported platform.
 
       <Accordion title="Properties" defaultOpen={true}>
         <ResponseField name="lower_bound" type="number | null" required>
@@ -94,7 +117,7 @@ Use the Audiences API to create audiences from CSV uploads, monitor processing s
 
     <ResponseField name="matched_rows" type="number" required>
       Members successfully uploaded to connected ad accounts. Always 0 for
-      lookalikes.
+      lookalikes and engagement audiences.
     </ResponseField>
 
     <ResponseField name="name" type="string" required>
@@ -106,7 +129,8 @@ Use the Audiences API to create audiences from CSV uploads, monitor processing s
     </ResponseField>
 
     <ResponseField name="processed_rows" type="number" required>
-      Members processed from the source so far. Always 0 for lookalikes.
+      Members processed from the source so far. Always 0 for lookalikes and
+      engagement audiences.
     </ResponseField>
 
     <ResponseField name="progress_percent" type="number" required>
@@ -119,20 +143,21 @@ Use the Audiences API to create audiences from CSV uploads, monitor processing s
     </ResponseField>
 
     <ResponseField name="source_type" type="string" required>
-      Where members come from. `csv_upload` = an uploaded customer list; `people_filter` = built from saved People filters. See `auto_refresh` for whether a `people_filter` audience keeps updating.
+      Membership source: an uploaded CSV, Whop People filters, or social engagement.
 
-      Available options: `csv_upload`, `people_filter`
+      Available options: `csv_upload`, `people_filter`, `engagement`
     </ResponseField>
 
     <ResponseField name="status" type="string" required>
-      Current state of the audience import. `syncing` means Whop is sending matched rows to connected ad accounts. When status is `partial` or `failed`, `error_message` explains what went wrong.
+      Current state of audience creation. For engagement audiences, `ready` means the rules were created on Meta; membership may still be populating. `syncing` means Whop is sending matched rows to connected ad accounts. When status is `partial` or `failed`, `error_message` explains what went wrong.
 
       Available options: `pending`, `processing`, `syncing`, `ready`, `partial`, `failed`
     </ResponseField>
 
     <ResponseField name="total_rows" type="number" required>
       Total members detected in the source — CSV rows for uploaded lists, matching
-      people for automatic audiences. Always 0 for lookalikes.
+      people for automatic audiences. Always 0 for lookalikes and engagement
+      audiences.
     </ResponseField>
 
     <ResponseField name="updated_at" type="string" required>
@@ -158,6 +183,7 @@ Use the Audiences API to create audiences from CSV uploads, monitor processing s
       	"progress_percent": 100,
       	"error_message": null,
       	"platform_audience_ids": ["120246230799130686"],
+      	"engagement": null,
       	"filters": {
       		"has_purchased": true,
       		"country": "US"

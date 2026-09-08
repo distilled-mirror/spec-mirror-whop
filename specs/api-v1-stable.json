@@ -6887,7 +6887,9 @@
           "rtp_withdrawal_markup",
           "next_day_bank_withdrawal_markup",
           "bank_wire_withdrawal_markup",
-          "digital_wallet_withdrawal_markup"
+          "digital_wallet_withdrawal_markup",
+          "crypto_deposit_markup",
+          "bank_deposit_markup"
         ],
         "type": "string"
       },
@@ -20636,6 +20638,8 @@
           "shipment.updated",
           "member.created",
           "ad_campaign.payment_failed",
+          "ad_campaign.updated",
+          "ad.updated",
           "chat.message.created",
           "chat.reaction.created",
           "payment.created",
@@ -20893,7 +20897,7 @@
     "termsOfService": "https://whop.com/tos-developer-api/",
     "title": "Whop API",
     "version": "1.0.0",
-    "x-api-version-date": "2026-09-04"
+    "x-api-version-date": "2026-09-06"
   },
   "openapi": "3.1.0",
   "paths": {

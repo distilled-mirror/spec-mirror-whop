@@ -4,7 +4,7 @@
 
 # Create
 
-> Creates an audience. Default (`audience_type` omitted or `custom`): creates one audience from an uploaded customer identity CSV file (`name`, `column_mapping`, and `file_id` required) and starts processing it; responds with the audience object. With `filters`: creates an audience from saved People filters (`name` required) — membership is built from the account's People data, and `auto_refresh` decides whether it keeps tracking the filters or keeps whoever matched at creation. With `audience_type: lookalike`: creates a ladder of Meta lookalike audiences from an existing ready custom audience (`source_audience_id`, `count`, and `percentage` required) — `count` equal similarity bands slicing the top `percentage`% (3 audiences at 6% = 0–2%, 2–4%, 4–6%), each returned as its own audience in a `{ data: [...] }` envelope.
+> Create an audience from a customer list, your account's Whop People data, or engagement with videos, lead forms, Instagram profiles, or Facebook pages. Create lookalike audiences to reach people similar to an existing audience. Processing runs asynchronously. Custom creation returns one audience; lookalike creation returns the requested similarity bands in `data`.
 
 Upload the customer CSV with [`POST /files`](/api-reference/files/create-file) on the Legacy API, then pass the returned `file_...` ID as `file_id`.
 
@@ -47,7 +47,7 @@ info:
   termsOfService: https://whop.com/tos-developer-api/
   title: Whop API
   version: 1.0.0
-  x-api-version-date: '2026-09-04'
+  x-api-version-date: '2026-09-06'
 servers:
   - description: Production Whop API
     url: https://api.whop.com/api/v1
@@ -314,7 +314,8 @@ tags:
       wallet addresses.
 
 
-      Use the Deposits API to create deposit instructions for an account.
+      Use the Deposits API to create deposit instructions for an account. Crypto
+      deposits require a $10 minimum.
     name: Deposits
     x-whop-summary: Add funds to a balance.
   - description: >
@@ -545,15 +546,17 @@ tags:
     name: Ad Groups
     x-whop-summary: Audience, placements, and schedule within a campaign.
   - description: >
-      An Audience represents a customer list uploaded to Whop for ad targeting.
-      Audiences belong to an account and sync to supported ad platforms as
-      custom audiences.
+      An Audience is a reusable group of people to include or exclude when
+      targeting ads. Build custom audiences from customer lists, Whop People
+      data, or social engagement, and create lookalikes to reach people similar
+      to an existing audience.
 
 
-      Use the Audiences API to create audiences from CSV uploads, monitor
-      processing status, and list or delete audiences for an account. Created
-      audiences are usable for targeting after processing reaches `ready` or
-      `partial`.
+      Use the Audiences API to create, list, and delete audiences and monitor
+      asynchronous processing. Meta engagement sources include videos, lead
+      forms, Instagram profiles, and Facebook pages. Engagement membership
+      updates on Meta; Whop People audiences can refresh automatically or keep a
+      snapshot.
     name: Audiences
     x-whop-summary: Reusable targeting lists for ad groups.
   - description: >
@@ -666,23 +669,19 @@ tags:
     x-whop-summary: What your credential is allowed to do on a resource.
 paths:
   /audiences:
+    parameters:
+      - $ref: '#/components/parameters/ApiVersionDate'
     post:
       tags:
         - Audiences
       summary: Create Audience
       description: >-
-        Creates an audience. Default (`audience_type` omitted or `custom`):
-        creates one audience from an uploaded customer identity CSV file
-        (`name`, `column_mapping`, and `file_id` required) and starts processing
-        it; responds with the audience object. With `filters`: creates an
-        audience from saved People filters (`name` required) — membership is
-        built from the account's People data, and `auto_refresh` decides whether
-        it keeps tracking the filters or keeps whoever matched at creation. With
-        `audience_type: lookalike`: creates a ladder of Meta lookalike audiences
-        from an existing ready custom audience (`source_audience_id`, `count`,
-        and `percentage` required) — `count` equal similarity bands slicing the
-        top `percentage`% (3 audiences at 6% = 0–2%, 2–4%, 4–6%), each returned
-        as its own audience in a `{ data: [...] }` envelope.
+        Create an audience from a customer list, your account's Whop People
+        data, or engagement with videos, lead forms, Instagram profiles, or
+        Facebook pages. Create lookalike audiences to reach people similar to an
+        existing audience. Processing runs asynchronously. Custom creation
+        returns one audience; lookalike creation returns the requested
+        similarity bands in `data`.
       operationId: createAudience
       parameters:
         - $ref: '#/components/parameters/IdempotencyKey'
@@ -690,13 +689,24 @@ paths:
         content:
           application/json:
             schema:
+              example:
+                account_id: biz_xxxxxxxxxxxxxx
+                engagement:
+                  include:
+                    - event: engaged
+                      object: facebook_page
+                      retention_days: 30
+                      social_account_id: sacc_xxxxxxxxxxxxxx
+                  platform: meta
+                name: Page engagers
+                source_type: engagement
               properties:
                 account_id:
                   description: Account ID, prefixed `biz_`.
                   example: biz_xxxxxxxxxxxxxx
                   type: string
                 audience_type:
-                  description: What to create. Defaults to `custom` (CSV upload).
+                  description: Audience type. Defaults to `custom`.
                   enum:
                     - custom
                     - lookalike
@@ -712,7 +722,7 @@ paths:
                   type: boolean
                 column_mapping:
                   description: >-
-                    Custom audiences only. Maps supported identity fields to CSV
+                    CSV audiences only. Maps supported identity fields to CSV
                     column headers. Map at least one of `email` or `phone`.
                   properties:
                     country:
@@ -753,9 +763,45 @@ paths:
                     (1–6).
                   example: 3
                   type: integer
+                engagement:
+                  additionalProperties: false
+                  description: >-
+                    Rules for membership based on social engagement. Requires a
+                    connected social account with advertising access.
+                  properties:
+                    exclude:
+                      description: >-
+                        Exclude anyone matching any exclusion rule. Defaults to
+                        an empty array. Video audiences do not support
+                        exclusions; use a separate audience in ad-group
+                        exclusions.
+                      items:
+                        $ref: '#/components/schemas/AudienceEngagementRule'
+                      maxItems: 10
+                      type: array
+                    include:
+                      description: >-
+                        Match any inclusion rule. Video rules must share a
+                        retention window and cannot be combined with other
+                        sources.
+                      items:
+                        $ref: '#/components/schemas/AudienceEngagementRule'
+                      maxItems: 10
+                      minItems: 1
+                      type: array
+                    platform:
+                      description: Ad platform that maintains membership.
+                      enum:
+                        - meta
+                      example: meta
+                      type: string
+                  required:
+                    - platform
+                    - include
+                  type: object
                 file_id:
                   description: >-
-                    Custom audiences only. The uploaded customer CSV — a file id
+                    CSV audiences only. The uploaded customer CSV — a file id
                     (`file_...`) returned by `POST /files`.
                   example: >-
                     eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
@@ -780,20 +826,34 @@ paths:
                   description: >-
                     Audience display name. Required for custom audiences;
                     lookalike names are generated from the source audience.
-                  example: Austin visitors, last 30 days
+                  example: Page engagers
                   type: string
                 percentage:
                   description: >-
                     Lookalikes only. Total similarity reach as a whole percent
                     (1–20), sliced evenly across `count` — must be divisible by
-                    `count`.
+                    `count`. For example, 3 audiences at 6% creates 0–2%, 2–4%,
+                    and 4–6% bands.
                   example: 6
                   type: integer
                 source_audience_id:
                   description: >-
                     Lookalikes only. The ready custom audience (`adaud_`) to
-                    build from; it needs at least 100 matched people.
+                    build from; uploaded and People audiences need at least 100
+                    matched people. Meta validates engagement audience
+                    eligibility when creating the lookalike.
                   example: adaud_xxxxxxxxxxxxxx
+                  type: string
+                source_type:
+                  description: >-
+                    Custom audience source. Inferred from `engagement`, then
+                    `filters`, otherwise defaults to `csv_upload`. Supply only
+                    the fields for the selected source.
+                  enum:
+                    - csv_upload
+                    - people_filter
+                    - engagement
+                  example: engagement
                   type: string
               required:
                 - account_id
@@ -815,8 +875,11 @@ paths:
                       - data
                     type: object
           description: >-
-            Audience created — the audience object for custom audiences, or `{
-            data: [...] }` for lookalike ladders.
+            Audience created. Custom creation returns one audience; lookalike
+            creation returns an array in `data`.
+        '400':
+          $ref: '#/components/responses/InvalidParameters'
+          description: Conflicting audience sources.
         '401':
           $ref: '#/components/responses/Unauthorized'
           description: Missing or invalid authentication.
@@ -843,6 +906,14 @@ paths:
             console.log(audience);
 components:
   parameters:
+    ApiVersionDate:
+      description: Pins the request to a dated API version.
+      in: header
+      name: Api-Version-Date
+      required: false
+      schema:
+        example: '2026-09-06'
+        type: string
     IdempotencyKey:
       description: >-
         A unique key that makes this request safe to retry. See [Idempotent
@@ -855,12 +926,29 @@ components:
         maxLength: 255
         type: string
   schemas:
+    AudienceEngagementRule:
+      discriminator:
+        mapping:
+          facebook_page:
+            $ref: '#/components/schemas/AudienceEngagementFacebookPageRule'
+          instagram_profile:
+            $ref: '#/components/schemas/AudienceEngagementInstagramProfileRule'
+          lead_form:
+            $ref: '#/components/schemas/AudienceEngagementLeadFormRule'
+          video:
+            $ref: '#/components/schemas/AudienceEngagementVideoRule'
+        propertyName: object
+      oneOf:
+        - $ref: '#/components/schemas/AudienceEngagementVideoRule'
+        - $ref: '#/components/schemas/AudienceEngagementLeadFormRule'
+        - $ref: '#/components/schemas/AudienceEngagementInstagramProfileRule'
+        - $ref: '#/components/schemas/AudienceEngagementFacebookPageRule'
     Audience:
       properties:
         audience_type:
           description: >-
-            `custom` = a customer list (uploaded, or built from saved People
-            filters); `lookalike` = Meta lookalike built from a custom audience.
+            Whether the audience targets a defined group of people or people
+            similar to an existing audience.
           enum:
             - custom
             - lookalike
@@ -868,16 +956,23 @@ components:
           type: string
         auto_refresh:
           description: >-
-            Whether membership keeps updating. `true` rebuilds it from the saved
-            filters twice a day, so people join and leave as they start and stop
-            matching. `false` keeps whoever matched when it was built and never
-            rebuilds. Always `false` for uploaded lists and lookalikes.
+            Whether Whop rebuilds membership from saved People filters twice a
+            day. When `false`, People audiences keep the members matched at
+            creation. Always `false` for uploaded lists, lookalikes, and
+            engagement audiences. Engagement membership is maintained by Meta.
           example: false
           type: boolean
         created_at:
           description: When the audience was created, as an ISO 8601 timestamp.
           example: '2026-01-01T12:00:00.000Z'
           type: string
+        engagement:
+          description: >-
+            Social engagement rules maintained by the ad platform. `null` for
+            other audience sources.
+          oneOf:
+            - $ref: '#/components/schemas/AudienceEngagement'
+            - type: 'null'
         error_message:
           description: >-
             Processing error message. `null` unless processing is partial or
@@ -890,10 +985,9 @@ components:
             - 'null'
         filters:
           description: >-
-            For audiences built from People filters: the filters that define
-            membership, keyed exactly as `GET /people` accepts them — for
-            example `{"os": "iOS", "country": "US"}`. `null` for uploaded lists
-            and lookalikes.
+            Saved Whop People filters that define membership, using the same
+            keys as `GET /people`. `null` for uploaded lists, engagement
+            audiences, and lookalikes.
           example:
             country: US
             last_seen_within_days: 30
@@ -932,13 +1026,13 @@ components:
           items:
             $ref: '#/components/schemas/AudienceMatchRate'
             description: >-
-              Estimated match rates by ad platform. Empty when the audience was
-              not sent to a supported platform.
+              Estimated match rates by ad platform. Empty for engagement
+              audiences and audiences not sent to a supported platform.
           type: array
         matched_rows:
           description: >-
             Members successfully uploaded to connected ad accounts. Always 0 for
-            lookalikes.
+            lookalikes and engagement audiences.
           example: 0
           type: number
         name:
@@ -954,7 +1048,9 @@ components:
             type: string
           type: array
         processed_rows:
-          description: Members processed from the source so far. Always 0 for lookalikes.
+          description: >-
+            Members processed from the source so far. Always 0 for lookalikes
+            and engagement audiences.
           example: 0
           type: number
         progress_percent:
@@ -971,20 +1067,21 @@ components:
             - 'null'
         source_type:
           description: >-
-            Where members come from. `csv_upload` = an uploaded customer list;
-            `people_filter` = built from saved People filters. See
-            `auto_refresh` for whether a `people_filter` audience keeps
-            updating.
+            Membership source: an uploaded CSV, Whop People filters, or social
+            engagement.
           enum:
             - csv_upload
             - people_filter
+            - engagement
           example: csv_upload
           type: string
         status:
           description: >-
-            Current state of the audience import. `syncing` means Whop is
-            sending matched rows to connected ad accounts. When status is
-            `partial` or `failed`, `error_message` explains what went wrong.
+            Current state of audience creation. For engagement audiences,
+            `ready` means the rules were created on Meta; membership may still
+            be populating. `syncing` means Whop is sending matched rows to
+            connected ad accounts. When status is `partial` or `failed`,
+            `error_message` explains what went wrong.
           enum:
             - pending
             - processing
@@ -996,7 +1093,8 @@ components:
         total_rows:
           description: >-
             Total members detected in the source — CSV rows for uploaded lists,
-            matching people for automatic audiences. Always 0 for lookalikes.
+            matching people for automatic audiences. Always 0 for lookalikes and
+            engagement audiences.
           example: 0
           type: number
         updated_at:
@@ -1018,12 +1116,211 @@ components:
         - source_audience_id
         - lookalike_ratio
         - lookalike_starting_ratio
+        - engagement
         - filters
         - auto_refresh
         - last_refreshed_at
         - created_at
         - updated_at
         - match_rates
+      type: object
+    AudienceEngagementFacebookPageRule:
+      properties:
+        event:
+          description: Interaction that qualifies a person for this rule.
+          enum:
+            - engaged
+            - visited
+            - liked
+            - messaged
+            - cta_clicked
+            - saved
+            - post_interaction
+          example: engaged
+          type: string
+        object:
+          description: Engagement source.
+          enum:
+            - facebook_page
+          example: facebook_page
+          type: string
+        retention_days:
+          description: >-
+            Rolling membership window in days, from 1 to 730. Use 0 for `liked`,
+            which tracks current likes and cannot be combined with other events.
+          example: 30
+          type: integer
+        social_account_id:
+          description: >-
+            Connected social account ID, prefixed `sacc_`, with advertising
+            access.
+          example: sacc_xxxxxxxxxxxxxx
+          type: string
+      required:
+        - object
+        - social_account_id
+        - event
+        - retention_days
+      type: object
+    AudienceEngagementInstagramProfileRule:
+      properties:
+        event:
+          description: Interaction that qualifies a person for this rule.
+          enum:
+            - all
+            - engaged
+            - visited
+            - messaged
+            - saved
+            - ad_liked
+            - ad_commented
+            - ad_shared
+            - ad_saved
+            - ad_cta_clicked
+            - ad_carousel_swiped
+            - organic_liked
+            - organic_commented
+            - organic_shared
+            - organic_saved
+            - organic_swiped
+            - organic_carousel_swiped
+          example: all
+          type: string
+        object:
+          description: Engagement source.
+          enum:
+            - instagram_profile
+          example: instagram_profile
+          type: string
+        retention_days:
+          description: Rolling membership window in days, from 1 to 730.
+          example: 30
+          type: integer
+        social_account_id:
+          description: >-
+            Connected social account ID, prefixed `sacc_`, with advertising
+            access.
+          example: sacc_xxxxxxxxxxxxxx
+          type: string
+      required:
+        - object
+        - social_account_id
+        - event
+        - retention_days
+      type: object
+    AudienceEngagementLeadFormRule:
+      properties:
+        event:
+          description: Interaction that qualifies a person for this rule.
+          enum:
+            - opened
+            - submitted
+            - not_submitted
+          example: opened
+          type: string
+        object:
+          description: Engagement source.
+          enum:
+            - lead_form
+          example: lead_form
+          type: string
+        platform_form_ids:
+          items:
+            description: >-
+              Numeric platform lead form IDs belonging to the selected social
+              account. Supply 1–50 IDs.
+            example: '333'
+            type: string
+          type: array
+        retention_days:
+          description: Rolling membership window in days, from 1 to 90.
+          example: 30
+          type: integer
+        social_account_id:
+          description: >-
+            Connected social account ID, prefixed `sacc_`, with advertising
+            access.
+          example: sacc_xxxxxxxxxxxxxx
+          type: string
+      required:
+        - object
+        - social_account_id
+        - event
+        - retention_days
+        - platform_form_ids
+      type: object
+    AudienceEngagementVideoRule:
+      properties:
+        event:
+          description: Interaction that qualifies a person for this rule.
+          enum:
+            - watched_3_seconds
+            - watched_10_seconds
+            - watched_15_seconds
+            - watched_25_percent
+            - watched_50_percent
+            - watched_75_percent
+            - watched_95_percent
+          example: watched_50_percent
+          type: string
+        object:
+          description: Engagement source.
+          enum:
+            - video
+          example: video
+          type: string
+        platform_video_ids:
+          items:
+            description: >-
+              Numeric platform video IDs belonging to the selected social
+              account. Supply 1–50 IDs.
+            example: '444'
+            type: string
+          type: array
+        retention_days:
+          description: Rolling membership window in days, from 1 to 365.
+          example: 30
+          type: integer
+        social_account_id:
+          description: >-
+            Connected social account ID, prefixed `sacc_`, with advertising
+            access.
+          example: sacc_xxxxxxxxxxxxxx
+          type: string
+      required:
+        - object
+        - social_account_id
+        - event
+        - retention_days
+        - platform_video_ids
+      type: object
+    AudienceEngagement:
+      properties:
+        exclude:
+          description: >-
+            Exclude anyone matching any exclusion rule. Supply 0–10 rules. Video
+            audiences do not support exclusions; use a separate audience in
+            ad-group exclusions.
+          items:
+            $ref: '#/components/schemas/AudienceEngagementRule'
+          type: array
+        include:
+          description: >-
+            Match any inclusion rule. Supply 1–10 rules. Video rules must share
+            a retention window and cannot be combined with other sources.
+          items:
+            $ref: '#/components/schemas/AudienceEngagementRule'
+          type: array
+        platform:
+          description: Ad platform that maintains membership.
+          enum:
+            - meta
+          example: meta
+          type: string
+      required:
+        - platform
+        - include
+        - exclude
       type: object
     AudienceMatchRate:
       properties:
@@ -1092,6 +1389,12 @@ components:
         - error
       type: object
   responses:
+    InvalidParameters:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/V1ErrorResponse'
+      description: Invalid Parameters
     Unauthorized:
       content:
         application/json:

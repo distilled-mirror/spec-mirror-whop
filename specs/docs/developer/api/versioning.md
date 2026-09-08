@@ -35,7 +35,15 @@ Every version automatically gets new endpoints and optional fields. Breaking cha
 
 ## Changelog
 
-<Update label="2026-09-04" description="Ending an experiment requires findings" tags={["Latest"]}>
+<Update label="2026-09-06" description="Engagement audience sources" tags={["Latest"]}>
+  `POST /audiences` supports engagement with videos, lead forms, Instagram profiles, and Facebook pages through a typed `engagement` definition.
+
+  * Explicit `source_type` values validate that the required source fields are present and conflicting source fields are absent.
+  * Audience responses include `engagement`, and `source_type` can be `engagement`. Engagement audiences can also be used as lookalike sources.
+  * `GET /social_accounts/{id}/posts` includes `video_id` and `caption` to help select videos without manually finding their platform identifiers.
+</Update>
+
+<Update label="2026-09-04" description="Ending an experiment requires findings">
   `POST /experiments/{id}/end` requires `findings` in the request body — a short explanation of what was learned and why the experiment ended the way it did.
 
   Pinned callers on an earlier version may still omit it. A placeholder findings value is recorded on their behalf instead of a `400`.

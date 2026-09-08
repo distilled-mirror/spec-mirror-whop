@@ -6,7 +6,7 @@
 
 Deposits describe ways to add funds to an account balance, including hosted deposit pages, bank deposit instructions, and supported crypto wallet addresses.
 
-Use the Deposits API to create deposit instructions for an account.
+Use the Deposits API to create deposit instructions for an account. Crypto deposits require a \$10 minimum.
 
 ## Endpoints
 
@@ -85,7 +85,7 @@ Use the Deposits API to create deposit instructions for an account.
         </ResponseField>
 
         <ResponseField name="crypto" type="object[]" required>
-          Crypto networks available for this deposit, each with its on-chain deposit address and the tokens accepted on that network.
+          Crypto networks available for this deposit, each with its on-chain deposit address and the tokens accepted on that network. Crypto deposits require a \$10 minimum.
 
           <Accordion title="Properties" defaultOpen={true}>
             <ResponseField name="deposit_address" type="string | null" required>

@@ -4,7 +4,7 @@
 
 # Ad Campaign Payment Failed
 
-> Sent when an ad campaign's payment fails and its ads stop delivering
+> Sent when an ad campaign's payment fails and its ads stop delivering. The payload carries no performance stats; read the campaign for those
 
 Required permissions:
  - `webhook_receive:ad_campaigns`

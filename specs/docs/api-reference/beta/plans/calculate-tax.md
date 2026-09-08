@@ -20,7 +20,7 @@ info:
   termsOfService: https://whop.com/tos-developer-api/
   title: Whop API
   version: 1.0.0
-  x-api-version-date: '2026-09-04'
+  x-api-version-date: '2026-09-06'
 servers:
   - description: Production Whop API
     url: https://api.whop.com/api/v1
@@ -287,7 +287,8 @@ tags:
       wallet addresses.
 
 
-      Use the Deposits API to create deposit instructions for an account.
+      Use the Deposits API to create deposit instructions for an account. Crypto
+      deposits require a $10 minimum.
     name: Deposits
     x-whop-summary: Add funds to a balance.
   - description: >
@@ -518,15 +519,17 @@ tags:
     name: Ad Groups
     x-whop-summary: Audience, placements, and schedule within a campaign.
   - description: >
-      An Audience represents a customer list uploaded to Whop for ad targeting.
-      Audiences belong to an account and sync to supported ad platforms as
-      custom audiences.
+      An Audience is a reusable group of people to include or exclude when
+      targeting ads. Build custom audiences from customer lists, Whop People
+      data, or social engagement, and create lookalikes to reach people similar
+      to an existing audience.
 
 
-      Use the Audiences API to create audiences from CSV uploads, monitor
-      processing status, and list or delete audiences for an account. Created
-      audiences are usable for targeting after processing reaches `ready` or
-      `partial`.
+      Use the Audiences API to create, list, and delete audiences and monitor
+      asynchronous processing. Meta engagement sources include videos, lead
+      forms, Instagram profiles, and Facebook pages. Engagement membership
+      updates on Meta; Whop People audiences can refresh automatically or keep a
+      snapshot.
     name: Audiences
     x-whop-summary: Reusable targeting lists for ad groups.
   - description: >

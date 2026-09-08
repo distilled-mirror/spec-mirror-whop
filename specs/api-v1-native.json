@@ -5,7 +5,7 @@
     "termsOfService": "https://whop.com/tos-developer-api/",
     "title": "Whop API",
     "version": "1.0.0",
-    "x-api-version-date": "2026-09-04"
+    "x-api-version-date": "2026-09-06"
   },
   "servers": [
     {
@@ -119,7 +119,7 @@
       "x-whop-summary": "Move funds between Whop accounts and users."
     },
     {
-      "description": "Deposits describe ways to add funds to an account balance, including hosted deposit pages, bank deposit instructions, and supported crypto wallet addresses.\n\nUse the Deposits API to create deposit instructions for an account.\n",
+      "description": "Deposits describe ways to add funds to an account balance, including hosted deposit pages, bank deposit instructions, and supported crypto wallet addresses.\n\nUse the Deposits API to create deposit instructions for an account. Crypto deposits require a $10 minimum.\n",
       "name": "Deposits",
       "x-whop-summary": "Add funds to a balance."
     },
@@ -208,7 +208,7 @@
       "x-whop-summary": "Audience, placements, and schedule within a campaign."
     },
     {
-      "description": "An Audience represents a customer list uploaded to Whop for ad targeting. Audiences belong to an account and sync to supported ad platforms as custom audiences.\n\nUse the Audiences API to create audiences from CSV uploads, monitor processing status, and list or delete audiences for an account. Created audiences are usable for targeting after processing reaches `ready` or `partial`.\n",
+      "description": "An Audience is a reusable group of people to include or exclude when targeting ads. Build custom audiences from customer lists, Whop People data, or social engagement, and create lookalikes to reach people similar to an existing audience.\n\nUse the Audiences API to create, list, and delete audiences and monitor asynchronous processing. Meta engagement sources include videos, lead forms, Instagram profiles, and Facebook pages. Engagement membership updates on Meta; Whop People audiences can refresh automatically or keep a snapshot.\n",
       "name": "Audiences",
       "x-whop-summary": "Reusable targeting lists for ad groups."
     },
@@ -630,7 +630,7 @@
                 "properties": {
                   "affiliate_code": {
                     "description": "The username, if any, of the partner who referred this account",
-                    "example": "random-username-45-xxxxxxxx",
+                    "example": "random-username-47-xxxxxxxx",
                     "type": [
                       "string",
                       "null"
@@ -661,6 +661,12 @@
                       "external_id": "user_12345"
                     },
                     "type": "object"
+                  },
+                  "send_customer_emails": {
+                    "default": false,
+                    "description": "Whether Whop sends transactional emails to customers on behalf of the connected account.",
+                    "example": true,
+                    "type": "boolean"
                   },
                   "title": {
                     "description": "The display name of the account. Defaults to `metadata.external_id` or the owner's email when omitted.",
@@ -9483,9 +9489,10 @@
                       "2026-09-02",
                       "2026-09-02-1",
                       "2026-09-02-2",
-                      "2026-09-04"
+                      "2026-09-04",
+                      "2026-09-06"
                     ],
-                    "example": "2026-09-04",
+                    "example": "2026-09-06",
                     "type": "string"
                   },
                   "expires_at": {
@@ -9911,9 +9918,10 @@
                       "2026-09-02",
                       "2026-09-02-1",
                       "2026-09-02-2",
-                      "2026-09-04"
+                      "2026-09-04",
+                      "2026-09-06"
                     ],
-                    "example": "2026-09-04",
+                    "example": "2026-09-06",
                     "type": "string"
                   },
                   "expires_at": {
@@ -12122,7 +12130,7 @@
     },
     "/audiences": {
       "get": {
-        "description": "Lists uploaded customer-list audiences for an account. Pass `audience_id` to return a specific audience.",
+        "description": "List custom and lookalike audiences for an account. Pass `audience_id` to return a specific audience.",
         "operationId": "listAudiences",
         "parameters": [
           {
@@ -12144,7 +12152,7 @@
             }
           },
           {
-            "description": "Filter by audience type: `custom` (uploaded lists) or `lookalike`.",
+            "description": "Filter by custom or lookalike audiences.",
             "in": "query",
             "name": "audience_type",
             "required": false,
@@ -12157,14 +12165,15 @@
             }
           },
           {
-            "description": "Filter by member source: `csv_upload` (uploaded lists) or `people_filter` (automatic audiences built from saved People filters).",
+            "description": "Filter by uploaded customer lists, Whop People filters, or social engagement.",
             "in": "query",
             "name": "source_type",
             "required": false,
             "schema": {
               "enum": [
                 "csv_upload",
-                "people_filter"
+                "people_filter",
+                "engagement"
               ],
               "type": "string"
             }
@@ -12271,8 +12280,13 @@
           }
         ]
       },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/ApiVersionDate"
+        }
+      ],
       "post": {
-        "description": "Creates an audience. Default (`audience_type` omitted or `custom`): creates one audience from an uploaded customer identity CSV file (`name`, `column_mapping`, and `file_id` required) and starts processing it; responds with the audience object. With `filters`: creates an audience from saved People filters (`name` required) — membership is built from the account's People data, and `auto_refresh` decides whether it keeps tracking the filters or keeps whoever matched at creation. With `audience_type: lookalike`: creates a ladder of Meta lookalike audiences from an existing ready custom audience (`source_audience_id`, `count`, and `percentage` required) — `count` equal similarity bands slicing the top `percentage`% (3 audiences at 6% = 0–2%, 2–4%, 4–6%), each returned as its own audience in a `{ data: [...] }` envelope.",
+        "description": "Create an audience from a customer list, your account's Whop People data, or engagement with videos, lead forms, Instagram profiles, or Facebook pages. Create lookalike audiences to reach people similar to an existing audience. Processing runs asynchronously. Custom creation returns one audience; lookalike creation returns the requested similarity bands in `data`.",
         "operationId": "createAudience",
         "parameters": [
           {
@@ -12283,6 +12297,22 @@
           "content": {
             "application/json": {
               "schema": {
+                "example": {
+                  "account_id": "biz_xxxxxxxxxxxxxx",
+                  "engagement": {
+                    "include": [
+                      {
+                        "event": "engaged",
+                        "object": "facebook_page",
+                        "retention_days": 30,
+                        "social_account_id": "sacc_xxxxxxxxxxxxxx"
+                      }
+                    ],
+                    "platform": "meta"
+                  },
+                  "name": "Page engagers",
+                  "source_type": "engagement"
+                },
                 "properties": {
                   "account_id": {
                     "description": "Account ID, prefixed `biz_`.",
@@ -12290,7 +12320,7 @@
                     "type": "string"
                   },
                   "audience_type": {
-                    "description": "What to create. Defaults to `custom` (CSV upload).",
+                    "description": "Audience type. Defaults to `custom`.",
                     "enum": [
                       "custom",
                       "lookalike"
@@ -12304,7 +12334,7 @@
                     "type": "boolean"
                   },
                   "column_mapping": {
-                    "description": "Custom audiences only. Maps supported identity fields to CSV column headers. Map at least one of `email` or `phone`.",
+                    "description": "CSV audiences only. Maps supported identity fields to CSV column headers. Map at least one of `email` or `phone`.",
                     "properties": {
                       "country": {
                         "description": "CSV header for ISO 3166-1 alpha-2 country codes, such as `US`.",
@@ -12344,8 +12374,44 @@
                     "example": 3,
                     "type": "integer"
                   },
+                  "engagement": {
+                    "additionalProperties": false,
+                    "description": "Rules for membership based on social engagement. Requires a connected social account with advertising access.",
+                    "properties": {
+                      "exclude": {
+                        "description": "Exclude anyone matching any exclusion rule. Defaults to an empty array. Video audiences do not support exclusions; use a separate audience in ad-group exclusions.",
+                        "items": {
+                          "$ref": "#/components/schemas/AudienceEngagementRule"
+                        },
+                        "maxItems": 10,
+                        "type": "array"
+                      },
+                      "include": {
+                        "description": "Match any inclusion rule. Video rules must share a retention window and cannot be combined with other sources.",
+                        "items": {
+                          "$ref": "#/components/schemas/AudienceEngagementRule"
+                        },
+                        "maxItems": 10,
+                        "minItems": 1,
+                        "type": "array"
+                      },
+                      "platform": {
+                        "description": "Ad platform that maintains membership.",
+                        "enum": [
+                          "meta"
+                        ],
+                        "example": "meta",
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "platform",
+                      "include"
+                    ],
+                    "type": "object"
+                  },
                   "file_id": {
-                    "description": "Custom audiences only. The uploaded customer CSV — a file id (`file_...`) returned by `POST /files`.",
+                    "description": "CSV audiences only. The uploaded customer CSV — a file id (`file_...`) returned by `POST /files`.",
                     "example": "eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
                     "type": "string"
                   },
@@ -12359,17 +12425,27 @@
                   },
                   "name": {
                     "description": "Audience display name. Required for custom audiences; lookalike names are generated from the source audience.",
-                    "example": "Austin visitors, last 30 days",
+                    "example": "Page engagers",
                     "type": "string"
                   },
                   "percentage": {
-                    "description": "Lookalikes only. Total similarity reach as a whole percent (1–20), sliced evenly across `count` — must be divisible by `count`.",
+                    "description": "Lookalikes only. Total similarity reach as a whole percent (1–20), sliced evenly across `count` — must be divisible by `count`. For example, 3 audiences at 6% creates 0–2%, 2–4%, and 4–6% bands.",
                     "example": 6,
                     "type": "integer"
                   },
                   "source_audience_id": {
-                    "description": "Lookalikes only. The ready custom audience (`adaud_`) to build from; it needs at least 100 matched people.",
+                    "description": "Lookalikes only. The ready custom audience (`adaud_`) to build from; uploaded and People audiences need at least 100 matched people. Meta validates engagement audience eligibility when creating the lookalike.",
                     "example": "adaud_xxxxxxxxxxxxxx",
+                    "type": "string"
+                  },
+                  "source_type": {
+                    "description": "Custom audience source. Inferred from `engagement`, then `filters`, otherwise defaults to `csv_upload`. Supply only the fields for the selected source.",
+                    "enum": [
+                      "csv_upload",
+                      "people_filter",
+                      "engagement"
+                    ],
+                    "example": "engagement",
                     "type": "string"
                   }
                 },
@@ -12409,7 +12485,11 @@
                 }
               }
             },
-            "description": "Audience created — the audience object for custom audiences, or `{ data: [...] }` for lookalike ladders."
+            "description": "Audience created. Custom creation returns one audience; lookalike creation returns an array in `data`."
+          },
+          "400": {
+            "$ref": "#/components/responses/InvalidParameters",
+            "description": "Conflicting audience sources."
           },
           "401": {
             "$ref": "#/components/responses/Unauthorized",
@@ -12502,6 +12582,11 @@
           }
         ]
       },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/ApiVersionDate"
+        }
+      ],
       "patch": {
         "description": "Renames an audience. For an audience built from People filters that keeps itself up to date, pass `filters` to replace them, which rebuilds membership immediately. Whether an audience auto refreshes is set when it is created.",
         "operationId": "updateAudience",
@@ -12582,6 +12667,11 @@
       }
     },
     "/audiences/{id}/add_people": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/ApiVersionDate"
+        }
+      ],
       "post": {
         "description": "Adds users from a new CSV file to an existing uploaded custom audience. The file uses the audience's saved column mapping, processing happens in the background, and existing audience members remain unchanged.",
         "operationId": "addAudiencePeople",
@@ -18178,7 +18268,7 @@
     },
     "/deposits": {
       "post": {
-        "description": "Retrieve the deposit methods for an account, including crypto and bank transfer.",
+        "description": "Retrieve the deposit methods for an account, including crypto and bank transfer. Crypto deposits require a $10 minimum.",
         "operationId": "createDeposit",
         "parameters": [
           {
@@ -18191,7 +18281,7 @@
               "schema": {
                 "properties": {
                   "amount": {
-                    "description": "Amount to prefill on hosted deposit page.",
+                    "description": "Amount to prefill on hosted deposit page. Crypto deposits require a $10 minimum.",
                     "example": 50,
                     "type": "number"
                   },
@@ -18349,7 +18439,7 @@
                           ]
                         },
                         "crypto": {
-                          "description": "Crypto networks available for this deposit, each with its on-chain deposit address and the tokens accepted on that network.",
+                          "description": "Crypto networks available for this deposit, each with its on-chain deposit address and the tokens accepted on that network. Crypto deposits require a $10 minimum.",
                           "items": {
                             "properties": {
                               "deposit_address": {
@@ -20315,6 +20405,7 @@
                                     "enum": [
                                       "csv_upload",
                                       "people_filter",
+                                      "engagement",
                                       null
                                     ],
                                     "example": "csv_upload",
@@ -22092,7 +22183,7 @@
                     "type": "array"
                   },
                   "filters": {
-                    "description": "Resource-specific filters. For native REST resources (`payouts`, `transfers`, `products`) these are the resource's own list query params; for dashboard tables they mirror the dashboard table filters.\n\n<details>\n<summary>Filters by resource (25)</summary>\n\n<details>\n<summary>ad_campaigns (4)</summary>\n\nMirrors the filtering query params of `GET /api/v1/ad_campaigns`.\n\n- `created_after` `string` — Only return campaigns created after this timestamp.\n- `created_before` `string` — Only return campaigns created before this timestamp.\n- `query` `string` — Filter campaigns by a title or ID substring.\n- `status` `string` — Only return campaigns with this status. One of `draft`, `active`, `paused`, `payment_failed`.\n\n</details>\n<details>\n<summary>ad_groups (6)</summary>\n\nMirrors the filtering query params of `GET /api/v1/ad_groups`.\n\n- `ad_campaign_id` `string` — Filter to ad groups in this campaign.\n- `ad_campaign_ids` `string[]` — Filter to ad groups in these campaigns (max 100). Repeat the parameter for each id (ad_campaign_ids=a&ad_campaign_ids=b).\n- `created_after` `string` — Only return ad groups created after this timestamp.\n- `created_before` `string` — Only return ad groups created before this timestamp.\n- `query` `string` — Filter ad groups by a title or ID substring.\n- `status` `string` — Filter to ad groups with this status. One of `active`, `paused`, `rejected`, `duplicating`.\n\n</details>\n<details>\n<summary>ads (8)</summary>\n\nMirrors the filtering query params of `GET /api/v1/ads`.\n\n- `ad_campaign_id` `string` — Only return ads in this ad campaign.\n- `ad_campaign_ids` `string[]` — Only return ads in these ad campaigns (max 100). Repeat the parameter for each id (ad_campaign_ids=a&ad_campaign_ids=b).\n- `ad_group_id` `string` — Only return ads in this ad group.\n- `ad_group_ids` `string[]` — Only return ads in these ad groups (max 100). Repeat the parameter for each id (ad_group_ids=a&ad_group_ids=b).\n- `created_after` `string` — Only return ads created after this timestamp.\n- `created_before` `string` — Only return ads created before this timestamp.\n- `query` `string` — Filter ads by a title or ID substring.\n- `status` `string` — Only return ads with this status. One of `active`, `paused`, `in_review`, `rejected`.\n\n</details>\n<details>\n<summary>apps (6)</summary>\n\nMirrors the filtering query params of `GET /api/v1/apps`.\n\n- `app_type` `string` — Filter apps by the type of end-user they are built for. Apps of type `website` are left out unless you ask for them by name. One of `b2b_app`, `b2c_app`, `company_app`, `component`, `website`.\n- `query` `string` — A search string matched against app names.\n- `recommended` `boolean` — Only return apps Whop recommends (or, with `false`, only those it does not), independently of verification status.\n- `verified` `boolean` — Only return apps whose Whop verification status matches this value. Omit this filter to include every verification status the caller can see.\n- `verified_apps_only` `boolean` — Legacy compatibility filter. Use `verified` for field equality. `true` returns verified apps; clients pinned before `2026-08-25-2` retain the earlier public website discovery behavior.\n- `view_type` `string` — Only return apps supporting this view type, such as `dashboard` or `hub`. One of `hub`, `discover`, `dash`, `dashboard`, `analytics`, `skills`, `openapi`.\n\n</details>\n<details>\n<summary>audiences (3)</summary>\n\nMirrors the filtering query params of `GET /api/v1/audiences`.\n\n- `audience_id` `string` — Audience ID, prefixed `adaud_`, used to filter the response to one audience.\n- `audience_type` `string` — Filter by audience type: `custom` (uploaded lists) or `lookalike`. One of `custom`, `lookalike`.\n- `source_type` `string` — Filter by member source: `csv_upload` (uploaded lists) or `people_filter` (automatic audiences built from saved People filters). One of `csv_upload`, `people_filter`.\n\n</details>\n<details>\n<summary>bounties (8)</summary>\n\nMirrors the filtering query params of `GET /api/v1/bounties`.\n\n- `business_goal_type` `string` — Filter by the poster's declared goal. Bounties created before the goal taxonomy carry no goal and never match this filter. One of `clipping`, `post_engagement`, `owned_account_growth`, `ugc_content`, `local_activation`, `data_capture`, `other`.\n- `country` `string` — Only bounties workable from this country, as an ISO 3166-1 alpha-2 code. Bounties with no country targeting are workable worldwide and always match.\n- `created_after` `string` — Only bounties created after this ISO 8601 timestamp.\n- `created_before` `string` — Only bounties created before this ISO 8601 timestamp.\n- `experience_id` `string` — Only bounties posted to this forum experience, prefixed `exp_`. An unknown experience, or one outside the caller's scope, matches nothing.\n- `query` `string` — Substring match on the bounty title or ID.\n- `status` `string` — Filter by lifecycle state. One of `scheduled`, `open`, `closed`, `completed`, `canceled`.\n- `user_id` `string` — List the bounties this user participated in (`user_` tag). Must be the authenticated user.\n\n</details>\n<details>\n<summary>bounty_submissions (4)</summary>\n\nMirrors the filtering query params of `GET /api/v1/bounty_submissions`.\n\n- `bounty_id` `string` — Only submissions on this bounty (`bnty_` tag).\n- `created_after` `string` — Only submissions created after this ISO 8601 timestamp.\n- `created_before` `string` — Only submissions created before this ISO 8601 timestamp.\n- `status` `string` — Filter by lifecycle state. One of `in_progress`, `submitted`, `approved`, `denied`.\n\n</details>\n<details>\n<summary>card_transactions (6)</summary>\n\nMirrors the filtering query params of `GET /api/v1/card_transactions`.\n\n- `card_id` `string[]` — Return only transactions charged to these cards, each prefixed `icrd_`.\n- `cardholder_id` `string[]` — Return only transactions on cards assigned to these users, each prefixed `user_`.\n- `created_after` `string` — Return only transactions authorized at or after this ISO 8601 timestamp.\n- `created_before` `string` — Return only transactions authorized at or before this ISO 8601 timestamp.\n- `status` `string` — Return only transactions with this status. One of `pending`, `completed`, `reversed`, `declined`.\n- `transaction_ids` `string[]` — Return only these card transactions, each prefixed `citx_`. Repeat the parameter, or pass one comma-separated value.\n\n</details>\n<details>\n<summary>checkout_configurations (3)</summary>\n\nMirrors the filtering query params of `GET /api/v1/checkout_configurations`.\n\n- `created_after` `string` — Only return checkout configurations created after this ISO 8601 timestamp.\n- `created_before` `string` — Only return checkout configurations created before this ISO 8601 timestamp.\n- `plan_id` `string` — Only return checkout configurations for this plan ID, prefixed `plan_`.\n\n</details>\n<details>\n<summary>disputes (4)</summary>\n\nMirrors the filtering query params of `GET /api/v1/disputes`.\n\n- `created_after` `string` — Only disputes opened after this ISO 8601 timestamp.\n- `created_before` `string` — Only disputes opened before this ISO 8601 timestamp.\n- `currency` `string` — Only disputes in this three-letter ISO currency.\n- `status` `string[]` — Only disputes in these statuses. Repeat the parameter to pass several — one paginated list covers all of them. Covers both chargebacks and inquiries at each stage. A `needs_response` dispute whose evidence deadline has passed reports and filters as `under_review` instead.\n\n</details>\n<details>\n<summary>events (14)</summary>\n\nMirrors the filtering query params of `GET /api/v1/events`.\n\n- `attribution_model` `string` — Attribution model for the source filter (defaults to last_touch). One of `last_touch`, `first_touch`.\n- `browser` `string` — Browser families to filter by, comma-separated (e.g. Chrome, Mobile Safari).\n- `city` `string` — Cities to filter by, comma-separated.\n- `country` `string` — Country codes to filter by, comma-separated.\n- `device` `string` — Device families to filter by, comma-separated (e.g. iPhone, Mac).\n- `event` `string` — Full event names to filter by, comma-separated (payment.completed, pixel.lead, pixel.page, pixel.custom:<name>) — the same vocabulary the events / people metrics use.\n- `from` `string` — Start of the time range as an ISO 8601 timestamp. Required when identifier is omitted.\n- `hostname` `string` — Page hostnames to filter by, comma-separated.\n- `identifier` `string` — Any hard identifier of the person: a person ID (prsn_*), user ID, email, phone number, or a tracking cookie value (wuid, anonymous ID, fbp/fbc/ttp/ga). Omit to list recent events for the account.\n- `os` `string` — Operating system families to filter by, comma-separated (e.g. iOS, Windows).\n- `page` `string` — Page paths to filter by, comma-separated.\n- `source` `string` — Canonical source path, exact or with a trailing :* prefix (whop:<campaign>:*, ext:meta:*, referrer:<domain>, direct). Restricts the list to conversion targets attributed to that source — the debuggability twin of a metric cell's source parameter. A whop:... source combined with non-conversion event names (event=pixel.page) instead lists the events whose ad click resolved to that entity — the page views an ad drove.\n- `to` `string` — End of the time range as an ISO 8601 timestamp. Required when identifier is omitted; otherwise defaults to now.\n- `utm_source` `string` — utm_source values to filter by, comma-separated.\n\n</details>\n<details>\n<summary>financial-activity (12)</summary>\n\nMirrors the filtering query params of `GET /api/v1/financial-activity`.\n\n- `activity_id` `string` — Optional ledger activity ID (for example `line_3`). Returns at most that one activity.\n- `available_after` `string` — Only include rows whose funds became withdrawable on or after this `YYYY-MM-DD` settlement date (UTC), distinct from posted_at. Requires currency.\n- `available_before` `string` — Only include rows whose funds became withdrawable on or before this `YYYY-MM-DD` settlement date (UTC). Set equal to available_after for a single day. Requires currency.\n- `currency` `string` — Optional currency code filter, for example `usd`.\n- `exclude_internal_movements` `boolean` — Whether to exclude balance reservations and balanced movements between the account's own balances.\n- `include_owned_accounts` `boolean` — When true, aggregates the authenticated user's personal ledger with the businesses they own (owner role with balance read) into one feed. Requires user_id to be the authenticated user; cannot be combined with account_id or the settlement-date filters. Each returned row includes the owning `account`.\n- `include_resource` `boolean` — Whether to include the `resource` field in the response or not. Consider passing `false` if you need a fast response without as many rich details.\n- `line_types` `string[]` — Optional ledger line categories to include. Some categories (for example `onchain_deposit`, which covers inbound crypto deposits such as MoonPay onramps) are only returned when explicitly requested here.\n- `posted_after` `string` — Only include rows posted after this ISO 8601 timestamp.\n- `posted_before` `string` — Only include rows posted before this ISO 8601 timestamp.\n- `resource_id` `string` — Optional prefixed resource ID. Returns activity associated with that resource.\n- `user_id` `string` — The owning user ID (a user_ identifier). Provide this or account_id.\n\n</details>\n<details>\n<summary>members (6)</summary>\n\nMirrors the filtering query params of `GET /api/v1/members`.\n\n- `access_level` `string` — Filter by what the member can reach on the account. One of `no_access`, `admin`, `customer`.\n- `created_after` `string` — Only members who joined after this ISO 8601 timestamp.\n- `created_before` `string` — Only members who joined before this ISO 8601 timestamp.\n- `query` `string` — Search members by name or username. An exact email address also matches when the credential holds the member:email:read scope.\n- `status` `string` — Filter by whether the member is still part of the account. One of `joined`, `left`.\n- `user_ids` `string[]` — Only return members whose users match these `user_` identifiers.\n\n</details>\n<details>\n<summary>memberships (6)</summary>\n\nMirrors the filtering query params of `GET /api/v1/memberships`.\n\n- `created_after` `string` — Only memberships created after this ISO 8601 timestamp.\n- `created_before` `string` — Only memberships created before this ISO 8601 timestamp.\n- `plan_id` `string` — Filter to memberships of this plan (`plan_` tag). Repeat as plan_ids[] for several.\n- `product_id` `string` — Filter to memberships of this product (`prod_` tag). Repeat as product_ids[] for several.\n- `status` `string` — Filter by billing state. `canceling` matches active memberships set to cancel at period end; `paused` matches memberships with payment collection paused. One of `active`, `trialing`, `past_due`, `completed`, `canceled`, `expired`, `canceling`, `paused`.\n- `user_id` `string` — Narrow to one user's memberships (`user_` tag, or `me` for the caller). A user outside the caller's visible set returns an empty list.\n\n</details>\n<details>\n<summary>payouts (7)</summary>\n\nMirrors the filtering query params of `GET /api/v1/payouts`.\n\n- `created_after` `string` — Only payouts created at or after this ISO 8601 time (inclusive).\n- `created_before` `string` — Only payouts created before this ISO 8601 time (exclusive).\n- `currency` `string` — Optional currency code filter, for example `usd`.\n- `payout_method_id` `string` — Filter to payouts sent to one saved payout method (a pytk_ identifier). An unknown id matches nothing.\n- `source` `string` — Filter by how the payout was created. Payouts created before source tracking or through internal tooling carry no source and never match. One of `api`, `dashboard`, `automatic`.\n- `status` `string` — Filter to payouts whose `status` reads this word, matching exactly what this version displays — `reversed` finds settled payouts the bank later returned. Requires Api-Version-Date 2026-08-21 or later. One of `requested`, `in_review`, `processing`, `completed`, `reversed`, `canceled`, `failed`, `denied`.\n- `user_id` `string` — The owning user ID (a user_ identifier). Provide this or account_id.\n\n</details>\n<details>\n<summary>people (20)</summary>\n\nMirrors the filtering query params of `GET /api/v1/people`.\n\n- `attribution_model` `string` — Attribution model the source filter matches against (defaults to last_touch). One of `last_touch`, `first_touch`.\n- `audience_id` `string` — Only include people in this audience. An audience that keeps itself up to date resolves to the People filters that define it, so this always reflects who matches now; uploaded lists and point-in-time snapshots match their recorded members.\n- `contactable` `boolean` — true for people who have an email address or phone number — the ones an ad platform can match.\n- `country` `string` — Only include people whose most recent visit came from this ISO 3166-1 alpha-2 country code.\n- `custom_event` `string` — Only include people who fired this custom pixel event.\n- `email` `string` — Only include the person linked to this email address.\n- `event_from` `string` — With event_to plus an event or source filter, switches to exact-population mode: person ids are resolved and paginated on the events side within this window (the same query the people metric counts), then hydrated per page.\n- `event_name` `string[]` — Only include people who fired any of these events, e.g. payment.completed or page.checkout.view.\n- `event_to` `string` — The inclusive end of the event window for exact-population mode.\n- `first_seen_after` `string` — Only include people first seen at or after this ISO 8601 timestamp.\n- `first_seen_before` `string` — Only include people first seen before this ISO 8601 timestamp.\n- `first_seen_within_days` `integer` — Only include people first seen within this many days, as a rolling window.\n- `has_purchased` `boolean` — true for customers only, false for people who have never purchased.\n- `last_seen_after` `string` — Only include people last seen at or after this ISO 8601 timestamp.\n- `last_seen_before` `string` — Only include people last seen before this ISO 8601 timestamp.\n- `last_seen_within_days` `integer` — Only include people last seen within this many days, as a rolling window.\n- `phone` `string` — Only include the person linked to this phone number.\n- `query` `string` — Search people by name, email, phone, or whop user ID (case-insensitive substring match).\n- `source` `string[]` — Only include people acquired from any of these sources — canonical paths (whop:<campaign>:<group>:<ad>, ext:<platform>:..., referrer:<domain>, direct, other), exact or with a trailing :* prefix. The same vocabulary the events / people metrics use.\n- `user_id` `string` — Only include the person linked to this whop user ID.\n\n</details>\n<details>\n<summary>plans (6)</summary>\n\nMirrors the filtering query params of `GET /api/v1/plans`.\n\n- `created_after` `string` — Only return plans created after this timestamp.\n- `created_before` `string` — Only return plans created before this timestamp.\n- `plan_types` `string[]` — Filter to only plans matching these billing types.\n- `product_ids` `string[]` — Filter to only plans belonging to these product identifiers. When `account_id` is omitted, this is required and the response is publicly readable: only visible, non-invoice plans are returned.\n- `release_methods` `string[]` — Filter to only plans matching these release methods.\n- `visibilities` `string[]` — Filter to only plans matching these visibility states.\n\n</details>\n<details>\n<summary>products (10)</summary>\n\nMirrors the filtering query params of `GET /api/v1/products`.\n\n- `access_pass_types` `string[]` — Filter to only products matching these types.\n- `created_after` `string` — Only return products created after this ISO 8601 timestamp.\n- `created_before` `string` — Only return products created before this ISO 8601 timestamp.\n- `labels` `string[]` — Filter to only products carrying all of these labels. Labels are matched lowercased.\n- `marketplace_category_route` `string` — Only return marketplace products assigned to this category route, such as `trading`.\n- `plan_types` `string[]` — Filter to products with a buyable plan of these billing models, such as `one_time` or `renewal`.\n- `price_maximum` `number` — Only return products whose advertised buyable plan has a displayed price of at most this amount. Recurring plans use renewal price.\n- `price_minimum` `number` — Only return products whose advertised buyable plan has a displayed price of at least this amount. Recurring plans use renewal price.\n- `query` `string` — Ranked search against product title and headline. Omit to browse by recency.\n- `visibilities` `string[]` — Filter to only products matching these visibility states. Ignored on the public marketplace list, which only returns visible products.\n\n</details>\n<details>\n<summary>promo_codes (5)</summary>\n\nMirrors the filtering query params of `GET /api/v1/promo_codes`.\n\n- `created_after` `string` — Only promo codes created after this ISO 8601 timestamp.\n- `created_before` `string` — Only promo codes created before this ISO 8601 timestamp.\n- `plan_ids` `string[]` — Only promo codes scoped to these plan IDs.\n- `product_ids` `string[]` — Only promo codes scoped to these product IDs.\n- `status` `string` — Promo-code status. `expired` groups inactive and archived codes. One of `active`, `inactive`, `archived`, `expired`.\n\n</details>\n<details>\n<summary>resolution_center_cases (6)</summary>\n\nMirrors the filtering query params of `GET /api/v1/resolution_center_cases`.\n\n- `created_after` `string` — Only cases created after this ISO 8601 timestamp.\n- `created_before` `string` — Only cases created before this ISO 8601 timestamp.\n- `outcome` `string[]` — Only closed cases that ended these ways. Repeat the parameter to pass several.\n- `reason` `string[]` — Only cases opened for these reasons. Repeat the parameter to pass several.\n- `status` `string[]` — Only cases in these statuses. Repeat the parameter to pass several — one paginated list covers all of them.\n- `user_id` `string` — Only cases opened by this customer — a `user_` tag, or `me` for the calling user. It narrows what you can already read, so `me` lists the cases you opened without the ones on accounts you are a team member of.\n\n</details>\n<details>\n<summary>shipments (4)</summary>\n\nMirrors the filtering query params of `GET /api/v1/shipments`.\n\n- `created_after` `string` — Return shipments created after this ISO 8601 timestamp.\n- `created_before` `string` — Return shipments created before this ISO 8601 timestamp.\n- `payment_id` `string[]` — Only shipments fulfilling these payments, each prefixed `pay_`. Repeat the parameter to pass several, up to 100 per request — one paginated list covers all of them.\n- `status` `string` — Filter to shipments with this delivery status. One of `unknown`, `pre_transit`, `in_transit`, `out_for_delivery`, `delivered`, `available_for_pickup`, `return_to_sender`, `failure`, `cancelled`, `error`.\n\n</details>\n<details>\n<summary>social_accounts (4)</summary>\n\nMirrors the filtering query params of `GET /api/v1/social_accounts`.\n\n- `platform` `string` — Only return social accounts for the platform that is specified. One of `x`, `instagram`, `youtube`, `tiktok`, `facebook`, `discord`, `telegram`.\n- `scopes` `string[]` — Only return social accounts that have these scopes.\n- `user_id` `string` — The User that the social accounts are connected to. Provide either this or account_id.\n- `verified` `boolean` — Only return social accounts that are verified on the platform.\n\n</details>\n<details>\n<summary>team_members (5)</summary>\n\nMirrors the filtering query params of `GET /api/v1/team_members`.\n\n- `created_after` `string` — Only return members added after this ISO 8601 timestamp.\n- `created_before` `string` — Only return members added before this ISO 8601 timestamp.\n- `role` `string` — Only return members with this role. `custom` matches members on a dashboard-managed custom role. One of `owner`, `admin`, `sales_manager`, `moderator`, `advertiser`, `app_manager`, `support`, `manager`, `workforce`, `custom`.\n- `status` `string` — Only return members with this status: `joined` (accepted members) or `pending` (pending invites). Both are returned by default. One of `joined`, `pending`.\n- `user_id` `string` — Only return the membership for this user ID, prefixed `user_`.\n\n</details>\n<details>\n<summary>transfers (4)</summary>\n\nMirrors the filtering query params of `GET /api/v1/transfers`.\n\n- `created_after` `string` — Only transfers created strictly after this ISO 8601 timestamp.\n- `created_before` `string` — Only transfers created strictly before this ISO 8601 timestamp.\n- `destination_id` `string` — Filter to transfers received by this account. Provide this or origin_id.\n- `origin_id` `string` — Filter to transfers sent from this account. Provide this or destination_id.\n\n</details>\n<details>\n<summary>webhooks (3)</summary>\n\nMirrors the filtering query params of `GET /api/v1/webhooks`.\n\n- `app_id` `string` — Only return webhooks attached to this app. Omit to list the account's own webhooks.\n- `has_failures` `boolean` — Only return webhooks whose endpoint is currently failing — every delivery since the current failure streak began has been rejected. Clears as soon as a delivery succeeds.\n- `include_app_webhooks` `boolean` — Also return webhooks attached to the account's apps, not just the account's own. Cannot be combined with `app_id`.\n\n</details>\n</details>",
+                    "description": "Resource-specific filters. For native REST resources (`payouts`, `transfers`, `products`) these are the resource's own list query params; for dashboard tables they mirror the dashboard table filters.\n\n<details>\n<summary>Filters by resource (25)</summary>\n\n<details>\n<summary>ad_campaigns (4)</summary>\n\nMirrors the filtering query params of `GET /api/v1/ad_campaigns`.\n\n- `created_after` `string` — Only return campaigns created after this timestamp.\n- `created_before` `string` — Only return campaigns created before this timestamp.\n- `query` `string` — Filter campaigns by a title or ID substring.\n- `status` `string` — Only return campaigns with this status. One of `draft`, `active`, `paused`, `payment_failed`.\n\n</details>\n<details>\n<summary>ad_groups (6)</summary>\n\nMirrors the filtering query params of `GET /api/v1/ad_groups`.\n\n- `ad_campaign_id` `string` — Filter to ad groups in this campaign.\n- `ad_campaign_ids` `string[]` — Filter to ad groups in these campaigns (max 100). Repeat the parameter for each id (ad_campaign_ids=a&ad_campaign_ids=b).\n- `created_after` `string` — Only return ad groups created after this timestamp.\n- `created_before` `string` — Only return ad groups created before this timestamp.\n- `query` `string` — Filter ad groups by a title or ID substring.\n- `status` `string` — Filter to ad groups with this status. One of `active`, `paused`, `rejected`, `duplicating`.\n\n</details>\n<details>\n<summary>ads (8)</summary>\n\nMirrors the filtering query params of `GET /api/v1/ads`.\n\n- `ad_campaign_id` `string` — Only return ads in this ad campaign.\n- `ad_campaign_ids` `string[]` — Only return ads in these ad campaigns (max 100). Repeat the parameter for each id (ad_campaign_ids=a&ad_campaign_ids=b).\n- `ad_group_id` `string` — Only return ads in this ad group.\n- `ad_group_ids` `string[]` — Only return ads in these ad groups (max 100). Repeat the parameter for each id (ad_group_ids=a&ad_group_ids=b).\n- `created_after` `string` — Only return ads created after this timestamp.\n- `created_before` `string` — Only return ads created before this timestamp.\n- `query` `string` — Filter ads by a title or ID substring.\n- `status` `string` — Only return ads with this status. One of `active`, `paused`, `in_review`, `rejected`.\n\n</details>\n<details>\n<summary>apps (6)</summary>\n\nMirrors the filtering query params of `GET /api/v1/apps`.\n\n- `app_type` `string` — Filter apps by the type of end-user they are built for. Apps of type `website` are left out unless you ask for them by name. One of `b2b_app`, `b2c_app`, `company_app`, `component`, `website`.\n- `query` `string` — A search string matched against app names.\n- `recommended` `boolean` — Only return apps Whop recommends (or, with `false`, only those it does not), independently of verification status.\n- `verified` `boolean` — Only return apps whose Whop verification status matches this value. Omit this filter to include every verification status the caller can see.\n- `verified_apps_only` `boolean` — Legacy compatibility filter. Use `verified` for field equality. `true` returns verified apps; clients pinned before `2026-08-25-2` retain the earlier public website discovery behavior.\n- `view_type` `string` — Only return apps supporting this view type, such as `dashboard` or `hub`. One of `hub`, `discover`, `dash`, `dashboard`, `analytics`, `skills`, `openapi`.\n\n</details>\n<details>\n<summary>audiences (3)</summary>\n\nMirrors the filtering query params of `GET /api/v1/audiences`.\n\n- `audience_id` `string` — Audience ID, prefixed `adaud_`, used to filter the response to one audience.\n- `audience_type` `string` — Filter by custom or lookalike audiences. One of `custom`, `lookalike`.\n- `source_type` `string` — Filter by uploaded customer lists, Whop People filters, or social engagement. One of `csv_upload`, `people_filter`, `engagement`.\n\n</details>\n<details>\n<summary>bounties (8)</summary>\n\nMirrors the filtering query params of `GET /api/v1/bounties`.\n\n- `business_goal_type` `string` — Filter by the poster's declared goal. Bounties created before the goal taxonomy carry no goal and never match this filter. One of `clipping`, `post_engagement`, `owned_account_growth`, `ugc_content`, `local_activation`, `data_capture`, `other`.\n- `country` `string` — Only bounties workable from this country, as an ISO 3166-1 alpha-2 code. Bounties with no country targeting are workable worldwide and always match.\n- `created_after` `string` — Only bounties created after this ISO 8601 timestamp.\n- `created_before` `string` — Only bounties created before this ISO 8601 timestamp.\n- `experience_id` `string` — Only bounties posted to this forum experience, prefixed `exp_`. An unknown experience, or one outside the caller's scope, matches nothing.\n- `query` `string` — Substring match on the bounty title or ID.\n- `status` `string` — Filter by lifecycle state. One of `scheduled`, `open`, `closed`, `completed`, `canceled`.\n- `user_id` `string` — List the bounties this user participated in (`user_` tag). Must be the authenticated user.\n\n</details>\n<details>\n<summary>bounty_submissions (4)</summary>\n\nMirrors the filtering query params of `GET /api/v1/bounty_submissions`.\n\n- `bounty_id` `string` — Only submissions on this bounty (`bnty_` tag).\n- `created_after` `string` — Only submissions created after this ISO 8601 timestamp.\n- `created_before` `string` — Only submissions created before this ISO 8601 timestamp.\n- `status` `string` — Filter by lifecycle state. One of `in_progress`, `submitted`, `approved`, `denied`.\n\n</details>\n<details>\n<summary>card_transactions (6)</summary>\n\nMirrors the filtering query params of `GET /api/v1/card_transactions`.\n\n- `card_id` `string[]` — Return only transactions charged to these cards, each prefixed `icrd_`.\n- `cardholder_id` `string[]` — Return only transactions on cards assigned to these users, each prefixed `user_`.\n- `created_after` `string` — Return only transactions authorized at or after this ISO 8601 timestamp.\n- `created_before` `string` — Return only transactions authorized at or before this ISO 8601 timestamp.\n- `status` `string` — Return only transactions with this status. One of `pending`, `completed`, `reversed`, `declined`.\n- `transaction_ids` `string[]` — Return only these card transactions, each prefixed `citx_`. Repeat the parameter, or pass one comma-separated value.\n\n</details>\n<details>\n<summary>checkout_configurations (3)</summary>\n\nMirrors the filtering query params of `GET /api/v1/checkout_configurations`.\n\n- `created_after` `string` — Only return checkout configurations created after this ISO 8601 timestamp.\n- `created_before` `string` — Only return checkout configurations created before this ISO 8601 timestamp.\n- `plan_id` `string` — Only return checkout configurations for this plan ID, prefixed `plan_`.\n\n</details>\n<details>\n<summary>disputes (4)</summary>\n\nMirrors the filtering query params of `GET /api/v1/disputes`.\n\n- `created_after` `string` — Only disputes opened after this ISO 8601 timestamp.\n- `created_before` `string` — Only disputes opened before this ISO 8601 timestamp.\n- `currency` `string` — Only disputes in this three-letter ISO currency.\n- `status` `string[]` — Only disputes in these statuses. Repeat the parameter to pass several — one paginated list covers all of them. Covers both chargebacks and inquiries at each stage. A `needs_response` dispute whose evidence deadline has passed reports and filters as `under_review` instead.\n\n</details>\n<details>\n<summary>events (14)</summary>\n\nMirrors the filtering query params of `GET /api/v1/events`.\n\n- `attribution_model` `string` — Attribution model for the source filter (defaults to last_touch). One of `last_touch`, `first_touch`.\n- `browser` `string` — Browser families to filter by, comma-separated (e.g. Chrome, Mobile Safari).\n- `city` `string` — Cities to filter by, comma-separated.\n- `country` `string` — Country codes to filter by, comma-separated.\n- `device` `string` — Device families to filter by, comma-separated (e.g. iPhone, Mac).\n- `event` `string` — Full event names to filter by, comma-separated (payment.completed, pixel.lead, pixel.page, pixel.custom:<name>) — the same vocabulary the events / people metrics use.\n- `from` `string` — Start of the time range as an ISO 8601 timestamp. Required when identifier is omitted.\n- `hostname` `string` — Page hostnames to filter by, comma-separated.\n- `identifier` `string` — Any hard identifier of the person: a person ID (prsn_*), user ID, email, phone number, or a tracking cookie value (wuid, anonymous ID, fbp/fbc/ttp/ga). Omit to list recent events for the account.\n- `os` `string` — Operating system families to filter by, comma-separated (e.g. iOS, Windows).\n- `page` `string` — Page paths to filter by, comma-separated.\n- `source` `string` — Canonical source path, exact or with a trailing :* prefix (whop:<campaign>:*, ext:meta:*, referrer:<domain>, direct). Restricts the list to conversion targets attributed to that source — the debuggability twin of a metric cell's source parameter. A whop:... source combined with non-conversion event names (event=pixel.page) instead lists the events whose ad click resolved to that entity — the page views an ad drove.\n- `to` `string` — End of the time range as an ISO 8601 timestamp. Required when identifier is omitted; otherwise defaults to now.\n- `utm_source` `string` — utm_source values to filter by, comma-separated.\n\n</details>\n<details>\n<summary>financial-activity (12)</summary>\n\nMirrors the filtering query params of `GET /api/v1/financial-activity`.\n\n- `activity_id` `string` — Optional ledger activity ID (for example `line_3`). Returns at most that one activity.\n- `available_after` `string` — Only include rows whose funds became withdrawable on or after this `YYYY-MM-DD` settlement date (UTC), distinct from posted_at. Requires currency.\n- `available_before` `string` — Only include rows whose funds became withdrawable on or before this `YYYY-MM-DD` settlement date (UTC). Set equal to available_after for a single day. Requires currency.\n- `currency` `string` — Optional currency code filter, for example `usd`.\n- `exclude_internal_movements` `boolean` — Whether to exclude balance reservations and balanced movements between the account's own balances.\n- `include_owned_accounts` `boolean` — When true, aggregates the authenticated user's personal ledger with the businesses they own (owner role with balance read) into one feed. Requires user_id to be the authenticated user; cannot be combined with account_id or the settlement-date filters. Each returned row includes the owning `account`.\n- `include_resource` `boolean` — Whether to include the `resource` field in the response or not. Consider passing `false` if you need a fast response without as many rich details.\n- `line_types` `string[]` — Optional ledger line categories to include. Some categories (for example `onchain_deposit`, which covers inbound crypto deposits such as MoonPay onramps) are only returned when explicitly requested here.\n- `posted_after` `string` — Only include rows posted after this ISO 8601 timestamp.\n- `posted_before` `string` — Only include rows posted before this ISO 8601 timestamp.\n- `resource_id` `string` — Optional prefixed resource ID. Returns activity associated with that resource.\n- `user_id` `string` — The owning user ID (a user_ identifier). Provide this or account_id.\n\n</details>\n<details>\n<summary>members (6)</summary>\n\nMirrors the filtering query params of `GET /api/v1/members`.\n\n- `access_level` `string` — Filter by what the member can reach on the account. One of `no_access`, `admin`, `customer`.\n- `created_after` `string` — Only members who joined after this ISO 8601 timestamp.\n- `created_before` `string` — Only members who joined before this ISO 8601 timestamp.\n- `query` `string` — Search members by name or username. An exact email address also matches when the credential holds the member:email:read scope.\n- `status` `string` — Filter by whether the member is still part of the account. One of `joined`, `left`.\n- `user_ids` `string[]` — Only return members whose users match these `user_` identifiers.\n\n</details>\n<details>\n<summary>memberships (6)</summary>\n\nMirrors the filtering query params of `GET /api/v1/memberships`.\n\n- `created_after` `string` — Only memberships created after this ISO 8601 timestamp.\n- `created_before` `string` — Only memberships created before this ISO 8601 timestamp.\n- `plan_id` `string` — Filter to memberships of this plan (`plan_` tag). Repeat as plan_ids[] for several.\n- `product_id` `string` — Filter to memberships of this product (`prod_` tag). Repeat as product_ids[] for several.\n- `status` `string` — Filter by billing state. `canceling` matches active memberships set to cancel at period end; `paused` matches memberships with payment collection paused. One of `active`, `trialing`, `past_due`, `completed`, `canceled`, `expired`, `canceling`, `paused`.\n- `user_id` `string` — Narrow to one user's memberships (`user_` tag, or `me` for the caller). A user outside the caller's visible set returns an empty list.\n\n</details>\n<details>\n<summary>payouts (7)</summary>\n\nMirrors the filtering query params of `GET /api/v1/payouts`.\n\n- `created_after` `string` — Only payouts created at or after this ISO 8601 time (inclusive).\n- `created_before` `string` — Only payouts created before this ISO 8601 time (exclusive).\n- `currency` `string` — Optional currency code filter, for example `usd`.\n- `payout_method_id` `string` — Filter to payouts sent to one saved payout method (a pytk_ identifier). An unknown id matches nothing.\n- `source` `string` — Filter by how the payout was created. Payouts created before source tracking or through internal tooling carry no source and never match. One of `api`, `dashboard`, `automatic`.\n- `status` `string` — Filter to payouts whose `status` reads this word, matching exactly what this version displays — `reversed` finds settled payouts the bank later returned. Requires Api-Version-Date 2026-08-21 or later. One of `requested`, `in_review`, `processing`, `completed`, `reversed`, `canceled`, `failed`, `denied`.\n- `user_id` `string` — The owning user ID (a user_ identifier). Provide this or account_id.\n\n</details>\n<details>\n<summary>people (20)</summary>\n\nMirrors the filtering query params of `GET /api/v1/people`.\n\n- `attribution_model` `string` — Attribution model the source filter matches against (defaults to last_touch). One of `last_touch`, `first_touch`.\n- `audience_id` `string` — Only include people in this audience. An audience that keeps itself up to date resolves to the People filters that define it, so this always reflects who matches now; uploaded lists and point-in-time snapshots match their recorded members.\n- `contactable` `boolean` — true for people who have an email address or phone number — the ones an ad platform can match.\n- `country` `string` — Only include people whose most recent visit came from this ISO 3166-1 alpha-2 country code.\n- `custom_event` `string` — Only include people who fired this custom pixel event.\n- `email` `string` — Only include the person linked to this email address.\n- `event_from` `string` — With event_to plus an event or source filter, switches to exact-population mode: person ids are resolved and paginated on the events side within this window (the same query the people metric counts), then hydrated per page.\n- `event_name` `string[]` — Only include people who fired any of these events, e.g. payment.completed or page.checkout.view.\n- `event_to` `string` — The inclusive end of the event window for exact-population mode.\n- `first_seen_after` `string` — Only include people first seen at or after this ISO 8601 timestamp.\n- `first_seen_before` `string` — Only include people first seen before this ISO 8601 timestamp.\n- `first_seen_within_days` `integer` — Only include people first seen within this many days, as a rolling window.\n- `has_purchased` `boolean` — true for customers only, false for people who have never purchased.\n- `last_seen_after` `string` — Only include people last seen at or after this ISO 8601 timestamp.\n- `last_seen_before` `string` — Only include people last seen before this ISO 8601 timestamp.\n- `last_seen_within_days` `integer` — Only include people last seen within this many days, as a rolling window.\n- `phone` `string` — Only include the person linked to this phone number.\n- `query` `string` — Search people by name, email, phone, or whop user ID (case-insensitive substring match).\n- `source` `string[]` — Only include people acquired from any of these sources — canonical paths (whop:<campaign>:<group>:<ad>, ext:<platform>:..., referrer:<domain>, direct, other), exact or with a trailing :* prefix. The same vocabulary the events / people metrics use.\n- `user_id` `string` — Only include the person linked to this whop user ID.\n\n</details>\n<details>\n<summary>plans (6)</summary>\n\nMirrors the filtering query params of `GET /api/v1/plans`.\n\n- `created_after` `string` — Only return plans created after this timestamp.\n- `created_before` `string` — Only return plans created before this timestamp.\n- `plan_types` `string[]` — Filter to only plans matching these billing types.\n- `product_ids` `string[]` — Filter to only plans belonging to these product identifiers. When `account_id` is omitted, this is required and the response is publicly readable: only visible, non-invoice plans are returned.\n- `release_methods` `string[]` — Filter to only plans matching these release methods.\n- `visibilities` `string[]` — Filter to only plans matching these visibility states.\n\n</details>\n<details>\n<summary>products (10)</summary>\n\nMirrors the filtering query params of `GET /api/v1/products`.\n\n- `access_pass_types` `string[]` — Filter to only products matching these types.\n- `created_after` `string` — Only return products created after this ISO 8601 timestamp.\n- `created_before` `string` — Only return products created before this ISO 8601 timestamp.\n- `labels` `string[]` — Filter to only products carrying all of these labels. Labels are matched lowercased.\n- `marketplace_category_route` `string` — Only return marketplace products assigned to this category route, such as `trading`.\n- `plan_types` `string[]` — Filter to products with a buyable plan of these billing models, such as `one_time` or `renewal`.\n- `price_maximum` `number` — Only return products whose advertised buyable plan has a displayed price of at most this amount. Recurring plans use renewal price.\n- `price_minimum` `number` — Only return products whose advertised buyable plan has a displayed price of at least this amount. Recurring plans use renewal price.\n- `query` `string` — Ranked search against product title and headline. Omit to browse by recency.\n- `visibilities` `string[]` — Filter to only products matching these visibility states. Ignored on the public marketplace list, which only returns visible products.\n\n</details>\n<details>\n<summary>promo_codes (5)</summary>\n\nMirrors the filtering query params of `GET /api/v1/promo_codes`.\n\n- `created_after` `string` — Only promo codes created after this ISO 8601 timestamp.\n- `created_before` `string` — Only promo codes created before this ISO 8601 timestamp.\n- `plan_ids` `string[]` — Only promo codes scoped to these plan IDs.\n- `product_ids` `string[]` — Only promo codes scoped to these product IDs.\n- `status` `string` — Promo-code status. `expired` groups inactive and archived codes. One of `active`, `inactive`, `archived`, `expired`.\n\n</details>\n<details>\n<summary>resolution_center_cases (6)</summary>\n\nMirrors the filtering query params of `GET /api/v1/resolution_center_cases`.\n\n- `created_after` `string` — Only cases created after this ISO 8601 timestamp.\n- `created_before` `string` — Only cases created before this ISO 8601 timestamp.\n- `outcome` `string[]` — Only closed cases that ended these ways. Repeat the parameter to pass several.\n- `reason` `string[]` — Only cases opened for these reasons. Repeat the parameter to pass several.\n- `status` `string[]` — Only cases in these statuses. Repeat the parameter to pass several — one paginated list covers all of them.\n- `user_id` `string` — Only cases opened by this customer — a `user_` tag, or `me` for the calling user. It narrows what you can already read, so `me` lists the cases you opened without the ones on accounts you are a team member of.\n\n</details>\n<details>\n<summary>shipments (4)</summary>\n\nMirrors the filtering query params of `GET /api/v1/shipments`.\n\n- `created_after` `string` — Return shipments created after this ISO 8601 timestamp.\n- `created_before` `string` — Return shipments created before this ISO 8601 timestamp.\n- `payment_id` `string[]` — Only shipments fulfilling these payments, each prefixed `pay_`. Repeat the parameter to pass several, up to 100 per request — one paginated list covers all of them.\n- `status` `string` — Filter to shipments with this delivery status. One of `unknown`, `pre_transit`, `in_transit`, `out_for_delivery`, `delivered`, `available_for_pickup`, `return_to_sender`, `failure`, `cancelled`, `error`.\n\n</details>\n<details>\n<summary>social_accounts (4)</summary>\n\nMirrors the filtering query params of `GET /api/v1/social_accounts`.\n\n- `platform` `string` — Only return social accounts for the platform that is specified. One of `x`, `instagram`, `youtube`, `tiktok`, `facebook`, `discord`, `telegram`.\n- `scopes` `string[]` — Only return social accounts that have these scopes.\n- `user_id` `string` — The User that the social accounts are connected to. Provide either this or account_id.\n- `verified` `boolean` — Only return social accounts that are verified on the platform.\n\n</details>\n<details>\n<summary>team_members (5)</summary>\n\nMirrors the filtering query params of `GET /api/v1/team_members`.\n\n- `created_after` `string` — Only return members added after this ISO 8601 timestamp.\n- `created_before` `string` — Only return members added before this ISO 8601 timestamp.\n- `role` `string` — Only return members with this role. `custom` matches members on a dashboard-managed custom role. One of `owner`, `admin`, `sales_manager`, `moderator`, `advertiser`, `app_manager`, `support`, `manager`, `workforce`, `custom`.\n- `status` `string` — Only return members with this status: `joined` (accepted members) or `pending` (pending invites). Both are returned by default. One of `joined`, `pending`.\n- `user_id` `string` — Only return the membership for this user ID, prefixed `user_`.\n\n</details>\n<details>\n<summary>transfers (4)</summary>\n\nMirrors the filtering query params of `GET /api/v1/transfers`.\n\n- `created_after` `string` — Only transfers created strictly after this ISO 8601 timestamp.\n- `created_before` `string` — Only transfers created strictly before this ISO 8601 timestamp.\n- `destination_id` `string` — Filter to transfers received by this account. Provide this or origin_id.\n- `origin_id` `string` — Filter to transfers sent from this account. Provide this or destination_id.\n\n</details>\n<details>\n<summary>webhooks (3)</summary>\n\nMirrors the filtering query params of `GET /api/v1/webhooks`.\n\n- `app_id` `string` — Only return webhooks attached to this app. Omit to list the account's own webhooks.\n- `has_failures` `boolean` — Only return webhooks whose endpoint is currently failing — every delivery since the current failure streak began has been rejected. Clears as soon as a delivery succeeds.\n- `include_app_webhooks` `boolean` — Also return webhooks attached to the account's apps, not just the account's own. Cannot be combined with `app_id`.\n\n</details>\n</details>",
                     "example": {
                       "origin_id": "ldgr_x"
                     },
@@ -51210,6 +51301,8 @@
                         "shipment.updated",
                         "member.created",
                         "ad_campaign.payment_failed",
+                        "ad_campaign.updated",
+                        "ad.updated",
                         "chat.message.created",
                         "chat.reaction.created",
                         "payment.created",
@@ -51573,6 +51666,8 @@
                         "shipment.updated",
                         "member.created",
                         "ad_campaign.payment_failed",
+                        "ad_campaign.updated",
+                        "ad.updated",
                         "chat.message.created",
                         "chat.reaction.created",
                         "payment.created",
@@ -52229,7 +52324,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-04",
+                "api_version_date": "2026-09-06",
                 "data": {
                   "balances": [],
                   "banner_image_url": null,
@@ -52506,9 +52601,9 @@
         ]
       }
     },
-    "ad_campaign.payment_failed": {
+    "ad.updated": {
       "post": {
-        "description": "Sent when an ad campaign's payment fails and its ads stop delivering\n\nRequired permissions:\n - `webhook_receive:ad_campaigns`",
+        "description": "Sent when an ad's status or delivery_status changes, including the in_review and rejected verdicts from ad review. previous_attributes carries the values they changed from; the payload carries no performance stats\n\nRequired permissions:\n - `webhook_receive:ads`",
         "parameters": [
           {
             "in": "header",
@@ -52547,68 +52642,448 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-04",
+                "api_version_date": "2026-09-06",
                 "data": {
-                  "added_to_cart_value": 0,
-                  "added_to_carts": 0,
+                  "ad_campaign": {
+                    "id": "adcamp_xxxxxxxxxxxxxx"
+                  },
+                  "ad_group": {
+                    "id": "adgrp_xxxxxxxxxxxxxx"
+                  },
+                  "call_to_action": null,
+                  "created_at": "2026-01-01T12:00:00.000Z",
+                  "creatives": [],
+                  "delivery_status": "in_review",
+                  "descriptions": [],
+                  "existing_post_id": null,
+                  "headlines": [],
+                  "id": "ad_xxxxxxxxxxxxxx",
+                  "issues": [],
+                  "lead_form": null,
+                  "lead_form_id": null,
+                  "messaging_config": null,
+                  "multi_advertiser_ads": true,
+                  "post_id": null,
+                  "post_source": null,
+                  "post_thumbnail_url": null,
+                  "primary_texts": [],
+                  "social_accounts": [],
+                  "status": "rejected",
+                  "title": "Ceramic Coating Package",
+                  "updated_at": "2026-01-01T12:00:00.000Z",
+                  "url": null,
+                  "url_parameters": {}
+                },
+                "id": "msg_xxxxxxxxxxxxxxxxxxxxxxxx",
+                "previous_attributes": {
+                  "status": "in_review"
+                },
+                "timestamp": "2025-01-01T00:00:00.000Z",
+                "type": "ad.updated"
+              },
+              "schema": {
+                "properties": {
+                  "account_id": {
+                    "description": "The account ID that this webhook event is associated with",
+                    "example": "biz_xxxxxxxxxxxxxx",
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "api_version": {
+                    "const": "v1",
+                    "description": "The API version for this webhook",
+                    "example": "v1",
+                    "type": "string"
+                  },
+                  "api_version_date": {
+                    "description": "The dated API version (Api-Version-Date) the payload is serialized to",
+                    "example": "2026-07-20",
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "data": {
+                    "properties": {
+                      "ad_campaign": {
+                        "$ref": "#/components/schemas/AdEntityReference",
+                        "description": "The ad campaign this ad belongs to."
+                      },
+                      "ad_group": {
+                        "$ref": "#/components/schemas/AdEntityReference",
+                        "description": "The ad group this ad belongs to."
+                      },
+                      "call_to_action": {
+                        "description": "The call-to-action button shown on the ad.",
+                        "enum": [
+                          "learn_more",
+                          "shop_now",
+                          "sign_up",
+                          "subscribe",
+                          "get_started",
+                          "book_now",
+                          "apply_now",
+                          "contact_us",
+                          "download",
+                          "order_now",
+                          "buy_now",
+                          "get_quote",
+                          "message_page",
+                          "whatsapp_message",
+                          "instagram_message",
+                          "call_now",
+                          "get_directions",
+                          "send_updates",
+                          "get_offer",
+                          "watch_more",
+                          "listen_now",
+                          "play_game",
+                          "open_link",
+                          "no_button",
+                          "get_offer_view",
+                          "get_event_tickets",
+                          "see_menu",
+                          "request_time",
+                          "event_rsvp",
+                          "see_details",
+                          "view_instagram_profile",
+                          null
+                        ],
+                        "example": "learn_more",
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "created_at": {
+                        "description": "When the ad was created, as an ISO 8601 timestamp.",
+                        "example": "2026-01-01T12:00:00.000Z",
+                        "type": "string"
+                      },
+                      "creatives": {
+                        "items": {
+                          "$ref": "#/components/schemas/AdCreative",
+                          "description": "The creative assets used by this ad. The original asset has a null format; square, vertical, and horizontal entries are placement-specific variants. A carousel ad returns one format-null entry per attachment, in order."
+                        },
+                        "type": "array"
+                      },
+                      "delivery_status": {
+                        "description": "Whether the ad is delivering right now, and if not, why. When several states apply at once, the highest-precedence one is returned.",
+                        "enum": [
+                          "rejected",
+                          "in_review",
+                          "draft",
+                          "campaign_paused",
+                          "ad_group_paused",
+                          "paused",
+                          "processing",
+                          "issues",
+                          "scheduled",
+                          "learning_limited",
+                          "learning",
+                          "active"
+                        ],
+                        "example": "paused",
+                        "type": "string"
+                      },
+                      "descriptions": {
+                        "items": {
+                          "description": "The description variants shown on the ad.",
+                          "example": "Paint correction included",
+                          "type": "string"
+                        },
+                        "type": "array"
+                      },
+                      "existing_post_id": {
+                        "description": "The post you pointed this ad at, when it promotes one you already published — a Facebook post, Instagram media, or TikTok video ID. `null` when the ad uses uploaded creatives.",
+                        "example": "xxxxxxxxxxxxxxxx_98765",
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "headlines": {
+                        "items": {
+                          "description": "The headline variants shown on the ad.",
+                          "example": "Austin's mobile detailers",
+                          "type": "string"
+                        },
+                        "type": "array"
+                      },
+                      "id": {
+                        "description": "Unique identifier for the ad, prefixed `ad_`.",
+                        "example": "ad_xxxxxxxxxxxxxx",
+                        "type": "string"
+                      },
+                      "issues": {
+                        "items": {
+                          "$ref": "#/components/schemas/AdPlatformIssue",
+                          "description": "Open issues affecting this ad. Empty when there are none."
+                        },
+                        "type": "array"
+                      },
+                      "lead_form": {
+                        "description": "The instant lead form shown when someone taps this ad. `null` when the ad group's conversion_location is not an instant-form destination.",
+                        "oneOf": [
+                          {
+                            "$ref": "#/components/schemas/AdLeadForm"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "lead_form_id": {
+                        "description": "The ad platform's ID for the instant form the ad uses. Set when the ad references an existing form via `lead_form_id`, or once a form built from `lead_form` has been created on the platform.",
+                        "example": "1037724182084885",
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "messaging_config": {
+                        "description": "Welcome message for click-to-message ads, shown when the conversation opens. `null` when the ad has none.",
+                        "oneOf": [
+                          {
+                            "$ref": "#/components/schemas/AdMessagingConfig"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "multi_advertiser_ads": {
+                        "description": "Whether the ad can appear alongside other advertisers' ads in the same unit. Defaults to true.",
+                        "example": true,
+                        "type": "boolean"
+                      },
+                      "music": {
+                        "description": "The advertiser-uploaded MP3 a TikTok carousel ad plays. TikTok-only; `null` elsewhere and for non-carousel ads.",
+                        "oneOf": [
+                          {
+                            "$ref": "#/components/schemas/AdMusic"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "post_id": {
+                        "description": "The post the ad network serves for this ad, as `pageID_postID` on Meta — the post Meta created for an uploaded creative, or the post being promoted. Use it to open the live post, or to promote the same post from another ad. `null` until the network has created the post.",
+                        "example": "xxxxxxxxxxxxxxxx_98765",
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "post_source": {
+                        "description": "Identifies the network that owns `existing_post_id`; `null` when the ad uses uploaded creatives.",
+                        "enum": [
+                          "facebook",
+                          "instagram",
+                          null
+                        ],
+                        "example": "facebook",
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "post_thumbnail_url": {
+                        "description": "Preview image of the post named by `existing_post_id`. `null` for ads that use uploaded creatives, or until the post's media has been fetched from the network.",
+                        "example": "https://whop-assets-example.s3.amazonaws.com/uploads/image/2026-01-01/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "primary_texts": {
+                        "items": {
+                          "description": "The primary text variants shown in the ad body.",
+                          "example": "Book a two-day ceramic coating and keep the shine for three years.",
+                          "type": "string"
+                        },
+                        "type": "array"
+                      },
+                      "social_accounts": {
+                        "items": {
+                          "$ref": "#/components/schemas/AdEntityReference",
+                          "description": "The social accounts the ad runs under — its Facebook page and Instagram profile — each referenced by ID, prefixed `sacc_`."
+                        },
+                        "type": "array"
+                      },
+                      "status": {
+                        "description": "Whether the ad is enabled. `active` and `paused` are set by you; `in_review` and `rejected` come from ad review.",
+                        "enum": [
+                          "active",
+                          "paused",
+                          "in_review",
+                          "rejected"
+                        ],
+                        "example": "paused",
+                        "type": "string"
+                      },
+                      "title": {
+                        "description": "Display title of the ad.",
+                        "example": "Ceramic coating — new ad group",
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "updated_at": {
+                        "description": "When the ad was last updated, as an ISO 8601 timestamp.",
+                        "example": "2026-01-01T12:00:00.000Z",
+                        "type": "string"
+                      },
+                      "url": {
+                        "description": "The URL the ad links to, without its query string. Parameters belong in `url_parameters`; any you send on `url` are moved there.",
+                        "example": "https://shinetime.example/ceramic-coating",
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "url_parameters": {
+                        "description": "Every query parameter appended to the URL, keyed by parameter name — including any you sent on `url` itself. Whop adds its own click-attribution parameters on top; those are reserved and rejected if you set them. Which keys are reserved depends on the ad's network — Meta: utm_meta_ad_id, utm_meta_adset_id, utm_meta_campaign_id, utm_source, utm_placement, utm_medium, utm_content, utm_adset, utm_whop, wacid, wasid, waid, tw_source, tw_adid; TikTok: waid, wasid, wacid, ad_id, adset_id, campaign_id, utm_source, utm_medium, utm_placement, utm_whop, tw_source, tw_adid.",
+                        "example": {},
+                        "type": "object"
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "title",
+                      "status",
+                      "delivery_status",
+                      "primary_texts",
+                      "headlines",
+                      "descriptions",
+                      "call_to_action",
+                      "url",
+                      "url_parameters",
+                      "post_id",
+                      "existing_post_id",
+                      "post_source",
+                      "post_thumbnail_url",
+                      "ad_group",
+                      "ad_campaign",
+                      "creatives",
+                      "social_accounts",
+                      "created_at",
+                      "updated_at",
+                      "issues"
+                    ],
+                    "type": "object"
+                  },
+                  "id": {
+                    "description": "A unique ID for every single webhook request",
+                    "example": "msg_xxxxxxxxxxxxxxxxxxxxxxxx",
+                    "type": "string"
+                  },
+                  "previous_attributes": {
+                    "description": "For some `.updated` events, the old values of the payload fields that changed, keyed by field name. Omitted when no capture is available for the event",
+                    "example": {
+                      "status": "in_review"
+                    },
+                    "type": "object"
+                  },
+                  "timestamp": {
+                    "description": "The timestamp in ISO 8601 format that the webhook was sent at on the server",
+                    "example": "2025-01-01T00:00:00.000Z",
+                    "format": "date-time",
+                    "type": "string"
+                  },
+                  "type": {
+                    "const": "ad.updated",
+                    "description": "The webhook event type",
+                    "example": "ad.updated",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "id",
+                  "api_version",
+                  "api_version_date",
+                  "timestamp",
+                  "type",
+                  "data"
+                ],
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Return a 200 status to indicate that the data was received successfully"
+          }
+        },
+        "summary": "Ad Updated",
+        "tags": [
+          "Ads"
+        ]
+      }
+    },
+    "ad_campaign.payment_failed": {
+      "post": {
+        "description": "Sent when an ad campaign's payment fails and its ads stop delivering. The payload carries no performance stats; read the campaign for those\n\nRequired permissions:\n - `webhook_receive:ad_campaigns`",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "webhook-id",
+            "required": true,
+            "schema": {
+              "description": "A unique identifier for this webhook request",
+              "example": "msg_xxxxxxxxxxxxxxxxxxxxxxxx",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "webhook-signature",
+            "required": true,
+            "schema": {
+              "description": "The signature of the webhook request with the webhook version prepended",
+              "example": "v1,BASE64ENCODEDSIGNATURE",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "webhook-timestamp",
+            "required": true,
+            "schema": {
+              "description": "The timestamp in seconds since the Unix epoch that the webhook was sent at on the server",
+              "example": "1727606400",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "example": {
+                "account_id": "biz_xxxxxxxxxxxxxx",
+                "api_version": "v1",
+                "api_version_date": "2026-09-06",
+                "data": {
                   "bid_type": null,
                   "budget_amount": 50,
                   "budget_optimization": null,
                   "budget_type": "daily",
-                  "click_through_rate": 0,
-                  "clicks": 0,
-                  "completed_registration_value": 0,
-                  "completed_registrations": 0,
-                  "contact_value": 0,
-                  "contacts": 0,
-                  "cost_per_added_to_cart": null,
-                  "cost_per_click": 0,
-                  "cost_per_completed_registration": null,
-                  "cost_per_contact": null,
-                  "cost_per_lead": null,
-                  "cost_per_mille": 0,
-                  "cost_per_purchase": null,
-                  "cost_per_result": null,
-                  "cost_per_schedule": null,
-                  "cost_per_submitted_application": null,
-                  "cost_per_unique_click": null,
-                  "cost_per_viewed_content": null,
                   "created_at": "2026-01-01T12:00:00.000Z",
-                  "custom_conversions": 0,
-                  "custom_event_counts": {},
-                  "custom_event_values": {},
                   "delivery_status": "payment_failed",
-                  "frequency": null,
                   "id": "adcamp_xxxxxxxxxxxxxx",
-                  "impressions": 0,
                   "issues": [],
-                  "lead_value": 0,
-                  "leads": 0,
-                  "link_clicks": 0,
                   "objective": null,
                   "optimization_goal": null,
                   "platform": "meta",
-                  "purchase_value": 0,
-                  "purchases": 0,
-                  "reach": 0,
-                  "result_event": null,
-                  "result_event_name": null,
-                  "results": null,
-                  "return_on_ad_spend": 0,
-                  "schedule_value": 0,
-                  "schedules": 0,
                   "special_ad_categories": [],
-                  "spend": 0,
-                  "spend_currency": null,
                   "status": "payment_failed",
-                  "submitted_application_value": 0,
-                  "submitted_applications": 0,
                   "title": "Ceramic Coating Package",
-                  "unique_click_through_rate": null,
-                  "unique_clicks": 0,
-                  "updated_at": "2026-01-01T12:00:00.000Z",
-                  "viewed_content_value": 0,
-                  "viewed_contents": 0
+                  "updated_at": "2026-01-01T12:00:00.000Z"
                 },
                 "id": "msg_xxxxxxxxxxxxxxxxxxxxxxxx",
                 "timestamp": "2025-01-01T00:00:00.000Z",
@@ -52639,7 +53114,184 @@
                     ]
                   },
                   "data": {
-                    "$ref": "#/components/schemas/AdCampaign"
+                    "properties": {
+                      "bid_type": {
+                        "description": "How delivery bids in the ad auction: `minimum_cost` gets the most results for the budget, `average_target` holds an average cost per result, and `maximum_target` never bids above a cap.",
+                        "enum": [
+                          "minimum_cost",
+                          "average_target",
+                          "maximum_target",
+                          null
+                        ],
+                        "example": "average_target",
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "budget_amount": {
+                        "description": "The campaign's budget, in the ad account's currency. `null` when each ad group sets its own budget instead.",
+                        "example": 50,
+                        "type": [
+                          "number",
+                          "null"
+                        ]
+                      },
+                      "budget_optimization": {
+                        "description": "Which level owns the budget: the whole campaign (`ad_campaign`) or each ad group individually (`ad_group`).",
+                        "enum": [
+                          "ad_campaign",
+                          "ad_group",
+                          null
+                        ],
+                        "example": "ad_group",
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "budget_type": {
+                        "description": "Whether `budget_amount` is spent per day (`daily`) or over the campaign's full run (`lifetime`).",
+                        "enum": [
+                          "daily",
+                          "lifetime",
+                          null
+                        ],
+                        "example": "daily",
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "created_at": {
+                        "description": "When the campaign was created, as an ISO 8601 timestamp.",
+                        "example": "2026-01-01T12:00:00.000Z",
+                        "type": "string"
+                      },
+                      "delivery_status": {
+                        "description": "Whether the campaign's ads are delivering right now, and if not, why. When several states apply at once, the highest-precedence one is returned.",
+                        "enum": [
+                          "payment_failed",
+                          "all_ads_rejected",
+                          "draft",
+                          "no_ad_groups",
+                          "no_ads",
+                          "paused",
+                          "processing",
+                          "issues",
+                          "scheduled",
+                          "completed",
+                          "ad_groups_off",
+                          "active"
+                        ],
+                        "example": "issues",
+                        "type": "string"
+                      },
+                      "id": {
+                        "description": "Unique identifier for the ad campaign, prefixed `adcamp_`.",
+                        "example": "adcamp_xxxxxxxxxxxxxx",
+                        "type": "string"
+                      },
+                      "issues": {
+                        "items": {
+                          "$ref": "#/components/schemas/AdPlatformIssue",
+                          "description": "Open issues affecting the campaign and its descendant ad groups and ads."
+                        },
+                        "type": "array"
+                      },
+                      "objective": {
+                        "description": "The goal the campaign optimizes toward.",
+                        "enum": [
+                          "awareness",
+                          "traffic",
+                          "engagement",
+                          "leads",
+                          "sales",
+                          null
+                        ],
+                        "example": "leads",
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "optimization_goal": {
+                        "description": "The event the campaign optimizes for when a single goal is set campaign-wide. `null` when each ad group sets its own optimization_goal.",
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "platform": {
+                        "description": "The ad network the campaign runs on.",
+                        "enum": [
+                          "meta",
+                          "tiktok"
+                        ],
+                        "example": "meta",
+                        "type": "string"
+                      },
+                      "special_ad_categories": {
+                        "items": {
+                          "description": "Regulated categories the campaign is declared under. Ads in these categories are subject to extra targeting restrictions. Empty when none apply.",
+                          "enum": [
+                            "housing",
+                            "employment",
+                            "financial_products",
+                            "politics"
+                          ],
+                          "example": "employment",
+                          "type": "string"
+                        },
+                        "type": "array"
+                      },
+                      "status": {
+                        "description": "The lifecycle status of the ad campaign.",
+                        "enum": [
+                          "active",
+                          "paused",
+                          "inactive",
+                          "stale",
+                          "pending_refund",
+                          "payment_failed",
+                          "draft",
+                          "in_review",
+                          "flagged",
+                          "importing",
+                          "imported",
+                          "duplicating"
+                        ],
+                        "example": "active",
+                        "type": "string"
+                      },
+                      "title": {
+                        "description": "Display name of the ad campaign.",
+                        "example": "Ceramic coating — Austin leads",
+                        "type": "string"
+                      },
+                      "updated_at": {
+                        "description": "When the campaign was last updated, as an ISO 8601 timestamp.",
+                        "example": "2026-01-01T12:00:00.000Z",
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "title",
+                      "status",
+                      "delivery_status",
+                      "platform",
+                      "objective",
+                      "special_ad_categories",
+                      "optimization_goal",
+                      "budget_amount",
+                      "budget_type",
+                      "budget_optimization",
+                      "created_at",
+                      "updated_at",
+                      "issues"
+                    ],
+                    "type": "object"
                   },
                   "id": {
                     "description": "A unique ID for every single webhook request",
@@ -52693,6 +53345,325 @@
         }
       }
     },
+    "ad_campaign.updated": {
+      "post": {
+        "description": "Sent when an ad campaign's status or delivery_status changes. previous_attributes carries the values they changed from; the payload carries no performance stats\n\nRequired permissions:\n - `webhook_receive:ad_campaigns`",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "webhook-id",
+            "required": true,
+            "schema": {
+              "description": "A unique identifier for this webhook request",
+              "example": "msg_xxxxxxxxxxxxxxxxxxxxxxxx",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "webhook-signature",
+            "required": true,
+            "schema": {
+              "description": "The signature of the webhook request with the webhook version prepended",
+              "example": "v1,BASE64ENCODEDSIGNATURE",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "webhook-timestamp",
+            "required": true,
+            "schema": {
+              "description": "The timestamp in seconds since the Unix epoch that the webhook was sent at on the server",
+              "example": "1727606400",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "example": {
+                "account_id": "biz_xxxxxxxxxxxxxx",
+                "api_version": "v1",
+                "api_version_date": "2026-09-06",
+                "data": {
+                  "bid_type": null,
+                  "budget_amount": 50,
+                  "budget_optimization": null,
+                  "budget_type": "daily",
+                  "created_at": "2026-01-01T12:00:00.000Z",
+                  "delivery_status": "active",
+                  "id": "adcamp_xxxxxxxxxxxxxx",
+                  "issues": [],
+                  "objective": null,
+                  "optimization_goal": null,
+                  "platform": "meta",
+                  "special_ad_categories": [],
+                  "status": "paused",
+                  "title": "Ceramic Coating Package",
+                  "updated_at": "2026-01-01T12:00:00.000Z"
+                },
+                "id": "msg_xxxxxxxxxxxxxxxxxxxxxxxx",
+                "previous_attributes": {
+                  "status": "active"
+                },
+                "timestamp": "2025-01-01T00:00:00.000Z",
+                "type": "ad_campaign.updated"
+              },
+              "schema": {
+                "properties": {
+                  "account_id": {
+                    "description": "The account ID that this webhook event is associated with",
+                    "example": "biz_xxxxxxxxxxxxxx",
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "api_version": {
+                    "const": "v1",
+                    "description": "The API version for this webhook",
+                    "example": "v1",
+                    "type": "string"
+                  },
+                  "api_version_date": {
+                    "description": "The dated API version (Api-Version-Date) the payload is serialized to",
+                    "example": "2026-07-20",
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "data": {
+                    "properties": {
+                      "bid_type": {
+                        "description": "How delivery bids in the ad auction: `minimum_cost` gets the most results for the budget, `average_target` holds an average cost per result, and `maximum_target` never bids above a cap.",
+                        "enum": [
+                          "minimum_cost",
+                          "average_target",
+                          "maximum_target",
+                          null
+                        ],
+                        "example": "average_target",
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "budget_amount": {
+                        "description": "The campaign's budget, in the ad account's currency. `null` when each ad group sets its own budget instead.",
+                        "example": 50,
+                        "type": [
+                          "number",
+                          "null"
+                        ]
+                      },
+                      "budget_optimization": {
+                        "description": "Which level owns the budget: the whole campaign (`ad_campaign`) or each ad group individually (`ad_group`).",
+                        "enum": [
+                          "ad_campaign",
+                          "ad_group",
+                          null
+                        ],
+                        "example": "ad_group",
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "budget_type": {
+                        "description": "Whether `budget_amount` is spent per day (`daily`) or over the campaign's full run (`lifetime`).",
+                        "enum": [
+                          "daily",
+                          "lifetime",
+                          null
+                        ],
+                        "example": "daily",
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "created_at": {
+                        "description": "When the campaign was created, as an ISO 8601 timestamp.",
+                        "example": "2026-01-01T12:00:00.000Z",
+                        "type": "string"
+                      },
+                      "delivery_status": {
+                        "description": "Whether the campaign's ads are delivering right now, and if not, why. When several states apply at once, the highest-precedence one is returned.",
+                        "enum": [
+                          "payment_failed",
+                          "all_ads_rejected",
+                          "draft",
+                          "no_ad_groups",
+                          "no_ads",
+                          "paused",
+                          "processing",
+                          "issues",
+                          "scheduled",
+                          "completed",
+                          "ad_groups_off",
+                          "active"
+                        ],
+                        "example": "issues",
+                        "type": "string"
+                      },
+                      "id": {
+                        "description": "Unique identifier for the ad campaign, prefixed `adcamp_`.",
+                        "example": "adcamp_xxxxxxxxxxxxxx",
+                        "type": "string"
+                      },
+                      "issues": {
+                        "items": {
+                          "$ref": "#/components/schemas/AdPlatformIssue",
+                          "description": "Open issues affecting the campaign and its descendant ad groups and ads."
+                        },
+                        "type": "array"
+                      },
+                      "objective": {
+                        "description": "The goal the campaign optimizes toward.",
+                        "enum": [
+                          "awareness",
+                          "traffic",
+                          "engagement",
+                          "leads",
+                          "sales",
+                          null
+                        ],
+                        "example": "leads",
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "optimization_goal": {
+                        "description": "The event the campaign optimizes for when a single goal is set campaign-wide. `null` when each ad group sets its own optimization_goal.",
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "platform": {
+                        "description": "The ad network the campaign runs on.",
+                        "enum": [
+                          "meta",
+                          "tiktok"
+                        ],
+                        "example": "meta",
+                        "type": "string"
+                      },
+                      "special_ad_categories": {
+                        "items": {
+                          "description": "Regulated categories the campaign is declared under. Ads in these categories are subject to extra targeting restrictions. Empty when none apply.",
+                          "enum": [
+                            "housing",
+                            "employment",
+                            "financial_products",
+                            "politics"
+                          ],
+                          "example": "employment",
+                          "type": "string"
+                        },
+                        "type": "array"
+                      },
+                      "status": {
+                        "description": "The lifecycle status of the ad campaign.",
+                        "enum": [
+                          "active",
+                          "paused",
+                          "inactive",
+                          "stale",
+                          "pending_refund",
+                          "payment_failed",
+                          "draft",
+                          "in_review",
+                          "flagged",
+                          "importing",
+                          "imported",
+                          "duplicating"
+                        ],
+                        "example": "active",
+                        "type": "string"
+                      },
+                      "title": {
+                        "description": "Display name of the ad campaign.",
+                        "example": "Ceramic coating — Austin leads",
+                        "type": "string"
+                      },
+                      "updated_at": {
+                        "description": "When the campaign was last updated, as an ISO 8601 timestamp.",
+                        "example": "2026-01-01T12:00:00.000Z",
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "title",
+                      "status",
+                      "delivery_status",
+                      "platform",
+                      "objective",
+                      "special_ad_categories",
+                      "optimization_goal",
+                      "budget_amount",
+                      "budget_type",
+                      "budget_optimization",
+                      "created_at",
+                      "updated_at",
+                      "issues"
+                    ],
+                    "type": "object"
+                  },
+                  "id": {
+                    "description": "A unique ID for every single webhook request",
+                    "example": "msg_xxxxxxxxxxxxxxxxxxxxxxxx",
+                    "type": "string"
+                  },
+                  "previous_attributes": {
+                    "description": "For some `.updated` events, the old values of the payload fields that changed, keyed by field name. Omitted when no capture is available for the event",
+                    "example": {
+                      "status": "active"
+                    },
+                    "type": "object"
+                  },
+                  "timestamp": {
+                    "description": "The timestamp in ISO 8601 format that the webhook was sent at on the server",
+                    "example": "2025-01-01T00:00:00.000Z",
+                    "format": "date-time",
+                    "type": "string"
+                  },
+                  "type": {
+                    "const": "ad_campaign.updated",
+                    "description": "The webhook event type",
+                    "example": "ad_campaign.updated",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "id",
+                  "api_version",
+                  "api_version_date",
+                  "timestamp",
+                  "type",
+                  "data"
+                ],
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Return a 200 status to indicate that the data was received successfully"
+          }
+        },
+        "summary": "Ad Campaign Updated",
+        "tags": [
+          "Ad Campaigns"
+        ]
+      }
+    },
     "card.canceled": {
       "post": {
         "description": "Sent when a card is canceled\n\nRequired permissions:\n - `webhook_receive:cards`",
@@ -52734,7 +53705,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-04",
+                "api_version_date": "2026-09-06",
                 "data": {
                   "billing": null,
                   "canceled_at": null,
@@ -53130,7 +54101,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-04",
+                "api_version_date": "2026-09-06",
                 "data": {
                   "billing": null,
                   "canceled_at": null,
@@ -53526,7 +54497,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-04",
+                "api_version_date": "2026-09-06",
                 "data": {
                   "billing": null,
                   "canceled_at": null,
@@ -53922,7 +54893,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-04",
+                "api_version_date": "2026-09-06",
                 "data": {
                   "billing": null,
                   "canceled_at": null,
@@ -54318,7 +55289,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-04",
+                "api_version_date": "2026-09-06",
                 "data": {
                   "hosted_url": null,
                   "id": "ciac_xxxxxxxxxxxxxx",
@@ -54486,7 +55457,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-04",
+                "api_version_date": "2026-09-06",
                 "data": {
                   "hosted_url": null,
                   "id": "ciac_xxxxxxxxxxxxxx",
@@ -54654,7 +55625,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-04",
+                "api_version_date": "2026-09-06",
                 "data": {
                   "hosted_url": null,
                   "id": "ciac_xxxxxxxxxxxxxx",
@@ -54822,7 +55793,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-04",
+                "api_version_date": "2026-09-06",
                 "data": {
                   "hosted_url": null,
                   "id": "ciac_xxxxxxxxxxxxxx",
@@ -54990,7 +55961,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-04",
+                "api_version_date": "2026-09-06",
                 "data": {
                   "card_id": "icrd_xxxxxxxxxxxxxx",
                   "cardholder_id": null,
@@ -55128,7 +56099,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-04",
+                "api_version_date": "2026-09-06",
                 "data": {
                   "card_id": "icrd_xxxxxxxxxxxxxx",
                   "cardholder_id": null,
@@ -55266,7 +56237,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-04",
+                "api_version_date": "2026-09-06",
                 "data": {
                   "card_id": "icrd_xxxxxxxxxxxxxx",
                   "cardholder_id": null,
@@ -55404,7 +56375,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-04",
+                "api_version_date": "2026-09-06",
                 "data": {
                   "card_id": "icrd_xxxxxxxxxxxxxx",
                   "cardholder_id": null,
@@ -55542,7 +56513,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-04",
+                "api_version_date": "2026-09-06",
                 "data": {
                   "card_id": "icrd_xxxxxxxxxxxxxx",
                   "cardholder_id": null,
@@ -55680,7 +56651,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-04",
+                "api_version_date": "2026-09-06",
                 "data": {
                   "amount": "75000000000",
                   "available_at": null,
@@ -55820,7 +56791,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-04",
+                "api_version_date": "2026-09-06",
                 "data": {
                   "account_id": "biz_xxxxxxxxxxxxxx",
                   "amount": 150,
@@ -55995,7 +56966,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-04",
+                "api_version_date": "2026-09-06",
                 "data": {
                   "account_id": "biz_xxxxxxxxxxxxxx",
                   "amount": 150,
@@ -56170,7 +57141,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-04",
+                "api_version_date": "2026-09-06",
                 "data": {
                   "account_id": null,
                   "actionable": false,
@@ -56307,7 +57278,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-04",
+                "api_version_date": "2026-09-06",
                 "data": {
                   "created_at": "2026-01-01T12:00:00.000Z",
                   "download_url": "https://s3.amazonaws.com/uploads/exports/members-export.csv",
@@ -56436,7 +57407,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-04",
+                "api_version_date": "2026-09-06",
                 "data": {
                   "created_at": "2026-01-01T12:00:00.000Z",
                   "download_url": null,
@@ -56565,7 +57536,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-04",
+                "api_version_date": "2026-09-06",
                 "data": {
                   "id": "idpf_xxxxxxxxxxxxxx"
                 },
@@ -56696,7 +57667,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-04",
+                "api_version_date": "2026-09-06",
                 "data": {
                   "access_level": "customer",
                   "account_id": "biz_xxxxxxxxxxxxxx",
@@ -56834,7 +57805,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-04",
+                "api_version_date": "2026-09-06",
                 "data": {
                   "account": {
                     "id": "biz_xxxxxxxxxxxxxx",
@@ -56973,7 +57944,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-04",
+                "api_version_date": "2026-09-06",
                 "data": {
                   "account": {
                     "id": "biz_xxxxxxxxxxxxxx",
@@ -57118,7 +58089,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-04",
+                "api_version_date": "2026-09-06",
                 "data": {
                   "account": {
                     "id": "biz_xxxxxxxxxxxxxx",
@@ -57257,7 +58228,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-04",
+                "api_version_date": "2026-09-06",
                 "data": {
                   "account": {
                     "id": "biz_xxxxxxxxxxxxxx",
@@ -57402,7 +58373,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-04",
+                "api_version_date": "2026-09-06",
                 "data": {
                   "account_id": "biz_xxxxxxxxxxxxxx",
                   "amount_after_fees": {
@@ -57649,7 +58620,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-04",
+                "api_version_date": "2026-09-06",
                 "data": {
                   "account_id": "biz_xxxxxxxxxxxxxx",
                   "amount_after_fees": {
@@ -57896,7 +58867,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-04",
+                "api_version_date": "2026-09-06",
                 "data": {
                   "account_id": "biz_xxxxxxxxxxxxxx",
                   "amount_after_fees": {
@@ -58143,7 +59114,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-04",
+                "api_version_date": "2026-09-06",
                 "data": {
                   "account_id": "biz_xxxxxxxxxxxxxx",
                   "amount_after_fees": {
@@ -58390,7 +59361,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-04",
+                "api_version_date": "2026-09-06",
                 "data": {
                   "account_id": "biz_xxxxxxxxxxxxxx",
                   "amount_after_fees": {
@@ -58634,7 +59605,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-04",
+                "api_version_date": "2026-09-06",
                 "data": {
                   "account_id": "biz_xxxxxxxxxxxxxx",
                   "amount_after_fees": {
@@ -58881,7 +59852,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-04",
+                "api_version_date": "2026-09-06",
                 "data": {
                   "amount": "10.0",
                   "created_at": "2026-01-01T12:00:00.000Z",
@@ -59354,7 +60325,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-04",
+                "api_version_date": "2026-09-06",
                 "data": {
                   "amount": "10.0",
                   "created_at": "2026-01-01T12:00:00.000Z",
@@ -59824,7 +60795,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-04",
+                "api_version_date": "2026-09-06",
                 "data": {
                   "amount": "10.0",
                   "created_at": "2026-01-01T12:00:00.000Z",
@@ -60290,7 +61261,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-04",
+                "api_version_date": "2026-09-06",
                 "data": {
                   "account_reference": "4483",
                   "bank_verification_state": "no_data",
@@ -60840,7 +61811,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-04",
+                "api_version_date": "2026-09-06",
                 "data": {
                   "account": {
                     "id": "biz_xxxxxxxxxxxxxx",
@@ -61134,7 +62105,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-04",
+                "api_version_date": "2026-09-06",
                 "data": {
                   "account": {
                     "id": "biz_xxxxxxxxxxxxxx",
@@ -61428,7 +62399,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-04",
+                "api_version_date": "2026-09-06",
                 "data": {
                   "account": {
                     "id": "biz_xxxxxxxxxxxxxx",
@@ -61722,7 +62693,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-04",
+                "api_version_date": "2026-09-06",
                 "data": {
                   "account": {
                     "id": "biz_xxxxxxxxxxxxxx",
@@ -61878,7 +62849,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-04",
+                "api_version_date": "2026-09-06",
                 "data": {
                   "account": {
                     "id": "biz_xxxxxxxxxxxxxx",
@@ -62034,7 +63005,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-04",
+                "api_version_date": "2026-09-06",
                 "data": {
                   "account": {
                     "id": "biz_xxxxxxxxxxxxxx",
@@ -62190,7 +63161,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-04",
+                "api_version_date": "2026-09-06",
                 "data": {
                   "account": {
                     "id": "biz_xxxxxxxxxxxxxx",
@@ -62346,7 +63317,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-04",
+                "api_version_date": "2026-09-06",
                 "data": {
                   "account": {
                     "id": "biz_xxxxxxxxxxxxxx",
@@ -62502,7 +63473,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-04",
+                "api_version_date": "2026-09-06",
                 "data": {
                   "account": {
                     "id": "biz_xxxxxxxxxxxxxx",
@@ -62529,7 +63500,7 @@
                   "line_items": [
                     {
                       "id": null,
-                      "label": "Diverse coherent time-frame",
+                      "label": "Multi-lateral upward-trendi...",
                       "plan_id": "plan_xxxxxxxxxxxxxx",
                       "product_id": "prod_xxxxxxxxxxxxxx",
                       "quantity": 1
@@ -62669,7 +63640,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-04",
+                "api_version_date": "2026-09-06",
                 "data": {
                   "account": {
                     "id": "biz_xxxxxxxxxxxxxx",
@@ -62692,7 +63663,7 @@
                   "line_items": [
                     {
                       "id": null,
-                      "label": "Cloned human-resource hub",
+                      "label": "Horizontal upward-trending ...",
                       "plan_id": "plan_xxxxxxxxxxxxxx",
                       "product_id": "prod_xxxxxxxxxxxxxx",
                       "quantity": 1
@@ -62832,7 +63803,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-04",
+                "api_version_date": "2026-09-06",
                 "data": {
                   "account": {
                     "id": "biz_xxxxxxxxxxxxxx",
@@ -62855,7 +63826,7 @@
                   "line_items": [
                     {
                       "id": null,
-                      "label": "Sharable didactic solution",
+                      "label": "Business-focused directiona...",
                       "plan_id": "plan_xxxxxxxxxxxxxx",
                       "product_id": "prod_xxxxxxxxxxxxxx",
                       "quantity": 1
@@ -62995,7 +63966,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-04",
+                "api_version_date": "2026-09-06",
                 "data": {
                   "account_id": "biz_xxxxxxxxxxxxxx",
                   "carrier": "ups",
@@ -63126,7 +64097,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-04",
+                "api_version_date": "2026-09-06",
                 "data": {
                   "account_id": "biz_xxxxxxxxxxxxxx",
                   "carrier": "ups",
@@ -63257,7 +64228,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-04",
+                "api_version_date": "2026-09-06",
                 "data": {
                   "account": {
                     "id": "biz_xxxxxxxxxxxxxx",
@@ -63474,7 +64445,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-04",
+                "api_version_date": "2026-09-06",
                 "data": {
                   "amount": 250,
                   "created_at": "2026-01-01T12:00:00.000Z",
@@ -63937,7 +64908,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-04",
+                "api_version_date": "2026-09-06",
                 "data": {
                   "amount": 250,
                   "created_at": "2026-01-01T12:00:00.000Z",
@@ -64400,7 +65371,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-04",
+                "api_version_date": "2026-09-06",
                 "data": {
                   "amount": 10,
                   "created_at": "2026-01-01T12:00:00.000Z",
@@ -64829,7 +65800,7 @@
         "name": "Api-Version-Date",
         "required": false,
         "schema": {
-          "example": "2026-09-04",
+          "example": "2026-09-06",
           "type": "string"
         }
       },
@@ -72084,9 +73055,10 @@
               "2026-09-02",
               "2026-09-02-1",
               "2026-09-02-2",
-              "2026-09-04"
+              "2026-09-04",
+              "2026-09-06"
             ],
-            "example": "2026-09-04",
+            "example": "2026-09-06",
             "type": "string"
           },
           "created_at": {
@@ -73260,7 +74232,7 @@
       "Audience": {
         "properties": {
           "audience_type": {
-            "description": "`custom` = a customer list (uploaded, or built from saved People filters); `lookalike` = Meta lookalike built from a custom audience.",
+            "description": "Whether the audience targets a defined group of people or people similar to an existing audience.",
             "enum": [
               "custom",
               "lookalike"
@@ -73269,7 +74241,7 @@
             "type": "string"
           },
           "auto_refresh": {
-            "description": "Whether membership keeps updating. `true` rebuilds it from the saved filters twice a day, so people join and leave as they start and stop matching. `false` keeps whoever matched when it was built and never rebuilds. Always `false` for uploaded lists and lookalikes.",
+            "description": "Whether Whop rebuilds membership from saved People filters twice a day. When `false`, People audiences keep the members matched at creation. Always `false` for uploaded lists, lookalikes, and engagement audiences. Engagement membership is maintained by Meta.",
             "example": false,
             "type": "boolean"
           },
@@ -73277,6 +74249,17 @@
             "description": "When the audience was created, as an ISO 8601 timestamp.",
             "example": "2026-01-01T12:00:00.000Z",
             "type": "string"
+          },
+          "engagement": {
+            "description": "Social engagement rules maintained by the ad platform. `null` for other audience sources.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/AudienceEngagement"
+              },
+              {
+                "type": "null"
+              }
+            ]
           },
           "error_message": {
             "description": "Processing error message. `null` unless processing is partial or failed.",
@@ -73287,7 +74270,7 @@
             ]
           },
           "filters": {
-            "description": "For audiences built from People filters: the filters that define membership, keyed exactly as `GET /people` accepts them — for example `{\"os\": \"iOS\", \"country\": \"US\"}`. `null` for uploaded lists and lookalikes.",
+            "description": "Saved Whop People filters that define membership, using the same keys as `GET /people`. `null` for uploaded lists, engagement audiences, and lookalikes.",
             "example": {
               "country": "US",
               "last_seen_within_days": 30
@@ -73329,12 +74312,12 @@
           "match_rates": {
             "items": {
               "$ref": "#/components/schemas/AudienceMatchRate",
-              "description": "Estimated match rates by ad platform. Empty when the audience was not sent to a supported platform."
+              "description": "Estimated match rates by ad platform. Empty for engagement audiences and audiences not sent to a supported platform."
             },
             "type": "array"
           },
           "matched_rows": {
-            "description": "Members successfully uploaded to connected ad accounts. Always 0 for lookalikes.",
+            "description": "Members successfully uploaded to connected ad accounts. Always 0 for lookalikes and engagement audiences.",
             "example": 0,
             "type": "number"
           },
@@ -73352,7 +74335,7 @@
             "type": "array"
           },
           "processed_rows": {
-            "description": "Members processed from the source so far. Always 0 for lookalikes.",
+            "description": "Members processed from the source so far. Always 0 for lookalikes and engagement audiences.",
             "example": 0,
             "type": "number"
           },
@@ -73370,16 +74353,17 @@
             ]
           },
           "source_type": {
-            "description": "Where members come from. `csv_upload` = an uploaded customer list; `people_filter` = built from saved People filters. See `auto_refresh` for whether a `people_filter` audience keeps updating.",
+            "description": "Membership source: an uploaded CSV, Whop People filters, or social engagement.",
             "enum": [
               "csv_upload",
-              "people_filter"
+              "people_filter",
+              "engagement"
             ],
             "example": "csv_upload",
             "type": "string"
           },
           "status": {
-            "description": "Current state of the audience import. `syncing` means Whop is sending matched rows to connected ad accounts. When status is `partial` or `failed`, `error_message` explains what went wrong.",
+            "description": "Current state of audience creation. For engagement audiences, `ready` means the rules were created on Meta; membership may still be populating. `syncing` means Whop is sending matched rows to connected ad accounts. When status is `partial` or `failed`, `error_message` explains what went wrong.",
             "enum": [
               "pending",
               "processing",
@@ -73391,7 +74375,7 @@
             "type": "string"
           },
           "total_rows": {
-            "description": "Total members detected in the source — CSV rows for uploaded lists, matching people for automatic audiences. Always 0 for lookalikes.",
+            "description": "Total members detected in the source — CSV rows for uploaded lists, matching people for automatic audiences. Always 0 for lookalikes and engagement audiences.",
             "example": 0,
             "type": "number"
           },
@@ -73416,12 +74400,266 @@
           "source_audience_id",
           "lookalike_ratio",
           "lookalike_starting_ratio",
+          "engagement",
           "filters",
           "auto_refresh",
           "last_refreshed_at",
           "created_at",
           "updated_at",
           "match_rates"
+        ],
+        "type": "object"
+      },
+      "AudienceEngagement": {
+        "properties": {
+          "exclude": {
+            "description": "Exclude anyone matching any exclusion rule. Supply 0–10 rules. Video audiences do not support exclusions; use a separate audience in ad-group exclusions.",
+            "items": {
+              "$ref": "#/components/schemas/AudienceEngagementRule"
+            },
+            "type": "array"
+          },
+          "include": {
+            "description": "Match any inclusion rule. Supply 1–10 rules. Video rules must share a retention window and cannot be combined with other sources.",
+            "items": {
+              "$ref": "#/components/schemas/AudienceEngagementRule"
+            },
+            "type": "array"
+          },
+          "platform": {
+            "description": "Ad platform that maintains membership.",
+            "enum": [
+              "meta"
+            ],
+            "example": "meta",
+            "type": "string"
+          }
+        },
+        "required": [
+          "platform",
+          "include",
+          "exclude"
+        ],
+        "type": "object"
+      },
+      "AudienceEngagementFacebookPageRule": {
+        "properties": {
+          "event": {
+            "description": "Interaction that qualifies a person for this rule.",
+            "enum": [
+              "engaged",
+              "visited",
+              "liked",
+              "messaged",
+              "cta_clicked",
+              "saved",
+              "post_interaction"
+            ],
+            "example": "engaged",
+            "type": "string"
+          },
+          "object": {
+            "description": "Engagement source.",
+            "enum": [
+              "facebook_page"
+            ],
+            "example": "facebook_page",
+            "type": "string"
+          },
+          "retention_days": {
+            "description": "Rolling membership window in days, from 1 to 730. Use 0 for `liked`, which tracks current likes and cannot be combined with other events.",
+            "example": 30,
+            "type": "integer"
+          },
+          "social_account_id": {
+            "description": "Connected social account ID, prefixed `sacc_`, with advertising access.",
+            "example": "sacc_xxxxxxxxxxxxxx",
+            "type": "string"
+          }
+        },
+        "required": [
+          "object",
+          "social_account_id",
+          "event",
+          "retention_days"
+        ],
+        "type": "object"
+      },
+      "AudienceEngagementInstagramProfileRule": {
+        "properties": {
+          "event": {
+            "description": "Interaction that qualifies a person for this rule.",
+            "enum": [
+              "all",
+              "engaged",
+              "visited",
+              "messaged",
+              "saved",
+              "ad_liked",
+              "ad_commented",
+              "ad_shared",
+              "ad_saved",
+              "ad_cta_clicked",
+              "ad_carousel_swiped",
+              "organic_liked",
+              "organic_commented",
+              "organic_shared",
+              "organic_saved",
+              "organic_swiped",
+              "organic_carousel_swiped"
+            ],
+            "example": "all",
+            "type": "string"
+          },
+          "object": {
+            "description": "Engagement source.",
+            "enum": [
+              "instagram_profile"
+            ],
+            "example": "instagram_profile",
+            "type": "string"
+          },
+          "retention_days": {
+            "description": "Rolling membership window in days, from 1 to 730.",
+            "example": 30,
+            "type": "integer"
+          },
+          "social_account_id": {
+            "description": "Connected social account ID, prefixed `sacc_`, with advertising access.",
+            "example": "sacc_xxxxxxxxxxxxxx",
+            "type": "string"
+          }
+        },
+        "required": [
+          "object",
+          "social_account_id",
+          "event",
+          "retention_days"
+        ],
+        "type": "object"
+      },
+      "AudienceEngagementLeadFormRule": {
+        "properties": {
+          "event": {
+            "description": "Interaction that qualifies a person for this rule.",
+            "enum": [
+              "opened",
+              "submitted",
+              "not_submitted"
+            ],
+            "example": "opened",
+            "type": "string"
+          },
+          "object": {
+            "description": "Engagement source.",
+            "enum": [
+              "lead_form"
+            ],
+            "example": "lead_form",
+            "type": "string"
+          },
+          "platform_form_ids": {
+            "items": {
+              "description": "Numeric platform lead form IDs belonging to the selected social account. Supply 1–50 IDs.",
+              "example": "333",
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "retention_days": {
+            "description": "Rolling membership window in days, from 1 to 90.",
+            "example": 30,
+            "type": "integer"
+          },
+          "social_account_id": {
+            "description": "Connected social account ID, prefixed `sacc_`, with advertising access.",
+            "example": "sacc_xxxxxxxxxxxxxx",
+            "type": "string"
+          }
+        },
+        "required": [
+          "object",
+          "social_account_id",
+          "event",
+          "retention_days",
+          "platform_form_ids"
+        ],
+        "type": "object"
+      },
+      "AudienceEngagementRule": {
+        "discriminator": {
+          "mapping": {
+            "facebook_page": "#/components/schemas/AudienceEngagementFacebookPageRule",
+            "instagram_profile": "#/components/schemas/AudienceEngagementInstagramProfileRule",
+            "lead_form": "#/components/schemas/AudienceEngagementLeadFormRule",
+            "video": "#/components/schemas/AudienceEngagementVideoRule"
+          },
+          "propertyName": "object"
+        },
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/AudienceEngagementVideoRule"
+          },
+          {
+            "$ref": "#/components/schemas/AudienceEngagementLeadFormRule"
+          },
+          {
+            "$ref": "#/components/schemas/AudienceEngagementInstagramProfileRule"
+          },
+          {
+            "$ref": "#/components/schemas/AudienceEngagementFacebookPageRule"
+          }
+        ]
+      },
+      "AudienceEngagementVideoRule": {
+        "properties": {
+          "event": {
+            "description": "Interaction that qualifies a person for this rule.",
+            "enum": [
+              "watched_3_seconds",
+              "watched_10_seconds",
+              "watched_15_seconds",
+              "watched_25_percent",
+              "watched_50_percent",
+              "watched_75_percent",
+              "watched_95_percent"
+            ],
+            "example": "watched_50_percent",
+            "type": "string"
+          },
+          "object": {
+            "description": "Engagement source.",
+            "enum": [
+              "video"
+            ],
+            "example": "video",
+            "type": "string"
+          },
+          "platform_video_ids": {
+            "items": {
+              "description": "Numeric platform video IDs belonging to the selected social account. Supply 1–50 IDs.",
+              "example": "444",
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "retention_days": {
+            "description": "Rolling membership window in days, from 1 to 365.",
+            "example": 30,
+            "type": "integer"
+          },
+          "social_account_id": {
+            "description": "Connected social account ID, prefixed `sacc_`, with advertising access.",
+            "example": "sacc_xxxxxxxxxxxxxx",
+            "type": "string"
+          }
+        },
+        "required": [
+          "object",
+          "social_account_id",
+          "event",
+          "retention_days",
+          "platform_video_ids"
         ],
         "type": "object"
       },
@@ -81235,6 +82473,7 @@
           "webhook_receive:chat",
           "webhook_receive:entries",
           "webhook_receive:ad_campaigns",
+          "webhook_receive:ads",
           "webhook_receive:products",
           "webhook_receive:plans",
           "webhook_receive:shipments",
@@ -81496,6 +82735,7 @@
           "WebhookReceiveChat",
           "WebhookReceiveEntries",
           "WebhookReceiveAdCampaigns",
+          "WebhookReceiveAds",
           "WebhookReceiveProducts",
           "WebhookReceivePlans",
           "WebhookReceiveShipments",
@@ -84910,6 +86150,14 @@
               "null"
             ]
           },
+          "caption": {
+            "description": "The text accompanying the post, when available.",
+            "example": "Ceramic coating in action",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
           "destination_url": {
             "description": "The URL the post's call-to-action drives to (Facebook only; null for Instagram and TikTok).",
             "example": "https://shinetime.example/book",
@@ -84962,9 +86210,19 @@
               "string",
               "null"
             ]
+          },
+          "video_id": {
+            "description": "The platform video identifier for engagement audience rules. Null for non-video posts or when unavailable. Facebook video identifiers differ from post identifiers.",
+            "example": "18000000000000000",
+            "type": [
+              "string",
+              "null"
+            ]
           }
         },
         "required": [
+          "video_id",
+          "caption",
           "id",
           "media_url",
           "thumbnail_url",
@@ -86096,6 +87354,8 @@
                 "shipment.updated",
                 "member.created",
                 "ad_campaign.payment_failed",
+                "ad_campaign.updated",
+                "ad.updated",
                 "chat.message.created",
                 "chat.reaction.created",
                 "payment.created",
@@ -86227,6 +87487,8 @@
                 "shipment.updated",
                 "member.created",
                 "ad_campaign.payment_failed",
+                "ad_campaign.updated",
+                "ad.updated",
                 "chat.message.created",
                 "chat.reaction.created",
                 "payment.created",
@@ -86510,6 +87772,8 @@
                 "shipment.updated",
                 "member.created",
                 "ad_campaign.payment_failed",
+                "ad_campaign.updated",
+                "ad.updated",
                 "chat.message.created",
                 "chat.reaction.created",
                 "payment.created",

@@ -4,7 +4,7 @@
 
 # List Audiences
 
-> Lists uploaded customer-list audiences for an account. Pass `audience_id` to return a specific audience.
+> List custom and lookalike audiences for an account. Pass `audience_id` to return a specific audience.
 
 
 
