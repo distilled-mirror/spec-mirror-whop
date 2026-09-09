@@ -11916,6 +11916,13 @@
               "null"
             ]
           },
+          "recovery_url": {
+            "description": "Whop-hosted URL where the buyer can sign in and complete 3D Secure for a failed subscription renewal. `null` when recovery is unavailable or you lack `member:basic:read`.",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
           "refundable": {
             "description": "True only for payments that are `paid`, have not been fully refunded, and were processed by a payment processor that allows refunds.",
             "type": "boolean"
@@ -12422,6 +12429,7 @@
           "decline_code",
           "metadata",
           "checkout_configuration_id",
+          "recovery_url",
           "settlement_time_at",
           "settlement_amount",
           "settlement_exchange_rate",
@@ -20571,6 +20579,8 @@
         "description": "The different event types available",
         "enum": [
           "account.updated",
+          "account.financing_approved",
+          "account.financing_denied",
           "invoice.created",
           "invoice.marked_uncollectible",
           "invoice.paid",
@@ -117207,6 +117217,7 @@
                     "title": "Ceramic Coating Package"
                   },
                   "promo_code": null,
+                  "recovery_url": null,
                   "refundable": false,
                   "refunded_amount": 0,
                   "refunded_at": null,
@@ -117454,6 +117465,7 @@
                     "title": "Ceramic Coating Package"
                   },
                   "promo_code": null,
+                  "recovery_url": null,
                   "refundable": false,
                   "refunded_amount": 0,
                   "refunded_at": null,
@@ -117701,6 +117713,7 @@
                     "title": "Ceramic Coating Package"
                   },
                   "promo_code": null,
+                  "recovery_url": null,
                   "refundable": false,
                   "refunded_amount": 0,
                   "refunded_at": null,
@@ -117948,6 +117961,7 @@
                     "title": "Ceramic Coating Package"
                   },
                   "promo_code": null,
+                  "recovery_url": null,
                   "refundable": false,
                   "refunded_amount": 0,
                   "refunded_at": null,
@@ -118192,6 +118206,7 @@
                     "title": "Ceramic Coating Package"
                   },
                   "promo_code": null,
+                  "recovery_url": null,
                   "refundable": false,
                   "refunded_amount": 0,
                   "refunded_at": null,
@@ -118439,6 +118454,7 @@
                     "title": "Ceramic Coating Package"
                   },
                   "promo_code": null,
+                  "recovery_url": null,
                   "refundable": true,
                   "refunded_amount": 0,
                   "refunded_at": null,

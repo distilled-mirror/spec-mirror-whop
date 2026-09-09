@@ -577,13 +577,14 @@ Use the Disputes API to list disputes, edit the evidence packet while a dispute 
     </ResponseField>
 
     <ResponseField name="reason" type="string" required>
-      Why the customer says they are disputing, normalized across card networks. `other` covers a code Whop has not categorized yet — read `reason_code` for the raw value.
+      Why the customer says they are disputing, normalized across processors and card networks. `other` covers a processor reason Whop has not categorized yet.
 
       Available options: `fraudulent`, `unrecognized`, `declined_authorization`, `product_not_received`, `product_unacceptable`, `subscription_canceled`, `credit_not_processed`, `duplicate`, `processing_error`, `documentation_request`, `bank_cannot_process`, `other`
     </ResponseField>
 
     <ResponseField name="reason_code" type="string | null" required>
-      The raw card-network or processor reason code, such as `10.4`.
+      The raw card-network or processor reason code, such as `10.4`. Informational
+      only — `reason` is not derived from it.
     </ResponseField>
 
     <ResponseField name="status" type="string" required>

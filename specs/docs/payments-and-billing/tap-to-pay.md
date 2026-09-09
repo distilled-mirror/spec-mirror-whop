@@ -26,10 +26,30 @@
   </div>
 
   <Note>
-    Tap to Pay on iPhone is currently available to **US businesses only**. You'll
-    need an **iPhone XS or later** running the latest version of iOS and the
-    latest version of the [Whop iOS app](https://apps.apple.com/app/apple-store/id1600181492?pt=123864738\&ct=docs_tap_to_pay\&mt=8).
+    You'll need an **iPhone XS or later** running **iOS 18 or later**, plus the
+    latest [Whop iOS app](https://apps.apple.com/app/apple-store/id1600181492?pt=123864738\&ct=docs_tap_to_pay\&mt=8).
+    Your business address must be in a [supported country](#where-its-available).
+    You also need an internet connection. Tap to Pay isn't available offline.
   </Note>
+
+  ## Where it's available
+
+  Availability follows the country on your **business address**, which you set under **Settings** → **Tax** on Whop. Tap to Pay on iPhone currently works for businesses based in:
+
+  | Country        | In-person currency                             |
+  | -------------- | ---------------------------------------------- |
+  | Australia      | <abbr title="Australian dollars">AUD</abbr>    |
+  | Canada         | <abbr title="Canadian dollars">CAD</abbr>      |
+  | Poland         | <abbr title="Polish złoty">PLN</abbr>          |
+  | United Kingdom | <abbr title="British pounds">GBP</abbr>        |
+  | United States  | <abbr title="United States dollars">USD</abbr> |
+
+  An in-person sale settles in your business's own country, so Whop needs a payments entity there. Poland is the only European Union country available today.
+
+  <Warning>
+    In every other country, Whop declines an in-person charge — even where Apple
+    offers Tap to Pay. Share the checkout link or let the customer scan the QR code instead.
+  </Warning>
 
   ## How it works
 
@@ -64,6 +84,9 @@
   <Tip>
     To let customers pay themselves, share the checkout link or let them
     scan the QR code instead of tapping. Both flows settle to the same balance.
+    Turn on **Point of Sale** in **Settings** → **Tap to Pay**
+    to charge from your product list or a custom amount.
+    You can also **Ask for a tip** before the customer presents their card.
   </Tip>
 
   ## What you can accept

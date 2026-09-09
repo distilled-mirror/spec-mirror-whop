@@ -95,12 +95,12 @@ Use the Social Accounts API to list connected accounts, create a Whop-managed Fa
 
     <ResponseField name="url" type="string | null" required>
       The URL where the social account can be accessed on the platform. Null while a
-      Whop-owned page is still being provisioned.
+      Whop-owned account is still being provisioned.
     </ResponseField>
 
     <ResponseField name="username" type="string | null" required>
       The username of the social account on the platform. Null while a Whop-owned
-      page is still being provisioned.
+      account is still being provisioned.
     </ResponseField>
 
     <ResponseField name="verified" type="boolean" required>

@@ -168,6 +168,7 @@
   		"number_of_intervals": 42,
   		"promo_type": "percentage"
   	},
+  	"recovery_url": "<string>",
   	"refundable": true,
   	"refunded_amount": 6.9,
   	"refunded_at": "2023-12-01T05:00:00.401Z",
@@ -914,6 +915,12 @@
       Available options: `percentage`, `flat_amount`
     </ResponseField>
   </Expandable>
+</ResponseField>
+
+<ResponseField name="recovery_url" type="string | null" required>
+  Whop-hosted URL where the buyer can sign in and complete 3D Secure for a
+  failed subscription renewal. `null` when recovery is unavailable or you lack
+  `member:basic:read`.
 </ResponseField>
 
 <ResponseField name="refundable" type="boolean" required>

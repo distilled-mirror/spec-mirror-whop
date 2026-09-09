@@ -3,7 +3,7 @@
     "https://docs.whop.com/llms.txt",
     "https://docs.whop.com/sitemap.xml"
   ],
-  "count": 1011,
+  "count": 1013,
   "pages": [
     {
       "page": "https://docs.whop.com/account-settings/account-security/delete-your-account",
@@ -476,6 +476,24 @@
       "page": "https://docs.whop.com/api-reference/beta/accounts/account",
       "markdown": "https://docs.whop.com/api-reference/beta/accounts/account.md",
       "file": "api-reference/beta/accounts/account.md",
+      "indexes": [
+        "llms.txt",
+        "sitemap"
+      ]
+    },
+    {
+      "page": "https://docs.whop.com/api-reference/beta/accounts/account-financing-approved",
+      "markdown": "https://docs.whop.com/api-reference/beta/accounts/account-financing-approved.md",
+      "file": "api-reference/beta/accounts/account-financing-approved.md",
+      "indexes": [
+        "llms.txt",
+        "sitemap"
+      ]
+    },
+    {
+      "page": "https://docs.whop.com/api-reference/beta/accounts/account-financing-denied",
+      "markdown": "https://docs.whop.com/api-reference/beta/accounts/account-financing-denied.md",
+      "file": "api-reference/beta/accounts/account-financing-denied.md",
       "indexes": [
         "llms.txt",
         "sitemap"

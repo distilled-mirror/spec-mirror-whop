@@ -19,8 +19,10 @@ Whop continues to improve support for brick-and-mortar businesses. In the meanti
   <Step title="Take in-person payments with the Whop iOS app" titleSize="h3">
     Open the Whop iOS app, select the bottom right tab, and then create a
     checkout link when it's time for a customer to pay. After you create a
-    checkout link from your phone, a QR code button will appear so customers can
-    scan and pay. You can also save or print the QR for signage.
+    checkout link from your phone, a QR code appears so customers can
+    scan and pay. A **Tap to pay** button lets you take a
+    contactless card or wallet on the iPhone itself. See [Tap to Pay on iPhone](/payments-and-billing/tap-to-pay)
+    for countries, device requirements, and the in-person flow. You can also save or print the QR for signage.
   </Step>
 
   <Step title="Give patrons exclusive perks" titleSize="h3">

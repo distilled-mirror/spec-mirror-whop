@@ -815,7 +815,8 @@ paths:
                                 - 'null'
                             icon_url:
                               description: Network icon URL.
-                              example: https://whop.com/crypto/solana.svg
+                              example: >-
+                                https://whop.com/_static/images/crypto/solana.svg
                               type:
                                 - string
                                 - 'null'
@@ -842,7 +843,8 @@ paths:
                                     description: >-
                                       Token icon URL. Null when no icon is
                                       available.
-                                    example: https://whop.com/crypto/ethereum.svg
+                                    example: >-
+                                      https://whop.com/_static/images/crypto/ethereum.svg
                                     type:
                                       - string
                                       - 'null'

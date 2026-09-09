@@ -4,7 +4,7 @@
 
 # Create a Social Account
 
-> Creates or returns a Whop-managed Facebook page for an account.
+> Creates or returns a Whop-managed Facebook page or TikTok account for an account.
 
 
 

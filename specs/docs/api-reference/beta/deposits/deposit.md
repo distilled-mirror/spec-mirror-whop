@@ -152,11 +152,11 @@ Use the Deposits API to create deposit instructions for an account. Crypto depos
       		"crypto": [
       			{
       				"deposit_address": "0x1234abcd5678ef901234abcd5678ef901234abcd",
-      				"icon_url": "https://whop.com/images/networks/ethereum.png",
+      				"icon_url": "https://whop.com/_static/images/crypto/ethereum.svg",
       				"name": "Ethereum",
       				"supported_currencies": [
       					{
-      						"icon_url": "https://whop.com/images/tokens/usdc.png",
+      						"icon_url": "https://whop.com/_static/images/crypto/usdc.svg",
       						"name": "USDC"
       					}
       				]
