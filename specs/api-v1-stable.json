@@ -20907,7 +20907,7 @@
     "termsOfService": "https://whop.com/tos-developer-api/",
     "title": "Whop API",
     "version": "1.0.0",
-    "x-api-version-date": "2026-09-06"
+    "x-api-version-date": "2026-09-09"
   },
   "openapi": "3.1.0",
   "paths": {
@@ -21336,8 +21336,8 @@
         "x-group-title": "Developer",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\nconst accessToken = await client.accessTokens.create();\n\nconsole.log(accessToken.token);"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.accessTokens.create();\n"
           }
         ]
       }
@@ -21753,8 +21753,8 @@
         "x-group-title": "Developer",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\nconst accountLink = await client.accountLinks.create({\n  company_id: 'biz_xxxxxxxxxxxxxx',\n  refresh_url: 'refresh_url',\n  return_url: 'return_url',\n  use_case: 'account_onboarding',\n});\n\nconsole.log(accountLink.expires_at);"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.accountLinks.create({\n    company_id: \"biz_xxxxxxxxxxxxxx\",\n    refresh_url: \"refresh_url\",\n    return_url: \"return_url\",\n    use_case: \"account_onboarding\"\n});\n"
           }
         ]
       }
@@ -22257,8 +22257,8 @@
         "x-group-title": "CRM",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\n// Automatically fetches more pages as needed.\nfor await (const affiliateListResponse of client.affiliates.list({\n  company_id: 'biz_xxxxxxxxxxxxxx',\n})) {\n  console.log(affiliateListResponse.id);\n}"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.affiliates.list({\n    first: 42,\n    last: 42,\n    company_id: \"biz_xxxxxxxxxxxxxx\"\n});\n"
           }
         ]
       },
@@ -22664,8 +22664,8 @@
         "x-group-title": "CRM",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\nconst affiliate = await client.affiliates.create({\n  company_id: 'biz_xxxxxxxxxxxxxx',\n  user_identifier: 'user_identifier',\n});\n\nconsole.log(affiliate.id);"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.affiliates.create({\n    company_id: \"biz_xxxxxxxxxxxxxx\",\n    user_identifier: \"user_identifier\"\n});\n"
           }
         ]
       }
@@ -23058,8 +23058,8 @@
         "x-group-title": "CRM",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\nconst affiliate = await client.affiliates.retrieve('aff_xxxxxxxxxxxxxx');\n\nconsole.log(affiliate.id);"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.affiliates.retrieve({\n    id: \"aff_xxxxxxxxxxxxxx\"\n});\n"
           }
         ]
       }
@@ -23453,8 +23453,8 @@
         "x-group-title": "CRM",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\nconst response = await client.affiliates.archive('aff_xxxxxxxxxxxxxx');\n\nconsole.log(response);"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.affiliates.archive({\n    id: \"aff_xxxxxxxxxxxxxx\"\n});\n"
           }
         ]
       }
@@ -24024,8 +24024,8 @@
         "x-group-title": "CRM",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\n// Automatically fetches more pages as needed.\nfor await (const overrideListResponse of client.affiliates.overrides.list('aff_xxxxxxxxxxxxxx')) {\n  console.log(overrideListResponse.id);\n}"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.affiliates.overrides.list({\n    id: \"aff_xxxxxxxxxxxxxx\",\n    first: 42,\n    last: 42\n});\n"
           }
         ]
       },
@@ -24639,8 +24639,8 @@
         "x-group-title": "CRM",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\nconst override = await client.affiliates.overrides.create('aff_xxxxxxxxxxxxxx', {\n  id: 'id',\n  commission_value: 6.9,\n  override_type: 'standard',\n  plan_id: 'plan_xxxxxxxxxxxxx',\n});\n\nconsole.log(override.id);"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.affiliates.overrides.create({\n    id: \"aff_xxxxxxxxxxxxxx\",\n    body: {\n        override_type: \"standard\",\n        commission_value: 6.9,\n        id: \"id\",\n        plan_id: \"plan_xxxxxxxxxxxxx\"\n    }\n});\n"
           }
         ]
       }
@@ -25043,8 +25043,8 @@
         "x-group-title": "CRM",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\nconst override = await client.affiliates.overrides.delete('override_id', {\n  id: 'aff_xxxxxxxxxxxxxx',\n});\n\nconsole.log(override);"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.affiliates.overrides.delete({\n    id: \"aff_xxxxxxxxxxxxxx\",\n    override_id: \"override_id\"\n});\n"
           }
         ]
       },
@@ -25546,8 +25546,8 @@
         "x-group-title": "CRM",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\nconst override = await client.affiliates.overrides.retrieve('override_id', {\n  id: 'aff_xxxxxxxxxxxxxx',\n});\n\nconsole.log(override.id);"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.affiliates.overrides.retrieve({\n    id: \"aff_xxxxxxxxxxxxxx\",\n    override_id: \"override_id\"\n});\n"
           }
         ]
       },
@@ -26104,8 +26104,8 @@
         "x-group-title": "CRM",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\nconst override = await client.affiliates.overrides.update('override_id', {\n  id: 'aff_xxxxxxxxxxxxxx',\n});\n\nconsole.log(override.id);"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.affiliates.overrides.update({\n    id: \"aff_xxxxxxxxxxxxxx\",\n    override_id: \"override_id\"\n});\n"
           }
         ]
       }
@@ -26499,8 +26499,8 @@
         "x-group-title": "CRM",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\nconst response = await client.affiliates.unarchive('aff_xxxxxxxxxxxxxx');\n\nconsole.log(response);"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.affiliates.unarchive({\n    id: \"aff_xxxxxxxxxxxxxx\"\n});\n"
           }
         ]
       }
@@ -26967,8 +26967,8 @@
         "x-group-title": "AI",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\n// Automatically fetches more pages as needed.\nfor await (const aiChatListResponse of client.aiChats.list()) {\n  console.log(aiChatListResponse.id);\n}"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.aiChats.list({\n    first: 42,\n    last: 42\n});\n"
           }
         ]
       },
@@ -27432,8 +27432,8 @@
         "x-group-title": "AI",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\nconst aiChat = await client.aiChats.create({ message_text: 'message_text' });\n\nconsole.log(aiChat.id);"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.aiChats.create({\n    message_text: \"message_text\"\n});\n"
           }
         ]
       }
@@ -27827,8 +27827,8 @@
         "x-group-title": "AI",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\nconst aiChat = await client.aiChats.delete('aich_xxxxxxxxxxxxx');\n\nconsole.log(aiChat);"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.aiChats.delete({\n    id: \"aich_xxxxxxxxxxxxx\"\n});\n"
           }
         ]
       },
@@ -28217,8 +28217,8 @@
         "x-group-title": "AI",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\nconst aiChat = await client.aiChats.retrieve('aich_xxxxxxxxxxxxx');\n\nconsole.log(aiChat.id);"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.aiChats.retrieve({\n    id: \"aich_xxxxxxxxxxxxx\"\n});\n"
           }
         ]
       },
@@ -28648,8 +28648,8 @@
         "x-group-title": "AI",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\nconst aiChat = await client.aiChats.update('aich_xxxxxxxxxxxxx');\n\nconsole.log(aiChat.id);"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.aiChats.update({\n    id: \"aich_xxxxxxxxxxxxx\"\n});\n"
           }
         ]
       }
@@ -29156,8 +29156,8 @@
         "x-group-title": "Developer",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\n// Automatically fetches more pages as needed.\nfor await (const appBuild of client.appBuilds.list({ app_id: 'app_id' })) {\n  console.log(appBuild.id);\n}"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.appBuilds.list({\n    app_id: \"app_id\"\n});\n"
           }
         ]
       },
@@ -29620,8 +29620,8 @@
         "x-group-title": "Developer",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\nconst appBuild = await client.appBuilds.create({\n  attachment: {},\n  checksum: 'xxxxxxxxxxxxxxx',\n  platform: 'web',\n});\n\nconsole.log(appBuild.id);"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.appBuilds.create({\n    attachment: {},\n    checksum: \"xxxxxxxxxxxxxxx\",\n    platform: \"ios\"\n});\n"
           }
         ]
       }
@@ -30014,8 +30014,8 @@
         "x-group-title": "Developer",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\nconst appBuild = await client.appBuilds.retrieve('id');\n\nconsole.log(appBuild.id);"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.appBuilds.retrieve({\n    id: \"id\"\n});\n"
           }
         ]
       }
@@ -30408,8 +30408,8 @@
         "x-group-title": "Developer",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\nconst appBuild = await client.appBuilds.promote('id');\n\nconsole.log(appBuild.id);"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.appBuilds.promote({\n    id: \"id\"\n});\n"
           }
         ]
       }
@@ -30932,8 +30932,8 @@
         "x-group-title": "Developer",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\n// Automatically fetches more pages as needed.\nfor await (const appListResponse of client.apps.list()) {\n  console.log(appListResponse.id);\n}"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.apps.list();\n"
           }
         ]
       },
@@ -31384,8 +31384,8 @@
         "x-group-title": "Developer",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\nconst app = await client.apps.create({ name: 'Shine Time Booking' });\n\nconsole.log(app.id);"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.apps.create({\n    name: \"Shine Time Booking\"\n});\n"
           }
         ]
       }
@@ -31818,7 +31818,13 @@
         "tags": [
           "Apps"
         ],
-        "x-group-title": "Developer"
+        "x-group-title": "Developer",
+        "x-codeSamples": [
+          {
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.apps.updatePermissionsApp({\n    app_id: \"app_id\",\n    requested_permissions: [{\n            action: \"action\",\n            is_required: true,\n            justification: \"justification\"\n        }]\n});\n"
+          }
+        ]
       }
     },
     "/apps/{id}": {
@@ -32211,8 +32217,8 @@
         "x-group-title": "Developer",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop();\n\nconst app = await client.apps.retrieve('id');\n\nconsole.log(app.id);"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.apps.retrieve({\n    id: \"id\"\n});\n"
           }
         ]
       },
@@ -32769,8 +32775,8 @@
         "x-group-title": "Developer",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\nconst app = await client.apps.update('id');\n\nconsole.log(app.id);"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.apps.update({\n    id: \"id\"\n});\n"
           }
         ]
       }
@@ -33279,8 +33285,8 @@
         "x-group-title": "Identity",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\n// Automatically fetches more pages as needed.\nfor await (const authorizedUserListResponse of client.authorizedUsers.list()) {\n  console.log(authorizedUserListResponse.id);\n}"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.authorizedUsers.list({\n    first: 42,\n    last: 42,\n    company_id: \"biz_xxxxxxxxxxxxxx\",\n    user_id: \"user_xxxxxxxxxxxxx\",\n    created_before: \"2023-12-01T05:00:00Z\",\n    created_after: \"2023-12-01T05:00:00Z\"\n});\n"
           }
         ]
       },
@@ -33759,8 +33765,8 @@
         "x-group-title": "Identity",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\nconst authorizedUser = await client.authorizedUsers.create({\n  company_id: 'biz_xxxxxxxxxxxxxx',\n  role: 'owner',\n  user_id: 'user_xxxxxxxxxxxxx',\n});\n\nconsole.log(authorizedUser.id);"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.authorizedUsers.create({\n    company_id: \"biz_xxxxxxxxxxxxxx\",\n    role: \"owner\",\n    user_id: \"user_xxxxxxxxxxxxx\"\n});\n"
           }
         ]
       }
@@ -34166,8 +34172,8 @@
         "x-group-title": "Identity",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\nconst authorizedUser = await client.authorizedUsers.delete('ausr_xxxxxxxxxxxxx');\n\nconsole.log(authorizedUser);"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.authorizedUsers.delete({\n    id: \"ausr_xxxxxxxxxxxxx\",\n    company_id: \"biz_xxxxxxxxxxxxxx\"\n});\n"
           }
         ]
       },
@@ -34559,8 +34565,8 @@
         "x-group-title": "Identity",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\nconst authorizedUser = await client.authorizedUsers.retrieve('ausr_xxxxxxxxxxxxx');\n\nconsole.log(authorizedUser.id);"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.authorizedUsers.retrieve({\n    id: \"ausr_xxxxxxxxxxxxx\"\n});\n"
           }
         ]
       }
@@ -35039,8 +35045,8 @@
         "x-group-title": "Bounties",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\n// Automatically fetches more pages as needed.\nfor await (const bountyListItem of client.bounties.list()) {\n  console.log(bountyListItem.id);\n}"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.bounties.list();\n"
           }
         ]
       },
@@ -35550,8 +35556,8 @@
         "x-group-title": "Bounties",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\nconst bounty = await client.bounties.create({\n  description:\n    'Record one continuous pass of a full interior detail, dash to trunk, on a customer vehicle.',\n  gross_reward_amount: 40,\n  title: 'Record interior detailing passes',\n});\n\nconsole.log(bounty.id);"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.bounties.create({\n    description: \"Record one continuous pass of a full interior detail, dash to trunk, on a customer vehicle.\",\n    gross_reward_amount: 40,\n    title: \"Record interior detailing passes\"\n});\n"
           }
         ]
       }
@@ -35942,8 +35948,8 @@
         "x-group-title": "Bounties",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\nconst bounty = await client.bounties.retrieve('id');\n\nconsole.log(bounty.id);"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.bounties.retrieve({\n    id: \"id\"\n});\n"
           }
         ]
       }
@@ -36461,8 +36467,8 @@
         "x-group-title": "Cards",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\n// Automatically fetches more pages as needed.\nfor await (const cardTransaction of client.cardTransactions.list()) {\n  console.log(cardTransaction.id);\n}"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.cardTransactions.list({\n    transaction_ids: [\"citx_xxxxxxxxxxxxxx\"],\n    card_id: [\"icrd_xxxxxxxxxxxxxx\"],\n    cardholder_id: [\"user_xxxxxxxxxxxxxx\"]\n});\n"
           }
         ]
       }
@@ -36854,8 +36860,8 @@
         "x-group-title": "Cards",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\nconst cardTransaction = await client.cardTransactions.retrieve('id');\n\nconsole.log(cardTransaction.id);"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.cardTransactions.retrieve({\n    id: \"id\"\n});\n"
           }
         ]
       }
@@ -37326,8 +37332,8 @@
         "x-group-title": "Engagement",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\n// Automatically fetches more pages as needed.\nfor await (const chatChannelListResponse of client.chatChannels.list({\n  company_id: 'biz_xxxxxxxxxxxxxx',\n})) {\n  console.log(chatChannelListResponse.id);\n}"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.chatChannels.list({\n    first: 42,\n    last: 42,\n    company_id: \"biz_xxxxxxxxxxxxxx\",\n    product_id: \"prod_xxxxxxxxxxxxx\"\n});\n"
           }
         ]
       }
@@ -37719,8 +37725,8 @@
         "x-group-title": "Engagement",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\nconst chatChannel = await client.chatChannels.retrieve('id');\n\nconsole.log(chatChannel.id);"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.chatChannels.retrieve({\n    id: \"id\"\n});\n"
           }
         ]
       },
@@ -38179,8 +38185,8 @@
         "x-group-title": "Engagement",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\nconst chatChannel = await client.chatChannels.update('id');\n\nconsole.log(chatChannel.id);"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.chatChannels.update({\n    id: \"id\"\n});\n"
           }
         ]
       }
@@ -38688,8 +38694,8 @@
         "x-group-title": "Payins",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\n// Automatically fetches more pages as needed.\nfor await (const checkoutConfigurationListResponse of client.checkoutConfigurations.list({\n  account_id: 'account_id',\n})) {\n  console.log(checkoutConfigurationListResponse.id);\n}"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.checkoutConfigurations.list({\n    account_id: \"account_id\"\n});\n"
           }
         ]
       },
@@ -39857,8 +39863,8 @@
         "x-group-title": "Payins",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\nconst checkoutConfiguration = await client.checkoutConfigurations.create();\n\nconsole.log(checkoutConfiguration.id);"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.checkoutConfigurations.create({\n    account_id: \"biz_xxxxxxxxxxxxxx\",\n    plan_id: \"plan_xxxxxxxxxxxxx\"\n});\n"
           }
         ]
       }
@@ -40251,8 +40257,8 @@
         "x-group-title": "Payins",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop();\n\nconst checkoutConfiguration = await client.checkoutConfigurations.retrieve('id');\n\nconsole.log(checkoutConfiguration.id);"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.checkoutConfigurations.retrieve({\n    id: \"id\"\n});\n"
           }
         ]
       }
@@ -40736,8 +40742,8 @@
         "x-group-title": "CRM",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\n// Automatically fetches more pages as needed.\nfor await (const companyTokenTransactionListResponse of client.companyTokenTransactions.list({\n  company_id: 'biz_xxxxxxxxxxxxxx',\n})) {\n  console.log(companyTokenTransactionListResponse.id);\n}"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.companyTokenTransactions.list({\n    first: 42,\n    last: 42,\n    company_id: \"biz_xxxxxxxxxxxxxx\",\n    user_id: \"user_xxxxxxxxxxxxx\"\n});\n"
           }
         ]
       },
@@ -41275,8 +41281,8 @@
         "x-group-title": "CRM",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\nconst companyTokenTransaction = await client.companyTokenTransactions.create({\n  amount: 6.9,\n  company_id: 'biz_xxxxxxxxxxxxxx',\n  destination_user_id: 'destination_user_id',\n  transaction_type: 'transfer',\n  user_id: 'user_xxxxxxxxxxxxx',\n});\n\nconsole.log(companyTokenTransaction.id);"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.companyTokenTransactions.create({\n    transaction_type: \"transfer\",\n    amount: 6.9,\n    company_id: \"biz_xxxxxxxxxxxxxx\",\n    destination_user_id: \"destination_user_id\",\n    user_id: \"user_xxxxxxxxxxxxx\"\n});\n"
           }
         ]
       }
@@ -41670,8 +41676,8 @@
         "x-group-title": "CRM",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\nconst companyTokenTransaction = await client.companyTokenTransactions.retrieve('id');\n\nconsole.log(companyTokenTransaction.id);"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.companyTokenTransactions.retrieve({\n    id: \"id\"\n});\n"
           }
         ]
       }
@@ -42130,8 +42136,8 @@
         "x-group-title": "Courses",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\n// Automatically fetches more pages as needed.\nfor await (const courseChapterListResponse of client.courseChapters.list({\n  course_id: 'cors_xxxxxxxxxxxxx',\n})) {\n  console.log(courseChapterListResponse.id);\n}"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.courseChapters.list({\n    first: 42,\n    last: 42,\n    course_id: \"cors_xxxxxxxxxxxxx\"\n});\n"
           }
         ]
       },
@@ -42539,8 +42545,8 @@
         "x-group-title": "Courses",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\nconst courseChapter = await client.courseChapters.create({ course_id: 'cors_xxxxxxxxxxxxx' });\n\nconsole.log(courseChapter.id);"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.courseChapters.create({\n    course_id: \"cors_xxxxxxxxxxxxx\"\n});\n"
           }
         ]
       }
@@ -42934,8 +42940,8 @@
         "x-group-title": "Courses",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\nconst courseChapter = await client.courseChapters.delete('chap_xxxxxxxxxxxxx');\n\nconsole.log(courseChapter);"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.courseChapters.delete({\n    id: \"chap_xxxxxxxxxxxxx\"\n});\n"
           }
         ]
       },
@@ -43326,8 +43332,8 @@
         "x-group-title": "Courses",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\nconst courseChapter = await client.courseChapters.retrieve('chap_xxxxxxxxxxxxx');\n\nconsole.log(courseChapter.id);"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.courseChapters.retrieve({\n    id: \"chap_xxxxxxxxxxxxx\"\n});\n"
           }
         ]
       },
@@ -43738,8 +43744,8 @@
         "x-group-title": "Courses",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\nconst courseChapter = await client.courseChapters.update('chap_xxxxxxxxxxxxx', { title: 'title' });\n\nconsole.log(courseChapter.id);"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.courseChapters.update({\n    id: \"chap_xxxxxxxxxxxxx\",\n    title: \"title\"\n});\n"
           }
         ]
       }
@@ -44234,8 +44240,8 @@
         "x-group-title": "Courses",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\n// Automatically fetches more pages as needed.\nfor await (const courseLessonInteractionListItem of client.courseLessonInteractions.list()) {\n  console.log(courseLessonInteractionListItem.id);\n}"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.courseLessonInteractions.list({\n    first: 42,\n    last: 42,\n    user_id: \"user_xxxxxxxxxxxxx\",\n    lesson_id: \"lesn_xxxxxxxxxxxxx\",\n    course_id: \"cors_xxxxxxxxxxxxx\"\n});\n"
           }
         ]
       }
@@ -44629,8 +44635,8 @@
         "x-group-title": "Courses",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\nconst courseLessonInteraction = await client.courseLessonInteractions.retrieve(\n  'crsli_xxxxxxxxxxxx',\n);\n\nconsole.log(courseLessonInteraction.id);"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.courseLessonInteractions.retrieve({\n    id: \"crsli_xxxxxxxxxxxx\"\n});\n"
           }
         ]
       }
@@ -45101,8 +45107,8 @@
         "x-group-title": "Courses",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\n// Automatically fetches more pages as needed.\nfor await (const courseLessonListResponse of client.courseLessons.list()) {\n  console.log(courseLessonListResponse.id);\n}"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.courseLessons.list({\n    first: 42,\n    last: 42,\n    course_id: \"cors_xxxxxxxxxxxxx\",\n    chapter_id: \"chap_xxxxxxxxxxxxx\"\n});\n"
           }
         ]
       },
@@ -45565,8 +45571,8 @@
         "x-group-title": "Courses",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\nconst lesson = await client.courseLessons.create({\n  chapter_id: 'chap_xxxxxxxxxxxxx',\n  lesson_type: 'text',\n});\n\nconsole.log(lesson.id);"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.courseLessons.create({\n    chapter_id: \"chap_xxxxxxxxxxxxx\",\n    lesson_type: \"text\"\n});\n"
           }
         ]
       }
@@ -45960,8 +45966,8 @@
         "x-group-title": "Courses",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\nconst courseLesson = await client.courseLessons.delete('lesn_xxxxxxxxxxxxx');\n\nconsole.log(courseLesson);"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.courseLessons.delete({\n    id: \"lesn_xxxxxxxxxxxxx\"\n});\n"
           }
         ]
       },
@@ -46352,8 +46358,8 @@
         "x-group-title": "Courses",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\nconst lesson = await client.courseLessons.retrieve('lesn_xxxxxxxxxxxxx');\n\nconsole.log(lesson.id);"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.courseLessons.retrieve({\n    id: \"lesn_xxxxxxxxxxxxx\"\n});\n"
           }
         ]
       },
@@ -47003,8 +47009,8 @@
         "x-group-title": "Courses",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\nconst lesson = await client.courseLessons.update('lesn_xxxxxxxxxxxxx');\n\nconsole.log(lesson.id);"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.courseLessons.update({\n    id: \"lesn_xxxxxxxxxxxxx\"\n});\n"
           }
         ]
       }
@@ -47395,8 +47401,8 @@
         "x-group-title": "Courses",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\nconst response = await client.courseLessons.markAsCompleted('lesson_id');\n\nconsole.log(response);"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.courseLessons.markAsCompleted({\n    lesson_id: \"lesson_id\"\n});\n"
           }
         ]
       }
@@ -47787,8 +47793,8 @@
         "x-group-title": "Courses",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\nconst response = await client.courseLessons.start('lesson_id');\n\nconsole.log(response);"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.courseLessons.start({\n    lesson_id: \"lesson_id\"\n});\n"
           }
         ]
       }
@@ -48340,8 +48346,8 @@
         "x-group-title": "Courses",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\nconst response = await client.courseLessons.submitAssessment('lesson_id', {\n  answers: [{ question_id: 'question_id' }],\n});\n\nconsole.log(response.id);"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.courseLessons.submitAssessment({\n    lesson_id: \"lesson_id\",\n    answers: [{\n            question_id: \"question_id\"\n        }]\n});\n"
           }
         ]
       }
@@ -48812,8 +48818,8 @@
         "x-group-title": "Courses",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\n// Automatically fetches more pages as needed.\nfor await (const courseStudentListResponse of client.courseStudents.list({\n  course_id: 'cors_xxxxxxxxxxxxx',\n})) {\n  console.log(courseStudentListResponse.id);\n}"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.courseStudents.list({\n    first: 42,\n    last: 42,\n    course_id: \"cors_xxxxxxxxxxxxx\"\n});\n"
           }
         ]
       }
@@ -49206,8 +49212,8 @@
         "x-group-title": "Courses",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\nconst courseStudent = await client.courseStudents.retrieve('id');\n\nconsole.log(courseStudent.id);"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.courseStudents.retrieve({\n    id: \"id\"\n});\n"
           }
         ]
       }
@@ -49678,8 +49684,8 @@
         "x-group-title": "Courses",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\n// Automatically fetches more pages as needed.\nfor await (const courseListResponse of client.courses.list()) {\n  console.log(courseListResponse.id);\n}"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.courses.list({\n    first: 42,\n    last: 42,\n    experience_id: \"exp_xxxxxxxxxxxxxx\",\n    company_id: \"biz_xxxxxxxxxxxxxx\"\n});\n"
           }
         ]
       },
@@ -50142,8 +50148,8 @@
         "x-group-title": "Courses",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\nconst course = await client.courses.create({ experience_id: 'exp_xxxxxxxxxxxxxx', title: 'title' });\n\nconsole.log(course.id);"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.courses.create({\n    experience_id: \"exp_xxxxxxxxxxxxxx\",\n    title: \"title\"\n});\n"
           }
         ]
       }
@@ -50537,8 +50543,8 @@
         "x-group-title": "Courses",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\nconst course = await client.courses.delete('cors_xxxxxxxxxxxxx');\n\nconsole.log(course);"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.courses.delete({\n    id: \"cors_xxxxxxxxxxxxx\"\n});\n"
           }
         ]
       },
@@ -50929,8 +50935,8 @@
         "x-group-title": "Courses",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\nconst course = await client.courses.retrieve('cors_xxxxxxxxxxxxx');\n\nconsole.log(course.id);"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.courses.retrieve({\n    id: \"cors_xxxxxxxxxxxxx\"\n});\n"
           }
         ]
       },
@@ -51485,8 +51491,8 @@
         "x-group-title": "Courses",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\nconst course = await client.courses.update('cors_xxxxxxxxxxxxx');\n\nconsole.log(course.id);"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.courses.update({\n    id: \"cors_xxxxxxxxxxxxx\"\n});\n"
           }
         ]
       }
@@ -51984,8 +51990,8 @@
         "x-group-title": "Payins",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\n// Automatically fetches more pages as needed.\nfor await (const disputeAlert of client.disputeAlerts.list()) {\n  console.log(disputeAlert.id);\n}"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.disputeAlerts.list();\n"
           }
         ]
       }
@@ -52383,8 +52389,8 @@
         "x-group-title": "Payins",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\nconst disputeAlert = await client.disputeAlerts.retrieve('id');\n\nconsole.log(disputeAlert.id);"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.disputeAlerts.retrieve({\n    id: \"id\"\n});\n"
           }
         ]
       }
@@ -52884,8 +52890,8 @@
         "x-group-title": "Payins",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\n// Automatically fetches more pages as needed.\nfor await (const dispute of client.disputes.list()) {\n  console.log(dispute.id);\n}"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.disputes.list();\n"
           }
         ]
       }
@@ -53285,8 +53291,8 @@
         "x-group-title": "Payins",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\nconst dispute = await client.disputes.retrieve('id');\n\nconsole.log(dispute.id);"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.disputes.retrieve({\n    id: \"id\"\n});\n"
           }
         ]
       }
@@ -53683,7 +53689,13 @@
         "tags": [
           "Disputes"
         ],
-        "x-group-title": "Payins"
+        "x-group-title": "Payins",
+        "x-codeSamples": [
+          {
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.disputes.submitEvidenceDispute({\n    id: \"dspt_xxxxxxxxxxxxx\"\n});\n"
+          }
+        ]
       }
     },
     "/disputes/{id}/update_evidence": {
@@ -54230,7 +54242,13 @@
         "tags": [
           "Disputes"
         ],
-        "x-group-title": "Payins"
+        "x-group-title": "Payins",
+        "x-codeSamples": [
+          {
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.disputes.updateEvidenceDispute({\n    id: \"dspt_xxxxxxxxxxxxx\"\n});\n"
+          }
+        ]
       }
     },
     "/dm_channels": {
@@ -54687,8 +54705,8 @@
         "x-group-title": "Engagement",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\n// Automatically fetches more pages as needed.\nfor await (const dmChannelListResponse of client.dmChannels.list()) {\n  console.log(dmChannelListResponse.id);\n}"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.dmChannels.list({\n    first: 42,\n    last: 42,\n    company_id: \"biz_xxxxxxxxxxxxxx\"\n});\n"
           }
         ]
       },
@@ -55114,8 +55132,8 @@
         "x-group-title": "Engagement",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\nconst dmChannel = await client.dmChannels.create({ with_user_ids: ['string'] });\n\nconsole.log(dmChannel.id);"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.dmChannels.create({\n    with_user_ids: [\"with_user_ids\"]\n});\n"
           }
         ]
       }
@@ -55513,8 +55531,8 @@
         "x-group-title": "Engagement",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\nconst dmChannel = await client.dmChannels.delete('id');\n\nconsole.log(dmChannel);"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.dmChannels.delete({\n    id: \"id\"\n});\n"
           }
         ]
       },
@@ -55909,8 +55927,8 @@
         "x-group-title": "Engagement",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\nconst dmChannel = await client.dmChannels.retrieve('id');\n\nconsole.log(dmChannel.id);"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.dmChannels.retrieve({\n    id: \"id\"\n});\n"
           }
         ]
       },
@@ -56326,8 +56344,8 @@
         "x-group-title": "Engagement",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\nconst dmChannel = await client.dmChannels.update('id');\n\nconsole.log(dmChannel.id);"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.dmChannels.update({\n    id: \"id\"\n});\n"
           }
         ]
       }
@@ -56790,8 +56808,8 @@
         "x-group-title": "Engagement",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\n// Automatically fetches more pages as needed.\nfor await (const dmMemberListResponse of client.dmMembers.list({ channel_id: 'channel_id' })) {\n  console.log(dmMemberListResponse.id);\n}"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.dmMembers.list({\n    first: 42,\n    last: 42,\n    channel_id: \"channel_id\"\n});\n"
           }
         ]
       },
@@ -57202,8 +57220,8 @@
         "x-group-title": "Engagement",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\nconst dmMember = await client.dmMembers.create({\n  channel_id: 'channel_id',\n  user_id: 'user_xxxxxxxxxxxxx',\n});\n\nconsole.log(dmMember.id);"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.dmMembers.create({\n    channel_id: \"channel_id\",\n    user_id: \"user_xxxxxxxxxxxxx\"\n});\n"
           }
         ]
       }
@@ -57601,8 +57619,8 @@
         "x-group-title": "Engagement",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\nconst dmMember = await client.dmMembers.delete('id');\n\nconsole.log(dmMember);"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.dmMembers.delete({\n    id: \"id\"\n});\n"
           }
         ]
       },
@@ -57997,8 +58015,8 @@
         "x-group-title": "Engagement",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\nconst dmMember = await client.dmMembers.retrieve('id');\n\nconsole.log(dmMember.id);"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.dmMembers.retrieve({\n    id: \"id\"\n});\n"
           }
         ]
       },
@@ -58429,8 +58447,8 @@
         "x-group-title": "Engagement",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\nconst dmMember = await client.dmMembers.update('id');\n\nconsole.log(dmMember.id);"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.dmMembers.update({\n    id: \"id\"\n});\n"
           }
         ]
       }
@@ -58982,8 +59000,8 @@
         "x-group-title": "CRM",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\n// Automatically fetches more pages as needed.\nfor await (const entryListResponse of client.entries.list({ company_id: 'biz_xxxxxxxxxxxxxx' })) {\n  console.log(entryListResponse.id);\n}"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.entries.list({\n    first: 42,\n    last: 42,\n    company_id: \"biz_xxxxxxxxxxxxxx\",\n    created_before: \"2023-12-01T05:00:00Z\",\n    created_after: \"2023-12-01T05:00:00Z\"\n});\n"
           }
         ]
       }
@@ -59377,8 +59395,8 @@
         "x-group-title": "CRM",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\nconst entry = await client.entries.retrieve('entry_xxxxxxxxxxxx');\n\nconsole.log(entry.id);"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.entries.retrieve({\n    id: \"entry_xxxxxxxxxxxx\"\n});\n"
           }
         ]
       }
@@ -59781,8 +59799,8 @@
         "x-group-title": "CRM",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\nconst response = await client.entries.approve('entry_xxxxxxxxxxxx');\n\nconsole.log(response.job_id);"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.entries.approve({\n    id: \"entry_xxxxxxxxxxxx\"\n});\n"
           }
         ]
       }
@@ -60177,8 +60195,8 @@
         "x-group-title": "CRM",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\nconst entry = await client.entries.deny('entry_xxxxxxxxxxxx');\n\nconsole.log(entry.id);"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.entries.deny({\n    id: \"entry_xxxxxxxxxxxx\"\n});\n"
           }
         ]
       }
@@ -60685,8 +60703,8 @@
         "x-group-title": "Engagement",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\n// Automatically fetches more pages as needed.\nfor await (const experienceListResponse of client.experiences.list({\n  company_id: 'biz_xxxxxxxxxxxxxx',\n})) {\n  console.log(experienceListResponse.id);\n}"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.experiences.list({\n    first: 42,\n    last: 42,\n    company_id: \"biz_xxxxxxxxxxxxxx\",\n    product_id: \"prod_xxxxxxxxxxxxx\",\n    app_id: \"app_xxxxxxxxxxxxxx\",\n    created_before: \"2023-12-01T05:00:00Z\",\n    created_after: \"2023-12-01T05:00:00Z\"\n});\n"
           }
         ]
       },
@@ -61138,8 +61156,8 @@
         "x-group-title": "Engagement",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\nconst experience = await client.experiences.create({\n  app_id: 'app_xxxxxxxxxxxxxx',\n  company_id: 'biz_xxxxxxxxxxxxxx',\n});\n\nconsole.log(experience.id);"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.experiences.create({\n    app_id: \"app_xxxxxxxxxxxxxx\",\n    company_id: \"biz_xxxxxxxxxxxxxx\"\n});\n"
           }
         ]
       }
@@ -61533,8 +61551,8 @@
         "x-group-title": "Engagement",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\nconst experience = await client.experiences.delete('exp_xxxxxxxxxxxxxx');\n\nconsole.log(experience);"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.experiences.delete({\n    id: \"exp_xxxxxxxxxxxxxx\"\n});\n"
           }
         ]
       },
@@ -61923,8 +61941,8 @@
         "x-group-title": "Engagement",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\nconst experience = await client.experiences.retrieve('exp_xxxxxxxxxxxxxx');\n\nconsole.log(experience.id);"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.experiences.retrieve({\n    id: \"exp_xxxxxxxxxxxxxx\"\n});\n"
           }
         ]
       },
@@ -62393,8 +62411,8 @@
         "x-group-title": "Engagement",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\nconst experience = await client.experiences.update('exp_xxxxxxxxxxxxxx');\n\nconsole.log(experience.id);"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.experiences.update({\n    id: \"exp_xxxxxxxxxxxxxx\"\n});\n"
           }
         ]
       }
@@ -62808,8 +62826,8 @@
         "x-group-title": "Engagement",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\nconst experience = await client.experiences.attach('exp_xxxxxxxxxxxxxx', {\n  product_id: 'prod_xxxxxxxxxxxxx',\n});\n\nconsole.log(experience.id);"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.experiences.attach({\n    id: \"exp_xxxxxxxxxxxxxx\",\n    product_id: \"prod_xxxxxxxxxxxxx\"\n});\n"
           }
         ]
       }
@@ -63223,8 +63241,8 @@
         "x-group-title": "Engagement",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\nconst experience = await client.experiences.detach('exp_xxxxxxxxxxxxxx', {\n  product_id: 'prod_xxxxxxxxxxxxx',\n});\n\nconsole.log(experience.id);"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.experiences.detach({\n    id: \"exp_xxxxxxxxxxxxxx\",\n    product_id: \"prod_xxxxxxxxxxxxx\"\n});\n"
           }
         ]
       }
@@ -63638,8 +63656,8 @@
         "x-group-title": "Engagement",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\nconst experience = await client.experiences.duplicate('exp_xxxxxxxxxxxxxx');\n\nconsole.log(experience.id);"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.experiences.duplicate({\n    id: \"exp_xxxxxxxxxxxxxx\"\n});\n"
           }
         ]
       }
@@ -64098,8 +64116,8 @@
         "x-group-title": "Identity",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\n// Automatically fetches more pages as needed.\nfor await (const feeMarkupListResponse of client.feeMarkups.list({\n  company_id: 'biz_xxxxxxxxxxxxxx',\n})) {\n  console.log(feeMarkupListResponse.id);\n}"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.feeMarkups.list({\n    first: 42,\n    last: 42,\n    company_id: \"biz_xxxxxxxxxxxxxx\"\n});\n"
           }
         ]
       },
@@ -64536,8 +64554,8 @@
         "x-group-title": "Identity",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\nconst feeMarkup = await client.feeMarkups.create({\n  company_id: 'biz_xxxxxxxxxxxxxx',\n  fee_type: 'crypto_withdrawal_markup',\n});\n\nconsole.log(feeMarkup.id);"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.feeMarkups.create({\n    company_id: \"biz_xxxxxxxxxxxxxx\",\n    fee_type: \"crypto_withdrawal_markup\"\n});\n"
           }
         ]
       }
@@ -64930,8 +64948,8 @@
         "x-group-title": "Identity",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\nconst feeMarkup = await client.feeMarkups.delete('id');\n\nconsole.log(feeMarkup);"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.feeMarkups.delete({\n    id: \"id\"\n});\n"
           }
         ]
       }
@@ -65416,8 +65434,8 @@
         "x-group-title": "Developer",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\nconst file = await client.files.create({ filename: 'filename' });\n\nconsole.log(file.id);"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.files.create({\n    filename: \"terms.pdf\"\n});\n"
           }
         ]
       }
@@ -65808,8 +65826,8 @@
         "x-group-title": "Developer",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\nconst file = await client.files.retrieve('file_xxxxxxxxxxxxx');\n\nconsole.log(file.id);"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.files.retrieve({\n    id: \"id\"\n});\n"
           }
         ]
       }
@@ -66301,8 +66319,8 @@
         "x-group-title": "Engagement",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\n// Automatically fetches more pages as needed.\nfor await (const forumPostListResponse of client.forumPosts.list({\n  experience_id: 'exp_xxxxxxxxxxxxxx',\n})) {\n  console.log(forumPostListResponse.id);\n}"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.forumPosts.list({\n    first: 42,\n    last: 42,\n    experience_id: \"exp_xxxxxxxxxxxxxx\"\n});\n"
           }
         ]
       },
@@ -66838,8 +66856,8 @@
         "x-group-title": "Engagement",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\nconst forumPost = await client.forumPosts.create({ experience_id: 'exp_xxxxxxxxxxxxxx' });\n\nconsole.log(forumPost.id);"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.forumPosts.create({\n    experience_id: \"exp_xxxxxxxxxxxxxx\"\n});\n"
           }
         ]
       }
@@ -67231,8 +67249,8 @@
         "x-group-title": "Engagement",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\nconst forumPost = await client.forumPosts.retrieve('id');\n\nconsole.log(forumPost.id);"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.forumPosts.retrieve({\n    id: \"id\"\n});\n"
           }
         ]
       },
@@ -67687,8 +67705,8 @@
         "x-group-title": "Engagement",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\nconst forumPost = await client.forumPosts.update('id');\n\nconsole.log(forumPost.id);"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.forumPosts.update({\n    id: \"id\"\n});\n"
           }
         ]
       }
@@ -68159,8 +68177,8 @@
         "x-group-title": "Engagement",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\n// Automatically fetches more pages as needed.\nfor await (const forumListResponse of client.forums.list({ company_id: 'biz_xxxxxxxxxxxxxx' })) {\n  console.log(forumListResponse.id);\n}"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.forums.list({\n    first: 42,\n    last: 42,\n    company_id: \"biz_xxxxxxxxxxxxxx\",\n    product_id: \"prod_xxxxxxxxxxxxx\"\n});\n"
           }
         ]
       }
@@ -68552,8 +68570,8 @@
         "x-group-title": "Engagement",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\nconst forum = await client.forums.retrieve('id');\n\nconsole.log(forum.id);"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.forums.retrieve({\n    id: \"id\"\n});\n"
           }
         ]
       },
@@ -69018,8 +69036,8 @@
         "x-group-title": "Engagement",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\nconst forum = await client.forums.update('id');\n\nconsole.log(forum.id);"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.forums.update({\n    id: \"id\"\n});\n"
           }
         ]
       }
@@ -69497,7 +69515,13 @@
         "tags": [
           "Identity profiles"
         ],
-        "x-group-title": "Payouts"
+        "x-group-title": "Payouts",
+        "x-codeSamples": [
+          {
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.identityProfiles.listIdentityProfile({\n    first: 42,\n    last: 42,\n    company_id: \"biz_xxxxxxxxxxxxxx\"\n});\n"
+          }
+        ]
       }
     },
     "/identity_profiles/{id}": {
@@ -69895,7 +69919,13 @@
         "tags": [
           "Identity profiles"
         ],
-        "x-group-title": "Payouts"
+        "x-group-title": "Payouts",
+        "x-codeSamples": [
+          {
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.identityProfiles.unlinkIdentityProfile({\n    id: \"idpf_xxxxxxxxxxxxx\",\n    ledger_account_id: \"ldgr_xxxxxxxxxxxxx\"\n});\n"
+          }
+        ]
       },
       "get": {
         "description": "Retrieves the details of an existing identity profile.\n\nRequired permissions:\n - `identity:read`",
@@ -70281,7 +70311,13 @@
         "tags": [
           "Identity profiles"
         ],
-        "x-group-title": "Payouts"
+        "x-group-title": "Payouts",
+        "x-codeSamples": [
+          {
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.identityProfiles.retrieveIdentityProfile({\n    id: \"idpf_xxxxxxxxxxxxx\"\n});\n"
+          }
+        ]
       }
     },
     "/identity_profiles/{id}/verifications": {
@@ -70786,7 +70822,13 @@
         "tags": [
           "Identity profiles"
         ],
-        "x-group-title": "Payouts"
+        "x-group-title": "Payouts",
+        "x-codeSamples": [
+          {
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.identityProfiles.listVerificationsIdentityProfile({\n    id: \"idpf_xxxxxxxxxxxxx\",\n    first: 42,\n    last: 42\n});\n"
+          }
+        ]
       }
     },
     "/invoices": {
@@ -71334,8 +71376,8 @@
         "x-group-title": "Payins",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\n// Automatically fetches more pages as needed.\nfor await (const invoiceListItem of client.invoices.list()) {\n  console.log(invoiceListItem.id);\n}"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.invoices.list({\n    first: 42,\n    last: 42,\n    company_id: \"biz_xxxxxxxxxxxxxx\",\n    created_before: \"2023-12-01T05:00:00Z\",\n    created_after: \"2023-12-01T05:00:00Z\"\n});\n"
           }
         ]
       },
@@ -72653,8 +72695,8 @@
         "x-group-title": "Payins",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\nconst invoice = await client.invoices.create({\n  collection_method: 'send_invoice',\n  company_id: 'biz_xxxxxxxxxxxxxx',\n  plan: {},\n  product: { title: 'title' },\n});\n\nconsole.log(invoice.id);"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.invoices.create({\n    collection_method: \"send_invoice\",\n    company_id: \"biz_xxxxxxxxxxxxxx\",\n    plan: {},\n    product: {\n        title: \"title\"\n    }\n});\n"
           }
         ]
       }
@@ -73048,8 +73090,8 @@
         "x-group-title": "Payins",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\nconst invoice = await client.invoices.delete('inv_xxxxxxxxxxxxxx');\n\nconsole.log(invoice);"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.invoices.delete({\n    id: \"inv_xxxxxxxxxxxxxx\"\n});\n"
           }
         ]
       },
@@ -73443,8 +73485,8 @@
         "x-group-title": "Payins",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\nconst invoice = await client.invoices.retrieve('inv_xxxxxxxxxxxxxx');\n\nconsole.log(invoice.id);"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.invoices.retrieve({\n    id: \"inv_xxxxxxxxxxxxxx\"\n});\n"
           }
         ]
       },
@@ -74285,8 +74327,8 @@
         "x-group-title": "Payins",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\nconst invoice = await client.invoices.update('inv_xxxxxxxxxxxxxx');\n\nconsole.log(invoice.id);"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.invoices.update({\n    id: \"inv_xxxxxxxxxxxxxx\"\n});\n"
           }
         ]
       }
@@ -74680,8 +74722,8 @@
         "x-group-title": "Payins",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\nconst response = await client.invoices.markPaid('inv_xxxxxxxxxxxxxx');\n\nconsole.log(response);"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.invoices.markPaid({\n    id: \"inv_xxxxxxxxxxxxxx\"\n});\n"
           }
         ]
       }
@@ -75075,8 +75117,8 @@
         "x-group-title": "Payins",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\nconst response = await client.invoices.markUncollectible('inv_xxxxxxxxxxxxxx');\n\nconsole.log(response);"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.invoices.markUncollectible({\n    id: \"inv_xxxxxxxxxxxxxx\"\n});\n"
           }
         ]
       }
@@ -75470,8 +75512,8 @@
         "x-group-title": "Payins",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\nconst response = await client.invoices.resend('inv_xxxxxxxxxxxxxx');\n\nconsole.log(response);"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.invoices.resend({\n    id: \"inv_xxxxxxxxxxxxxx\"\n});\n"
           }
         ]
       }
@@ -75865,8 +75907,8 @@
         "x-group-title": "Payins",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\nconst response = await client.invoices.void('inv_xxxxxxxxxxxxxx');\n\nconsole.log(response);"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.invoices.void({\n    id: \"inv_xxxxxxxxxxxxxx\"\n});\n"
           }
         ]
       }
@@ -76369,8 +76411,8 @@
         "x-group-title": "CRM",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\n// Automatically fetches more pages as needed.\nfor await (const leadListResponse of client.leads.list({ company_id: 'biz_xxxxxxxxxxxxxx' })) {\n  console.log(leadListResponse.id);\n}"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.leads.list({\n    first: 42,\n    last: 42,\n    company_id: \"biz_xxxxxxxxxxxxxx\",\n    created_after: \"2023-12-01T05:00:00Z\",\n    created_before: \"2023-12-01T05:00:00Z\"\n});\n"
           }
         ]
       },
@@ -76805,8 +76847,8 @@
         "x-group-title": "CRM",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\nconst lead = await client.leads.create({ company_id: 'biz_xxxxxxxxxxxxxx' });\n\nconsole.log(lead.id);"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.leads.create({\n    company_id: \"biz_xxxxxxxxxxxxxx\"\n});\n"
           }
         ]
       }
@@ -77202,8 +77244,8 @@
         "x-group-title": "CRM",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\nconst lead = await client.leads.retrieve('lead_xxxxxxxxxxxxx');\n\nconsole.log(lead.id);"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.leads.retrieve({\n    id: \"lead_xxxxxxxxxxxxx\"\n});\n"
           }
         ]
       },
@@ -77626,8 +77668,8 @@
         "x-group-title": "CRM",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\nconst lead = await client.leads.update('lead_xxxxxxxxxxxxx');\n\nconsole.log(lead.id);"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.leads.update({\n    id: \"lead_xxxxxxxxxxxxx\"\n});\n"
           }
         ]
       }
@@ -78021,8 +78063,8 @@
         "x-group-title": "Payouts",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\nconst ledgerAccount = await client.ledgerAccounts.retrieve('ldgr_xxxxxxxxxxxxx');\n\nconsole.log(ledgerAccount.id);"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.ledgerAccounts.retrieve({\n    id: \"ldgr_xxxxxxxxxxxxx\"\n});\n"
           }
         ]
       }
@@ -78641,8 +78683,8 @@
         "x-group-title": "CRM",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\n// Automatically fetches more pages as needed.\nfor await (const member of client.members.list()) {\n  console.log(member.id);\n}"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.members.list();\n"
           }
         ]
       }
@@ -79036,8 +79078,8 @@
         "x-group-title": "CRM",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\nconst member = await client.members.retrieve('id');\n\nconsole.log(member.id);"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.members.retrieve({\n    id: \"id\"\n});\n"
           }
         ]
       }
@@ -79672,8 +79714,8 @@
         "x-group-title": "CRM",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\n// Automatically fetches more pages as needed.\nfor await (const membership of client.memberships.list()) {\n  console.log(membership.id);\n}"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.memberships.list();\n"
           }
         ]
       }
@@ -80067,8 +80109,8 @@
         "x-group-title": "CRM",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\nconst membership = await client.memberships.retrieve('id');\n\nconsole.log(membership.id);"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.memberships.retrieve({\n    id: \"id\"\n});\n"
           }
         ]
       },
@@ -80483,8 +80525,8 @@
         "x-group-title": "CRM",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\nconst membership = await client.memberships.update('id');\n\nconsole.log(membership.id);"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.memberships.update({\n    id: \"id\"\n});\n"
           }
         ]
       }
@@ -80897,7 +80939,13 @@
         "tags": [
           "Memberships"
         ],
-        "x-group-title": "CRM"
+        "x-group-title": "CRM",
+        "x-codeSamples": [
+          {
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.memberships.addFreeDaysMembership({\n    id: \"mem_xxxxxxxxxxxxxx\",\n    free_days: 42\n});\n"
+          }
+        ]
       }
     },
     "/memberships/{id}/cancel": {
@@ -81315,8 +81363,8 @@
         "x-group-title": "CRM",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\nconst membership = await client.memberships.cancel('id');\n\nconsole.log(membership.id);"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.memberships.cancel({\n    id: \"id\"\n});\n"
           }
         ]
       }
@@ -81741,8 +81789,8 @@
         "x-group-title": "CRM",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\nconst membership = await client.memberships.pause('id');\n\nconsole.log(membership.id);"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.memberships.pause({\n    id: \"id\"\n});\n"
           }
         ]
       }
@@ -82137,8 +82185,8 @@
         "x-group-title": "CRM",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\nconst membership = await client.memberships.resume('id');\n\nconsole.log(membership.id);"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.memberships.resume({\n    id: \"id\"\n});\n"
           }
         ]
       }
@@ -82530,7 +82578,13 @@
         "tags": [
           "Memberships"
         ],
-        "x-group-title": "CRM"
+        "x-group-title": "CRM",
+        "x-codeSamples": [
+          {
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.memberships.resyncAccessMembership({\n    id: \"mem_xxxxxxxxxxxxxx\"\n});\n"
+          }
+        ]
       }
     },
     "/memberships/{id}/uncancel": {
@@ -82920,7 +82974,13 @@
         "tags": [
           "Memberships"
         ],
-        "x-group-title": "CRM"
+        "x-group-title": "CRM",
+        "x-codeSamples": [
+          {
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.memberships.uncancelMembership({\n    id: \"mem_xxxxxxxxxxxxxx\"\n});\n"
+          }
+        ]
       }
     },
     "/messages": {
@@ -83397,8 +83457,8 @@
         "x-group-title": "Engagement",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\n// Automatically fetches more pages as needed.\nfor await (const messageListResponse of client.messages.list({ channel_id: 'channel_id' })) {\n  console.log(messageListResponse.id);\n}"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.messages.list({\n    first: 42,\n    last: 42,\n    channel_id: \"channel_id\"\n});\n"
           }
         ]
       },
@@ -83887,8 +83947,8 @@
         "x-group-title": "Engagement",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\nconst message = await client.messages.create({ channel_id: 'channel_id', content: 'content' });\n\nconsole.log(message.id);"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.messages.create({\n    channel_id: \"channel_id\",\n    content: \"content\"\n});\n"
           }
         ]
       }
@@ -84300,8 +84360,8 @@
         "x-group-title": "Engagement",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\nconst message = await client.messages.delete('id');\n\nconsole.log(message);"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.messages.delete({\n    id: \"id\"\n});\n"
           }
         ]
       },
@@ -84706,8 +84766,8 @@
         "x-group-title": "Engagement",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\nconst message = await client.messages.retrieve('id');\n\nconsole.log(message.id);"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.messages.retrieve({\n    id: \"id\"\n});\n"
           }
         ]
       },
@@ -85161,8 +85221,8 @@
         "x-group-title": "Engagement",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\nconst message = await client.messages.update('id');\n\nconsole.log(message.id);"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.messages.update({\n    id: \"id\"\n});\n"
           }
         ]
       }
@@ -85681,8 +85741,8 @@
         "x-group-title": "Engagement",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\nconst notification = await client.notifications.create({\n  content: 'Drop off at 4180 Burnet Rd. Plan on two days for the full coating.',\n  title: 'Your ceramic coating is booked',\n});\n\nconsole.log(notification.success);"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.notifications.create({\n    content: \"Drop off at 4180 Burnet Rd. Plan on two days for the full coating.\",\n    title: \"Your ceramic coating is booked\"\n});\n"
           }
         ]
       }
@@ -86276,8 +86336,8 @@
         "x-group-title": "Payins",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\n// Automatically fetches more pages as needed.\nfor await (const paymentMethodListResponse of client.paymentMethods.list()) {\n  console.log(paymentMethodListResponse);\n}"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.paymentMethods.list({\n    first: 42,\n    last: 42,\n    member_id: \"mber_xxxxxxxxxxxxx\",\n    company_id: \"biz_xxxxxxxxxxxxxx\",\n    created_before: \"2023-12-01T05:00:00Z\",\n    created_after: \"2023-12-01T05:00:00Z\"\n});\n"
           }
         ]
       }
@@ -86692,7 +86752,13 @@
         "tags": [
           "Payment methods"
         ],
-        "x-group-title": "Payins"
+        "x-group-title": "Payins",
+        "x-codeSamples": [
+          {
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.paymentMethods.deletePaymentMethod({\n    id: \"payt_xxxxxxxxxxxxx\",\n    company_id: \"biz_xxxxxxxxxxxxxx\",\n    member_id: \"mber_xxxxxxxxxxxxx\"\n});\n"
+          }
+        ]
       },
       "get": {
         "description": "Retrieves the details of an existing payment method. Addresses a member's wallet when member_id or account_id is given, otherwise your own.\n\nRequired permissions:\n - `member:payment_methods:read`",
@@ -87105,8 +87171,8 @@
         "x-group-title": "Payins",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\nconst paymentMethod = await client.paymentMethods.retrieve('payt_xxxxxxxxxxxxx');\n\nconsole.log(paymentMethod);"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.paymentMethods.retrieve({\n    id: \"payt_xxxxxxxxxxxxx\",\n    company_id: \"biz_xxxxxxxxxxxxxx\",\n    member_id: \"mber_xxxxxxxxxxxxx\"\n});\n"
           }
         ]
       }
@@ -87769,8 +87835,8 @@
         "x-group-title": "Payins",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\n// Automatically fetches more pages as needed.\nfor await (const paymentListResponse of client.payments.list()) {\n  console.log(paymentListResponse.id);\n}"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.payments.list({\n    first: 42,\n    last: 42,\n    company_id: \"biz_xxxxxxxxxxxxxx\",\n    created_before: \"2023-12-01T05:00:00Z\",\n    created_after: \"2023-12-01T05:00:00Z\",\n    updated_before: \"2023-12-01T05:00:00Z\",\n    updated_after: \"2023-12-01T05:00:00Z\"\n});\n"
           }
         ]
       },
@@ -88920,8 +88986,8 @@
         "x-group-title": "Payins",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\nconst payment = await client.payments.create({\n  company_id: 'biz_xxxxxxxxxxxxxx',\n  confirmation_token: 'confirmation_token',\n  plan: { currency: 'usd' },\n});\n\nconsole.log(payment.id);"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.payments.create({\n    company_id: \"biz_xxxxxxxxxxxxxx\",\n    confirmation_token: \"confirmation_token\",\n    plan: {\n        currency: \"usd\"\n    }\n});\n"
           }
         ]
       }
@@ -89344,8 +89410,8 @@
         "x-group-title": "Payins",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\nconst payment = await client.payments.retrieve('pay_xxxxxxxxxxxxxx');\n\nconsole.log(payment.id);"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.payments.retrieve({\n    id: \"pay_xxxxxxxxxxxxxx\"\n});\n"
           }
         ]
       }
@@ -89829,8 +89895,8 @@
         "x-group-title": "Payins",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\n// Automatically fetches more pages as needed.\nfor await (const paymentListFeesResponse of client.payments.listFees('pay_xxxxxxxxxxxxxx')) {\n  console.log(paymentListFeesResponse.amount);\n}"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.payments.listFees({\n    id: \"pay_xxxxxxxxxxxxxx\",\n    first: 42,\n    last: 42\n});\n"
           }
         ]
       }
@@ -90254,8 +90320,8 @@
         "x-group-title": "Payins",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\nconst payment = await client.payments.refund('pay_xxxxxxxxxxxxxx');\n\nconsole.log(payment.id);"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.payments.refund({\n    id: \"pay_xxxxxxxxxxxxxx\"\n});\n"
           }
         ]
       }
@@ -90657,8 +90723,8 @@
         "x-group-title": "Payins",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\nconst payment = await client.payments.retry('pay_xxxxxxxxxxxxxx');\n\nconsole.log(payment.id);"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.payments.retry({\n    id: \"pay_xxxxxxxxxxxxxx\"\n});\n"
           }
         ]
       }
@@ -91060,8 +91126,8 @@
         "x-group-title": "Payins",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\nconst payment = await client.payments.void('pay_xxxxxxxxxxxxxx');\n\nconsole.log(payment.id);"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.payments.void({\n    id: \"pay_xxxxxxxxxxxxxx\"\n});\n"
           }
         ]
       }
@@ -91454,8 +91520,8 @@
         "x-group-title": "Payouts",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\nconst payoutAccount = await client.payoutAccounts.retrieve('poact_xxxxxxxxxxxx');\n\nconsole.log(payoutAccount.id);"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.payoutAccounts.retrieve({\n    id: \"poact_xxxxxxxxxxxx\"\n});\n"
           }
         ]
       }
@@ -91911,7 +91977,13 @@
         "tags": [
           "Payout methods"
         ],
-        "x-group-title": "Payouts"
+        "x-group-title": "Payouts",
+        "x-codeSamples": [
+          {
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.payoutMethods.listPayoutMethod({\n    first: 42,\n    last: 42,\n    company_id: \"biz_xxxxxxxxxxxxxx\"\n});\n"
+          }
+        ]
       }
     },
     "/payout_methods/{id}": {
@@ -92299,7 +92371,13 @@
         "tags": [
           "Payout methods"
         ],
-        "x-group-title": "Payouts"
+        "x-group-title": "Payouts",
+        "x-codeSamples": [
+          {
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.payoutMethods.retrievePayoutMethod({\n    id: \"potk_xxxxxxxxxxxxx\"\n});\n"
+          }
+        ]
       }
     },
     "/products": {
@@ -92832,8 +92910,8 @@
         "x-group-title": "Payins",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\n// Automatically fetches more pages as needed.\nfor await (const productListItem of client.products.list({ account_id: 'account_id' })) {\n  console.log(productListItem.id);\n}"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.products.list({\n    visibilities: [\"visible\"],\n    access_pass_types: [\"regular\"]\n});\n"
           }
         ]
       },
@@ -93514,8 +93592,8 @@
         "x-group-title": "Payins",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\nconst product = await client.products.create({ title: 'Interior Deep Clean' });\n\nconsole.log(product.id);"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.products.create({\n    title: \"Interior Deep Clean\"\n});\n"
           }
         ]
       }
@@ -93909,8 +93987,8 @@
         "x-group-title": "Payins",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\nconst product = await client.products.delete('id');\n\nconsole.log(product.id);"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.products.delete({\n    id: \"id\"\n});\n"
           }
         ]
       },
@@ -94301,8 +94379,8 @@
         "x-group-title": "Payins",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop();\n\nconst product = await client.products.retrieve('id');\n\nconsole.log(product.id);"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.products.retrieve({\n    id: \"id\"\n});\n"
           }
         ]
       },
@@ -94892,8 +94970,8 @@
         "x-group-title": "Payins",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\nconst product = await client.products.update('id');\n\nconsole.log(product.id);"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.products.update({\n    id: \"id\"\n});\n"
           }
         ]
       }
@@ -95420,8 +95498,8 @@
         "x-group-title": "Payins",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\n// Automatically fetches more pages as needed.\nfor await (const promoCodeListResponse of client.promoCodes.list({ account_id: 'account_id' })) {\n  console.log(promoCodeListResponse.id);\n}"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.promoCodes.list({\n    account_id: \"account_id\",\n    product_ids: [\"prod_xxxxxxxxxxxxxx\"],\n    plan_ids: [\"plan_xxxxxxxxxxxxxx\"]\n});\n"
           }
         ]
       },
@@ -95919,8 +95997,8 @@
         "x-group-title": "Payins",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\nconst promoCode = await client.promoCodes.create({\n  account_id: 'biz_xxxxxxxxxxxxxx',\n  amount_off: 25,\n  base_currency: 'usd',\n  code: 'AFFILIATE25',\n  new_users_only: true,\n  promo_duration_months: 3,\n  promo_type: 'percentage',\n});\n\nconsole.log(promoCode.id);"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.promoCodes.create({\n    account_id: \"biz_xxxxxxxxxxxxxx\",\n    amount_off: 25,\n    base_currency: \"usd\",\n    code: \"AFFILIATE25\",\n    new_users_only: true,\n    promo_duration_months: 3,\n    promo_type: \"percentage\"\n});\n"
           }
         ]
       }
@@ -96314,8 +96392,8 @@
         "x-group-title": "Payins",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\nconst promoCode = await client.promoCodes.delete('id');\n\nconsole.log(promoCode.id);"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.promoCodes.delete({\n    id: \"id\"\n});\n"
           }
         ]
       },
@@ -96707,8 +96785,8 @@
         "x-group-title": "Payins",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\nconst promoCode = await client.promoCodes.retrieve('id');\n\nconsole.log(promoCode.id);"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.promoCodes.retrieve({\n    id: \"id\"\n});\n"
           }
         ]
       },
@@ -97593,8 +97671,8 @@
         "x-group-title": "Engagement",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\n// Automatically fetches more pages as needed.\nfor await (const reactionListResponse of client.reactions.list({ resource_id: 'resource_id' })) {\n  console.log(reactionListResponse.id);\n}"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.reactions.list({\n    first: 42,\n    last: 42,\n    resource_id: \"resource_id\"\n});\n"
           }
         ]
       },
@@ -98028,8 +98106,8 @@
         "x-group-title": "Engagement",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\nconst reaction = await client.reactions.create({ resource_id: 'resource_id' });\n\nconsole.log(reaction.id);"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.reactions.create({\n    resource_id: \"resource_id\"\n});\n"
           }
         ]
       }
@@ -98454,8 +98532,8 @@
         "x-group-title": "Engagement",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\nconst reaction = await client.reactions.delete('reac_xxxxxxxxxxxxxxxxxxxxxx');\n\nconsole.log(reaction);"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.reactions.delete({\n    id: \"reac_xxxxxxxxxxxxxxxxxxxxxx\"\n});\n"
           }
         ]
       },
@@ -98866,8 +98944,8 @@
         "x-group-title": "Engagement",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\nconst reaction = await client.reactions.retrieve('reac_xxxxxxxxxxxxxxxxxxxxxx');\n\nconsole.log(reaction.id);"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.reactions.retrieve({\n    id: \"reac_xxxxxxxxxxxxxxxxxxxxxx\"\n});\n"
           }
         ]
       }
@@ -99387,8 +99465,8 @@
         "x-group-title": "Payins",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\n// Automatically fetches more pages as needed.\nfor await (const refundListResponse of client.refunds.list()) {\n  console.log(refundListResponse.id);\n}"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.refunds.list({\n    first: 42,\n    last: 42,\n    payment_id: \"pay_xxxxxxxxxxxxxx\",\n    company_id: \"biz_xxxxxxxxxxxxxx\",\n    user_id: \"user_xxxxxxxxxxxxx\",\n    created_before: \"2023-12-01T05:00:00Z\",\n    created_after: \"2023-12-01T05:00:00Z\"\n});\n"
           }
         ]
       }
@@ -99786,8 +99864,8 @@
         "x-group-title": "Payins",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\nconst refund = await client.refunds.retrieve('rf_xxxxxxxxxxxxxxx');\n\nconsole.log(refund.id);"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.refunds.retrieve({\n    id: \"rf_xxxxxxxxxxxxxxx\"\n});\n"
           }
         ]
       }
@@ -100297,8 +100375,8 @@
         "x-group-title": "Payins",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\n// Automatically fetches more pages as needed.\nfor await (const resolutionCenterCaseListResponse of client.resolutionCenterCases.list()) {\n  console.log(resolutionCenterCaseListResponse.id);\n}"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.resolutionCenterCases.list();\n"
           }
         ]
       }
@@ -100691,8 +100769,8 @@
         "x-group-title": "Payins",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\nconst resolutionCenterCase = await client.resolutionCenterCases.retrieve('id');\n\nconsole.log(resolutionCenterCase.id);"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.resolutionCenterCases.retrieve({\n    id: \"id\"\n});\n"
           }
         ]
       }
@@ -101199,8 +101277,8 @@
         "x-group-title": "CRM",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\n// Automatically fetches more pages as needed.\nfor await (const reviewListResponse of client.reviews.list({ product_id: 'prod_xxxxxxxxxxxxx' })) {\n  console.log(reviewListResponse.id);\n}"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.reviews.list({\n    first: 42,\n    last: 42,\n    product_id: \"prod_xxxxxxxxxxxxx\",\n    min_stars: 42,\n    max_stars: 42,\n    created_before: \"2023-12-01T05:00:00Z\",\n    created_after: \"2023-12-01T05:00:00Z\"\n});\n"
           }
         ]
       }
@@ -101591,8 +101669,8 @@
         "x-group-title": "CRM",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\nconst review = await client.reviews.retrieve('rev_xxxxxxxxxxxxxx');\n\nconsole.log(review.id);"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.reviews.retrieve({\n    id: \"rev_xxxxxxxxxxxxxx\"\n});\n"
           }
         ]
       }
@@ -102090,8 +102168,8 @@
         "x-group-title": "Payins",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\n// Automatically fetches more pages as needed.\nfor await (const setupIntentListResponse of client.setupIntents.list({\n  company_id: 'biz_xxxxxxxxxxxxxx',\n})) {\n  console.log(setupIntentListResponse.id);\n}"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.setupIntents.list({\n    first: 42,\n    last: 42,\n    company_id: \"biz_xxxxxxxxxxxxxx\",\n    created_before: \"2023-12-01T05:00:00Z\",\n    created_after: \"2023-12-01T05:00:00Z\"\n});\n"
           }
         ]
       },
@@ -102893,8 +102971,8 @@
         "x-group-title": "Payins",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\nconst setupIntent = await client.setupIntents.create({\n  company_id: 'biz_xxxxxxxxxxxxxx',\n  confirmation_token: 'ctok_xxxxxxxxxxxxxx',\n});\n\nconsole.log(setupIntent.id);"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.setupIntents.create({\n    company_id: \"biz_xxxxxxxxxxxxxx\",\n    confirmation_token: \"ctok_xxxxxxxxxxxxxx\"\n});\n"
           }
         ]
       }
@@ -103289,8 +103367,8 @@
         "x-group-title": "Payins",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\nconst setupIntent = await client.setupIntents.retrieve('sint_xxxxxxxxxxxxx');\n\nconsole.log(setupIntent.id);"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.setupIntents.retrieve({\n    id: \"sint_xxxxxxxxxxxxx\"\n});\n"
           }
         ]
       }
@@ -103774,8 +103852,8 @@
         "x-group-title": "CRM",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\n// Automatically fetches more pages as needed.\nfor await (const shipment of client.shipments.list()) {\n  console.log(shipment.id);\n}"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.shipments.list({\n    payment_id: [\"pay_xxxxxxxxxxxxxx\"]\n});\n"
           }
         ]
       },
@@ -104188,8 +104266,8 @@
         "x-group-title": "CRM",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\nconst shipment = await client.shipments.create({\n  payment_id: 'pay_xxxxxxxxxxxxxx',\n  tracking_number: '1Z999AA10123456784',\n});\n\nconsole.log(shipment.id);"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.shipments.create({\n    payment_id: \"pay_xxxxxxxxxxxxxx\",\n    tracking_number: \"1Z999AA10123456784\"\n});\n"
           }
         ]
       }
@@ -104583,8 +104661,8 @@
         "x-group-title": "CRM",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\nconst shipment = await client.shipments.retrieve('id');\n\nconsole.log(shipment.id);"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.shipments.retrieve({\n    id: \"id\"\n});\n"
           }
         ]
       }
@@ -105511,7 +105589,13 @@
         "tags": [
           "Stats"
         ],
-        "x-group-title": "Stats"
+        "x-group-title": "Stats",
+        "x-codeSamples": [
+          {
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.stats.describeStats({\n    company_id: \"biz_xxxxxxxxxxxxxx\",\n    user_id: \"user_xxxxxxxxxxxxx\"\n});\n"
+          }
+        ]
       }
     },
     "/stats/metric": {
@@ -106099,7 +106183,13 @@
         "tags": [
           "Stats"
         ],
-        "x-group-title": "Stats"
+        "x-group-title": "Stats",
+        "x-codeSamples": [
+          {
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.stats.metricStats({\n    resource: \"resource\",\n    from: \"2023-12-01T05:00:00Z\",\n    to: \"2023-12-01T05:00:00Z\",\n    company_id: \"biz_xxxxxxxxxxxxxx\",\n    user_id: \"user_xxxxxxxxxxxxx\"\n});\n"
+          }
+        ]
       }
     },
     "/stats/raw": {
@@ -106677,7 +106767,13 @@
         "tags": [
           "Stats"
         ],
-        "x-group-title": "Stats"
+        "x-group-title": "Stats",
+        "x-codeSamples": [
+          {
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.stats.rawStats({\n    resource: \"resource\",\n    from: \"2023-12-01T05:00:00Z\",\n    to: \"2023-12-01T05:00:00Z\",\n    limit: 42,\n    company_id: \"biz_xxxxxxxxxxxxxx\",\n    user_id: \"user_xxxxxxxxxxxxx\"\n});\n"
+          }
+        ]
       }
     },
     "/support_channels": {
@@ -107178,8 +107274,8 @@
         "x-group-title": "Engagement",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\n// Automatically fetches more pages as needed.\nfor await (const supportChannelListResponse of client.supportChannels.list()) {\n  console.log(supportChannelListResponse.id);\n}"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.supportChannels.list({\n    first: 42,\n    last: 42,\n    company_id: \"biz_xxxxxxxxxxxxxx\"\n});\n"
           }
         ]
       },
@@ -107600,8 +107696,8 @@
         "x-group-title": "Engagement",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\nconst supportChannel = await client.supportChannels.create({\n  company_id: 'biz_xxxxxxxxxxxxxx',\n  user_id: 'user_xxxxxxxxxxxxx',\n});\n\nconsole.log(supportChannel.id);"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.supportChannels.create({\n    company_id: \"biz_xxxxxxxxxxxxxx\",\n    user_id: \"user_xxxxxxxxxxxxx\"\n});\n"
           }
         ]
       }
@@ -107993,8 +108089,8 @@
         "x-group-title": "Engagement",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\nconst supportChannel = await client.supportChannels.retrieve('id');\n\nconsole.log(supportChannel.id);"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.supportChannels.retrieve({\n    id: \"id\"\n});\n"
           }
         ]
       }
@@ -108414,8 +108510,8 @@
         "x-group-title": "Payouts",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\nconst topup = await client.topups.create({\n  amount: 6.9,\n  company_id: 'biz_xxxxxxxxxxxxxx',\n  currency: 'usd',\n  payment_method_id: 'pmt_xxxxxxxxxxxxxx',\n});\n\nconsole.log(topup.id);"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.topups.create({\n    amount: 6.9,\n    company_id: \"biz_xxxxxxxxxxxxxx\",\n    currency: \"usd\",\n    payment_method_id: \"pmt_xxxxxxxxxxxxxx\"\n});\n"
           }
         ]
       }
@@ -108874,8 +108970,8 @@
         "x-group-title": "Payouts",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\nconst verifications = await client.verifications.list({ account_id: 'account_id' });\n\nconsole.log(verifications.data);"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.verifications.list({\n    account_id: \"account_id\"\n});\n"
           }
         ]
       }
@@ -109268,8 +109364,8 @@
         "x-group-title": "Payouts",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\nconst verification = await client.verifications.retrieve('id');\n\nconsole.log(verification.id);"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.verifications.retrieve({\n    id: \"id\"\n});\n"
           }
         ]
       }
@@ -109740,8 +109836,8 @@
         "x-group-title": "Developer",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\n// Automatically fetches more pages as needed.\nfor await (const webhookListResponse of client.webhooks.list({ account_id: 'account_id' })) {\n  console.log(webhookListResponse.id);\n}"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.webhooks.list({\n    account_id: \"account_id\"\n});\n"
           }
         ]
       },
@@ -110265,8 +110361,8 @@
         "x-group-title": "Developer",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\nconst webhook = await client.webhooks.create({ url: 'https://example.com/hooks' });\n\nconsole.log(webhook.id);"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.webhooks.create({\n    url: \"https://example.com/hooks\"\n});\n"
           }
         ]
       }
@@ -110660,8 +110756,8 @@
         "x-group-title": "Developer",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\nconst webhook = await client.webhooks.delete('id');\n\nconsole.log(webhook.id);"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.webhooks.delete({\n    id: \"id\"\n});\n"
           }
         ]
       },
@@ -111052,8 +111148,8 @@
         "x-group-title": "Developer",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\nconst webhook = await client.webhooks.retrieve('id');\n\nconsole.log(webhook.id);"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.webhooks.retrieve({\n    id: \"id\"\n});\n"
           }
         ]
       },
@@ -111508,8 +111604,8 @@
         "x-group-title": "Developer",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\nconst webhook = await client.webhooks.update('id');\n\nconsole.log(webhook.id);"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.webhooks.update({\n    id: \"id\"\n});\n"
           }
         ]
       }
@@ -111944,8 +112040,8 @@
         "x-group-title": "Developer",
         "x-codeSamples": [
           {
-            "lang": "JavaScript",
-            "source": "import Whop from '@whop/sdk';\n\nconst client = new Whop({\n  apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted\n});\n\nconst response = await client.webhooks.test('id', { event: 'payment.succeeded' });\n\nconsole.log(response.body);"
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.webhooks.test({\n    id: \"id\",\n    event: \"payment.succeeded\"\n});\n"
           }
         ]
       }
@@ -112456,7 +112552,13 @@
         "tags": [
           "Webhooks"
         ],
-        "x-group-title": "Developer"
+        "x-group-title": "Developer",
+        "x-codeSamples": [
+          {
+            "lang": "TypeScript",
+            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.webhooks.deliveriesWebhook({\n    webhook_id: \"webhook_id\",\n    first: 42,\n    last: 42\n});\n"
+          }
+        ]
       }
     }
   },
@@ -114147,8 +114249,13 @@
                       "username": "marcuswebb"
                     }
                   },
-                  "plan": null,
-                  "product": null,
+                  "plan": {
+                    "id": "plan_xxxxxxxxxxxxxx"
+                  },
+                  "product": {
+                    "id": "prod_xxxxxxxxxxxxxx",
+                    "title": "Ceramic Coating Package"
+                  },
                   "product_description": null,
                   "reason": "fraudulent",
                   "reason_code": null,
@@ -114321,8 +114428,13 @@
                       "username": "marcuswebb"
                     }
                   },
-                  "plan": null,
-                  "product": null,
+                  "plan": {
+                    "id": "plan_xxxxxxxxxxxxxx"
+                  },
+                  "product": {
+                    "id": "prod_xxxxxxxxxxxxxx",
+                    "title": "Ceramic Coating Package"
+                  },
                   "product_description": "Two-day ceramic coating service, completed as scheduled on the booked date.",
                   "reason": "fraudulent",
                   "reason_code": null,
@@ -119041,6 +119153,7 @@
                     "route": "biz_xxxxxxxxxxxxxx",
                     "title": "Shine Time Auto Detailing"
                   },
+                  "average_review_rating": 0,
                   "created_at": "2026-01-01T12:00:00.000Z",
                   "custom_cta": null,
                   "custom_cta_url": null,
@@ -119113,6 +119226,11 @@
                           "object",
                           "null"
                         ]
+                      },
+                      "average_review_rating": {
+                        "description": "Average star rating across published reviews for this product, from `1.0` to `5.0`. Returns `0.0` when no published-review rating is available.",
+                        "example": 0,
+                        "type": "number"
                       },
                       "created_at": {
                         "description": "When the product was created, as an ISO 8601 timestamp.",
@@ -119506,6 +119624,7 @@
                       "member_count",
                       "route",
                       "published_reviews_count",
+                      "average_review_rating",
                       "external_identifier",
                       "metadata",
                       "labels",

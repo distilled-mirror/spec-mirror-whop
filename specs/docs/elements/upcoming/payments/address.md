@@ -11,7 +11,7 @@
 </div>
 
 <div data-whop-platform="swift" style={{ display: "none" }}>
-  Mounts anywhere. Keep an `AddressElementManager` near your submit button to read and validate the address.
+  Mounts inside a `WhopPayments` scope. Collects the billing address in the selected country's own format, and the controller reads it for the mint whether or not you bind it.
 </div>
 
 <div data-whop-platform="react-native" style={{ display: "none" }}>
@@ -67,26 +67,23 @@
         ```
 
         ```swift Swift theme={null}
+        import Elements
         import SwiftUI
-        import WhopElements
 
+        // .whopElements(environment:) runs once at the app root. See Getting started.
         struct CheckoutScreen: View {
-            @State private var manager = AddressElementManager()
+            @State private var address = PostalAddress()
+            @State private var addressComplete = false
 
             var body: some View {
-                ScrollView {
-                    AddressElement(manager: manager) { snapshot in
-                        print(snapshot.isComplete)
+                WhopPayments(accountID: "biz_xxxx", charge: .plan(id: "plan_xxxx")) { payments in
+                    ScrollView {
+                        VStack(alignment: .leading, spacing: 20) {
+                        WhopAddressElement(address: $address, isComplete: $addressComplete)
+                            WhopBrandingElement()
+                        }
+                        .padding()
                     }
-                    .padding()
-                }
-                .safeAreaInset(edge: .bottom) {
-                    Button("Continue") {
-                        let snapshot = manager.validate()
-                        guard snapshot.isComplete else { return }
-                        print(snapshot.address.country, snapshot.address.postalCode ?? "")
-                    }
-                    .padding()
                 }
             }
         }
@@ -104,14 +101,6 @@
       </div>
 
       <p style={{ fontSize: "0.8125rem", opacity: 0.7 }}>Example data. [Open the Playground](/elements/upcoming/payments/overview#playground).</p>
-    </div>
-
-    <div data-whop-platform="swift" style={{ display: "none" }}>
-      <div style={{ width: "22rem", maxWidth: "100%" }}>
-        <div data-whop-simulator-shell className="whop-ios-simulator" style={{ position: "relative", aspectRatio: "390 / 800", overflow: "hidden" }}>
-          <iframe src={"https://app.revyl.ai/embed/89c536ac-28ef-45d0-b99a-ecfffe579e33?controls=0"} title="AddressElement running on an iPhone simulator" loading="lazy" allow="fullscreen; clipboard-read; clipboard-write" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", border: 0, background: "transparent", display: "block" }} />
-        </div>
-      </div>
     </div>
 
     <div data-whop-platform="react-native" style={{ display: "none" }}>
@@ -283,74 +272,88 @@
 <div data-whop-platform="swift" style={{ display: "none" }}>
   ## Parameters
 
-  <ResponseField name="manager" type="AddressElementManager?">
-    Reads and validates the address outside the view. Keep one with `@State`, then call `validate()` before submitting.
+  <ResponseField name="address" type="Binding<PostalAddress>?">
+    Reads the collected address back out. The controller collects it either way.
   </ResponseField>
 
-  <ResponseField name="layout" type="AddressElement.Layout">
+  <ResponseField name="isComplete" type="Binding<Bool>?">
+    True once every field the country requires is filled and valid.
+  </ResponseField>
+
+  <ResponseField name="mode" type="WhopAddressElement.Mode">
+    `.billing` or `.shipping`. Shipping asks the keyboard for shipping fields. Defaults to `.billing`.
+  </ResponseField>
+
+  <ResponseField name="layout" type="WhopAddressElement.Layout">
     `.full` labels every field and stacks them; `.compact` moves the labels into placeholders. Defaults to `.full`.
   </ResponseField>
 
-  <ResponseField name="scope" type="AddressElement.Scope">
-    `.full` collects the country's whole address format; `.minimal` collects country and postal code only. Defaults to `.full`.
+  <ResponseField name="scope" type="WhopAddressElement.Scope">
+    `.full` collects the country's whole format; `.minimal` collects country and postal code only. Defaults to `.full`.
   </ResponseField>
 
-  <ResponseField name="name" type="AddressElement.NameFields">
+  <ResponseField name="name" type="WhopAddressElement.NameFields">
     `.combined` for one full-name field, `.split` for first and last, `.none` to leave the name out. Defaults to `.combined`.
   </ResponseField>
 
-  <ResponseField name="organization" type="AddressElement.OrganizationFields">
+  <ResponseField name="organization" type="WhopAddressElement.OrganizationFields">
     `.none`, `.name` for an organization name, or `.nameWithType` to also ask whether it is a business or an individual. Defaults to `.none`.
   </ResponseField>
 
-  <ResponseField name="line2" type="AddressElement.Line2Field">
-    `.always` shows the second line, `.toggle` reveals it with a button, `.never` leaves it out. Defaults to `.always`.
+  <ResponseField name="line2" type="WhopAddressElement.Line2Field">
+    `.always` shows the second line, `.toggle` reveals it with a button, `.never` leaves it out. Defaults to `.toggle`.
   </ResponseField>
 
-  <ResponseField name="defaultValues" type="WhopAddress?">
-    Values to start from. Its `country` is an ISO 3166-1 alpha-2 code and takes precedence over country detection.
+  <ResponseField name="defaultValues" type="PostalAddress?">
+    Values to start from. Its `country` is an ISO 3166-1 alpha-2 code and takes precedence over detection.
   </ResponseField>
 
   <ResponseField name="detectCountry" type="Bool">
-    Uses the device region when `true`. Falls back to `countryHint`, then US. Defaults to `true`.
+    Starts on the buyer's own country when true. Falls back to `countryHint`, then the charge currency's country, then US. Defaults to `true`.
   </ResponseField>
 
   <ResponseField name="allowedCountries" type="[String]?">
-    Restrict the country picker to these ISO 3166-1 alpha-2 codes. Defaults to every country.
+    Restricts the picker to these ISO 3166-1 alpha-2 codes, intersected with the selected method's own constraint.
   </ResponseField>
 
   <ResponseField name="countryHint" type="String?">
-    ISO 3166-1 alpha-2 fallback for the country chain, for example one derived from the buyer's currency.
+    ISO 3166-1 alpha-2 fallback for the country chain.
   </ResponseField>
 
   <ResponseField name="autocomplete" type="Bool">
-    Shows street suggestions as the buyer types. Disable it to show every field immediately. Defaults to `true`.
+    Street suggestions as the buyer types. With it off there is nothing to pick, so every field shows from the start. Defaults to `true`.
   </ResponseField>
 
-  <ResponseField name="onChange" type="((WhopAddressSnapshot) -> Void)?">
-    Called on every edit with the current snapshot.
-  </ResponseField>
-
-  ## `WhopAddressSnapshot`
+  ## `PostalAddress`
 
   What a selection hands back:
 
-  * `isComplete: Bool`: every field the country requires is filled and valid
-  * `address: WhopAddress`: what the buyer has entered so far
-  * `errors: [WhopAddressField: WhopAddressFieldError]`: empty exactly when `isComplete` is true
+  * `country: String`: ISO 3166-1 alpha-2, uppercased
+  * `line1` / `line2` / `city` / `state` / `postalCode`: `String?`, in the country's own format
+  * `name` / `firstName` / `lastName`: `String?`, per the `name` mode
+  * `organization` / `organizationType`: `String?`, per the `organization` mode
 
   ## States
 
-  The form renders immediately. `manager.validate()` reveals field errors and returns the current snapshot. `errors` is empty when `isComplete` is true. With autocomplete at `.full` scope, locality fields appear after a suggestion or manual entry. Disable autocomplete to show every field immediately.
+  The form renders immediately. With autocomplete on at `.full` scope, the locality fields appear after a suggestion or a manual entry; turn it off and every field shows at once. Errors reveal on the first confirm attempt, then live.
 
   ## Good to know
 
-  * MapKit provides street suggestions on-device. Whop doesn't receive the buyer's query as they type.
-  * `defaultValues.country` overrides detection. Detection falls back to `countryHint`, then US.
-  * `WhopAddress` uses the web payload and confirmation-token `billing_details` keys. The same JSON works across platforms.
+  * MapKit provides the street suggestions on-device. Whop never sees the buyer's query as they type.
+  * `defaultValues.country` beats detection. Detection falls back to `countryHint`, then the charge currency's country, then US.
+  * `allowedCountries` is intersected with the selected method's own billing-country constraint, so a method that only takes one country narrows the picker on its own.
+  * `PostalAddress` uses the confirmation-token `billing_details` keys, so the same JSON works across platforms.
+
+  ## Install
+
+  ```swift theme={null}
+  dependencies: [
+      .package(url: "https://github.com/whopio/elements-swift.git", from: "0.1.0")
+  ]
+  ```
 
   <Note>
-    Call `WhopSDK.configure(tokenProvider:)` once at launch. Views wait for the token. See [Getting started](/elements/upcoming/getting-started). Apply a theme with `.whopTheme(_:)`.
+    Mount it inside a `WhopPayments(accountID:charge:)` scope, which creates the controller and hands it to its content. `payments.buyer` is the signed-in buyer once an email sign-in has proven one. `WhopBrandingElement` has to be on screen too, because Whop is merchant of record on these sales and `createConfirmationToken` refuses without it. Style with `.whopElementsAppearance(_:)`. The module is `Elements`, not the wallet SDK's `WhopElements`. See [Getting started](/elements/upcoming/getting-started) and [Appearance](/elements/upcoming/appearance).
   </Note>
 </div>
 

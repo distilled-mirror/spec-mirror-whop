@@ -443,6 +443,44 @@
   * [`ActivityElement`](/elements/upcoming/wallet/activity#swift): the ledger activity feed
 
   `WhopChatView` and `WhopDMsListView` ship in the same package for viewer-authenticated chat. See the [README](https://github.com/whopio/whopsdk-elements-swift).
+
+  ## Payments on iOS
+
+  The payments elements ship from their own package, [`whopio/elements-swift`](https://github.com/whopio/elements-swift), vending an `Elements` module. The wallet SDK's module is `WhopElements`, so the two install side by side:
+
+  ```swift theme={null}
+  dependencies: [
+      .package(url: "https://github.com/whopio/elements-swift.git", from: "0.1.0")
+  ]
+  ```
+
+  The module is `Elements`, not `WhopElements`, so `import Elements` is the one line that changes. Setup differs too, and it splits the way SwiftUI splits: configuration inherits from the app root, and one charge is a scope. Nothing needs a token, because a confirmation token is minted from what the buyer typed and confirmed on your server:
+
+  ```swift theme={null}
+  // once, at the app root
+  WindowGroup {
+      CheckoutScreen()
+          .whopElements(environment: .production)
+  }
+
+  // one charge, and the elements that collect for it
+  WhopPayments(accountID: "biz_xxxxxxxx", charge: .plan(id: "plan_xxxxxxxx")) { payments in
+      WhopEmailElement()
+      WhopPaymentElement()
+      WhopBrandingElement()
+      Button("Pay") { Task { try await payments.createConfirmationToken() } }
+          .disabled(!payments.isComplete)
+  }
+  ```
+
+  * [`WhopPaymentElement`](/elements/upcoming/payments/payment#swift): the method tiles and whatever the selected method collects
+  * [`WhopCardElement`](/elements/upcoming/payments/card#swift) and [`WhopCardFields`](/elements/upcoming/payments/cardFields#swift): the hosted card inputs, as one unit or placed one by one
+  * [`WhopAddressElement`](/elements/upcoming/payments/address#swift): the billing address, in the country's own format
+  * [`WhopEmailElement`](/elements/upcoming/payments/email#swift) and [`WhopTaxIDElement`](/elements/upcoming/payments/taxId#swift)
+  * [`WhopBrandingElement`](/elements/upcoming/payments/branding#swift): required beside any payment surface
+  * [`WhopPaymentRequest`](/elements/upcoming/payments/paymentRequest#swift): Apple Pay with no element mounted
+
+  Card data is captured by PCI-isolated hosted inputs and never enters your process. Style everything with `.whopElementsAppearance(_:)` rather than `.whopTheme(_:)`.
 </div>
 
 <div data-whop-platform="react-native" style={{ display: "none" }}>

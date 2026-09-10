@@ -35,7 +35,13 @@ Every version automatically gets new endpoints and optional fields. Breaking cha
 
 ## Changelog
 
-<Update label="2026-09-06" description="Engagement audience sources" tags={["Latest"]}>
+<Update label="2026-09-09" description="Named Whop withdrawal holds on pending funds" tags={["Latest"]}>
+  Account `payment_controls.undated_pending_reason` can be `withdrawals_disabled` when Whop has blocked withdrawals, so those pending funds can't become available.
+
+  `kyc_incomplete`, `pending_information_request`, and `null` for funds that are still clearing are unchanged.
+</Update>
+
+<Update label="2026-09-06" description="Engagement audience sources">
   `POST /audiences` supports engagement with videos, lead forms, Instagram profiles, and Facebook pages through a typed `engagement` definition.
 
   * Explicit `source_type` values validate that the required source fields are present and conflicting source fields are absent.

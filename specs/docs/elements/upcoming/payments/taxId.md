@@ -10,6 +10,10 @@
   Mounts inside [`Payments`](/elements/upcoming/payments/overview). Pass props and callbacks through the create options or React props.
 </div>
 
+<div data-whop-platform="swift" style={{ display: "none" }}>
+  Mounts inside a `WhopPayments` scope. A registration-type picker beside its value field, preselected from the buyer's country.
+</div>
+
 <div data-whop-platform="react-native" style={{ display: "none" }}>
   Mount inside `<Payments>`, which owns the charge and the confirmation token. `<Payments>` itself mounts inside `<WhopElements>`. A registration-type picker beside a value input, so a buyer entering a VAT or CUIT number picks the right kind first.
 </div>
@@ -51,6 +55,30 @@
           const payments = window.WhopElements().payments.create({ /* options */ });
           payments.create('taxId', { onChange: (e) => console.log(e) }).mount('#payments-taxId');
         </script>
+        ```
+
+        ```swift Swift theme={null}
+        import Elements
+        import SwiftUI
+
+        // .whopElements(environment:) runs once at the app root. See Getting started.
+        struct CheckoutScreen: View {
+            @State private var address = PostalAddress()
+            @State private var taxID: WhopTaxID?
+
+            var body: some View {
+                WhopPayments(accountID: "biz_xxxx", charge: .plan(id: "plan_xxxx")) { payments in
+                    ScrollView {
+                        VStack(alignment: .leading, spacing: 20) {
+                        WhopAddressElement(address: $address)
+                        WhopTaxIDElement(taxID: $taxID, country: address.country)
+                            WhopBrandingElement()
+                        }
+                        .padding()
+                    }
+                }
+            }
+        }
         ```
       </CodeGroup>
     </div>
@@ -177,6 +205,59 @@
   ```
 
   In React, pass `appearance` to `<Payments>`. Set it globally with `WhopElements({ appearance })`.
+</div>
+
+<div data-whop-platform="swift" style={{ display: "none" }}>
+  ## Parameters
+
+  <ResponseField name="taxID" type="Binding<WhopTaxID?>?">
+    Receives each committed registration.
+  </ResponseField>
+
+  <ResponseField name="country" type="String?">
+    ISO 3166-1 alpha-2 buyer country, used to preselect the type.
+  </ResponseField>
+
+  <ResponseField name="defaultValue" type="WhopTaxID?">
+    An initial pair from a resumed session. An unsupported type falls back.
+  </ResponseField>
+
+  <ResponseField name="isDisabled" type="Bool">
+    Disables both fields while you save the last committed registration. Defaults to `false`.
+  </ResponseField>
+
+  <ResponseField name="error" type="String?">
+    An API validation error, shown below the value input.
+  </ResponseField>
+
+  ## `WhopTaxID`
+
+  What a selection hands back:
+
+  * `type: WhopTaxIDType`: the registration type, `eu_vat`, `ar_cuit`, …
+  * `value: String`: the registration itself
+
+  ## States
+
+  Renders immediately. A value that does not match the selected type's format shows its error. `error` renders an API validation failure under the value field.
+
+  ## Good to know
+
+  * `AR` preselects `ar_cuit`; EU members and anything unmapped preselect `eu_vat`. A manual pick persists across country changes.
+  * Pass the country from the address element so the two stay in step.
+  * The binding fires on each committed registration, not on every keystroke.
+
+  ## Install
+
+  ```swift theme={null}
+  dependencies: [
+      .package(url: "https://github.com/whopio/elements-swift.git", from: "0.1.0")
+  ]
+  ```
+
+  <Note>
+    Mount it inside a `WhopPayments(accountID:charge:)` scope, which creates the controller and hands it to its content. `payments.buyer` is the signed-in buyer once an email sign-in has proven one. `WhopBrandingElement` has to be on screen too, because Whop is merchant of record on these sales and `createConfirmationToken` refuses without it. Style with `.whopElementsAppearance(_:)`. The module is `Elements`, not the wallet SDK's `WhopElements`. See [Getting started](/elements/upcoming/getting-started) and [Appearance](/elements/upcoming/appearance).
+  </Note>
 </div>
 
 <div data-whop-platform="react-native" style={{ display: "none" }}>

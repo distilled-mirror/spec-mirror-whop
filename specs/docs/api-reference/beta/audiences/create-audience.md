@@ -47,7 +47,7 @@ info:
   termsOfService: https://whop.com/tos-developer-api/
   title: Whop API
   version: 1.0.0
-  x-api-version-date: '2026-09-06'
+  x-api-version-date: '2026-09-09'
 servers:
   - description: Production Whop API
     url: https://api.whop.com/api/v1
@@ -618,6 +618,20 @@ tags:
     name: Apps
     x-whop-summary: 'Apps you build on Whop: metadata, hosted builds, runtime logs.'
   - description: >
+      A Domain is an account's claim to a hostname and its app assignment.
+      Publish the returned ownership TXT and routing DNS records. Verification
+      and certificate provisioning run automatically; unverified claims expire
+      after 48 hours. Only verified domains with active hostname and certificate
+      status resolve through the Apps API.
+
+
+      An unverified claim does not reserve a hostname globally. Transferring
+      ownership requires a fresh TXT proof and an explicit replacement request.
+      Removing a domain stops app resolution immediately while Cloudflare
+      cleanup finishes in the background.
+    name: Domains
+    x-whop-summary: Custom domains assigned to hosted apps.
+  - description: >
       An App Build is a versioned artifact uploaded for an app — a hosted web
       archive, or an iOS/Android bundle. Builds start as drafts, go through
       review, and one approved build per platform is served to users as the
@@ -889,21 +903,17 @@ paths:
         - bearerAuth:
             - audience:update
       x-codeSamples:
-        - lang: JavaScript
-          source: >-
-            import Whop from '@whop/sdk';
+        - lang: TypeScript
+          source: >
+            import { WhopClient } from "@whop/sdk";
 
 
-            const client = new Whop({
-              apiKey: process.env['WHOP_API_KEY'], // This is the default and can be omitted
+            const client = new WhopClient({ token: "YOUR_TOKEN", apiVersionDate:
+            "2026-08-21-1", idempotencyKey: "YOUR_IDEMPOTENCY_KEY" });
+
+            await client.audiences.create({
+                account_id: "biz_xxxxxxxxxxxxxx"
             });
-
-
-            const audience = await client.audiences.create({ account_id:
-            'biz_xxxxxxxxxxxxxx' });
-
-
-            console.log(audience);
 components:
   parameters:
     ApiVersionDate:
@@ -912,7 +922,7 @@ components:
       name: Api-Version-Date
       required: false
       schema:
-        example: '2026-09-06'
+        example: '2026-09-09'
         type: string
     IdempotencyKey:
       description: >-

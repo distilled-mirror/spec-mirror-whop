@@ -38,6 +38,11 @@ Use the Products API to search the public marketplace, list an account's product
       Account that sells this product.
     </ResponseField>
 
+    <ResponseField name="average_review_rating" type="number" required>
+      Average star rating across published reviews for this product, from `1.0` to
+      `5.0`. Returns `0.0` when no published-review rating is available.
+    </ResponseField>
+
     <ResponseField name="created_at" type="string" required>
       When the product was created, as an ISO 8601 timestamp.
     </ResponseField>
@@ -256,6 +261,7 @@ Use the Products API to search the public marketplace, list an account's product
       		"route": "pickaxe",
       		"title": "Pickaxe"
       	},
+      	"average_review_rating": 4.75,
       	"created_at": "2023-12-01T05:00:00.401Z",
       	"custom_cta": "get_access",
       	"custom_cta_url": "https://example.com/signup",

@@ -3,7 +3,7 @@
     "https://docs.whop.com/llms.txt",
     "https://docs.whop.com/sitemap.xml"
   ],
-  "count": 1013,
+  "count": 1022,
   "pages": [
     {
       "page": "https://docs.whop.com/account-settings/account-security/delete-your-account",
@@ -1682,6 +1682,60 @@
       "page": "https://docs.whop.com/api-reference/beta/disputes/upload-dispute-evidence",
       "markdown": "https://docs.whop.com/api-reference/beta/disputes/upload-dispute-evidence.md",
       "file": "api-reference/beta/disputes/upload-dispute-evidence.md",
+      "indexes": [
+        "llms.txt",
+        "sitemap"
+      ]
+    },
+    {
+      "page": "https://docs.whop.com/api-reference/beta/domains/create-domain",
+      "markdown": "https://docs.whop.com/api-reference/beta/domains/create-domain.md",
+      "file": "api-reference/beta/domains/create-domain.md",
+      "indexes": [
+        "llms.txt",
+        "sitemap"
+      ]
+    },
+    {
+      "page": "https://docs.whop.com/api-reference/beta/domains/delete-domain",
+      "markdown": "https://docs.whop.com/api-reference/beta/domains/delete-domain.md",
+      "file": "api-reference/beta/domains/delete-domain.md",
+      "indexes": [
+        "llms.txt",
+        "sitemap"
+      ]
+    },
+    {
+      "page": "https://docs.whop.com/api-reference/beta/domains/domain",
+      "markdown": "https://docs.whop.com/api-reference/beta/domains/domain.md",
+      "file": "api-reference/beta/domains/domain.md",
+      "indexes": [
+        "llms.txt",
+        "sitemap"
+      ]
+    },
+    {
+      "page": "https://docs.whop.com/api-reference/beta/domains/list-domains",
+      "markdown": "https://docs.whop.com/api-reference/beta/domains/list-domains.md",
+      "file": "api-reference/beta/domains/list-domains.md",
+      "indexes": [
+        "llms.txt",
+        "sitemap"
+      ]
+    },
+    {
+      "page": "https://docs.whop.com/api-reference/beta/domains/retrieve-domain",
+      "markdown": "https://docs.whop.com/api-reference/beta/domains/retrieve-domain.md",
+      "file": "api-reference/beta/domains/retrieve-domain.md",
+      "indexes": [
+        "llms.txt",
+        "sitemap"
+      ]
+    },
+    {
+      "page": "https://docs.whop.com/api-reference/beta/domains/update-domain",
+      "markdown": "https://docs.whop.com/api-reference/beta/domains/update-domain.md",
+      "file": "api-reference/beta/domains/update-domain.md",
       "indexes": [
         "llms.txt",
         "sitemap"
@@ -7797,6 +7851,30 @@
       "page": "https://docs.whop.com/elements/upcoming/wallet/overview",
       "markdown": "https://docs.whop.com/elements/upcoming/wallet/overview.md",
       "file": "elements/upcoming/wallet/overview.md",
+      "indexes": [
+        "llms.txt"
+      ]
+    },
+    {
+      "page": "https://docs.whop.com/elements/upcoming/wallet/reports",
+      "markdown": "https://docs.whop.com/elements/upcoming/wallet/reports.md",
+      "file": "elements/upcoming/wallet/reports.md",
+      "indexes": [
+        "llms.txt"
+      ]
+    },
+    {
+      "page": "https://docs.whop.com/elements/upcoming/wallet/reports-balanceReport",
+      "markdown": "https://docs.whop.com/elements/upcoming/wallet/reports-balanceReport.md",
+      "file": "elements/upcoming/wallet/reports-balanceReport.md",
+      "indexes": [
+        "llms.txt"
+      ]
+    },
+    {
+      "page": "https://docs.whop.com/elements/upcoming/wallet/reports-reportActivity",
+      "markdown": "https://docs.whop.com/elements/upcoming/wallet/reports-reportActivity.md",
+      "file": "elements/upcoming/wallet/reports-reportActivity.md",
       "indexes": [
         "llms.txt"
       ]

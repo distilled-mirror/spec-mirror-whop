@@ -12,6 +12,10 @@
   <Note>**Exclusive.** `PaymentElement` is an alternative to `CardElement` or `CardFields` in this Payments handle. Mount one at a time. Destroy it before mounting another.</Note>
 </div>
 
+<div data-whop-platform="swift" style={{ display: "none" }}>
+  Mounts inside a `WhopPayments` scope. Renders the method tiles the charge offers, then whatever the selected method collects: the card fields, the fields it declares, or the Apple Pay button.
+</div>
+
 <div data-whop-platform="react-native" style={{ display: "none" }}>
   Mount inside `<Payments>`, which owns the charge and the confirmation token. `<Payments>` itself mounts inside `<WhopElements>`. It renders the method tiles for the charge and collects whatever the selected method declares, so a card, a wallet sheet and a bank redirect are the same one line.
 </div>
@@ -78,6 +82,28 @@
             onAddressChange: (e) => console.log(e)
           }).mount('#payments-payment');
         </script>
+        ```
+
+        ```swift Swift theme={null}
+        import Elements
+        import SwiftUI
+
+        // .whopElements(environment:) runs once at the app root. See Getting started.
+        struct CheckoutScreen: View {
+            @State private var selection = WhopPaymentSelection(isComplete: false, type: nil, displayName: nil, category: nil)
+
+            var body: some View {
+                WhopPayments(accountID: "biz_xxxx", charge: .plan(id: "plan_xxxx")) { payments in
+                    ScrollView {
+                        VStack(alignment: .leading, spacing: 20) {
+                        WhopPaymentElement(selection: $selection)
+                            WhopBrandingElement()
+                        }
+                        .padding()
+                    }
+                }
+            }
+        }
         ```
       </CodeGroup>
     </div>
@@ -302,6 +328,53 @@
   ```
 
   In React, pass `appearance` to `<Payments>`. Set it globally with `WhopElements({ appearance })`.
+</div>
+
+<div data-whop-platform="swift" style={{ display: "none" }}>
+  ## Parameters
+
+  <ResponseField name="order" type="[WhopPaymentMethodType]">
+    Tile order for this mount, overriding the controller's `methodOrder`. Listed types take their list position; the rest keep their incoming order behind them.
+  </ResponseField>
+
+  <ResponseField name="selection" type="Binding<WhopPaymentSelection>?">
+    Reads the current selection and its completeness back out. The controller tracks both either way.
+  </ResponseField>
+
+  ## `WhopPaymentSelection`
+
+  What a selection hands back:
+
+  * `isComplete: Bool`: the selected method has everything it needs
+  * `type: WhopPaymentMethodType?`: the selected method
+  * `displayName: String?`: its label, as the matrix spells it
+  * `category: String?`: `card`, `wallet`, `bank_debit`, …
+
+  ## States
+
+  Shows skeleton tiles while the method matrix loads, and the failure message when the read fails. A method whose category this build cannot run is skipped rather than rendered as a broken tile. Selecting a wallet swaps the confirm surface for Apple Pay.
+
+  ## Good to know
+
+  * Apple Pay needs nothing from your app: no merchant identifier, no `In-App Payments` capability. The merchant is the one registered on the Whop account, and the tile renders whenever the device can pay.
+  * A method that declares a `secure` field renders it as a hosted input. Those values never enter your process.
+  * A signed-in buyer's stored methods appear above the fresh ones. Mount [`WhopEmailElement`](/elements/upcoming/payments/email#swift) to offer the sign-in that produces the credential; picking a stored row collects nothing and mints a reference.
+  * A card charge that publishes installment tiers shows a plan picker inside the card pane. A plan the buyer's card cannot take collapses rather than dimming, and a plan whose region does not pair with the billing country is refused before any tokenizer runs.
+  * A market that requires an identity document (an `ars` charge, today) renders the type picker and number field inside the pane. That number passes through your app on its way to the tokenizer, unlike the card, and still never reaches Whop.
+  * Card and secure-field values are tokenized before the mint, so the confirmation token is the only thing that crosses your app.
+  * Mount [`WhopAddressElement`](/elements/upcoming/payments/address#swift) beside it when a method needs a billing country: the tile list narrows to the methods that country allows.
+
+  ## Install
+
+  ```swift theme={null}
+  dependencies: [
+      .package(url: "https://github.com/whopio/elements-swift.git", from: "0.1.0")
+  ]
+  ```
+
+  <Note>
+    Mount it inside a `WhopPayments(accountID:charge:)` scope, which creates the controller and hands it to its content. `payments.buyer` is the signed-in buyer once an email sign-in has proven one. `WhopBrandingElement` has to be on screen too, because Whop is merchant of record on these sales and `createConfirmationToken` refuses without it. Style with `.whopElementsAppearance(_:)`. The module is `Elements`, not the wallet SDK's `WhopElements`. See [Getting started](/elements/upcoming/getting-started) and [Appearance](/elements/upcoming/appearance).
+  </Note>
 </div>
 
 <div data-whop-platform="react-native" style={{ display: "none" }}>

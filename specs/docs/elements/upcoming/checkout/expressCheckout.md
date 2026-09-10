@@ -4,7 +4,7 @@
 
 # ExpressCheckoutElement
 
-> One-press Apple Pay and Google Pay buttons for a checkout — the OS payment sheet collects whatever the session still needs (the buyer's email, a shipping address for physical goods, and in Apple Pay a promo code where the seller offers entry) and one press finishes the purchase. It shares the checkout's entry slot with the full checkout element, so a handle mounts exactly one of the two: this button alone where the purchase is simple enough for a sheet to finish, or the full checkout surface for everything else. Renders only the wallets the buyer's device can actually pay with — and the checkout's own payment method configuration allows — using the served button art, and renders nothing where no wallet is available. Apple Pay additionally requires the page's domain to be a verified payment method domain: first-party whop.com pages are pre-approved, and any other site must register its domain through the Payment Method Domains API before the button renders there. A checkout the sheet cannot honestly finish — a waitlist join, a transfer, a form question only a page can ask — refuses loudly instead of rendering a doomed button.
+> One-press Apple Pay and Google Pay buttons for a checkout — the OS payment sheet collects whatever the session still needs (the buyer's email, a phone number where the seller collects one, a shipping address for physical goods, and in Apple Pay a promo code where the seller offers entry) and one press finishes the purchase. It shares the checkout's entry slot with the full checkout element, so a handle mounts exactly one of the two: this button alone where the purchase is simple enough for a sheet to finish, or the full checkout surface for everything else. Renders only the wallets the buyer's device can actually pay with — and the checkout's own payment method configuration allows — using the served button art, and renders nothing where no wallet is available. Apple Pay additionally requires the page's domain to be a verified payment method domain: first-party whop.com pages are pre-approved, and any other site must register its domain through the Payment Method Domains API before the button renders there. A checkout the sheet cannot honestly finish — a waitlist join, a transfer, a form question only a page can ask — refuses loudly instead of rendering a doomed button.
 
 Mounts inside [`Checkout`](/elements/upcoming/checkout/overview). Pass props and callbacks through the create options or React props.
 
@@ -148,15 +148,9 @@ Style these parts through `appearance.classes`. Use camel case or kebab case for
 | `.whop-CheckoutExpressFinishPayment`       | The finish-payment line shown while the payment still needs a step the buyer dismissed                                                                                          |
 | `.whop-CheckoutExpressFinishPaymentButton` | The re-entry button that re-runs the payment’s pending step                                                                                                                     |
 | `.whop-CheckoutExpressGooglePay`           | The Google Pay express button                                                                                                                                                   |
-| `.whop-CheckoutExpressPhoneHeading`        | The standalone express button’s verify-to-pay heading                                                                                                                           |
+| `.whop-CheckoutExpressPhoneError`          | The refusal line for a wallet-collected phone number the server could not text                                                                                                  |
 | `.whop-CheckoutExpressRetry`               | The failed rest’s button — re-reads the reopened session so the buyer can pay again                                                                                             |
 | `.whop-CheckoutExpressUnavailable`         | The face shown when an express button cannot serve this checkout                                                                                                                |
-| `.whop-CheckoutPhoneVerification`          | The phone-verification ceremony — number entry, then the texted code                                                                                                            |
-| `.whop-CheckoutPhoneVerificationError`     | The ceremony’s refusal line — a wrong code, a bad number                                                                                                                        |
-| `.whop-CheckoutPhoneVerificationHint`      | The line explaining why the seller asks for a verified number                                                                                                                   |
-| `.whop-CheckoutPhoneVerificationInput`     | The phone number’s input                                                                                                                                                        |
-| `.whop-CheckoutRequirementLabel`           | A collected value’s label                                                                                                                                                       |
-| `.whop-CheckoutRequirementRequired`        | The marker beside a value an answer is required for                                                                                                                             |
 | `.whop-CompletePayment`                    | Completion surface root                                                                                                                                                         |
 | `.whop-CompletePaymentAmount`              | The amount the buyer must pay                                                                                                                                                   |
 | `.whop-CompletePaymentBarcode`             | The scannable barcode card                                                                                                                                                      |
@@ -288,7 +282,7 @@ const checkout = whop.checkout.create({
   }
 });
 
-// 165 classes use this shape
+// 159 classes use this shape
 checkout.update({
   appearance: { classes: { 'whop-Address': { fontWeight: '700' } } }
 });

@@ -10,6 +10,10 @@
   Mounts inside [`Payments`](/elements/upcoming/payments/overview). Pass props and callbacks through the create options or React props.
 </div>
 
+<div data-whop-platform="swift" style={{ display: "none" }}>
+  Mounts inside a `WhopPayments` scope. The merchant-of-record line every payment surface has to carry, with the Whop wordmark drawn as a path.
+</div>
+
 <div data-whop-platform="react-native" style={{ display: "none" }}>
   Mount inside `<Payments>`, which owns the charge and the confirmation token. `<Payments>` itself mounts inside `<WhopElements>`. Required on every form that collects: `createConfirmationToken` refuses while none is mounted, and it themes with the rest of your form.
 </div>
@@ -48,6 +52,27 @@
           const payments = window.WhopElements().payments.create({ /* options */ });
           payments.create('branding').mount('#payments-branding');
         </script>
+        ```
+
+        ```swift Swift theme={null}
+        import Elements
+        import SwiftUI
+
+        // .whopElements(environment:) runs once at the app root. See Getting started.
+        struct CheckoutScreen: View {
+
+            var body: some View {
+                WhopPayments(accountID: "biz_xxxx", charge: .plan(id: "plan_xxxx")) { payments in
+                    ScrollView {
+                        VStack(alignment: .leading, spacing: 20) {
+                        WhopPaymentElement()
+                            WhopBrandingElement()
+                        }
+                        .padding()
+                    }
+                }
+            }
+        }
         ```
       </CodeGroup>
     </div>
@@ -126,6 +151,29 @@
   ## Styling
 
   This element doesn't expose class names for styling. Use `appearance` (theme, accent color, variables) to restyle it.
+</div>
+
+<div data-whop-platform="swift" style={{ display: "none" }}>
+  ## States
+
+  Renders immediately. It fetches nothing and has no failure state.
+
+  ## Good to know
+
+  * **`createConfirmationToken` refuses while it is unmounted.** Whop is merchant of record on these sales, so the buyer has to be told so on the screen where they pay.
+  * The wordmark is a vector path, not an asset, so the framework carries no image bundle.
+
+  ## Install
+
+  ```swift theme={null}
+  dependencies: [
+      .package(url: "https://github.com/whopio/elements-swift.git", from: "0.1.0")
+  ]
+  ```
+
+  <Note>
+    Mount it inside a `WhopPayments(accountID:charge:)` scope, which creates the controller and hands it to its content. `payments.buyer` is the signed-in buyer once an email sign-in has proven one. `WhopBrandingElement` has to be on screen too, because Whop is merchant of record on these sales and `createConfirmationToken` refuses without it. Style with `.whopElementsAppearance(_:)`. The module is `Elements`, not the wallet SDK's `WhopElements`. See [Getting started](/elements/upcoming/getting-started) and [Appearance](/elements/upcoming/appearance).
+  </Note>
 </div>
 
 <div data-whop-platform="react-native" style={{ display: "none" }}>

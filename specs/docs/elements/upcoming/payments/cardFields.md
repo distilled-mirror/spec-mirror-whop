@@ -22,6 +22,10 @@
   </div>
 </div>
 
+<div data-whop-platform="swift" style={{ display: "none" }}>
+  Mounts inside a `WhopPayments` scope. The same three hosted inputs as [`WhopCardElement`](/elements/upcoming/payments/card#swift), placed one by one inside its content builder so your own layout decides where each sits.
+</div>
+
 <div data-whop-platform="react-native" style={{ display: "none" }}>
   The provider for individually placed card fields. Wrap the part of your form that holds them, then put `CardNumberElement`, `CardExpiryElement` and `CardCvcElement` wherever your layout wants them.
 
@@ -92,6 +96,34 @@
       cardFields.create('cardCvc').mount('#payments-cardFields-cardCvc');
     </script>
     ```
+
+    ```swift Swift theme={null}
+    import Elements
+    import SwiftUI
+
+    // .whopElements(environment:) runs once at the app root. See Getting started.
+    struct CheckoutScreen: View {
+        @State private var card = WhopCardState(isComplete: false, brand: nil)
+
+        var body: some View {
+            WhopPayments(accountID: "biz_xxxx", charge: .plan(id: "plan_xxxx")) { payments in
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 20) {
+                    WhopCardFields(state: $card) {
+                        WhopCardNumberElement()
+                        HStack(alignment: .top, spacing: 8) {
+                            WhopCardExpiryElement()
+                            WhopCardCVCElement()
+                        }
+                    }
+                        WhopBrandingElement()
+                    }
+                    .padding()
+                }
+            }
+        }
+    }
+    ```
   </CodeGroup>
 </div>
 
@@ -149,6 +181,54 @@
   Destroys the sub-controller and its elements, then frees its exclusive slot. A later `create("cardFields")` starts fresh.
 
   **Signature:** `() => void`
+</div>
+
+<div data-whop-platform="swift" style={{ display: "none" }}>
+  ## Parameters
+
+  <ResponseField name="publicKey" type="String?">
+    An advanced publishable key. Omit it and the account's own is fetched.
+  </ResponseField>
+
+  <ResponseField name="layout" type="WhopCardElement.Layout">
+    Only read when a composing unit arranges the fields itself. Separately mounted fields ignore it.
+  </ResponseField>
+
+  <ResponseField name="state" type="Binding<WhopCardState>?">
+    Reads completeness and the detected brand back out.
+  </ResponseField>
+
+  <ResponseField name="content" type="() -> Content" required>
+    Where the three field views go. Anything else in here renders normally.
+  </ResponseField>
+
+  ## `WhopCardState`
+
+  What a selection hands back:
+
+  * `isComplete: Bool`: all three fields valid
+  * `brand: String?`: the detected network
+
+  ## States
+
+  Each field renders immediately and validates as the buyer types. `state.isComplete` turns true when all three are valid, wherever you put them.
+
+  ## Good to know
+
+  * The three field views only work inside a `WhopCardFields` builder: they read the unit it creates. Mounted anywhere else they render nothing.
+  * Mount all three. A unit missing one never completes, so the confirm button never enables.
+
+  ## Install
+
+  ```swift theme={null}
+  dependencies: [
+      .package(url: "https://github.com/whopio/elements-swift.git", from: "0.1.0")
+  ]
+  ```
+
+  <Note>
+    Mount it inside a `WhopPayments(accountID:charge:)` scope, which creates the controller and hands it to its content. `payments.buyer` is the signed-in buyer once an email sign-in has proven one. `WhopBrandingElement` has to be on screen too, because Whop is merchant of record on these sales and `createConfirmationToken` refuses without it. Style with `.whopElementsAppearance(_:)`. The module is `Elements`, not the wallet SDK's `WhopElements`. See [Getting started](/elements/upcoming/getting-started) and [Appearance](/elements/upcoming/appearance).
+  </Note>
 </div>
 
 <div data-whop-platform="react-native" style={{ display: "none" }}>

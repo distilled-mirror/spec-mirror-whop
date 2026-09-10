@@ -12,6 +12,10 @@
   <Note>**Exclusive.** `CardElement` is an alternative to `PaymentElement` or `CardFields` in this Payments handle. Mount one at a time. Destroy it before mounting another.</Note>
 </div>
 
+<div data-whop-platform="swift" style={{ display: "none" }}>
+  Mounts inside a `WhopPayments` scope. The three card inputs as one unit, PCI-isolated by the tokenizer, so the number, expiry and security code never enter your process.
+</div>
+
 <div data-whop-platform="react-native" style={{ display: "none" }}>
   Mount inside `<Payments>`, which owns the charge and the confirmation token. `<Payments>` itself mounts inside `<WhopElements>`. Reach for it when the form takes a card and nothing else: it registers itself as the collection surface, so `createConfirmationToken` tokenizes it with nothing else wired.
 </div>
@@ -53,6 +57,28 @@
           const payments = window.WhopElements().payments.create({ /* options */ });
           payments.create('card', { onChange: (e) => console.log(e) }).mount('#payments-card');
         </script>
+        ```
+
+        ```swift Swift theme={null}
+        import Elements
+        import SwiftUI
+
+        // .whopElements(environment:) runs once at the app root. See Getting started.
+        struct CheckoutScreen: View {
+            @State private var card = WhopCardState(isComplete: false, brand: nil)
+
+            var body: some View {
+                WhopPayments(accountID: "biz_xxxx", charge: .plan(id: "plan_xxxx")) { payments in
+                    ScrollView {
+                        VStack(alignment: .leading, spacing: 20) {
+                        WhopCardElement(layout: .stacked, state: $card)
+                            WhopBrandingElement()
+                        }
+                        .padding()
+                    }
+                }
+            }
+        }
         ```
       </CodeGroup>
     </div>
@@ -171,6 +197,51 @@
   ```
 
   In React, pass `appearance` to `<Payments>`. Set it globally with `WhopElements({ appearance })`.
+</div>
+
+<div data-whop-platform="swift" style={{ display: "none" }}>
+  ## Parameters
+
+  <ResponseField name="layout" type="WhopCardElement.Layout">
+    `.stacked` puts the number above expiry and security code; `.compact` puts all three in one row. Defaults to `.stacked`.
+  </ResponseField>
+
+  <ResponseField name="publicKey" type="String?">
+    An advanced publishable key. Omit it and the account's own is fetched.
+  </ResponseField>
+
+  <ResponseField name="state" type="Binding<WhopCardState>?">
+    Reads completeness and the detected brand back out.
+  </ResponseField>
+
+  ## `WhopCardState`
+
+  What a selection hands back:
+
+  * `isComplete: Bool`: all three fields valid
+  * `brand: String?`: the detected network, once the number identifies one
+
+  ## States
+
+  Renders immediately and validates as the buyer types. The brand appears once the number identifies one. `state.isComplete` turns true when all three fields are valid.
+
+  ## Good to know
+
+  * Use it instead of [`WhopPaymentElement`](/elements/upcoming/payments/payment#swift) when card is the only method you take. Mounting both is a conflict: the controller mints from one collecting surface.
+  * `createConfirmationToken(billingDetails:)` needs a cardholder name for the card lane, so pass one or mount an address element that collects it.
+  * `publicKey` is an advanced escape hatch. Omit it and the SDK fetches the account's tokenizer key.
+
+  ## Install
+
+  ```swift theme={null}
+  dependencies: [
+      .package(url: "https://github.com/whopio/elements-swift.git", from: "0.1.0")
+  ]
+  ```
+
+  <Note>
+    Mount it inside a `WhopPayments(accountID:charge:)` scope, which creates the controller and hands it to its content. `payments.buyer` is the signed-in buyer once an email sign-in has proven one. `WhopBrandingElement` has to be on screen too, because Whop is merchant of record on these sales and `createConfirmationToken` refuses without it. Style with `.whopElementsAppearance(_:)`. The module is `Elements`, not the wallet SDK's `WhopElements`. See [Getting started](/elements/upcoming/getting-started) and [Appearance](/elements/upcoming/appearance).
+  </Note>
 </div>
 
 <div data-whop-platform="react-native" style={{ display: "none" }}>

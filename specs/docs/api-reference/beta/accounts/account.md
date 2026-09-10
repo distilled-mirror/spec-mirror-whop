@@ -617,9 +617,9 @@ The `business_type`, `industry_group`, and `industry_type` fields classify accou
         </ResponseField>
 
         <ResponseField name="undated_pending_reason" type="string | null" required>
-          Why pending funds without a settlement date aren't moving yet, when it's something the merchant can act on. `null` when there's no reason to show (still clearing, or the account is held for a reason that isn't merchant-actionable).
+          Why pending funds without a settlement date aren't moving yet. `kyc_incomplete` and `pending_information_request` are things the merchant can act on. `withdrawals_disabled` means Whop has blocked withdrawals, so these funds cannot become available. `null` when there's no reason to show — still clearing, or held for a reason that isn't named here.
 
-          Available options: `kyc_incomplete`, `pending_information_request`
+          Available options: `kyc_incomplete`, `pending_information_request`, `withdrawals_disabled`
         </ResponseField>
 
         <ResponseField name="withdrawal_schedule" type="object" required>

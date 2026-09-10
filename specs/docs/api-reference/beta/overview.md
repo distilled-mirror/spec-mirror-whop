@@ -193,6 +193,7 @@ Build, host, and observe apps on the Whop platform.
 | Resource                                                  | What it's for                                                  |
 | --------------------------------------------------------- | -------------------------------------------------------------- |
 | [Apps](/api-reference/beta/apps/app)                      | Apps you build on Whop: metadata, hosted builds, runtime logs. |
+| [Domains](/api-reference/beta/domains/domain)             | Custom domains assigned to hosted apps.                        |
 | [App Builds](/api-reference/beta/app-builds/app-build)    | Versioned build artifacts deployed to an app's platforms.      |
 | [API Keys](/api-reference/beta/api-keys/api-key)          | Programmatic credentials for an account or app.                |
 | [API Logs](/api-reference/beta/api-logs/list-api-logs)    | Requests made to Whop's API with your account's API keys.      |

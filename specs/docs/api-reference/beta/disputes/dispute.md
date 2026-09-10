@@ -383,6 +383,68 @@ Use the Disputes API to list disputes, edit the evidence packet while a dispute 
       </Accordion>
     </ResponseField>
 
+    <ResponseField name="line_items" type="object[]" required>
+      Everything the disputed payment charged for, in purchase order. `product_id` and `plan_id` name the first of these; a cart's later items appear only here. A payment made before items were recorded lists the single item its plan implies. Empty when the payment is not linked to a plan.
+
+      <Accordion title="Properties" defaultOpen={true}>
+        <ResponseField name="id" type="string | null" required>
+          Line item ID, prefixed `li_`. Null when the payment predates item snapshots
+          and the item is read from the payment's plan.
+        </ResponseField>
+
+        <ResponseField name="label" type="string | null" required>
+          The item's name as shown at checkout — the product title, else the plan title.
+        </ResponseField>
+
+        <ResponseField name="plan_id" type="string | null" required>
+          The plan bought, prefixed `plan_`. Null when the plan has since been deleted.
+        </ResponseField>
+
+        <ResponseField name="plan_title" type="string | null" required>
+          The plan's current title, or `null` when the plan has been deleted or has no
+          title.
+        </ResponseField>
+
+        <ResponseField name="product_id" type="string | null" required>
+          The product the plan belongs to, prefixed `prod_`. On a payment that predates
+          item snapshots this falls back to the plan's product, so it can be set where
+          the parent's own `product_id` is null. Null for a plan with no product.
+        </ResponseField>
+
+        <ResponseField name="product_title" type="string | null" required>
+          The product's current title, or `null` when the item has no product.
+        </ResponseField>
+
+        <ResponseField name="quantity" type="number" required>
+          How many units were bought.
+        </ResponseField>
+
+        <ResponseField name="subtotal" type="object | null" required>
+          The recorded amount for this item's full quantity, before discounts, tax, and fees, in its purchase currency. This is not the amount being contested. Returns `null` when no item amount was recorded.
+
+          <Accordion title="Properties" defaultOpen={true}>
+            <ResponseField name="amount" type="string" required>
+              The amount in major units, as an exact decimal string — `"10.00"` is ten
+              dollars. A string so no float rounds it in transit.
+            </ResponseField>
+
+            <ResponseField name="currency" type="string" required>
+              Three-letter ISO 4217 currency code, lowercase.
+            </ResponseField>
+
+            <ResponseField name="decimals" type="integer" required>
+              How many decimal places the amount CARRIES — the precision the charge itself
+              runs at.
+            </ResponseField>
+
+            <ResponseField name="display_decimals" type="integer" required>
+              How many decimal places to SHOW. Usually equal to `decimals`, and deliberately not always: COP is charged in centavos but written in whole pesos, so it is `2` and `0`. Format the number in your own locale using this.
+            </ResponseField>
+          </Accordion>
+        </ResponseField>
+      </Accordion>
+    </ResponseField>
+
     <ResponseField name="payment" type="object | null" required>
       The payment being disputed.
 
@@ -417,12 +479,18 @@ Use the Disputes API to list disputes, edit the evidence packet while a dispute 
 
           <Accordion title="Properties" defaultOpen={true}>
             <ResponseField name="card" type="object | null" required>
-              Card payments only: the card's network and last four.
+              Card payments only: the card's network, last four, and issuer identification number.
 
               <Accordion title="Properties" defaultOpen={true}>
                 <ResponseField name="brand" type="string" required>
                   The network identifier (`visa`, `amex`, …), matching `card.networks` entries
                   and saved card payment methods.
+                </ResponseField>
+
+                <ResponseField name="issuer_identification_number" type="string | null" required>
+                  The issuer identification number, also called the BIN: the card's leading six
+                  or eight digits, which identify the issuing bank. Null when the processor did
+                  not report it.
                 </ResponseField>
 
                 <ResponseField name="last4" type="string | null" required>
@@ -712,11 +780,29 @@ Use the Disputes API to list disputes, edit the evidence packet while a dispute 
       			},
       			"card": {
       				"brand": "visa",
-      				"last4": "4242"
+      				"last4": "4242",
+      				"issuer_identification_number": "41111111"
       			},
       			"installment_count": null
       		}
       	},
+      	"line_items": [
+      		{
+      			"id": "li_xxxxxxxxxxxxx",
+      			"label": "Ceramic Coating Package",
+      			"plan_id": "plan_xxxxxxxxxxxxx",
+      			"plan_title": "One-time",
+      			"product_id": "prod_xxxxxxxxxxxxx",
+      			"product_title": "Ceramic Coating Package",
+      			"quantity": 1,
+      			"subtotal": {
+      				"amount": "299.00",
+      				"currency": "usd",
+      				"decimals": 2,
+      				"display_decimals": 2
+      			}
+      		}
+      	],
       	"plan_id": "plan_xxxxxxxxxxxxx",
       	"product_id": "prod_xxxxxxxxxxxxx",
       	"rapid_dispute_resolution": false,

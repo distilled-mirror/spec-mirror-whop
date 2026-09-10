@@ -10,6 +10,10 @@
   Mounts inside [`CardFields`](/elements/upcoming/payments/cardFields), in [`Payments`](/elements/upcoming/payments/overview). Pass props and callbacks through the create options or React props.
 </div>
 
+<div data-whop-platform="swift" style={{ display: "none" }}>
+  Goes inside a [`WhopCardFields`](/elements/upcoming/payments/cardFields#swift) builder. The hosted card-number input, with the brand mark on its trailing edge.
+</div>
+
 <div data-whop-platform="react-native" style={{ display: "none" }}>
   Mounts inside [`CardFields`](/elements/upcoming/payments/cardFields). The card number on its own, so your layout decides where it sits.
 </div>
@@ -50,6 +54,31 @@
           const cardFields = payments.create('cardFields', { /* options */ });
           cardFields.create('cardNumber').mount('#payments-cardFields-cardNumber');
         </script>
+        ```
+
+        ```swift Swift theme={null}
+        import Elements
+        import SwiftUI
+
+        // .whopElements(environment:) runs once at the app root. See Getting started.
+        struct CheckoutScreen: View {
+
+            var body: some View {
+                WhopPayments(accountID: "biz_xxxx", charge: .plan(id: "plan_xxxx")) { payments in
+                    ScrollView {
+                        VStack(alignment: .leading, spacing: 20) {
+                        WhopCardFields {
+                            WhopCardNumberElement()
+                            WhopCardExpiryElement()
+                            WhopCardCVCElement()
+                        }
+                            WhopBrandingElement()
+                        }
+                        .padding()
+                    }
+                }
+            }
+        }
         ```
       </CodeGroup>
     </div>
@@ -155,6 +184,28 @@
   ```
 
   In React, pass `appearance` to `<Payments>`. Set it globally with `WhopElements({ appearance })`.
+</div>
+
+<div data-whop-platform="swift" style={{ display: "none" }}>
+  ## States
+
+  Renders immediately. The brand mark appears once the number identifies a network. An invalid number shows its error under the field.
+
+  ## Good to know
+
+  * Outside a `WhopCardFields` builder it renders nothing: it reads the card unit that builder creates.
+
+  ## Install
+
+  ```swift theme={null}
+  dependencies: [
+      .package(url: "https://github.com/whopio/elements-swift.git", from: "0.1.0")
+  ]
+  ```
+
+  <Note>
+    Mount it inside a `WhopPayments(accountID:charge:)` scope, which creates the controller and hands it to its content. `payments.buyer` is the signed-in buyer once an email sign-in has proven one. `WhopBrandingElement` has to be on screen too, because Whop is merchant of record on these sales and `createConfirmationToken` refuses without it. Style with `.whopElementsAppearance(_:)`. The module is `Elements`, not the wallet SDK's `WhopElements`. See [Getting started](/elements/upcoming/getting-started) and [Appearance](/elements/upcoming/appearance).
+  </Note>
 </div>
 
 <div data-whop-platform="react-native" style={{ display: "none" }}>
