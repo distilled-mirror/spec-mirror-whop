@@ -116,16 +116,16 @@
 <div data-whop-platform="web">
   ## Props
 
-  <ResponseField name="layout" type="&#x22;full&#x22; | &#x22;compact&#x22;">
-    `full` (default) stacks labeled fields. `compact` groups placeholder-labeled fields within one border. Defaults to `"full"`.
-  </ResponseField>
-
   <ResponseField name="line2" type="&#x22;never&#x22; | &#x22;toggle&#x22; | &#x22;always&#x22;">
     Address line 2: always visible (default), revealed by a text button (`toggle`), or never collected. Defaults to `"always"`.
   </ResponseField>
 
   <ResponseField name="name" type="&#x22;split&#x22; | &#x22;combined&#x22; | &#x22;none&#x22;">
     The name row: one full-name field (default), split first/last fields, or none. Defaults to `"combined"`.
+  </ResponseField>
+
+  <ResponseField name="layout" type="&#x22;full&#x22; | &#x22;compact&#x22;">
+    `full` (default) stacks labeled fields. `compact` groups placeholder-labeled fields within one border. Defaults to `"full"`.
   </ResponseField>
 
   <ResponseField name="mode" type="&#x22;billing&#x22; | &#x22;shipping&#x22;">
@@ -156,7 +156,7 @@
     Enables Google Places suggestions for the street address. If no match appears or Places is blocked, the list reports no matches and lets buyers enter the address manually. Set `false` for a plain input. Defaults to `true`.
   </ResponseField>
 
-  <ResponseField name="customFields" type="({ key: string; label: string; type: &#x22;text&#x22; | &#x22;phone&#x22; | &#x22;select&#x22; | &#x22;date&#x22;; position: &#x22;after_name&#x22; | &#x22;after_organization&#x22; | &#x22;before_country&#x22; | &#x22;after_address&#x22;; required?: boolean | undefined; options?: string[] | undefined; format?: string | undefined; autocomplete?: string | undefined; })[]">
+  <ResponseField name="customFields" type="({ key: string; label: string; type: &#x22;text&#x22; | &#x22;select&#x22; | &#x22;phone&#x22; | &#x22;date&#x22;; position: &#x22;after_name&#x22; | &#x22;after_organization&#x22; | &#x22;before_country&#x22; | &#x22;after_address&#x22;; required?: boolean | undefined; options?: string[] | undefined; format?: string | undefined; autocomplete?: string | undefined; })[]">
     Additional fields rendered with the address form. Values are validated and emitted in the separate `custom` map.
   </ResponseField>
 

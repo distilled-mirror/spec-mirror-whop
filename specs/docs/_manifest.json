@@ -3,7 +3,7 @@
     "https://docs.whop.com/llms.txt",
     "https://docs.whop.com/sitemap.xml"
   ],
-  "count": 1022,
+  "count": 1035,
   "pages": [
     {
       "page": "https://docs.whop.com/account-settings/account-security/delete-your-account",
@@ -1472,6 +1472,42 @@
       ]
     },
     {
+      "page": "https://docs.whop.com/api-reference/beta/cashback-rules/cashback-rule",
+      "markdown": "https://docs.whop.com/api-reference/beta/cashback-rules/cashback-rule.md",
+      "file": "api-reference/beta/cashback-rules/cashback-rule.md",
+      "indexes": [
+        "llms.txt",
+        "sitemap"
+      ]
+    },
+    {
+      "page": "https://docs.whop.com/api-reference/beta/cashback-rules/create-cashback-rule",
+      "markdown": "https://docs.whop.com/api-reference/beta/cashback-rules/create-cashback-rule.md",
+      "file": "api-reference/beta/cashback-rules/create-cashback-rule.md",
+      "indexes": [
+        "llms.txt",
+        "sitemap"
+      ]
+    },
+    {
+      "page": "https://docs.whop.com/api-reference/beta/cashback-rules/list-cashback-rules",
+      "markdown": "https://docs.whop.com/api-reference/beta/cashback-rules/list-cashback-rules.md",
+      "file": "api-reference/beta/cashback-rules/list-cashback-rules.md",
+      "indexes": [
+        "llms.txt",
+        "sitemap"
+      ]
+    },
+    {
+      "page": "https://docs.whop.com/api-reference/beta/cashback-rules/update-cashback-rule",
+      "markdown": "https://docs.whop.com/api-reference/beta/cashback-rules/update-cashback-rule.md",
+      "file": "api-reference/beta/cashback-rules/update-cashback-rule.md",
+      "indexes": [
+        "llms.txt",
+        "sitemap"
+      ]
+    },
+    {
       "page": "https://docs.whop.com/api-reference/beta/checkout-configurations/checkout-configuration",
       "markdown": "https://docs.whop.com/api-reference/beta/checkout-configurations/checkout-configuration.md",
       "file": "api-reference/beta/checkout-configurations/checkout-configuration.md",
@@ -1742,6 +1778,24 @@
       ]
     },
     {
+      "page": "https://docs.whop.com/api-reference/beta/economic-intelligence/list-economic-intelligence",
+      "markdown": "https://docs.whop.com/api-reference/beta/economic-intelligence/list-economic-intelligence.md",
+      "file": "api-reference/beta/economic-intelligence/list-economic-intelligence.md",
+      "indexes": [
+        "llms.txt",
+        "sitemap"
+      ]
+    },
+    {
+      "page": "https://docs.whop.com/api-reference/beta/economic-intelligence/run-economic-intelligence",
+      "markdown": "https://docs.whop.com/api-reference/beta/economic-intelligence/run-economic-intelligence.md",
+      "file": "api-reference/beta/economic-intelligence/run-economic-intelligence.md",
+      "indexes": [
+        "llms.txt",
+        "sitemap"
+      ]
+    },
+    {
       "page": "https://docs.whop.com/api-reference/beta/events/create-event",
       "markdown": "https://docs.whop.com/api-reference/beta/events/create-event.md",
       "file": "api-reference/beta/events/create-event.md",
@@ -1781,6 +1835,78 @@
       "page": "https://docs.whop.com/api-reference/beta/events/validate-pixel",
       "markdown": "https://docs.whop.com/api-reference/beta/events/validate-pixel.md",
       "file": "api-reference/beta/events/validate-pixel.md",
+      "indexes": [
+        "llms.txt",
+        "sitemap"
+      ]
+    },
+    {
+      "page": "https://docs.whop.com/api-reference/beta/experiments/activate-experiment",
+      "markdown": "https://docs.whop.com/api-reference/beta/experiments/activate-experiment.md",
+      "file": "api-reference/beta/experiments/activate-experiment.md",
+      "indexes": [
+        "llms.txt",
+        "sitemap"
+      ]
+    },
+    {
+      "page": "https://docs.whop.com/api-reference/beta/experiments/create-experiment",
+      "markdown": "https://docs.whop.com/api-reference/beta/experiments/create-experiment.md",
+      "file": "api-reference/beta/experiments/create-experiment.md",
+      "indexes": [
+        "llms.txt",
+        "sitemap"
+      ]
+    },
+    {
+      "page": "https://docs.whop.com/api-reference/beta/experiments/end-experiment",
+      "markdown": "https://docs.whop.com/api-reference/beta/experiments/end-experiment.md",
+      "file": "api-reference/beta/experiments/end-experiment.md",
+      "indexes": [
+        "llms.txt",
+        "sitemap"
+      ]
+    },
+    {
+      "page": "https://docs.whop.com/api-reference/beta/experiments/evaluate-experiments",
+      "markdown": "https://docs.whop.com/api-reference/beta/experiments/evaluate-experiments.md",
+      "file": "api-reference/beta/experiments/evaluate-experiments.md",
+      "indexes": [
+        "llms.txt",
+        "sitemap"
+      ]
+    },
+    {
+      "page": "https://docs.whop.com/api-reference/beta/experiments/list-experiments",
+      "markdown": "https://docs.whop.com/api-reference/beta/experiments/list-experiments.md",
+      "file": "api-reference/beta/experiments/list-experiments.md",
+      "indexes": [
+        "llms.txt",
+        "sitemap"
+      ]
+    },
+    {
+      "page": "https://docs.whop.com/api-reference/beta/experiments/pause-experiment",
+      "markdown": "https://docs.whop.com/api-reference/beta/experiments/pause-experiment.md",
+      "file": "api-reference/beta/experiments/pause-experiment.md",
+      "indexes": [
+        "llms.txt",
+        "sitemap"
+      ]
+    },
+    {
+      "page": "https://docs.whop.com/api-reference/beta/experiments/retrieve-experiment",
+      "markdown": "https://docs.whop.com/api-reference/beta/experiments/retrieve-experiment.md",
+      "file": "api-reference/beta/experiments/retrieve-experiment.md",
+      "indexes": [
+        "llms.txt",
+        "sitemap"
+      ]
+    },
+    {
+      "page": "https://docs.whop.com/api-reference/beta/experiments/update-experiment",
+      "markdown": "https://docs.whop.com/api-reference/beta/experiments/update-experiment.md",
+      "file": "api-reference/beta/experiments/update-experiment.md",
       "indexes": [
         "llms.txt",
         "sitemap"
@@ -1977,6 +2103,15 @@
       "page": "https://docs.whop.com/api-reference/beta/members/member-created",
       "markdown": "https://docs.whop.com/api-reference/beta/members/member-created.md",
       "file": "api-reference/beta/members/member-created.md",
+      "indexes": [
+        "llms.txt",
+        "sitemap"
+      ]
+    },
+    {
+      "page": "https://docs.whop.com/api-reference/beta/members/member-updated",
+      "markdown": "https://docs.whop.com/api-reference/beta/members/member-updated.md",
+      "file": "api-reference/beta/members/member-updated.md",
       "indexes": [
         "llms.txt",
         "sitemap"
@@ -2898,42 +3033,6 @@
       "page": "https://docs.whop.com/api-reference/beta/promo-codes/retrieve-promo-code",
       "markdown": "https://docs.whop.com/api-reference/beta/promo-codes/retrieve-promo-code.md",
       "file": "api-reference/beta/promo-codes/retrieve-promo-code.md",
-      "indexes": [
-        "llms.txt",
-        "sitemap"
-      ]
-    },
-    {
-      "page": "https://docs.whop.com/api-reference/beta/recommended-actions/execute-action-chain",
-      "markdown": "https://docs.whop.com/api-reference/beta/recommended-actions/execute-action-chain.md",
-      "file": "api-reference/beta/recommended-actions/execute-action-chain.md",
-      "indexes": [
-        "llms.txt",
-        "sitemap"
-      ]
-    },
-    {
-      "page": "https://docs.whop.com/api-reference/beta/recommended-actions/list-action-chains",
-      "markdown": "https://docs.whop.com/api-reference/beta/recommended-actions/list-action-chains.md",
-      "file": "api-reference/beta/recommended-actions/list-action-chains.md",
-      "indexes": [
-        "llms.txt",
-        "sitemap"
-      ]
-    },
-    {
-      "page": "https://docs.whop.com/api-reference/beta/recommended-actions/list-recommended-action-executions",
-      "markdown": "https://docs.whop.com/api-reference/beta/recommended-actions/list-recommended-action-executions.md",
-      "file": "api-reference/beta/recommended-actions/list-recommended-action-executions.md",
-      "indexes": [
-        "llms.txt",
-        "sitemap"
-      ]
-    },
-    {
-      "page": "https://docs.whop.com/api-reference/beta/recommended-actions/retrieve-action-chain",
-      "markdown": "https://docs.whop.com/api-reference/beta/recommended-actions/retrieve-action-chain.md",
-      "file": "api-reference/beta/recommended-actions/retrieve-action-chain.md",
       "indexes": [
         "llms.txt",
         "sitemap"
@@ -4984,6 +5083,15 @@
       "page": "https://docs.whop.com/api-reference/members/member-created",
       "markdown": "https://docs.whop.com/api-reference/members/member-created.md",
       "file": "api-reference/members/member-created.md",
+      "indexes": [
+        "llms.txt",
+        "sitemap"
+      ]
+    },
+    {
+      "page": "https://docs.whop.com/api-reference/members/member-updated",
+      "markdown": "https://docs.whop.com/api-reference/members/member-updated.md",
+      "file": "api-reference/members/member-updated.md",
       "indexes": [
         "llms.txt",
         "sitemap"
@@ -7635,6 +7743,14 @@
       "page": "https://docs.whop.com/elements/upcoming/payments/paymentRequest",
       "markdown": "https://docs.whop.com/elements/upcoming/payments/paymentRequest.md",
       "file": "elements/upcoming/payments/paymentRequest.md",
+      "indexes": [
+        "llms.txt"
+      ]
+    },
+    {
+      "page": "https://docs.whop.com/elements/upcoming/payments/payments",
+      "markdown": "https://docs.whop.com/elements/upcoming/payments/payments.md",
+      "file": "elements/upcoming/payments/payments.md",
       "indexes": [
         "llms.txt"
       ]

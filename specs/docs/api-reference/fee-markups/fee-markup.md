@@ -29,7 +29,7 @@
 <ResponseField name="fee_type" type="FeeMarkupTypes" required>
   The category of fee this markup applies to.
 
-  Available options: `crypto_withdrawal_markup`, `rtp_withdrawal_markup`, `next_day_bank_withdrawal_markup`, `bank_wire_withdrawal_markup`, `digital_wallet_withdrawal_markup`, `crypto_deposit_markup`, `bank_deposit_markup`
+  Available options: `crypto_withdrawal_markup`, `rtp_withdrawal_markup`, `next_day_bank_withdrawal_markup`, `bank_wire_withdrawal_markup`, `digital_wallet_withdrawal_markup`, `transfer_markup`, `crypto_deposit_markup`, `bank_deposit_markup`, `crypto_swap_markup`
 </ResponseField>
 
 <ResponseField name="fixed_fee_usd" type="number | null" required>

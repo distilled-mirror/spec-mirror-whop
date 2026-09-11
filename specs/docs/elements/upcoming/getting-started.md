@@ -143,13 +143,14 @@
 
 <CodeGroup>
   ```tsx React theme={null}
-  import { WhopElements, Payments, PaymentElement, AddressElement, CardElement, EmailElement, TaxIdElement, BrandingElement } from "@whop/elements-react";
+  import { WhopElements, Payments, PaymentsElement, PaymentElement, AddressElement, CardElement, EmailElement, TaxIdElement, BrandingElement } from "@whop/elements-react";
   import { loadWhop } from "@whop/elements";
 
   function Example() {
     return (
       <WhopElements elements={loadWhop()}>
         <Payments /* options */>
+          <PaymentsElement />
           <PaymentElement />
           <AddressElement />
           <CardElement />
@@ -209,6 +210,7 @@
   <script src="https://js.whop.cloud/elements/amber/elements.js" data-whop-elements></script>
   <script type="module">
     const payments = window.WhopElements().payments.create({ /* options */ });
+    payments.create('payments').mount('#payments-payments');
     payments.create('payment').mount('#payments-payment');
     payments.create('address').mount('#payments-address');
     payments.create('card').mount('#payments-card');
@@ -269,20 +271,20 @@
 
   <CodeGroup>
     ```tsx React theme={null}
-    <Ads accountId="biz_xxxxxxxx" accessToken={token}>
+    <Payments accountId="biz_xxxxxxxx" accessToken={token}>
       {/* elements */}
-    </Ads>
+    </Payments>
     ```
 
     ```ts JavaScript theme={null}
-    const ads = whop.ads.create({ accountId: "biz_xxxxxxxx", accessToken });
+    const payments = whop.payments.create({ accountId: "biz_xxxxxxxx", accessToken });
     ```
   </CodeGroup>
 
   The token is a value you set, not a callback the SDK calls. Set a new one before it expires:
 
   ```ts theme={null}
-  ads.update({ accessToken: await createAccessToken() });
+  payments.update({ accessToken: await createAccessToken() });
   ```
 
   <Note>If you omit `accessToken`, requests use the viewer's session cookie instead. This works **only on whop.com**. The API does not send `Access-Control-Allow-Credentials` on cross-origin preflights, so a page on your own domain has no session to fall back to and must pass a token.</Note>
@@ -295,7 +297,7 @@
     Visual customization for every element — `theme` (light/dark + palettes), `variables` (CSS custom properties), and `classes` (per-part style declarations). The color scheme is applied before an element's first paint, so dark pages never flash light. See [Appearance](/elements/upcoming/appearance).
   </ResponseField>
 
-  <ResponseField name="locale" type="&#x22;en&#x22; | &#x22;es&#x22; | &#x22;zh&#x22; | &#x22;nl&#x22; | &#x22;pt&#x22; | &#x22;de&#x22; | &#x22;it&#x22; | &#x22;fr&#x22; | &#x22;ja&#x22; | &#x22;pl&#x22; | &#x22;tr&#x22;">
+  <ResponseField name="locale" type="&#x22;en&#x22; | &#x22;es&#x22; | &#x22;zh&#x22; | &#x22;nl&#x22; | &#x22;pt&#x22; | &#x22;de&#x22; | &#x22;hu&#x22; | &#x22;it&#x22; | &#x22;fr&#x22; | &#x22;ja&#x22; | &#x22;pl&#x22; | &#x22;tr&#x22;">
     Locale for element UI text — one of the app's built locales; any other value falls back to the default locale. Defaults to `"en"`.
   </ResponseField>
 
@@ -348,7 +350,7 @@
 
   <CardGroup cols={2}>
     <Card title="Payments" href="/elements/upcoming/payments/overview">
-      Collect a payment from a `plan_` ID or inline currency and amount.
+      Browse account payments with PaymentsElement, or collect a payment from a `plan_` ID or inline currency and amount.
     </Card>
 
     <Card title="Verifications" href="/elements/upcoming/verifications/overview">
@@ -523,7 +525,7 @@
 
   ## Apple Pay and Google Pay
 
-  Wallet tiles appear only once the platform can present a sheet. Pass `applePayMerchantId` (and `googlePayMerchantName`) on `<Payments>`, add the **Apple Pay** capability with that merchant ID in Xcode, and the tile presents `PKPaymentAuthorizationController` with Google's `PayButton` as the Android counterpart.
+  Wallet tiles appear once the platform can present a sheet, and there is nothing to set up for either. Apple Pay uses the merchant registered on the Whop account, so your app needs no merchant identifier and no Xcode capability. `googlePayMerchantName` on `<Payments>` only sets the name shown in the sheet.
 
   ## Theming
 
@@ -539,7 +541,7 @@
   | ---------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
   | `BrandingRequiredError` on confirm | No `BrandingElement` is mounted. Mount one inside `<Payments>`.                                                                          |
   | `ChargeConfigError`                | `<Payments>` has neither a `plan` nor an `amount` and `currency` pair.                                                                   |
-  | No wallet tile                     | `applePayMerchantId` is unset, the Apple Pay capability is missing, or the device has no card.                                           |
+  | No wallet tile                     | The account has no Apple Pay merchant registered, or the device cannot present a sheet.                                                  |
   | Method tiles never arrive          | `getToken` is returning an API key rather than an access token, or the token is not scoped for the account.                              |
   | A blank card field                 | The native build predates the package. `@basis-theory/react-native-elements` installs with it, so rebuild rather than adding it by hand. |
 

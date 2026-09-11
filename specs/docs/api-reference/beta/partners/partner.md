@@ -173,7 +173,7 @@ Use it to enroll as a Whop partner, list the users you referred, list your refer
             <ResponseField name="action" type="string" required>
               What the holder must do; new values may be added, so handle unknown actions gracefully
 
-              Available options: `deposit_funds`, `submit_information_request`, `update_automatic_withdrawal_method`, `reauthorize_payout_methods`, `update_payout_profile`, `card_usage_review`, `verify_identity`, `sign_formation_documents`, `connect_fulfillment_tracker`, `setup_apple_pay_domains`, `configure_tax_remitter`, `add_vat_registration`
+              Available options: `deposit_funds`, `accept_airwallex_terms`, `submit_information_request`, `update_automatic_withdrawal_method`, `reauthorize_payout_methods`, `update_payout_profile`, `card_usage_review`, `verify_identity`, `sign_formation_documents`, `connect_fulfillment_tracker`, `setup_apple_pay_domains`, `configure_tax_remitter`, `add_vat_registration`
             </ResponseField>
 
             <ResponseField name="blocked_capabilities" type="string[]" required>

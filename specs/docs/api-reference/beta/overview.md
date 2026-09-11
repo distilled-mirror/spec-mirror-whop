@@ -71,16 +71,17 @@ Use the API selector at the top of the sidebar to switch between references.
 
 The accounts and people everything else hangs off.
 
-| Resource                                                        | What it's for                                                         |
-| --------------------------------------------------------------- | --------------------------------------------------------------------- |
-| [Accounts](/api-reference/beta/accounts/account)                | A business on Whop: profile, wallet, capabilities, settings.          |
-| [Users](/api-reference/beta/users/user)                         | A person on Whop: profile and connected identities.                   |
-| [Team Members](/api-reference/beta/team-members/team-member)    | An account's team members and the roles that scope their access.      |
-| [Members](/api-reference/beta/members/member)                   | One buyer's relationship with an account, across all their purchases. |
-| [Webhooks](/api-reference/beta/webhooks/list-webhooks)          | Event notifications pushed to your server as things happen.           |
-| [Stats](/api-reference/beta/stats/stats)                        | Aggregated financial, audience, and traffic reporting.                |
-| [Verifications](/api-reference/beta/verifications/verification) | Legal identity required before payouts and card issuing.              |
-| [Exports](/api-reference/beta/exports/list-exports)             | Asynchronous CSV dumps of an account's dashboard data.                |
+| Resource                                                                                      | What it's for                                                         |
+| --------------------------------------------------------------------------------------------- | --------------------------------------------------------------------- |
+| [Accounts](/api-reference/beta/accounts/account)                                              | A business on Whop: profile, wallet, capabilities, settings.          |
+| [Users](/api-reference/beta/users/user)                                                       | A person on Whop: profile and connected identities.                   |
+| [Team Members](/api-reference/beta/team-members/team-member)                                  | An account's team members and the roles that scope their access.      |
+| [Members](/api-reference/beta/members/member)                                                 | One buyer's relationship with an account, across all their purchases. |
+| [Economic Intelligence](/api-reference/beta/economic-intelligence/list-economic-intelligence) | What an account should do next to grow, generated from its own data.  |
+| [Webhooks](/api-reference/beta/webhooks/list-webhooks)                                        | Event notifications pushed to your server as things happen.           |
+| [Stats](/api-reference/beta/stats/stats)                                                      | Aggregated financial, audience, and traffic reporting.                |
+| [Verifications](/api-reference/beta/verifications/verification)                               | Legal identity required before payouts and card issuing.              |
+| [Exports](/api-reference/beta/exports/list-exports)                                           | Asynchronous CSV dumps of an account's dashboard data.                |
 
 ### Notifications
 
@@ -108,14 +109,15 @@ Accept payments from buyers and handle what comes after.
 
 Balances and banking: every way funds move in or out.
 
-| Resource                                                          | What it's for                                          |
-| ----------------------------------------------------------------- | ------------------------------------------------------ |
-| [Financial Activity](/api-reference/beta/ledgers/ledger-activity) | The activity feed behind an account or user's balance. |
-| [Payouts](/api-reference/beta/payouts/payout)                     | Send money from a balance to a bank or wallet.         |
-| [Cards](/api-reference/beta/cards/card)                           | Issue cards that spend from a balance.                 |
-| [Transfers](/api-reference/beta/transfers/transfer)               | Move funds between Whop accounts and users.            |
-| [Deposits](/api-reference/beta/deposits/deposit)                  | Add funds to a balance.                                |
-| [Swaps](/api-reference/beta/swaps/swap)                           | Convert a balance between currencies.                  |
+| Resource                                                           | What it's for                                          |
+| ------------------------------------------------------------------ | ------------------------------------------------------ |
+| [Financial Activity](/api-reference/beta/ledgers/ledger-activity)  | The activity feed behind an account or user's balance. |
+| [Payouts](/api-reference/beta/payouts/payout)                      | Send money from a balance to a bank or wallet.         |
+| [Cards](/api-reference/beta/cards/card)                            | Issue cards that spend from a balance.                 |
+| [Cashback Rules](/api-reference/beta/cashback-rules/cashback-rule) | Configure platform-sponsored card cashback.            |
+| [Transfers](/api-reference/beta/transfers/transfer)                | Move funds between Whop accounts and users.            |
+| [Deposits](/api-reference/beta/deposits/deposit)                   | Add funds to a balance.                                |
+| [Swaps](/api-reference/beta/swaps/swap)                            | Convert a balance between currencies.                  |
 
 ### Commerce
 
@@ -152,11 +154,10 @@ Post paid tasks and pay people for completed work.
 
 Who visits and what converts, captured by the pixel.
 
-| Resource                                                                          | What it's for                                                                        |
-| --------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
-| [People](/api-reference/beta/people/person)                                       | Visitors and customers of an account, with identity, purchase, and traffic profiles. |
-| [Events](/api-reference/beta/events/event)                                        | Conversion and engagement events tracked for attribution.                            |
-| [Recommended Actions](/api-reference/beta/recommended-actions/list-action-chains) | Suggested next-step action chains for an account.                                    |
+| Resource                                    | What it's for                                                                        |
+| ------------------------------------------- | ------------------------------------------------------------------------------------ |
+| [People](/api-reference/beta/people/person) | Visitors and customers of an account, with identity, purchase, and traffic profiles. |
+| [Events](/api-reference/beta/events/event)  | Conversion and engagement events tracked for attribution.                            |
 
 ### Ads
 
@@ -190,11 +191,12 @@ Accounts connected from other platforms.
 
 Build, host, and observe apps on the Whop platform.
 
-| Resource                                                  | What it's for                                                  |
-| --------------------------------------------------------- | -------------------------------------------------------------- |
-| [Apps](/api-reference/beta/apps/app)                      | Apps you build on Whop: metadata, hosted builds, runtime logs. |
-| [Domains](/api-reference/beta/domains/domain)             | Custom domains assigned to hosted apps.                        |
-| [App Builds](/api-reference/beta/app-builds/app-build)    | Versioned build artifacts deployed to an app's platforms.      |
-| [API Keys](/api-reference/beta/api-keys/api-key)          | Programmatic credentials for an account or app.                |
-| [API Logs](/api-reference/beta/api-logs/list-api-logs)    | Requests made to Whop's API with your account's API keys.      |
-| [Permissions](/api-reference/beta/permissions/permission) | What your credential is allowed to do on a resource.           |
+| Resource                                                        | What it's for                                                                      |
+| --------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| [Apps](/api-reference/beta/apps/app)                            | Apps you build on Whop: metadata, hosted builds, runtime logs.                     |
+| [Domains](/api-reference/beta/domains/domain)                   | Custom domains assigned to hosted apps.                                            |
+| [App Builds](/api-reference/beta/app-builds/app-build)          | Versioned build artifacts deployed to an app's platforms.                          |
+| [API Keys](/api-reference/beta/api-keys/api-key)                | Programmatic credentials for an account or app.                                    |
+| [API Logs](/api-reference/beta/api-logs/list-api-logs)          | Requests made to Whop's API with your account's API keys.                          |
+| [Permissions](/api-reference/beta/permissions/permission)       | What your credential is allowed to do on a resource.                               |
+| [Experiments](/api-reference/beta/experiments/list-experiments) | Feature flags and A/B experiments for gradual rollout and statistical measurement. |

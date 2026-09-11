@@ -512,6 +512,13 @@ The `business_type`, `industry_group`, and `industry_type` fields classify accou
           Account ID, prefixed `biz_`.
         </ResponseField>
 
+        <ResponseField name="fees" type="object">
+          Markup rates this parent charges the connected account being read, keyed by
+          fee type (for example `crypto_deposit_markup`), each with `percentage_fee` and
+          `fixed_fee_usd`. Resolved with the connected account's own overrides winning
+          over the platform default.
+        </ResponseField>
+
         <ResponseField name="logo_url" type="string | null" required>
           Account logo image URL.
         </ResponseField>
@@ -731,7 +738,7 @@ The `business_type`, `industry_group`, and `industry_type` fields classify accou
     </ResponseField>
 
     <ResponseField name="recommended_actions" type="object[] | null" required>
-      DEPRECATED: Use the `GET /recommended_actions?account_id=\{account_id}` endpoint instead.
+      DEPRECATED: Use the `GET /economic_intelligence?account_id=\{account_id}` endpoint instead.
 
       <Accordion title="Properties" defaultOpen={true}>
         <ResponseField name="action" type="string" required>
@@ -791,7 +798,7 @@ The `business_type`, `industry_group`, and `industry_type` fields classify accou
         <ResponseField name="action" type="string" required>
           What the holder must do; new values may be added, so handle unknown actions gracefully
 
-          Available options: `deposit_funds`, `submit_information_request`, `update_automatic_withdrawal_method`, `reauthorize_payout_methods`, `update_payout_profile`, `card_usage_review`, `verify_identity`, `sign_formation_documents`, `connect_fulfillment_tracker`, `setup_apple_pay_domains`, `configure_tax_remitter`, `add_vat_registration`
+          Available options: `deposit_funds`, `accept_airwallex_terms`, `submit_information_request`, `update_automatic_withdrawal_method`, `reauthorize_payout_methods`, `update_payout_profile`, `card_usage_review`, `verify_identity`, `sign_formation_documents`, `connect_fulfillment_tracker`, `setup_apple_pay_domains`, `configure_tax_remitter`, `add_vat_registration`
         </ResponseField>
 
         <ResponseField name="blocked_capabilities" type="string[]" required>

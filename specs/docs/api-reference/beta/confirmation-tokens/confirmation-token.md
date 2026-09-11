@@ -66,29 +66,43 @@ Create a confirmation token in a buyer-facing collection flow, then send its `ct
         </ResponseField>
 
         <ResponseField name="bank_debit" type="object">
-          Present when the category is `bank_debit`. Carries the account's last four when the linking provider surfaced it.
+          Present when the category is `bank_debit`. Empty until the account is charged.
 
           <Accordion title="Properties" defaultOpen={true}>
             <ResponseField name="brand" type="string">
-              Lowercase card brand, e.g. `visa`. Absent when the method carries no brand.
+              Lowercase card brand, such as `visa` or `mastercard`.
+            </ResponseField>
+
+            <ResponseField name="fingerprint" type="string">
+              Uniquely identifies this particular card number. Matches the `fingerprint` on
+              any payment method saved from this token, so you can recognize a card across
+              attempts. For a wallet, this identifies the network token rather than the
+              underlying card.
             </ResponseField>
 
             <ResponseField name="last4" type="string">
-              Last four digits of the instrument. Absent when the method carries none.
+              The last four digits of the card.
             </ResponseField>
           </Accordion>
         </ResponseField>
 
         <ResponseField name="card" type="object">
-          Present when the category is `card`. What the collection surface displayed — the token has not been charged, so this is the buyer's claim, not the vault's record.
+          Details of the card, when the category is `card`.
 
           <Accordion title="Properties" defaultOpen={true}>
             <ResponseField name="brand" type="string">
-              Lowercase card brand, e.g. `visa`. Absent when the method carries no brand.
+              Lowercase card brand, such as `visa` or `mastercard`.
+            </ResponseField>
+
+            <ResponseField name="fingerprint" type="string">
+              Uniquely identifies this particular card number. Matches the `fingerprint` on
+              any payment method saved from this token, so you can recognize a card across
+              attempts. For a wallet, this identifies the network token rather than the
+              underlying card.
             </ResponseField>
 
             <ResponseField name="last4" type="string">
-              Last four digits of the instrument. Absent when the method carries none.
+              The last four digits of the card.
             </ResponseField>
           </Accordion>
         </ResponseField>
@@ -104,15 +118,22 @@ Create a confirmation token in a buyer-facing collection flow, then send its `ct
         </ResponseField>
 
         <ResponseField name="saved" type="object">
-          Present when the category is `saved` and the stored method is a card. Unlike the other previews this is the vault's own record, not a claim from the collection surface. Absent for a balance, which has no instrument.
+          Details of the stored card, when the category is `saved`. Absent for a balance.
 
           <Accordion title="Properties" defaultOpen={true}>
             <ResponseField name="brand" type="string">
-              Lowercase card brand, e.g. `visa`. Absent when the method carries no brand.
+              Lowercase card brand, such as `visa` or `mastercard`.
+            </ResponseField>
+
+            <ResponseField name="fingerprint" type="string">
+              Uniquely identifies this particular card number. Matches the `fingerprint` on
+              any payment method saved from this token, so you can recognize a card across
+              attempts. For a wallet, this identifies the network token rather than the
+              underlying card.
             </ResponseField>
 
             <ResponseField name="last4" type="string">
-              Last four digits of the instrument. Absent when the method carries none.
+              The last four digits of the card.
             </ResponseField>
           </Accordion>
         </ResponseField>
@@ -122,15 +143,22 @@ Create a confirmation token in a buyer-facing collection flow, then send its `ct
         </ResponseField>
 
         <ResponseField name="wallet" type="object">
-          Present when the category is `wallet`. Carries the backing card's brand and last four when the wallet surfaced them.
+          Details of the network token the wallet supplied, when the category is `wallet`.
 
           <Accordion title="Properties" defaultOpen={true}>
             <ResponseField name="brand" type="string">
-              Lowercase card brand, e.g. `visa`. Absent when the method carries no brand.
+              Lowercase card brand, such as `visa` or `mastercard`.
+            </ResponseField>
+
+            <ResponseField name="fingerprint" type="string">
+              Uniquely identifies this particular card number. Matches the `fingerprint` on
+              any payment method saved from this token, so you can recognize a card across
+              attempts. For a wallet, this identifies the network token rather than the
+              underlying card.
             </ResponseField>
 
             <ResponseField name="last4" type="string">
-              Last four digits of the instrument. Absent when the method carries none.
+              The last four digits of the card.
             </ResponseField>
           </Accordion>
         </ResponseField>
@@ -163,6 +191,7 @@ Create a confirmation token in a buyer-facing collection flow, then send its `ct
       		"display_name": "Visa •••• 4242",
       		"card": {
       			"brand": "visa",
+      			"fingerprint": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
       			"last4": "4242"
       		}
       	},

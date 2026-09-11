@@ -20,7 +20,7 @@ info:
   termsOfService: https://whop.com/tos-developer-api/
   title: Whop API
   version: 1.0.0
-  x-api-version-date: '2026-09-09'
+  x-api-version-date: '2026-09-11'
 servers:
   - description: Production Whop API
     url: https://api.whop.com/api/v1
@@ -76,6 +76,23 @@ tags:
       lifecycle; to grant or revoke access, work with memberships instead.
     name: Members
     x-whop-summary: One buyer's relationship with an account, across all their purchases.
+  - description: >
+      Economic Intelligence is Whop's recommendation engine for an account. Each
+      recommendation is a single action: a title the owner sees, a step-by-step
+      brief Whop AI carries out, and the bet it makes on the account's ledger.
+      Whop generates them from the account's sales, site, ads, and what its
+      owner has said.
+
+
+      Use the Economic Intelligence API to list every recommendation the account
+      has been given and to run the engine toward what the owner wants, in their
+      own words. Running it returns a recommendation right away with status
+      `queued`; the engine moves it through `pending` to `ready`, or to `failed`
+      when it has nothing to recommend. A `ready` recommendation becomes
+      `executed` once the owner runs it from the dashboard, or `superseded` when
+      a newer one replaces it.
+    name: Economic Intelligence
+    x-whop-summary: What an account should do next to grow, generated from its own data.
   - name: Webhooks
     x-whop-summary: Event notifications pushed to your server as things happen.
   - description: >
@@ -270,6 +287,19 @@ tags:
       retrieve active card details such as the card number and CVC.
     name: Cards
     x-whop-summary: Issue cards that spend from a balance.
+  - description: >
+      Cashback rules designate a funding platform, a merchant name and category,
+      a rate, and an eligibility window. An optional account ID limits the rule
+      to one of the platform's direct connected accounts.
+
+
+      Use the Cashback Rules API to create future-dated rules, update their
+      merchant name, MCC, description, or expiration, and list every rule funded
+      by the authenticated platform, including expired and discarded rules.
+      Discarded rules cannot be updated. Creating or updating a rule does not
+      transfer funds.
+    name: Cashback Rules
+    x-whop-summary: Configure platform-sponsored card cashback.
   - description: >
       Transfers move value between identities on Whop. They are used for
       account-to-account money movement, user payouts inside Whop, crypto
@@ -470,19 +500,6 @@ tags:
     name: Events
     x-whop-summary: Conversion and engagement events tracked for attribution.
   - description: >
-      A Recommended Action Chain is a short, ordered sequence of dashboard
-      actions — create a product, price it, publish it — suggested for an
-      account based on what it already has. Seeded chains come from hand-written
-      presets; generated chains, produced per account, share the same shape.
-
-
-      Use the Recommended Actions API to list the chains recommended for an
-      account and to record that a chain was run. Running a chain executes
-      nothing server-side — the client follows each step's CTA itself; the run
-      endpoint records the `recommended_action_chain.executed` analytics event.
-    name: Recommended Actions
-    x-whop-summary: Suggested next-step action chains for an account.
-  - description: >
       An Ad is the individual creative unit delivered by an [ad
       group](/api-reference/beta/ad-groups/ad-group). It holds the copy,
       creative assets, and destination URL for one ad.
@@ -654,6 +671,40 @@ tags:
       to manage who else can reach an account, use the Team Members API.
     name: Permissions
     x-whop-summary: What your credential is allowed to do on a resource.
+  - description: >
+      Experiments belong to an account. Use `account_id` to select the owning
+      account, or `internal` for Whop's platform experiments. Reading and
+      managing account experiments requires `experiment:read` or
+      `experiment:manage`; internal configuration requires Whop internal access.
+      Exposure is callable without authentication.
+
+
+      Create a draft, configure treatment weights and targeting, then activate,
+      pause, or end it. Treatments occupy stable percentage ranges; the
+      remainder is control. Growing an allocation preserves existing treatment
+      assignments. Optional `related_resource` references attach experiments,
+      control, and variants to resources owned by the account. Bindings cannot
+      change after first activation.
+
+
+      `GET /experiments/exposures` evaluates and records exposure. Ownership is
+      separate from `subject` identity: `subject[user_id]`,
+      `subject[account_id]`, and `subject[anonymous_id]` supply the experiment's
+      bucketing unit. Internal user identity comes from the authenticated
+      session. Resolved authentication is recorded on the event separately from
+      the subject. Pass a flag key and its account, or a globally unique
+      experiment ID. Without a flag key, evaluation returns active experiments
+      in the account and related resource scope.
+
+
+      Account experiments run without a reporting provider. Statistical results
+      and the metric catalog currently remain internal. Configuration responses
+      include an assignment seed and revision for consumers that cache
+      experiment definitions.
+    name: Experiments
+    x-whop-summary: >-
+      Feature flags and A/B experiments for gradual rollout and statistical
+      measurement.
 paths:
   /plans/{id}/calculate_tax:
     parameters:

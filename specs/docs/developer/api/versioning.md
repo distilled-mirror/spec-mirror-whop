@@ -35,7 +35,25 @@ Every version automatically gets new endpoints and optional fields. Breaking cha
 
 ## Changelog
 
-<Update label="2026-09-09" description="Named Whop withdrawal holds on pending funds" tags={["Latest"]}>
+<Update label="2026-09-11" description="Business categories come from one table" tags={["Latest"]}>
+  Account `business_type`, `industry_group`, and `industry_type` are strings drawn from Whop's business categories table instead of fixed enums. New categories appear without a new API version. The [business types and industries glossary](/api-reference/beta/accounts/business-types) lists the current values.
+
+  * `coaching_and_courses` is now `education`, `physical_product` is now `ecommerce`, and `marketplace` is now `platform`.
+  * Industry groups and types were reorganized under the eight business types. `PATCH /accounts/{id}` accepts glossary slugs only. Unknown values return `400`.
+
+  Pinned callers on an earlier version still receive the previous business type names, and industry values that didn't exist before this version are returned as `null`.
+</Update>
+
+<Update label="2026-09-09-1" description="Account-owned experiments">
+  Experiments accept an owning `account_id` (`biz_…` or `internal`), optional resource references, and account-local flag keys. Creation requires explicit ownership. Evaluation identifies the subject through `subject[account_id]`, `subject[anonymous_id]`, and `subject[user_id]`.
+
+  Older versions retain internal experiment scope and their existing evaluation identity parameters. Reading and managing account experiments requires account permissions. Exposure accepts optional credentials and records their identity on the event. Account experiments don't provision a reporting provider.
+  Listing selects one account. Omitting `account_id` lists internal experiments after the internal access check. Team tags remain private and aren't supported for account experiments.
+
+  Evaluation accepts targeting `properties` as a JSON query value. Existing nested property query keys remain supported.
+</Update>
+
+<Update label="2026-09-09" description="Named Whop withdrawal holds on pending funds">
   Account `payment_controls.undated_pending_reason` can be `withdrawals_disabled` when Whop has blocked withdrawals, so those pending funds can't become available.
 
   `kyc_incomplete`, `pending_information_request`, and `null` for funds that are still clearing are unchanged.

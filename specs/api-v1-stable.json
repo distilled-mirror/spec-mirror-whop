@@ -6888,8 +6888,10 @@
           "next_day_bank_withdrawal_markup",
           "bank_wire_withdrawal_markup",
           "digital_wallet_withdrawal_markup",
+          "transfer_markup",
           "crypto_deposit_markup",
-          "bank_deposit_markup"
+          "bank_deposit_markup",
+          "crypto_swap_markup"
         ],
         "type": "string"
       },
@@ -20647,6 +20649,7 @@
           "shipment.created",
           "shipment.updated",
           "member.created",
+          "member.updated",
           "ad_campaign.payment_failed",
           "ad_campaign.updated",
           "ad.updated",
@@ -20907,7 +20910,7 @@
     "termsOfService": "https://whop.com/tos-developer-api/",
     "title": "Whop API",
     "version": "1.0.0",
-    "x-api-version-date": "2026-09-09"
+    "x-api-version-date": "2026-09-11"
   },
   "openapi": "3.1.0",
   "paths": {
@@ -116523,6 +116526,149 @@
           }
         },
         "summary": "Member Created",
+        "tags": [
+          "Members"
+        ]
+      }
+    },
+    "member.updated": {
+      "post": {
+        "description": "Sent when a member is updated\n\nRequired permissions:\n - `member:basic:read`\n - `member:email:read`\n - `member:phone:read`\n - `webhook_receive:members`",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "webhook-id",
+            "required": true,
+            "schema": {
+              "description": "A unique identifier for this webhook request",
+              "example": "msg_xxxxxxxxxxxxxxxxxxxxxxxx",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "webhook-signature",
+            "required": true,
+            "schema": {
+              "description": "The signature of the webhook request with the webhook version prepended",
+              "example": "v1,BASE64ENCODEDSIGNATURE",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "webhook-timestamp",
+            "required": true,
+            "schema": {
+              "description": "The timestamp in seconds since the Unix epoch that the webhook was sent at on the server",
+              "example": "1727606400",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "example": {
+                "api_version": "v1",
+                "api_version_date": null,
+                "company_id": "biz_xxxxxxxxxxxxxx",
+                "data": {
+                  "access_level": "customer",
+                  "company": {
+                    "id": "biz_xxxxxxxxxxxxxx",
+                    "route": "biz_xxxxxxxxxxxxxx",
+                    "title": "Shine Time Auto Detailing"
+                  },
+                  "company_token_balance": 0,
+                  "created_at": "2026-01-01T12:00:00.000Z",
+                  "id": "mber_xxxxxxxxxxxxxx",
+                  "joined_at": "2026-01-01T12:00:00.000Z",
+                  "most_recent_action": null,
+                  "most_recent_action_at": null,
+                  "phone": null,
+                  "status": "joined",
+                  "updated_at": "2026-01-01T12:00:00.000Z",
+                  "usd_total_spent": 0,
+                  "user": {
+                    "email": "marcus@shinetime.example",
+                    "id": "user_xxxxxxxxxxxxxx",
+                    "name": "Marcus Webb",
+                    "username": "marcuswebb"
+                  }
+                },
+                "id": "msg_xxxxxxxxxxxxxxxxxxxxxxxx",
+                "timestamp": "2025-01-01T00:00:00.000Z",
+                "type": "member.updated"
+              },
+              "schema": {
+                "properties": {
+                  "api_version": {
+                    "const": "v1",
+                    "description": "The API version for this webhook",
+                    "example": "v1",
+                    "type": "string"
+                  },
+                  "api_version_date": {
+                    "description": "The dated API version (Api-Version-Date) the payload is serialized to",
+                    "example": "2026-07-20",
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "company_id": {
+                    "description": "The account ID that this webhook event is associated with",
+                    "example": "biz_xxxxxxxxxxxxxx",
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "data": {
+                    "$ref": "#/components/schemas/Member"
+                  },
+                  "id": {
+                    "description": "A unique ID for every single webhook request",
+                    "example": "msg_xxxxxxxxxxxxxxxxxxxxxxxx",
+                    "type": "string"
+                  },
+                  "previous_attributes": {
+                    "description": "For some `.updated` events, the old values of the payload fields that changed, keyed by field name. Omitted when no capture is available for the event",
+                    "type": "object"
+                  },
+                  "timestamp": {
+                    "description": "The timestamp in ISO 8601 format that the webhook was sent at on the server",
+                    "example": "2025-01-01T00:00:00.000Z",
+                    "format": "date-time",
+                    "type": "string"
+                  },
+                  "type": {
+                    "const": "member.updated",
+                    "description": "The webhook event type",
+                    "example": "member.updated",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "id",
+                  "api_version",
+                  "api_version_date",
+                  "timestamp",
+                  "type",
+                  "data"
+                ],
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Return a 200 status to indicate that the data was received successfully"
+          }
+        },
+        "summary": "Member Updated",
         "tags": [
           "Members"
         ]

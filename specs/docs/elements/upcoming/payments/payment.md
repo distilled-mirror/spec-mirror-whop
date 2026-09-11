@@ -53,7 +53,6 @@
               ref={payments}
               accountId="biz_xxxxxxxx"
               plan="plan_xxxxxxxx"
-              applePayMerchantId="merchant.com.example"
               returnUrl="https://example.com/checkout/return"
             >
               <ScrollView>
@@ -419,7 +418,7 @@
   ## Good to know
 
   * Card numbers never pass through your code. The fields are PCI-isolated native inputs, and the SDK hands Whop a token, so your app stays out of PCI scope.
-  * Apple Pay and Google Pay use the platform sheet through `PKPaymentAuthorizationController` and Google's `PaymentsClient`. Apple Pay needs a merchant identifier: it comes from the account's own Apple Pay registration, and `applePayMerchantId` on `<Payments>` overrides it, so the tile is hidden only when neither exists. Google Pay needs nothing from you; `googlePayMerchantName` only sets the name shown in the sheet, which defaults to Whop.
+  * Apple Pay and Google Pay both present the platform's own sheet. Neither needs anything from you: Apple Pay uses the merchant registered on the Whop account, so there is no merchant identifier to pass and no capability to add in Xcode, and `googlePayMerchantName` only sets the name shown in the sheet, which defaults to Whop.
   * Redirect methods and 3D Secure open `ASWebAuthenticationSession` on iOS and Custom Tabs on Android. The system browser, never a WebView, so the issuer's page stays outside your app's trust boundary.
   * Set `returnUrl` on `<Payments>` to an **https** URL you host. The API refuses anything but https or loopback (`PaymentsApi::ValidateReturnUrl`), so a custom app scheme is not available here. You do not register a deep link: after the issuer redirects, `handleNextAction` polls the payment to rest and closes the browser itself.
 

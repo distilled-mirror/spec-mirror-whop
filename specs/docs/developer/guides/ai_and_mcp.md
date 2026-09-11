@@ -63,7 +63,11 @@ Lets AI agents call the Current API: list resources, create data, and explore yo
 
 ### One URL, every client
 
-Clients on older protocol revisions connect to the same `/mcp` URL with no special configuration. `https://mcp.whop.com/sse` stays supported for clients already pointed at it. Configure new clients with `/mcp`.
+All clients connect to the `/mcp` URL. Clients on older protocol revisions use the same URL with no special configuration.
+
+<Note>
+  If you connected using the `/sse` URL, update it to `/mcp`. The `/sse` endpoint has been retired and now returns a 404.
+</Note>
 
 ### Authentication
 

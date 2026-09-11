@@ -67,7 +67,7 @@ Pass callbacks in the create options or React props.
 
 One group of requirements was answered. Fires per group, not once per field.
 
-**Signature:** `((payload: { source: "identity" | "payout" | "audit" | "card_issuing" | "bank" | "ads" | "application"; itemIds: string[]; }) => void)`
+**Signature:** `((payload: { source: "identity" | "payout" | "audit" | "card_issuing" | "bank" | "ads" | "application" | "airwallex"; itemIds: string[]; }) => void)`
 
 ### `onCompleted`
 

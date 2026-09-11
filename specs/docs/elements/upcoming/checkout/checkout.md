@@ -301,6 +301,7 @@ Style these parts through `appearance.classes`. Use camel case or kebab case for
 | `.whop-PaymentSavedMoreSpinner`         | The spinner shown while the next page of saved payment methods loads                                                                                                              |
 | `.whop-PaymentSaveNotice`               | The save-for-future-purchases consent line closing the detail region                                                                                                              |
 | `.whop-PaymentSettlementNotice`         | The settlement-window hint on methods whose matrix configuration declares one                                                                                                     |
+| `.whop-PaymentsTable`                   | The complete payments table                                                                                                                                                       |
 | `.whop-PhoneVerificationChangeNumber`   | Return-to-number control                                                                                                                                                          |
 | `.whop-PhoneVerificationCode`           | Six-digit confirmation-code pane                                                                                                                                                  |
 | `.whop-PhoneVerificationDone`           | Success pane shown before closing                                                                                                                                                 |
@@ -342,7 +343,7 @@ const checkout = whop.checkout.create({
   }
 });
 
-// 225 classes use this shape
+// 226 classes use this shape
 checkout.update({
   appearance: { classes: { 'whop-Address': { fontWeight: '700' } } }
 });
