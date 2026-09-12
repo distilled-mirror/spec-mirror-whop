@@ -6,7 +6,7 @@
 
 > Every Whop CLI command group and subcommand, with descriptions from the CLI itself. Captured from whop 0.16.1.
 
-Every command group in `whop` 0.16.1, with each group's own description. Run `whop <group> --help` for flags, or `whop --llms-full` for the complete machine-readable reference. Commands that change state ask for confirmation before they run.
+Every command group in `whop`, with each group's own description. Run `whop <group> --help` for flags, or `whop --llms-full` for the complete machine-readable reference. Commands that change state ask for confirmation before they run.
 
 <Warning>
   The CLI has no sandbox, test, or dry-run mode, so every command runs in production.
@@ -38,6 +38,17 @@ Build and deploy fully hosted web apps on Whop (`*.whop.site`).
 
 Update the CLI to the latest version. `--check` reports without installing.
 
+## Feedback and questions
+
+```bash theme={null}
+whop report-feedback --content "The error message does not explain which permission is missing."
+whop ask-question --content "How do trials interact with an existing subscription?" --format json
+```
+
+Both commands submit one observation for Whop's internal review and return a receipt. `ask-question` records an unanswered question. It doesn't return an answer or start a support conversation. Use a user credential from `whop login` (browser OAuth). Remove secrets, personal data, and payment details from `--content`.
+
+Use `--account_id biz_...` to identify the account for an affected resource. Both commands default to your active account when available. Account context is optional.
+
 ## Commerce
 
 ### `products`
@@ -45,6 +56,14 @@ Update the CLI to the latest version. `--check` reports without installing.
 The things you sell. Each owns plans and a store page.
 
 `create` · `get` · `list` · `update` · `delete` · `publish` · `unpublish`
+
+`create` and `update` accept `--gallery_images` as a JSON array of objects containing an uploaded file `id` or a completed `direct_upload_id`:
+
+```bash theme={null}
+whop products update prod_xxxxxxxx --gallery_images '[{"id":"file_xxxxxxxx"}]'
+```
+
+The array replaces the gallery in display order, so include every file you want to keep. Pass `'[]'` to clear it. Omitting the option preserves the gallery. `banner_image` is separate and doesn't satisfy the marketplace gallery requirement.
 
 ### `plans`
 
@@ -225,6 +244,14 @@ Audience, placements, and schedule within a campaign.
 Reusable targeting lists for ad groups.
 
 `create` · `list` · `update` · `delete` · `add_people`
+
+## Experiments
+
+### `experiments`
+
+Create and manage experiments for an account. Pass `--account_id` to select the owning business. Account experiments don't accept or require tags. Creation currently requires Whop internal access.
+
+`list` · `create` · `get` · `update` · `exposures` · `activate` · `pause` · `end`
 
 ## Tracking
 

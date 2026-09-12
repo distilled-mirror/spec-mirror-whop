@@ -11919,7 +11919,7 @@
             ]
           },
           "recovery_url": {
-            "description": "Whop-hosted URL where the buyer can sign in and complete 3D Secure for a failed subscription renewal. `null` when recovery is unavailable or you lack `member:basic:read`.",
+            "description": "Whop-hosted URL where the buyer can sign in and complete 3D Secure for an off-session charge the bank challenged — a subscription renewal or a saved-card payment. `null` when recovery is unavailable or you lack `member:basic:read`.",
             "type": [
               "string",
               "null"
@@ -12100,7 +12100,7 @@
             ]
           },
           "settlement_time_at": {
-            "description": "When this payment's funds post to the company's available balance, at midnight UTC. Known at payment time and never changes. The `ledger_account.funds_available` webhook carries the same `settlement_time_at` when that batch posts — match them to know these funds are now withdrawable.",
+            "description": "When this payment's funds post to the company's available balance, at midnight UTC. Known at payment time and never changes. The `financial_activity.funds_available` webhook's `posted_at` carries the same value when the settlement that clears it posts — match them to know these funds are now withdrawable.",
             "example": "2023-12-01T05:00:00.401Z",
             "format": "date-time",
             "type": [
@@ -20603,6 +20603,7 @@
           "ledger_account.funds_available",
           "swap.completed",
           "deposit.succeeded",
+          "financial_activity.funds_available",
           "transfer.created",
           "transfer.completed",
           "transfer.failed",
@@ -20910,7 +20911,7 @@
     "termsOfService": "https://whop.com/tos-developer-api/",
     "title": "Whop API",
     "version": "1.0.0",
-    "x-api-version-date": "2026-09-11"
+    "x-api-version-date": "2026-09-11-1"
   },
   "openapi": "3.1.0",
   "paths": {
@@ -37779,7 +37780,7 @@
                     ]
                   },
                   "user_posts_cooldown_seconds": {
-                    "description": "The minimum number of seconds a user must wait between sending messages in this chat channel.",
+                    "description": "The minimum number of seconds a user must wait between sending messages in this chat channel. Pass null or 0 to remove the cooldown.",
                     "example": 42,
                     "type": [
                       "integer",

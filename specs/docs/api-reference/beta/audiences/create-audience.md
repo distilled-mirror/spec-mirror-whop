@@ -47,7 +47,7 @@ info:
   termsOfService: https://whop.com/tos-developer-api/
   title: Whop API
   version: 1.0.0
-  x-api-version-date: '2026-09-11'
+  x-api-version-date: 2026-09-11-1
 servers:
   - description: Production Whop API
     url: https://api.whop.com/api/v1
@@ -973,7 +973,7 @@ components:
       name: Api-Version-Date
       required: false
       schema:
-        example: '2026-09-11'
+        example: 2026-09-11-1
         type: string
     IdempotencyKey:
       description: >-

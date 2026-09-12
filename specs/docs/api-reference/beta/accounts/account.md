@@ -337,6 +337,10 @@ The `business_type`, `industry_group`, and `industry_type` fields classify accou
       Account promotional description.
     </ResponseField>
 
+    <ResponseField name="economic_intelligence" type="boolean" required>
+      Whether economic intelligence is enabled for the account.
+    </ResponseField>
+
     <ResponseField name="email" type="string | null" required>
       Account owner email address.
     </ResponseField>
@@ -1240,6 +1244,7 @@ The `business_type`, `industry_group`, and `industry_type` fields classify accou
       	"country": "US",
       	"created_at": "2026-06-01T12:00:00Z",
       	"description": "Petal Post delivers fresh bouquets.",
+      	"economic_intelligence": false,
       	"email": "hello@petalpost.example",
       	"eula": null,
       	"home_preferences": ["hide_member_count"],

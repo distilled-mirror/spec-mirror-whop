@@ -4,7 +4,7 @@
 
 # List Economic Intelligence
 
-> Lists every recommendation the account has been given, newest first: requests the engine is still answering, cards ready to run, cards already run, and cards a newer one replaced. `status=ready` is what the dashboard shows; an account with nothing ready gets `generation_pending` true while cards are being generated, so poll until it clears.
+> Lists all recommended actions Economic Intelligence has generated for the account, newest first. Filter with `status=ready` for actions that are current.
 
 
 

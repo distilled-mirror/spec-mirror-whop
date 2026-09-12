@@ -918,8 +918,9 @@
 </ResponseField>
 
 <ResponseField name="recovery_url" type="string | null" required>
-  Whop-hosted URL where the buyer can sign in and complete 3D Secure for a
-  failed subscription renewal. `null` when recovery is unavailable or you lack
+  Whop-hosted URL where the buyer can sign in and complete 3D Secure for an
+  off-session charge the bank challenged — a subscription renewal or a
+  saved-card payment. `null` when recovery is unavailable or you lack
   `member:basic:read`.
 </ResponseField>
 
@@ -1074,7 +1075,7 @@
 </ResponseField>
 
 <ResponseField name="settlement_time_at" type="string<date-time> | null" required>
-  When this payment's funds post to the company's available balance, at midnight UTC. Known at payment time and never changes. The `ledger_account.funds_available` webhook carries the same `settlement_time_at` when that batch posts — match them to know these funds are now withdrawable.
+  When this payment's funds post to the company's available balance, at midnight UTC. Known at payment time and never changes. The `financial_activity.funds_available` webhook's `posted_at` carries the same value when the settlement that clears it posts — match them to know these funds are now withdrawable.
 
   Example: `2023-12-01T05:00:00.401Z`
 </ResponseField>

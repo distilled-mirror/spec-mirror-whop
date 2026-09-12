@@ -309,6 +309,10 @@
     Whether elements may show toast notifications on your page — brief status messages ("Payment method added", "Payment failed") rendered in the bottom-right corner. Set `false` to turn them off entirely. Defaults to `true`.
   </ResponseField>
 
+  <ResponseField name="skipPixel" type="boolean">
+    Skip linking element analytics to the Whop pixel's visitor id on pages that run the pixel — a one-time identity link that makes element activity joinable to your ad-attribution data in Whop's identity graph. Usage analytics themselves are unaffected (turn those off per handle with `analytics: false`). Defaults to `false`.
+  </ResponseField>
+
   ```ts theme={null}
   const whop = WhopElements({
     locale: 'es',

@@ -4,7 +4,7 @@
 
 # Run Economic Intelligence
 
-> Runs the engine toward what the owner wants, in their own words, such as "get more repeat buyers for my taurine supplement". The recommendation comes back right away with status `queued` and only the owner's `input` filled in; the engine moves it to `pending` while it works and then to `ready`, with the title and brief written, or to `failed`. Watch it in the list.
+> Harnesses Economic Intelligence to generate recommended actions that lead the business down the most optimal path to the next dollar. Returns a `queued` recommendation right away. Poll the list endpoint until it is `ready` or `failed`.
 
 
 

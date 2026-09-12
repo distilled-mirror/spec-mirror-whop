@@ -35,7 +35,11 @@ Every version automatically gets new endpoints and optional fields. Breaking cha
 
 ## Changelog
 
-<Update label="2026-09-11" description="Business categories come from one table" tags={["Latest"]}>
+<Update label="2026-09-11-1" description="Triple Whale status renamed for white-label merchants" tags={["Latest"]}>
+  Account preferences `ads_triple_whale_integration.status` reports `requires_shop_domain` instead of `requires_shopify_store`. A `shop_domain` can now be set explicitly on the integration, so a connected Shopify store is no longer the only way to supply one.
+</Update>
+
+<Update label="2026-09-11" description="Business categories come from one table">
   Account `business_type`, `industry_group`, and `industry_type` are strings drawn from Whop's business categories table instead of fixed enums. New categories appear without a new API version. The [business types and industries glossary](/api-reference/beta/accounts/business-types) lists the current values.
 
   * `coaching_and_courses` is now `education`, `physical_product` is now `ecommerce`, and `marketplace` is now `platform`.

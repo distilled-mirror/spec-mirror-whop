@@ -5,7 +5,7 @@
     "termsOfService": "https://whop.com/tos-developer-api/",
     "title": "Whop API",
     "version": "1.0.0",
-    "x-api-version-date": "2026-09-11"
+    "x-api-version-date": "2026-09-11-1"
   },
   "servers": [
     {
@@ -389,7 +389,8 @@
         "API Keys",
         "Api Logs",
         "Permissions",
-        "Experiments"
+        "Experiments",
+        "Feedback"
       ]
     }
   ],
@@ -647,7 +648,7 @@
                 "properties": {
                   "affiliate_code": {
                     "description": "The username, if any, of the partner who referred this account",
-                    "example": "random-username-47-xxxxxxxx",
+                    "example": "random-username-48-xxxxxxxx",
                     "type": [
                       "string",
                       "null"
@@ -757,6 +758,11 @@
       "get": {
         "description": "Retrieves the account's preferences: a singleton settings document keyed by preference name.",
         "operationId": "retrieveAccountPreferences",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ApiVersionDate"
+          }
+        ],
         "responses": {
           "200": {
             "content": {
@@ -797,7 +803,7 @@
                             "pending_signature",
                             "signed"
                           ],
-                          "example": "signed",
+                          "example": "not_required",
                           "type": "string"
                         }
                       },
@@ -981,7 +987,7 @@
                       "type": "string"
                     },
                     "ads_triple_whale_integration": {
-                      "description": "The account's Triple Whale integration, which pushes Whop ad spend to Triple Whale's Data-In API so it reports as a `whop` channel.",
+                      "description": "The account's Triple Whale integration, which pushes Whop ad spend to Triple Whale's Data-In API so it reports as a `whop` channel. Available to any Triple Whale customer — Shopify, WooCommerce, a custom checkout, or no connected store — by setting `shop_domain` explicitly; Shopify merchants may instead rely on a connected store's domain. Requires the `ad_campaign:create` scope. Once connected, ad click-through URLs Whop serves carry `tw_source=whop` and `tw_adid=<ad id>` query parameters so Triple Whale's pixel attributes conversions back to the originating ad — no destination URL changes are needed.",
                       "properties": {
                         "masked_api_key": {
                           "description": "The leading characters of the stored Data-In API key, followed by asterisks. The full key is never returned. `null` when no key is stored.",
@@ -992,19 +998,19 @@
                           ]
                         },
                         "shop_domain": {
-                          "description": "The connected Shopify store domain spend is reported for, such as `acme.myshopify.com`. `null` when no store is connected.",
-                          "example": "shinetime.myshopify.com",
+                          "description": "The shop domain spend is reported for, such as `acme.myshopify.com` or a custom domain for a non-Shopify store. This is the explicit `shop_domain` if one was set, otherwise a connected Shopify store's domain. `null` when neither is present.",
+                          "example": "custom-store.example.com",
                           "type": [
                             "string",
                             "null"
                           ]
                         },
                         "status": {
-                          "description": "Where the integration stands. `requires_shopify_store` means no Shopify store is connected — Triple Whale keys records by Shopify shop, so no spend is reported until one is.",
+                          "description": "Where the integration stands. `requires_shop_domain` means no shop domain is configured — set `shop_domain` explicitly, or connect a Shopify store, before spend can be reported.",
                           "enum": [
                             "connected",
                             "not_connected",
-                            "requires_shopify_store"
+                            "requires_shop_domain"
                           ],
                           "example": "connected",
                           "type": "string"
@@ -1031,6 +1037,11 @@
                       "description": "Whether Whop assembles and files the evidence response when this account's payments are disputed. Off by default; enabling it also opts the account into the success fee charged only on disputes it wins.",
                       "example": false,
                       "type": "boolean"
+                    },
+                    "economic_intelligence": {
+                      "description": "Whether economic intelligence is enabled for the account.",
+                      "example": false,
+                      "type": "boolean"
                     }
                   },
                   "required": [
@@ -1041,7 +1052,8 @@
                     "ads_triple_whale_integration",
                     "cards_auto_top_up",
                     "cards_notifications",
-                    "dispute_fighter_enabled"
+                    "dispute_fighter_enabled",
+                    "economic_intelligence"
                   ],
                   "type": "object"
                 }
@@ -1067,6 +1079,11 @@
           {
             "bearerAuth": [
               "payout:account:update"
+            ]
+          },
+          {
+            "bearerAuth": [
+              "company:update"
             ]
           }
         ],
@@ -1098,9 +1115,13 @@
         }
       ],
       "patch": {
-        "description": "Updates the account's preferences. Each top-level key present in the body is replaced as a whole; omitted keys are left untouched. `ads_triple_whale_integration` takes the Data-In API key to connect with, or `null` to disconnect. `ads_payment_methods` always requires a `primary` entry. `backup` is optional and any pairing is allowed — two cards, `card`+`platform_balance`, or a single method — so a card-only advertiser can fund ads without a platform balance. The `primary` and `backup` must be different sources. A `platform_balance` entry may omit `id` to use the account's default Whop balance. Configuring a `card` requires a user token; account API keys can set up platform-balance billing only.",
+        "description": "Updates the account's preferences. Each top-level key present in the body is replaced as a whole; omitted keys are left untouched. `ads_triple_whale_integration` takes the Data-In API key to connect with, or `null` to disconnect, plus an optional `shop_domain`. `ads_payment_methods` always requires a `primary` entry. `backup` is optional and any pairing is allowed — two cards, `card`+`platform_balance`, or a single method — so a card-only advertiser can fund ads without a platform balance. The `primary` and `backup` must be different sources. A `platform_balance` entry may omit `id` to use the account's default Whop balance. Configuring a `card` requires a user token; account API keys can set up platform-balance billing only.",
         "operationId": "updateAccountPreferences",
-        "parameters": [],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ApiVersionDate"
+          }
+        ],
         "requestBody": {
           "content": {
             "application/json": {
@@ -1171,15 +1192,20 @@
                     "type": "string"
                   },
                   "ads_triple_whale_integration": {
-                    "description": "Connects or disconnects the Triple Whale integration. Requires a connected Shopify store, since Triple Whale keys spend records by Shopify shop.",
+                    "description": "Connects or disconnects the Triple Whale integration. Requires the `ad_campaign:create` scope. Connecting requires a shop domain to report spend against — either an explicit `shop_domain` (required for any merchant without a connected Shopify store, e.g. WooCommerce, a custom checkout, or a white-label platform's merchant) or a Shopify store connected on the Fulfillment page.",
                     "properties": {
                       "api_key": {
-                        "description": "A Triple Whale Data-In API key with the `Data-In Write: Ads` scope, validated against Triple Whale before it is stored. Pass `null` to disconnect. Connecting for the first time backfills the account's existing ad spend.",
+                        "description": "A Triple Whale Data-In API key with the `Ads: Write` scope, validated against Triple Whale before it is stored. Pass `null` to disconnect. Connecting for the first time backfills the account's existing ad spend.",
                         "example": "tw_live_key_1234",
                         "type": [
                           "string",
                           "null"
                         ]
+                      },
+                      "shop_domain": {
+                        "description": "The exact shop domain configured in Triple Whale's Settings → Store (for Shopify this is the `.myshopify.com` domain; for a custom sales platform it's whatever domain Triple Whale assigned when the shop was set up there). Validated against Triple Whale — the API key must have access to it — before it is stored. Omit to fall back to a connected Shopify store's domain; there is no way to clear a stored value, only to overwrite it with a new domain.",
+                        "example": "custom-store.example.com",
+                        "type": "string"
                       }
                     },
                     "required": [
@@ -1199,6 +1225,11 @@
                   },
                   "dispute_fighter_enabled": {
                     "description": "Whether Whop assembles and files the evidence response when this account's payments are disputed. Off by default; enabling it also opts the account into the success fee charged only on disputes it wins.",
+                    "example": true,
+                    "type": "boolean"
+                  },
+                  "economic_intelligence": {
+                    "description": "Whether economic intelligence is enabled for the account. Requires company:update permission and an existing ledger account.",
                     "example": true,
                     "type": "boolean"
                   }
@@ -1433,7 +1464,7 @@
                       "type": "string"
                     },
                     "ads_triple_whale_integration": {
-                      "description": "The account's Triple Whale integration, which pushes Whop ad spend to Triple Whale's Data-In API so it reports as a `whop` channel.",
+                      "description": "The account's Triple Whale integration, which pushes Whop ad spend to Triple Whale's Data-In API so it reports as a `whop` channel. Available to any Triple Whale customer — Shopify, WooCommerce, a custom checkout, or no connected store — by setting `shop_domain` explicitly; Shopify merchants may instead rely on a connected store's domain. Requires the `ad_campaign:create` scope. Once connected, ad click-through URLs Whop serves carry `tw_source=whop` and `tw_adid=<ad id>` query parameters so Triple Whale's pixel attributes conversions back to the originating ad — no destination URL changes are needed.",
                       "properties": {
                         "masked_api_key": {
                           "description": "The leading characters of the stored Data-In API key, followed by asterisks. The full key is never returned. `null` when no key is stored.",
@@ -1444,7 +1475,7 @@
                           ]
                         },
                         "shop_domain": {
-                          "description": "The connected Shopify store domain spend is reported for, such as `acme.myshopify.com`. `null` when no store is connected.",
+                          "description": "The shop domain spend is reported for, such as `acme.myshopify.com` or a custom domain for a non-Shopify store. This is the explicit `shop_domain` if one was set, otherwise a connected Shopify store's domain. `null` when neither is present.",
                           "example": "shinetime.myshopify.com",
                           "type": [
                             "string",
@@ -1452,13 +1483,13 @@
                           ]
                         },
                         "status": {
-                          "description": "Where the integration stands. `requires_shopify_store` means no Shopify store is connected — Triple Whale keys records by Shopify shop, so no spend is reported until one is.",
+                          "description": "Where the integration stands. `requires_shop_domain` means no shop domain is configured — set `shop_domain` explicitly, or connect a Shopify store, before spend can be reported.",
                           "enum": [
                             "connected",
                             "not_connected",
-                            "requires_shopify_store"
+                            "requires_shop_domain"
                           ],
-                          "example": "requires_shopify_store",
+                          "example": "requires_shop_domain",
                           "type": "string"
                         }
                       },
@@ -1483,6 +1514,11 @@
                       "description": "Whether Whop assembles and files the evidence response when this account's payments are disputed. Off by default; enabling it also opts the account into the success fee charged only on disputes it wins.",
                       "example": false,
                       "type": "boolean"
+                    },
+                    "economic_intelligence": {
+                      "description": "Whether economic intelligence is enabled for the account.",
+                      "example": false,
+                      "type": "boolean"
                     }
                   },
                   "required": [
@@ -1493,7 +1529,8 @@
                     "ads_triple_whale_integration",
                     "cards_auto_top_up",
                     "cards_notifications",
-                    "dispute_fighter_enabled"
+                    "dispute_fighter_enabled",
+                    "economic_intelligence"
                   ],
                   "type": "object"
                 }
@@ -1527,6 +1564,11 @@
           {
             "bearerAuth": [
               "payout:account:update"
+            ]
+          },
+          {
+            "bearerAuth": [
+              "company:update"
             ]
           }
         ],
@@ -7394,9 +7436,10 @@
                       "2026-09-06",
                       "2026-09-09",
                       "2026-09-09-1",
-                      "2026-09-11"
+                      "2026-09-11",
+                      "2026-09-11-1"
                     ],
-                    "example": "2026-09-11",
+                    "example": "2026-09-11-1",
                     "type": "string"
                   },
                   "expires_at": {
@@ -7826,9 +7869,10 @@
                       "2026-09-06",
                       "2026-09-09",
                       "2026-09-09-1",
-                      "2026-09-11"
+                      "2026-09-11",
+                      "2026-09-11-1"
                     ],
-                    "example": "2026-09-11",
+                    "example": "2026-09-11-1",
                     "type": "string"
                   },
                   "expires_at": {
@@ -18554,7 +18598,7 @@
     },
     "/economic_intelligence": {
       "get": {
-        "description": "Lists every recommendation the account has been given, newest first: requests the engine is still answering, cards ready to run, cards already run, and cards a newer one replaced. `status=ready` is what the dashboard shows; an account with nothing ready gets `generation_pending` true while cards are being generated, so poll until it clears.",
+        "description": "Lists all recommended actions Economic Intelligence has generated for the account, newest first. Filter with `status=ready` for actions that are current.",
         "operationId": "listEconomicIntelligence",
         "parameters": [
           {
@@ -18632,11 +18676,6 @@
                       },
                       "type": "array"
                     },
-                    "generation_pending": {
-                      "description": "Whether a generation is running because the account has no ready recommendations.",
-                      "example": false,
-                      "type": "boolean"
-                    },
                     "page_info": {
                       "properties": {
                         "end_cursor": {
@@ -18672,8 +18711,7 @@
                   },
                   "required": [
                     "data",
-                    "page_info",
-                    "generation_pending"
+                    "page_info"
                   ],
                   "type": "object"
                 }
@@ -18721,7 +18759,7 @@
         }
       ],
       "post": {
-        "description": "Runs the engine toward what the owner wants, in their own words, such as \"get more repeat buyers for my taurine supplement\". The recommendation comes back right away with status `queued` and only the owner's `input` filled in; the engine moves it to `pending` while it works and then to `ready`, with the title and brief written, or to `failed`. Watch it in the list.",
+        "description": "Harnesses Economic Intelligence to generate recommended actions that lead the business down the most optimal path to the next dollar. Returns a `queued` recommendation right away. Poll the list endpoint until it is `ready` or `failed`.",
         "operationId": "runEconomicIntelligence",
         "parameters": [
           {
@@ -18775,7 +18813,7 @@
           },
           "409": {
             "$ref": "#/components/responses/Conflict",
-            "description": "a generation is already running for the account"
+            "description": "too many recommendations are already generating for the account"
           }
         },
         "security": [
@@ -23077,6 +23115,7 @@
             "schema": {
               "items": {
                 "enum": [
+                  "account_settlement",
                   "ad_budget_release",
                   "ad_campaign_budget",
                   "ad_publisher_payout",
@@ -23526,6 +23565,7 @@
             "schema": {
               "items": {
                 "enum": [
+                  "account_settlement",
                   "ad_budget_release",
                   "ad_campaign_budget",
                   "ad_publisher_payout",
@@ -27723,6 +27763,7 @@
       "get": {
         "description": "Retrieves a single referred business and its referral terms.",
         "operationId": "retrievePartnerBusiness",
+        "parameters": [],
         "responses": {
           "200": {
             "content": {
@@ -33013,6 +33054,7 @@
                                 "kyc_completed",
                                 "rmi_clear",
                                 "identity_rfi_clear",
+                                "guardian_id_clear",
                                 "ecommerce_fulfillment_connected",
                                 "block_move_money_out",
                                 "block_move_money_out_set_by_parent",
@@ -39018,6 +39060,29 @@
                       "null"
                     ]
                   },
+                  "gallery_images": {
+                    "description": "Images or videos displayed in the product gallery, in display order. Replaces the existing gallery. Send an empty array to clear it; omit or pass null to leave it unchanged. A banner image does not populate the gallery.",
+                    "items": {
+                      "properties": {
+                        "direct_upload_id": {
+                          "description": "The signed ID of a completed direct upload, as an alternative to id.",
+                          "example": "eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+                          "type": "string"
+                        },
+                        "id": {
+                          "description": "The tag of an already-uploaded attachment.",
+                          "example": "file_xxxxxxxxxxxxxx",
+                          "type": "string"
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "maxItems": 8,
+                    "type": [
+                      "array",
+                      "null"
+                    ]
+                  },
                   "global_affiliate_percentage": {
                     "description": "The commission rate affiliates earn.",
                     "example": 10,
@@ -39323,6 +39388,29 @@
                     "example": "Full interior extraction, leather conditioning, and an ozone odor treatment.",
                     "type": [
                       "string",
+                      "null"
+                    ]
+                  },
+                  "gallery_images": {
+                    "description": "Images or videos displayed in the product gallery, in display order. Replaces the existing gallery. Send an empty array to clear it; omit or pass null to leave it unchanged. A banner image does not populate the gallery.",
+                    "items": {
+                      "properties": {
+                        "direct_upload_id": {
+                          "description": "The signed ID of a completed direct upload, as an alternative to id.",
+                          "example": "eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+                          "type": "string"
+                        },
+                        "id": {
+                          "description": "The tag of an already-uploaded attachment.",
+                          "example": "file_xxxxxxxxxxxxxx",
+                          "type": "string"
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "maxItems": 8,
+                    "type": [
+                      "array",
                       "null"
                     ]
                   },
@@ -51248,7 +51336,7 @@
                 "properties": {
                   "api_version_date": {
                     "description": "The dated API version (Api-Version-Date) to pin this webhook's payloads to. Omit to leave the webhook unpinned, tracking the current payload shape.",
-                    "example": "2026-01-01",
+                    "example": "2026-09-11-1",
                     "type": [
                       "string",
                       "null"
@@ -51291,6 +51379,7 @@
                         "ledger_account.funds_available",
                         "swap.completed",
                         "deposit.succeeded",
+                        "financial_activity.funds_available",
                         "transfer.created",
                         "transfer.completed",
                         "transfer.failed",
@@ -51616,7 +51705,7 @@
                 "properties": {
                   "api_version_date": {
                     "description": "The dated API version (Api-Version-Date) to pin this webhook's payloads to. Only valid for `v1` webhooks. Omit to leave the current pin unchanged, or pass `null` to unpin and track the current payload shape.",
-                    "example": "2026-01-01",
+                    "example": "2026-09-11-1",
                     "type": [
                       "string",
                       "null"
@@ -51659,6 +51748,7 @@
                         "ledger_account.funds_available",
                         "swap.completed",
                         "deposit.succeeded",
+                        "financial_activity.funds_available",
                         "transfer.created",
                         "transfer.completed",
                         "transfer.failed",
@@ -52362,7 +52452,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-11",
+                "api_version_date": "2026-09-11-1",
                 "data": {
                   "balances": [],
                   "banner_image_url": null,
@@ -52392,6 +52482,7 @@
                   "country": "us",
                   "created_at": "2026-01-01T12:00:00.000Z",
                   "description": "Mobile ceramic coating, paint correction, and interior detailing across the Austin metro.",
+                  "economic_intelligence": false,
                   "email": "marcus@shinetime.example",
                   "eula": null,
                   "home_preferences": [],
@@ -52680,7 +52771,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-11",
+                "api_version_date": "2026-09-11-1",
                 "data": {
                   "balances": [],
                   "banner_image_url": null,
@@ -52710,6 +52801,7 @@
                   "country": "us",
                   "created_at": "2026-01-01T12:00:00.000Z",
                   "description": "Mobile ceramic coating, paint correction, and interior detailing across the Austin metro.",
+                  "economic_intelligence": false,
                   "email": "marcus@shinetime.example",
                   "eula": null,
                   "home_preferences": [],
@@ -52998,7 +53090,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-11",
+                "api_version_date": "2026-09-11-1",
                 "data": {
                   "balances": [],
                   "banner_image_url": null,
@@ -53028,6 +53120,7 @@
                   "country": "us",
                   "created_at": "2026-01-01T12:00:00.000Z",
                   "description": "Mobile ceramic coating, paint correction, and interior detailing across the Austin metro.",
+                  "economic_intelligence": false,
                   "email": "marcus@shinetime.example",
                   "eula": null,
                   "home_preferences": [],
@@ -53316,7 +53409,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-11",
+                "api_version_date": "2026-09-11-1",
                 "data": {
                   "ad_campaign": {
                     "id": "adcamp_xxxxxxxxxxxxxx"
@@ -53741,7 +53834,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-11",
+                "api_version_date": "2026-09-11-1",
                 "data": {
                   "bid_type": null,
                   "budget_amount": 50,
@@ -54060,7 +54153,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-11",
+                "api_version_date": "2026-09-11-1",
                 "data": {
                   "bid_type": null,
                   "budget_amount": 50,
@@ -54379,7 +54472,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-11",
+                "api_version_date": "2026-09-11-1",
                 "data": {
                   "billing": null,
                   "canceled_at": null,
@@ -54775,7 +54868,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-11",
+                "api_version_date": "2026-09-11-1",
                 "data": {
                   "billing": null,
                   "canceled_at": null,
@@ -55171,7 +55264,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-11",
+                "api_version_date": "2026-09-11-1",
                 "data": {
                   "billing": null,
                   "canceled_at": null,
@@ -55567,7 +55660,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-11",
+                "api_version_date": "2026-09-11-1",
                 "data": {
                   "billing": null,
                   "canceled_at": null,
@@ -55963,7 +56056,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-11",
+                "api_version_date": "2026-09-11-1",
                 "data": {
                   "hosted_url": null,
                   "id": "ciac_xxxxxxxxxxxxxx",
@@ -56131,7 +56224,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-11",
+                "api_version_date": "2026-09-11-1",
                 "data": {
                   "hosted_url": null,
                   "id": "ciac_xxxxxxxxxxxxxx",
@@ -56299,7 +56392,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-11",
+                "api_version_date": "2026-09-11-1",
                 "data": {
                   "hosted_url": null,
                   "id": "ciac_xxxxxxxxxxxxxx",
@@ -56467,7 +56560,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-11",
+                "api_version_date": "2026-09-11-1",
                 "data": {
                   "hosted_url": null,
                   "id": "ciac_xxxxxxxxxxxxxx",
@@ -56635,7 +56728,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-11",
+                "api_version_date": "2026-09-11-1",
                 "data": {
                   "card_id": "icrd_xxxxxxxxxxxxxx",
                   "cardholder_id": null,
@@ -56773,7 +56866,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-11",
+                "api_version_date": "2026-09-11-1",
                 "data": {
                   "card_id": "icrd_xxxxxxxxxxxxxx",
                   "cardholder_id": null,
@@ -56911,7 +57004,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-11",
+                "api_version_date": "2026-09-11-1",
                 "data": {
                   "card_id": "icrd_xxxxxxxxxxxxxx",
                   "cardholder_id": null,
@@ -57049,7 +57142,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-11",
+                "api_version_date": "2026-09-11-1",
                 "data": {
                   "card_id": "icrd_xxxxxxxxxxxxxx",
                   "cardholder_id": null,
@@ -57187,7 +57280,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-11",
+                "api_version_date": "2026-09-11-1",
                 "data": {
                   "card_id": "icrd_xxxxxxxxxxxxxx",
                   "cardholder_id": null,
@@ -57325,7 +57418,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-11",
+                "api_version_date": "2026-09-11-1",
                 "data": {
                   "amount": "75000000000",
                   "available_at": null,
@@ -57465,7 +57558,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-11",
+                "api_version_date": "2026-09-11-1",
                 "data": {
                   "account_id": "biz_xxxxxxxxxxxxxx",
                   "amount": 150,
@@ -57652,7 +57745,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-11",
+                "api_version_date": "2026-09-11-1",
                 "data": {
                   "account_id": "biz_xxxxxxxxxxxxxx",
                   "amount": 150,
@@ -57839,7 +57932,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-11",
+                "api_version_date": "2026-09-11-1",
                 "data": {
                   "account_id": null,
                   "actionable": false,
@@ -57976,7 +58069,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-11",
+                "api_version_date": "2026-09-11-1",
                 "data": {
                   "created_at": "2026-01-01T12:00:00.000Z",
                   "download_url": "https://s3.amazonaws.com/uploads/exports/members-export.csv",
@@ -58105,7 +58198,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-11",
+                "api_version_date": "2026-09-11-1",
                 "data": {
                   "created_at": "2026-01-01T12:00:00.000Z",
                   "download_url": null,
@@ -58193,6 +58286,151 @@
         ]
       }
     },
+    "financial_activity.funds_available": {
+      "post": {
+        "description": "Sent when a settlement moves one release date's pending funds into the account's available balance — one event per release date that cleared, carrying that settlement's ledger line. Its posted_at is the release date at midnight UTC, the same value as settlement_time_at on every payment it clears\n\nRequired permissions:\n - `webhook_receive:financial_activity`",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "webhook-id",
+            "required": true,
+            "schema": {
+              "description": "A unique identifier for this webhook request",
+              "example": "msg_xxxxxxxxxxxxxxxxxxxxxxxx",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "webhook-signature",
+            "required": true,
+            "schema": {
+              "description": "The signature of the webhook request with the webhook version prepended",
+              "example": "v1,BASE64ENCODEDSIGNATURE",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "webhook-timestamp",
+            "required": true,
+            "schema": {
+              "description": "The timestamp in seconds since the Unix epoch that the webhook was sent at on the server",
+              "example": "1727606400",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "example": {
+                "account_id": "biz_xxxxxxxxxxxxxx",
+                "api_version": "v1",
+                "api_version_date": "2026-09-11-1",
+                "data": {
+                  "amount": "512345000000",
+                  "available_at": "2026-01-01T12:00:00.000Z",
+                  "currency": {
+                    "code": "usd",
+                    "precision": "100000000"
+                  },
+                  "id": "line_7",
+                  "line_type": "account_settlement",
+                  "object": "ledger_activity",
+                  "posted_at": "2026-01-02T12:00:00.000Z",
+                  "resource": null,
+                  "source": {
+                    "id": "wallet_release_date_settlement|ldgr_xxxxxxxxxxxxxx|2026-01-01|usd",
+                    "object": "settlement",
+                    "release_date": "2026-01-01",
+                    "settled_at": "2026-01-01T12:00:00.000Z"
+                  },
+                  "usd_amount": "5123.45"
+                },
+                "id": "msg_xxxxxxxxxxxxxxxxxxxxxxxx",
+                "timestamp": "2025-01-01T00:00:00.000Z",
+                "type": "financial_activity.funds_available"
+              },
+              "schema": {
+                "properties": {
+                  "account_id": {
+                    "description": "The account ID that this webhook event is associated with",
+                    "example": "biz_xxxxxxxxxxxxxx",
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "api_version": {
+                    "const": "v1",
+                    "description": "The API version for this webhook",
+                    "example": "v1",
+                    "type": "string"
+                  },
+                  "api_version_date": {
+                    "description": "The dated API version (Api-Version-Date) the payload is serialized to",
+                    "example": "2026-07-20",
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "data": {
+                    "$ref": "#/components/schemas/LedgerActivity"
+                  },
+                  "id": {
+                    "description": "A unique ID for every single webhook request",
+                    "example": "msg_xxxxxxxxxxxxxxxxxxxxxxxx",
+                    "type": "string"
+                  },
+                  "previous_attributes": {
+                    "description": "For some `.updated` events, the old values of the payload fields that changed, keyed by field name. Omitted when no capture is available for the event",
+                    "type": "object"
+                  },
+                  "timestamp": {
+                    "description": "The timestamp in ISO 8601 format that the webhook was sent at on the server",
+                    "example": "2025-01-01T00:00:00.000Z",
+                    "format": "date-time",
+                    "type": "string"
+                  },
+                  "type": {
+                    "const": "financial_activity.funds_available",
+                    "description": "The webhook event type",
+                    "example": "financial_activity.funds_available",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "id",
+                  "api_version",
+                  "api_version_date",
+                  "timestamp",
+                  "type",
+                  "data"
+                ],
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Return a 200 status to indicate that the data was received successfully"
+          }
+        },
+        "summary": "Financial Activity Funds available",
+        "tags": [
+          "Ledgers"
+        ],
+        "x-mint": {
+          "metadata": {
+            "title": "Financial Activity Funds Available",
+            "sidebarTitle": "Financial Activity Funds Available"
+          }
+        }
+      }
+    },
     "identity_profile.updated": {
       "post": {
         "description": "Sent whenever an identity profile changes state — a verification is approved, needs action, or is rejected, or a Whop review opens or clears. Every other identity_profile event is also delivered as an identity_profile.updated, so you can subscribe to this single event and re-fetch the verification to read its current status.\n\nRequired permissions:\n - `identity:read`\n - `webhook_receive:identity_profiles`",
@@ -58234,7 +58472,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-11",
+                "api_version_date": "2026-09-11-1",
                 "data": {
                   "id": "idpf_xxxxxxxxxxxxxx"
                 },
@@ -58365,7 +58603,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-11",
+                "api_version_date": "2026-09-11-1",
                 "data": {
                   "access_level": "customer",
                   "account_id": "biz_xxxxxxxxxxxxxx",
@@ -58503,7 +58741,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-11",
+                "api_version_date": "2026-09-11-1",
                 "data": {
                   "access_level": "customer",
                   "account_id": "biz_xxxxxxxxxxxxxx",
@@ -58641,7 +58879,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-11",
+                "api_version_date": "2026-09-11-1",
                 "data": {
                   "account": {
                     "id": "biz_xxxxxxxxxxxxxx",
@@ -58780,7 +59018,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-11",
+                "api_version_date": "2026-09-11-1",
                 "data": {
                   "account": {
                     "id": "biz_xxxxxxxxxxxxxx",
@@ -58925,7 +59163,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-11",
+                "api_version_date": "2026-09-11-1",
                 "data": {
                   "account": {
                     "id": "biz_xxxxxxxxxxxxxx",
@@ -59064,7 +59302,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-11",
+                "api_version_date": "2026-09-11-1",
                 "data": {
                   "account": {
                     "id": "biz_xxxxxxxxxxxxxx",
@@ -59209,7 +59447,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-11",
+                "api_version_date": "2026-09-11-1",
                 "data": {
                   "account_id": "biz_xxxxxxxxxxxxxx",
                   "amount_after_fees": {
@@ -59465,7 +59703,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-11",
+                "api_version_date": "2026-09-11-1",
                 "data": {
                   "account_id": "biz_xxxxxxxxxxxxxx",
                   "amount_after_fees": {
@@ -59721,7 +59959,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-11",
+                "api_version_date": "2026-09-11-1",
                 "data": {
                   "account_id": "biz_xxxxxxxxxxxxxx",
                   "amount_after_fees": {
@@ -59977,7 +60215,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-11",
+                "api_version_date": "2026-09-11-1",
                 "data": {
                   "account_id": "biz_xxxxxxxxxxxxxx",
                   "amount_after_fees": {
@@ -60233,7 +60471,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-11",
+                "api_version_date": "2026-09-11-1",
                 "data": {
                   "account_id": "biz_xxxxxxxxxxxxxx",
                   "amount_after_fees": {
@@ -60485,7 +60723,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-11",
+                "api_version_date": "2026-09-11-1",
                 "data": {
                   "account_id": "biz_xxxxxxxxxxxxxx",
                   "amount_after_fees": {
@@ -60741,7 +60979,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-11",
+                "api_version_date": "2026-09-11-1",
                 "data": {
                   "amount": "10.0",
                   "created_at": "2026-01-01T12:00:00.000Z",
@@ -61214,7 +61452,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-11",
+                "api_version_date": "2026-09-11-1",
                 "data": {
                   "amount": "10.0",
                   "created_at": "2026-01-01T12:00:00.000Z",
@@ -61684,7 +61922,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-11",
+                "api_version_date": "2026-09-11-1",
                 "data": {
                   "amount": "10.0",
                   "created_at": "2026-01-01T12:00:00.000Z",
@@ -62150,7 +62388,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-11",
+                "api_version_date": "2026-09-11-1",
                 "data": {
                   "account_reference": "4483",
                   "bank_verification_state": "no_data",
@@ -62700,7 +62938,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-11",
+                "api_version_date": "2026-09-11-1",
                 "data": {
                   "account": {
                     "id": "biz_xxxxxxxxxxxxxx",
@@ -62994,7 +63232,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-11",
+                "api_version_date": "2026-09-11-1",
                 "data": {
                   "account": {
                     "id": "biz_xxxxxxxxxxxxxx",
@@ -63288,7 +63526,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-11",
+                "api_version_date": "2026-09-11-1",
                 "data": {
                   "account": {
                     "id": "biz_xxxxxxxxxxxxxx",
@@ -63582,7 +63820,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-11",
+                "api_version_date": "2026-09-11-1",
                 "data": {
                   "account": {
                     "id": "biz_xxxxxxxxxxxxxx",
@@ -63739,7 +63977,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-11",
+                "api_version_date": "2026-09-11-1",
                 "data": {
                   "account": {
                     "id": "biz_xxxxxxxxxxxxxx",
@@ -63896,7 +64134,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-11",
+                "api_version_date": "2026-09-11-1",
                 "data": {
                   "account": {
                     "id": "biz_xxxxxxxxxxxxxx",
@@ -64053,7 +64291,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-11",
+                "api_version_date": "2026-09-11-1",
                 "data": {
                   "account": {
                     "id": "biz_xxxxxxxxxxxxxx",
@@ -64210,7 +64448,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-11",
+                "api_version_date": "2026-09-11-1",
                 "data": {
                   "account": {
                     "id": "biz_xxxxxxxxxxxxxx",
@@ -64367,7 +64605,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-11",
+                "api_version_date": "2026-09-11-1",
                 "data": {
                   "account": {
                     "id": "biz_xxxxxxxxxxxxxx",
@@ -64537,7 +64775,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-11",
+                "api_version_date": "2026-09-11-1",
                 "data": {
                   "account": {
                     "id": "biz_xxxxxxxxxxxxxx",
@@ -64703,7 +64941,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-11",
+                "api_version_date": "2026-09-11-1",
                 "data": {
                   "account": {
                     "id": "biz_xxxxxxxxxxxxxx",
@@ -64869,7 +65107,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-11",
+                "api_version_date": "2026-09-11-1",
                 "data": {
                   "account_id": "biz_xxxxxxxxxxxxxx",
                   "carrier": "ups",
@@ -65000,7 +65238,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-11",
+                "api_version_date": "2026-09-11-1",
                 "data": {
                   "account_id": "biz_xxxxxxxxxxxxxx",
                   "carrier": "ups",
@@ -65131,7 +65369,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-11",
+                "api_version_date": "2026-09-11-1",
                 "data": {
                   "account": {
                     "id": "biz_xxxxxxxxxxxxxx",
@@ -65198,6 +65436,7 @@
                     "claim_url": "https://whop.com/claim",
                     "created_at": "2026-01-01T12:00:00.000Z",
                     "estimated_arrival": "2026-01-01T12:00:00.000Z",
+                    "fee_kind": "swap",
                     "from_amount": "502.51",
                     "from_currency": "usdt",
                     "id": "airdrp_xxxxxxxxxxxxxx",
@@ -65348,7 +65587,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-11",
+                "api_version_date": "2026-09-11-1",
                 "data": {
                   "amount": 250,
                   "created_at": "2026-01-01T12:00:00.000Z",
@@ -65811,7 +66050,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-11",
+                "api_version_date": "2026-09-11-1",
                 "data": {
                   "amount": 250,
                   "created_at": "2026-01-01T12:00:00.000Z",
@@ -66274,7 +66513,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-11",
+                "api_version_date": "2026-09-11-1",
                 "data": {
                   "amount": 10,
                   "created_at": "2026-01-01T12:00:00.000Z",
@@ -66703,7 +66942,7 @@
         "name": "Api-Version-Date",
         "required": false,
         "schema": {
-          "example": "2026-09-11",
+          "example": "2026-09-11-1",
           "type": "string"
         }
       },
@@ -66898,6 +67137,11 @@
               "string",
               "null"
             ]
+          },
+          "economic_intelligence": {
+            "description": "Whether economic intelligence is enabled for the account.",
+            "example": false,
+            "type": "boolean"
           },
           "email": {
             "description": "Account owner email address.",
@@ -67352,6 +67596,7 @@
           "total_usd",
           "balances",
           "stablecoin_rails",
+          "economic_intelligence",
           "can_transfer_pending_balance_to_children",
           "verification",
           "company_formation",
@@ -71712,9 +71957,10 @@
               "2026-09-06",
               "2026-09-09",
               "2026-09-09-1",
-              "2026-09-11"
+              "2026-09-11",
+              "2026-09-11-1"
             ],
-            "example": "2026-09-11",
+            "example": "2026-09-11-1",
             "type": "string"
           },
           "created_at": {
@@ -76445,41 +76691,9 @@
               "null"
             ]
           },
-          "execution_type": {
-            "description": "How the card runs. `whop_ai` means `prompt` is sent to Whop AI, which carries out every step.",
-            "enum": [
-              "whop_ai"
-            ],
-            "example": "whop_ai",
-            "type": "string"
-          },
-          "expected_delta": {
-            "description": "Expected change in that ledger line over the evaluation window, in USD, negative when the action reduces it, or `null`",
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/Money"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "expected_ledger_line": {
-            "description": "The ledger line the action is expected to move, or `null` when the card carries no expectation",
-            "example": "ad_spend_charge",
-            "type": [
-              "string",
-              "null"
-            ]
-          },
           "id": {
             "description": "Economic intelligence ID, prefixed `reca_`",
             "example": "reca_xxxxxxxxxxxxxx",
-            "type": "string"
-          },
-          "inference_version": {
-            "description": "The engine that generated the card, e.g. `whop-ai-v5`",
-            "example": "whop-ai-v5",
             "type": "string"
           },
           "input": {
@@ -76539,15 +76753,11 @@
           "id",
           "account_id",
           "action_type",
-          "execution_type",
           "title",
           "prompt",
           "reasoning",
           "input",
-          "inference_version",
           "status",
-          "expected_ledger_line",
-          "expected_delta",
           "executed_at",
           "superseded_at",
           "created_at"
@@ -77375,6 +77585,7 @@
           "line_type": {
             "description": "The ledger line category this activity was posted under.",
             "enum": [
+              "account_settlement",
               "ad_budget_release",
               "ad_campaign_budget",
               "ad_publisher_payout",
@@ -78320,7 +78531,7 @@
           },
           "source": {
             "additionalProperties": true,
-            "description": "Source of this ledger activity.",
+            "description": "Source of this ledger activity. Platform markup fees use object platform_fee and the ledger activity ID.",
             "properties": {
               "amount_float": {
                 "description": "Payout amount as a decimal number in the destination currency (payout sources only; requires payout:withdrawal:read).",
@@ -78366,6 +78577,22 @@
                 "description": "Estimated arrival as an ISO 8601 timestamp (payout sources only; requires payout:withdrawal:read).",
                 "example": "2026-01-01T12:00:00.000Z",
                 "format": "date-time",
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "fee_kind": {
+                "description": "Action that generated a platform markup fee: deposit, swap, transfer, card_spend, or payout. Present for platform_markup_fee and platform_markup_fee_payout, including when include_resource is false. Null when the originating action is unavailable; omitted on other source types.",
+                "enum": [
+                  "payout",
+                  "transfer",
+                  "deposit",
+                  "swap",
+                  "card_spend",
+                  null
+                ],
+                "example": "swap",
                 "type": [
                   "string",
                   "null"
@@ -80030,7 +80257,7 @@
             ]
           },
           "recovery_url": {
-            "description": "Whop-hosted URL where the buyer can sign in and complete 3D Secure for a failed subscription renewal. Null when recovery is unavailable, you lack `member:basic:read`, or in list responses. Retrieve the payment for it.",
+            "description": "Whop-hosted URL where the buyer can sign in and complete 3D Secure for an off-session charge the bank challenged — a subscription renewal or a saved-card payment. Null when recovery is unavailable, you lack `member:basic:read`, or in list responses. Retrieve the payment for it.",
             "type": [
               "string",
               "null"
@@ -80079,7 +80306,7 @@
             ]
           },
           "settlement_time_at": {
-            "description": "When the funds post to the account's available balance, at midnight UTC. The `ledger_account.funds_available` webhook carries the same value. Null until the payment is paid, and always null in list responses — retrieve the payment for it.",
+            "description": "When the funds post to the account's available balance, at midnight UTC. The `financial_activity.funds_available` webhook's `posted_at` carries the same value when the settlement that clears it posts. Null until the payment is paid, and always null in list responses — retrieve the payment for it.",
             "type": [
               "string",
               "null"
@@ -80368,8 +80595,12 @@
             "type": "string"
           },
           "bank_code": {
-            "description": "The receiving bank's code in the local clearing system.",
+            "description": "The code that identifies the receiving bank — its code in the local clearing system, or its SWIFT/BIC on a transfer that crosses borders.",
             "example": "684",
+            "type": "string"
+          },
+          "bank_code_label": {
+            "description": "What to call `bank_code` when showing it, in the scheme's own terms — `SWIFT / BIC` on an international wire, for example.",
             "type": "string"
           },
           "bank_name": {
@@ -81971,6 +82202,7 @@
           "webhook_receive:ledger_accounts",
           "webhook_receive:accounts",
           "webhook_receive:deposits",
+          "webhook_receive:financial_activity",
           "webhook_receive:transfers",
           "webhook_receive:card_transactions",
           "webhook_receive:cards",
@@ -82236,6 +82468,7 @@
           "WebhookReceiveLedgerAccounts",
           "WebhookReceiveAccounts",
           "WebhookReceiveDeposits",
+          "WebhookReceiveFinancialActivity",
           "WebhookReceiveTransfers",
           "WebhookReceiveCardTransactions",
           "WebhookReceiveCards",
@@ -83567,7 +83800,7 @@
           },
           "description": {
             "description": "Written description displayed on the product page. `null` if none is set.",
-            "example": "evolve back-end solutions",
+            "example": "aggregate 24/7 ROI",
             "type": [
               "string",
               "null"
@@ -83590,7 +83823,7 @@
           },
           "headline": {
             "description": "Short marketing headline displayed on product page.",
-            "example": "impact map",
+            "example": "SWAG",
             "type": [
               "string",
               "null"
@@ -86725,7 +86958,7 @@
           },
           "api_version_date": {
             "description": "The dated API version (Api-Version-Date) that v1 payloads for this endpoint are pinned to: events serialize exactly like a REST read at this version (the native serializer where the resource has one). Null when unpinned — legacy (v2/v5) webhooks, and v1 webhooks on the legacy payload shape.",
-            "example": "2026-01-01",
+            "example": "2026-09-11-1",
             "type": [
               "string",
               "null"
@@ -86798,6 +87031,7 @@
                 "ledger_account.funds_available",
                 "swap.completed",
                 "deposit.succeeded",
+                "financial_activity.funds_available",
                 "transfer.created",
                 "transfer.completed",
                 "transfer.failed",
@@ -86934,6 +87168,7 @@
                 "ledger_account.funds_available",
                 "swap.completed",
                 "deposit.succeeded",
+                "financial_activity.funds_available",
                 "transfer.created",
                 "transfer.completed",
                 "transfer.failed",
@@ -87149,7 +87384,7 @@
           },
           "api_version_date": {
             "description": "The dated API version (Api-Version-Date) that v1 payloads for this endpoint are pinned to: events serialize exactly like a REST read at this version (the native serializer where the resource has one). Null when unpinned — legacy (v2/v5) webhooks, and v1 webhooks on the legacy payload shape.",
-            "example": "2026-01-01",
+            "example": "2026-09-11-1",
             "type": [
               "string",
               "null"
@@ -87222,6 +87457,7 @@
                 "ledger_account.funds_available",
                 "swap.completed",
                 "deposit.succeeded",
+                "financial_activity.funds_available",
                 "transfer.created",
                 "transfer.completed",
                 "transfer.failed",

@@ -3,7 +3,7 @@
     "https://docs.whop.com/llms.txt",
     "https://docs.whop.com/sitemap.xml"
   ],
-  "count": 1035,
+  "count": 1036,
   "pages": [
     {
       "page": "https://docs.whop.com/account-settings/account-security/delete-your-account",
@@ -2004,6 +2004,15 @@
       "page": "https://docs.whop.com/api-reference/beta/ledger-stats/time-series",
       "markdown": "https://docs.whop.com/api-reference/beta/ledger-stats/time-series.md",
       "file": "api-reference/beta/ledger-stats/time-series.md",
+      "indexes": [
+        "llms.txt",
+        "sitemap"
+      ]
+    },
+    {
+      "page": "https://docs.whop.com/api-reference/beta/ledgers/financial-activity-funds-available",
+      "markdown": "https://docs.whop.com/api-reference/beta/ledgers/financial-activity-funds-available.md",
+      "file": "api-reference/beta/ledgers/financial-activity-funds-available.md",
       "indexes": [
         "llms.txt",
         "sitemap"
