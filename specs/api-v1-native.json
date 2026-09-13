@@ -648,7 +648,7 @@
                 "properties": {
                   "affiliate_code": {
                     "description": "The username, if any, of the partner who referred this account",
-                    "example": "random-username-48-xxxxxxxx",
+                    "example": "random-username-38-xxxxxxxx",
                     "type": [
                       "string",
                       "null"
@@ -814,6 +814,102 @@
                         "accepted_at"
                       ],
                       "type": "object"
+                    },
+                    "ads_certifications": {
+                      "description": "The account's advertising certifications, one entry per certification type Whop offers. Start an application by setting a type's `status` to `pending_information` via `PATCH`, then answer the fields it requests via `GET`/`PATCH /verifications/{id}`.",
+                      "items": {
+                        "properties": {
+                          "approved_countries": {
+                            "description": "Countries every approved application of this type covers, as ISO 3166-1 alpha-2 codes. Ads targeting only these countries are exempt from the category's restrictions.",
+                            "items": {
+                              "type": "string"
+                            },
+                            "type": "array"
+                          },
+                          "business_name": {
+                            "description": "The business name on the latest application.",
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "business_type": {
+                            "description": "The kind of business on the latest application. `null` until the account applies.",
+                            "enum": [
+                              "online_pharmacy",
+                              "pharmaceutical_manufacturer",
+                              "telehealth_provider",
+                              null
+                            ],
+                            "example": "online_pharmacy",
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "certification_type": {
+                            "description": "The certification this entry describes.",
+                            "enum": [
+                              "prescription_drug_ads"
+                            ],
+                            "example": "prescription_drug_ads",
+                            "type": "string"
+                          },
+                          "countries": {
+                            "description": "Countries the latest application covers, as ISO 3166-1 alpha-2 codes.",
+                            "items": {
+                              "type": "string"
+                            },
+                            "type": "array"
+                          },
+                          "denial_reason": {
+                            "description": "Why the latest application was denied. `null` unless `status` is `denied`.",
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "request_id": {
+                            "description": "The latest application's request ID, prefixed `inrq_`. `null` until the account applies.",
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "status": {
+                            "description": "`not_started` until the account applies; `pending_information` while an application waits for answers; `in_review` once submitted; then `approved` or `denied`.",
+                            "enum": [
+                              "not_started",
+                              "pending_information",
+                              "in_review",
+                              "approved",
+                              "denied"
+                            ],
+                            "example": "not_started",
+                            "type": "string"
+                          },
+                          "url": {
+                            "description": "The website on the latest application.",
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          }
+                        },
+                        "required": [
+                          "certification_type",
+                          "status",
+                          "request_id",
+                          "business_name",
+                          "url",
+                          "business_type",
+                          "countries",
+                          "approved_countries",
+                          "denial_reason"
+                        ],
+                        "type": "object"
+                      },
+                      "type": "array"
                     },
                     "ads_payment_methods": {
                       "description": "How the account pays for Whop Ads spend. `primary` is charged first; `backup` covers the charge when the primary fails. `null` until ads billing has been configured.",
@@ -1049,6 +1145,7 @@
                     "ads_reporting_currency",
                     "ads_scheduling_timezone",
                     "ads_agreement",
+                    "ads_certifications",
                     "ads_triple_whale_integration",
                     "cards_auto_top_up",
                     "cards_notifications",
@@ -1127,6 +1224,30 @@
             "application/json": {
               "schema": {
                 "properties": {
+                  "ads_certifications": {
+                    "additionalProperties": {
+                      "properties": {
+                        "status": {
+                          "description": "Must be `pending_information`.",
+                          "enum": [
+                            "pending_information"
+                          ],
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "status"
+                      ],
+                      "type": "object"
+                    },
+                    "description": "Opens an advertising certification application. Keyed by certification type (`prescription_drug_ads`); set the entry's `status` to `pending_information` to start, then answer the requested fields via `PATCH /verifications/{id}`. Only one application per type can be open at a time; every other status is set by Whop's review.",
+                    "example": {
+                      "prescription_drug_ads": {
+                        "status": "pending_information"
+                      }
+                    },
+                    "type": "object"
+                  },
                   "ads_payment_methods": {
                     "description": "How the account pays for Whop Ads spend. `primary` is charged first; `backup` covers the charge when the primary fails.",
                     "properties": {
@@ -1291,6 +1412,103 @@
                         "accepted_at"
                       ],
                       "type": "object"
+                    },
+                    "ads_certifications": {
+                      "description": "The account's advertising certifications, one entry per certification type Whop offers. Start an application by setting a type's `status` to `pending_information` via `PATCH`, then answer the fields it requests via `GET`/`PATCH /verifications/{id}`.",
+                      "items": {
+                        "properties": {
+                          "approved_countries": {
+                            "description": "Countries every approved application of this type covers, as ISO 3166-1 alpha-2 codes. Ads targeting only these countries are exempt from the category's restrictions.",
+                            "items": {
+                              "type": "string"
+                            },
+                            "type": "array"
+                          },
+                          "business_name": {
+                            "description": "The business name on the latest application.",
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "business_type": {
+                            "description": "The kind of business on the latest application. `null` until the account applies.",
+                            "enum": [
+                              "online_pharmacy",
+                              "pharmaceutical_manufacturer",
+                              "telehealth_provider",
+                              null
+                            ],
+                            "example": "online_pharmacy",
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "certification_type": {
+                            "description": "The certification this entry describes.",
+                            "enum": [
+                              "prescription_drug_ads"
+                            ],
+                            "example": "prescription_drug_ads",
+                            "type": "string"
+                          },
+                          "countries": {
+                            "description": "Countries the latest application covers, as ISO 3166-1 alpha-2 codes.",
+                            "items": {
+                              "type": "string"
+                            },
+                            "type": "array"
+                          },
+                          "denial_reason": {
+                            "description": "Why the latest application was denied. `null` unless `status` is `denied`.",
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "request_id": {
+                            "description": "The latest application's request ID, prefixed `inrq_`. `null` until the account applies.",
+                            "example": "inrq_xxxxxxxxxxxxxx",
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "status": {
+                            "description": "`not_started` until the account applies; `pending_information` while an application waits for answers; `in_review` once submitted; then `approved` or `denied`.",
+                            "enum": [
+                              "not_started",
+                              "pending_information",
+                              "in_review",
+                              "approved",
+                              "denied"
+                            ],
+                            "example": "not_started",
+                            "type": "string"
+                          },
+                          "url": {
+                            "description": "The website on the latest application.",
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          }
+                        },
+                        "required": [
+                          "certification_type",
+                          "status",
+                          "request_id",
+                          "business_name",
+                          "url",
+                          "business_type",
+                          "countries",
+                          "approved_countries",
+                          "denial_reason"
+                        ],
+                        "type": "object"
+                      },
+                      "type": "array"
                     },
                     "ads_payment_methods": {
                       "description": "How the account pays for Whop Ads spend. `primary` is charged first; `backup` covers the charge when the primary fails. `null` until ads billing has been configured.",
@@ -1526,6 +1744,7 @@
                     "ads_reporting_currency",
                     "ads_scheduling_timezone",
                     "ads_agreement",
+                    "ads_certifications",
                     "ads_triple_whale_integration",
                     "cards_auto_top_up",
                     "cards_notifications",
@@ -1553,6 +1772,10 @@
           "404": {
             "$ref": "#/components/responses/NotFound",
             "description": "account not found"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict",
+            "description": "an application for that certification is already open"
           }
         },
         "security": [
@@ -27244,6 +27467,15 @@
               ],
               "type": "string"
             }
+          },
+          {
+            "description": "Case-insensitive business-name prefix, or an exact `biz_` account ID. Surrounding whitespace is ignored; blank values apply no filter.",
+            "in": "query",
+            "name": "business_prefix_query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -28289,7 +28521,8 @@
                   "sales",
                   "ad_spend",
                   "transfer",
-                  "card_interchange"
+                  "card_interchange",
+                  "onboarding_reward"
                 ],
                 "example": "sales",
                 "type": "string"
@@ -28518,12 +28751,13 @@
                             ]
                           },
                           "income_source": {
-                            "description": "Which income source the commission is on: product-sales gross profit, Whop Ads spend billed to the business, platform balance transfer fees, or Whop Card interchange.",
+                            "description": "Which income source the commission is on: product-sales gross profit, Whop Ads spend billed to the business, platform balance transfer fees, Whop Card interchange, or a fixed onboarding reward paid to the partner when a referred business qualifies.",
                             "enum": [
                               "sales",
                               "ad_spend",
                               "transfer",
-                              "card_interchange"
+                              "card_interchange",
+                              "onboarding_reward"
                             ],
                             "example": "sales",
                             "type": "string"
@@ -28738,6 +28972,50 @@
                                   "id",
                                   "currency",
                                   "merchant_name",
+                                  "created_at"
+                                ],
+                                "type": "object"
+                              },
+                              {
+                                "properties": {
+                                  "business_id": {
+                                    "description": "The referred business that qualified.",
+                                    "type": "string"
+                                  },
+                                  "created_at": {
+                                    "example": "2026-01-01T12:00:00.000Z",
+                                    "format": "date-time",
+                                    "type": "string"
+                                  },
+                                  "id": {
+                                    "description": "The onboarding reward the referred business qualified for, prefixed `onbr_`.",
+                                    "example": "onbr_xxxxxxxxxxxxxx",
+                                    "type": [
+                                      "string",
+                                      "null"
+                                    ]
+                                  },
+                                  "object": {
+                                    "enum": [
+                                      "onboarding_reward"
+                                    ],
+                                    "example": "onboarding_reward",
+                                    "type": "string"
+                                  },
+                                  "slug": {
+                                    "description": "The reward link slug.",
+                                    "example": "launch-reward",
+                                    "type": [
+                                      "string",
+                                      "null"
+                                    ]
+                                  }
+                                },
+                                "required": [
+                                  "object",
+                                  "id",
+                                  "slug",
+                                  "business_id",
                                   "created_at"
                                 ],
                                 "type": "object"
@@ -50573,6 +50851,13 @@
                               ],
                               "example": "raw",
                               "type": "string"
+                            },
+                            "values": {
+                              "description": "Every chosen option for a `select` item that accepts more than one answer, such as the countries an advertising certification covers. Use `value` for every other item.",
+                              "items": {
+                                "type": "string"
+                              },
+                              "type": "array"
                             }
                           },
                           "required": [
@@ -50807,6 +51092,13 @@
                               ],
                               "example": "raw",
                               "type": "string"
+                            },
+                            "values": {
+                              "description": "Every chosen option for a `select` item that accepts more than one answer, such as the countries an advertising certification covers. Use `value` for every other item.",
+                              "items": {
+                                "type": "string"
+                              },
+                              "type": "array"
                             }
                           },
                           "required": [
@@ -74812,7 +75104,7 @@
           },
           "id": {
             "description": "Livestream feed ID.",
-            "example": "lfeed_3",
+            "example": "lfeed_1",
             "type": "string"
           },
           "recording_status": {
@@ -76672,7 +76964,7 @@
           },
           "action_type": {
             "description": "The playbook action this card recommends, or `null` for an untyped card; new values may be added, so handle unknown types gracefully",
-            "example": "scale_winning_ads",
+            "example": "improve_landing_page",
             "type": [
               "string",
               "null"
@@ -76698,7 +76990,7 @@
           },
           "input": {
             "description": "What the owner asked for, in their own words, when this recommendation was requested, or `null` when the engine chose the action on its own",
-            "example": "more sales from ads",
+            "example": "Grow revenue",
             "type": [
               "string",
               "null"
@@ -76714,7 +77006,7 @@
           },
           "reasoning": {
             "description": "The signal and number the recommendation rests on, or `null`",
-            "example": "Capped 9 of 14 days.",
+            "example": "Revenue fell by 20%.",
             "type": [
               "string",
               "null"
@@ -76730,11 +77022,12 @@
               "superseded",
               "failed"
             ],
-            "example": "ready",
+            "example": "superseded",
             "type": "string"
           },
           "superseded_at": {
             "description": "When a newer card replaced this one, as an ISO 8601 timestamp, or `null`",
+            "example": "2026-01-01T12:00:00.000Z",
             "type": [
               "string",
               "null"
@@ -79874,6 +80167,17 @@
             "$ref": "#/components/schemas/UserSummary",
             "description": "Partner whose link attributed this reward."
           },
+          "partner_reward_amount": {
+            "description": "What the partner earns when a referred business qualifies for this reward. Null when the reward pays the business only.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/Money"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "qualification_amount": {
             "description": "Required qualifying volume. Null for an immediate reward.",
             "oneOf": [
@@ -79961,6 +80265,7 @@
           "status",
           "reward_type",
           "reward_amount",
+          "partner_reward_amount",
           "qualification_income_source",
           "qualification_amount",
           "qualification_progress",
@@ -83800,7 +84105,7 @@
           },
           "description": {
             "description": "Written description displayed on the product page. `null` if none is set.",
-            "example": "aggregate 24/7 ROI",
+            "example": "exploit end-to-end users",
             "type": [
               "string",
               "null"
@@ -83823,7 +84128,7 @@
           },
           "headline": {
             "description": "Short marketing headline displayed on product page.",
-            "example": "SWAG",
+            "example": "immersive experience",
             "type": [
               "string",
               "null"
