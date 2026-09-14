@@ -16858,7 +16858,7 @@
     },
     "/deposits": {
       "post": {
-        "description": "Retrieve the deposit methods for an account, including crypto and bank transfer. Crypto deposits require a $10 minimum.",
+        "description": "Retrieve the deposit methods for an account, including crypto and bank transfer. Bitcoin deposits are converted by Relay directly to USDT on Plasma in the destination account's wallet. Crypto deposits require a $10 minimum.",
         "operationId": "createDeposit",
         "parameters": [
           {
@@ -17053,6 +17053,7 @@
                                 "enum": [
                                   "Ethereum",
                                   "Solana",
+                                  "Bitcoin",
                                   "Base",
                                   "BNB Smart Chain",
                                   "Hyperliquid",
@@ -17071,7 +17072,7 @@
                                   "properties": {
                                     "icon_url": {
                                       "description": "Token icon URL. Null when no icon is available.",
-                                      "example": "https://whop.com/_static/images/crypto/ethereum.svg",
+                                      "example": "https://whop.com/_static/images/crypto/pyusd.svg",
                                       "type": [
                                         "string",
                                         "null"
@@ -17082,6 +17083,7 @@
                                       "enum": [
                                         "ARB",
                                         "BNB",
+                                        "BTC",
                                         "ETH",
                                         "EURC",
                                         "HYPE",
@@ -17100,7 +17102,7 @@
                                         "pUSD",
                                         "wETH"
                                       ],
-                                      "example": "wETH",
+                                      "example": "PYUSD",
                                       "type": "string"
                                     }
                                   },
@@ -18940,7 +18942,7 @@
                 }
               }
             },
-            "description": "empty for a connected (child) account"
+            "description": "recommendations listed"
           },
           "400": {
             "$ref": "#/components/responses/InvalidParameters",
@@ -38200,7 +38202,7 @@
     },
     "/plans/{id}": {
       "delete": {
-        "description": "Permanently delete a plan from a product. Existing memberships on this plan will not be affected.",
+        "description": "Delete a plan from a product. It stops selling immediately; existing memberships on this plan will not be affected.",
         "operationId": "deletePlan",
         "responses": {
           "200": {
@@ -70454,7 +70456,7 @@
             ]
           },
           "budget_type": {
-            "description": "Whether `budget_amount` is spent per day (`daily`) or over the ad group's full run (`lifetime`).",
+            "description": "Whether `budget_amount` is spent per day (`daily`) or over the ad group's full run (`lifetime`). A `lifetime` ad group also needs `ends_at`, at least 24 hours after it starts.",
             "enum": [
               "daily",
               "lifetime",

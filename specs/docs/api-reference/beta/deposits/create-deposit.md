@@ -713,7 +713,9 @@ paths:
       summary: Create Deposit
       description: >-
         Retrieve the deposit methods for an account, including crypto and bank
-        transfer. Crypto deposits require a $10 minimum.
+        transfer. Bitcoin deposits are converted by Relay directly to USDT on
+        Plasma in the destination account's wallet. Crypto deposits require a
+        $10 minimum.
       operationId: createDeposit
       parameters:
         - $ref: '#/components/parameters/IdempotencyKey'
@@ -890,6 +892,7 @@ paths:
                               enum:
                                 - Ethereum
                                 - Solana
+                                - Bitcoin
                                 - Base
                                 - BNB Smart Chain
                                 - Hyperliquid
@@ -909,7 +912,7 @@ paths:
                                       Token icon URL. Null when no icon is
                                       available.
                                     example: >-
-                                      https://whop.com/_static/images/crypto/ethereum.svg
+                                      https://whop.com/_static/images/crypto/pyusd.svg
                                     type:
                                       - string
                                       - 'null'
@@ -918,6 +921,7 @@ paths:
                                     enum:
                                       - ARB
                                       - BNB
+                                      - BTC
                                       - ETH
                                       - EURC
                                       - HYPE
@@ -935,7 +939,7 @@ paths:
                                       - XPL
                                       - pUSD
                                       - wETH
-                                    example: wETH
+                                    example: PYUSD
                                     type: string
                                 required:
                                   - name

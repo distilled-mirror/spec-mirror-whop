@@ -76,7 +76,7 @@ Use the Ad Groups API to create ad groups in campaigns, list or retrieve targeti
     </ResponseField>
 
     <ResponseField name="budget_type" type="string | null" required>
-      Whether `budget_amount` is spent per day (`daily`) or over the ad group's full run (`lifetime`).
+      Whether `budget_amount` is spent per day (`daily`) or over the ad group's full run (`lifetime`). A `lifetime` ad group also needs `ends_at`, at least 24 hours after it starts.
 
       Available options: `daily`, `lifetime`
     </ResponseField>

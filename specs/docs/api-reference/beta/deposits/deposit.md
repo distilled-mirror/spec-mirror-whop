@@ -100,7 +100,7 @@ Use the Deposits API to create deposit instructions for an account. Crypto depos
             <ResponseField name="name" type="string" required>
               Network display name.
 
-              Available options: `Ethereum`, `Solana`, `Base`, `BNB Smart Chain`, `Hyperliquid`, `Hypercore`, `MegaETH`, `Polygon`, `Plasma`, `Arbitrum`
+              Available options: `Ethereum`, `Solana`, `Bitcoin`, `Base`, `BNB Smart Chain`, `Hyperliquid`, `Hypercore`, `MegaETH`, `Polygon`, `Plasma`, `Arbitrum`
             </ResponseField>
 
             <ResponseField name="supported_currencies" type="object[]" required>
@@ -114,7 +114,7 @@ Use the Deposits API to create deposit instructions for an account. Crypto depos
                 <ResponseField name="name" type="string" required>
                   Token symbol.
 
-                  Available options: `ARB`, `BNB`, `ETH`, `EURC`, `HYPE`, `PYUSD`, `SOL`, `USD1`, `USDC`, `USDC.e`, `USDG`, `USDT`, `USDT0`, `USDe`, `USDm`, `XO`, `XPL`, `pUSD`, `wETH`
+                  Available options: `ARB`, `BNB`, `BTC`, `ETH`, `EURC`, `HYPE`, `PYUSD`, `SOL`, `USD1`, `USDC`, `USDC.e`, `USDG`, `USDT`, `USDT0`, `USDe`, `USDm`, `XO`, `XPL`, `pUSD`, `wETH`
                 </ResponseField>
               </Accordion>
             </ResponseField>
