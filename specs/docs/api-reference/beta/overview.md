@@ -137,9 +137,9 @@ Sell products and get paid.
 
 Refer users and businesses to Whop and track what you earn.
 
-| Resource                                         | What it's for                                                               |
-| ------------------------------------------------ | --------------------------------------------------------------------------- |
-| [Partners](/api-reference/beta/partners/partner) | The users and businesses you referred to Whop, and what you earn from them. |
+| Resource                                         | What it's for                                                                |
+| ------------------------------------------------ | ---------------------------------------------------------------------------- |
+| [Partners](/api-reference/beta/partners/partner) | Your partner profile, referral links, payout rates, and referred businesses. |
 
 ### Workforce
 

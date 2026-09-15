@@ -20,7 +20,7 @@ info:
   termsOfService: https://whop.com/tos-developer-api/
   title: Whop API
   version: 1.0.0
-  x-api-version-date: 2026-09-11-1
+  x-api-version-date: '2026-09-13'
 servers:
   - description: Production Whop API
     url: https://api.whop.com/api/v1
@@ -422,18 +422,21 @@ tags:
     name: Shipments
     x-whop-summary: Track the delivery of an order by its carrier tracking number.
   - description: >
-      The Partners API covers your Whop partner activity: the users you referred
-      onto Whop, the businesses you referred and the earnings generated from
-      their processing volume, and the partner leaderboard.
+      Get started at [whop.com/network](https://whop.com/network). A Partner is
+      a user who refers people and businesses to Whop. The partner profile
+      includes enrollment, active direct business referral counts, and default
+      payout terms.
 
 
-      Use it to enroll as a Whop partner, list the users you referred, list your
-      referred businesses and review their earnings, and see the partner
-      leaderboard.
+      Retrieve your profile with `/partners/{id}`. Use `/partners/links` for
+      your standard referral URL and paginated promotion links, including reward
+      amounts, requirements, redemption counts, and availability. You can also
+      enroll in the partner program, review referred users and businesses, track
+      earnings, and see the partner leaderboard.
     name: Partners
     x-whop-summary: >-
-      The users and businesses you referred to Whop, and what you earn from
-      them.
+      Your partner profile, referral links, payout rates, and referred
+      businesses.
   - description: >
       A Bounty is a paid task posted by an account or user. The reward is held
       in escrow when the bounty publishes, workers submit proof of completed

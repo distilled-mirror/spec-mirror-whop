@@ -38,7 +38,7 @@ Use the Users API to search for users, retrieve or update profiles, and check wh
     </ResponseField>
 
     <ResponseField name="balance" type="object | null" required>
-      The user's balance: personal cash + crypto + in-flight treasury deposits, plus account balances for accounts they own. Computed only on the self view (retrieved with the reserved id `me`) for callers with balance-read scope; `null` otherwise.
+      The user's balance: personal cash + crypto + in-flight treasury deposits, plus account balances for accounts they own. Computed only on the self view (retrieved with the reserved id `me`) for callers with balance-read scope; `null` otherwise, or when `include_balance=false`.
 
       <Accordion title="Properties" defaultOpen={true}>
         <ResponseField name="businesses" type="object[]" required>

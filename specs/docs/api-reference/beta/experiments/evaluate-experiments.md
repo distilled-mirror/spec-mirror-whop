@@ -12,6 +12,8 @@ Assignments use exactly the configured `bucket_by`: `subject[user_id]`, `subject
 
 Pass `subject[account_id]` to enable account-level targeting rules. Pass `properties` as a JSON object to supply the values that `property` targeting conditions match against.
 
+Pass `log_exposure=false` to read an assignment without recording an exposure, for a client that caches assignments up front and records the exposure when the arm is actually rendered. Omitted records the exposure, so pinned callers are unchanged.
+
 
 
 

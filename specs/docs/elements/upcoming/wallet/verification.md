@@ -4,7 +4,7 @@
 
 # VerificationElement
 
-> A banner asking the account holder to verify their identity, shown only while verification is outstanding — an account that has already verified renders nothing at all, so the element can sit permanently in a layout. The headline and body come from the API, so they track the account's actual state: an unstarted account is invited to unlock cards and payouts, one under review reads as pending, and a failed or flagged one says so. Pressing the button reports `verificationRequested` and stays put, so the host mounts its own verification — the `verifications` controller's `kyc` element, say. Needs an `accessToken`. A failed read renders nothing rather than an error — a nudge should never become the loudest thing on the page.
+> A banner asking the account holder to verify their identity, shown only while verification is outstanding — an account that has already verified renders nothing at all, so the element can sit permanently in a layout. The headline and status messages come from the API, with a shorter description when inviting the account holder to start verification, so they track the account's actual state: an unstarted account is invited to unlock cards and payouts, one under review reads as pending, and a failed or flagged one says so. Pressing the button reports `verificationRequested` and stays put, so the host mounts its own verification — the `verifications` controller's `kyc` element, say. Needs an `accessToken`. A failed read renders nothing rather than an error — a nudge should never become the loudest thing on the page.
 
 Mounts inside [`Wallet`](/elements/upcoming/wallet/overview). `accountId` comes from there. Pass props and callbacks through the create options or React props. Keep the created handle, or React `ref`, to call `refresh()`.
 
@@ -57,6 +57,10 @@ Mounts inside [`Wallet`](/elements/upcoming/wallet/overview). `accountId` comes 
 
 <ResponseField name="kind" type="&#x22;individual&#x22; | &#x22;business&#x22;">
   Which verification the button starts. `individual` (KYC) is what unlocks payouts and a Whop card. `business` (KYB) covers that and additionally unlocks financing and business cards — use it for a company that will need those. Defaults to `"individual"`.
+</ResponseField>
+
+<ResponseField name="compact" type="boolean">
+  Show a compact inline prompt without the supporting description. Defaults to `false`.
 </ResponseField>
 
 ## Events

@@ -354,7 +354,7 @@
 
   <CardGroup cols={2}>
     <Card title="Payments" href="/elements/upcoming/payments/overview">
-      Browse account payments with PaymentsElement, or collect a payment from a `plan_` ID or inline currency and amount.
+      Browse account payments with PaymentsElement, collect a payment from a `plan_` ID or inline currency and amount, or save a payment method without charging with `mode: "setup"`.
     </Card>
 
     <Card title="Verifications" href="/elements/upcoming/verifications/overview">

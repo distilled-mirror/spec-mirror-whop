@@ -610,7 +610,7 @@
 
         <div className="text-sm">
           <h3>0.5%</h3>
-          <div className="text-gray-700 dark:text-gray-300">per transaction</div>
+          <div className="text-gray-700 dark:text-gray-300">per transaction (when enabled)</div>
         </div>
       </div>
     </div>
@@ -627,7 +627,44 @@
 
         <div className="text-sm">
           <h3>2%</h3>
-          <div className="text-gray-700 dark:text-gray-300">per transaction (when Whop collects tax)</div>
+          <div className="text-gray-700 dark:text-gray-300">per transaction (when enabled and tax is collected)</div>
+        </div>
+      </div>
+    </div>
+
+    <div className="-mx-6 mb-6 border-t border-gray-200 dark:border-gray-800">
+      <div className="p-6">
+        <p className="mb-4">
+          Revenue optimization fees stack on top of the base processing fee. Below is what a domestic card
+          transaction costs as you turn each one on. International cards and currency conversion add to the base
+          rate.
+        </p>
+
+        <div className="text-sm">
+          <div className="flex items-baseline justify-between border-b border-gray-200 py-2 dark:border-gray-800">
+            <span>Card processing</span>
+            <span className="font-semibold">2.7% + \$0.30</span>
+          </div>
+
+          <div className="flex items-baseline justify-between border-b border-gray-200 py-2 dark:border-gray-800">
+            <span>+ Orchestration <span className="text-gray-500">(when enabled)</span></span>
+            <span className="font-semibold">0.8%</span>
+          </div>
+
+          <div className="flex items-baseline justify-between border-b border-gray-200 py-2 dark:border-gray-800">
+            <span>+ Billing <span className="text-gray-500">(when enabled)</span></span>
+            <span className="font-semibold">0.5%</span>
+          </div>
+
+          <div className="flex items-baseline justify-between border-b border-gray-200 py-2 dark:border-gray-800">
+            <span>+ Tax and remittance <span className="text-gray-500">(when enabled and tax is collected)</span></span>
+            <span className="font-semibold">2%</span>
+          </div>
+
+          <div className="flex items-baseline justify-between py-2">
+            <span className="font-semibold">Everything enabled, tax collected</span>
+            <span className="font-semibold">6% + \$0.30</span>
+          </div>
         </div>
       </div>
     </div>

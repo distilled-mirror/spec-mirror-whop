@@ -4,170 +4,58 @@
 
 # Stats API
 
-> Explore and query analytics data for your account
+> Discover metrics and query revenue, payments, and engagement over time
 
-The Stats API gives you access to your account's analytics data. It's designed to be self-exploratory - use the describe endpoints to discover what data is available, then query raw records or pre-defined metrics.
+Use the Stats API to discover available metrics, then retrieve a time series for an account. The [Stats reference](/api-reference/beta/stats/stats) explains each metric, its units, and supported filters.
 
 <Note>
-  The Stats API requires the `stats:read` permission. See
-  [Permissions](/developer/guides/permissions) to learn how to request
-  permissions for your app.
+  Account revenue queries require the `stats:read` permission. See
+  [Permissions](/developer/guides/permissions) to request permissions for your app.
 </Note>
 
-## Getting started
+## Discover metrics
 
-The API explains its available data. Start by calling the describe endpoint to see what's available:
-
-```bash theme={null}
-curl "https://api.whop.com/api/v1/stats/describe?company_id=YOUR_ACCOUNT_ID" \
-  -H "Authorization: Bearer $WHOP_API_KEY"
-```
-
-This returns the available data nodes, views, and metrics you can query. The response varies based on your permissions and what data exists for your account.
-
-## Core concepts
-
-The Stats API has three main operations:
-
-| Operation    | Purpose                                                                 |
-| ------------ | ----------------------------------------------------------------------- |
-| **Describe** | Discover available nodes, views, columns, metrics, and their parameters |
-| **Raw**      | Query paginated rows from any data node or view                         |
-| **Metric**   | Get pre-defined aggregated time-series data                             |
-
-All endpoints are `GET` requests. The `resource` parameter uses `:` as a separator for paths (e.g., `receipts:gross_revenue`).
-
-## Exploring the schema
-
-Use describe to navigate the API. It works at any level:
+[List metrics](/api-reference/beta/stats/list-metrics) to get their keys, names, units, descriptions, and filterable properties:
 
 ```bash theme={null}
-# What nodes, views, and metrics are available?
-curl "https://api.whop.com/api/v1/stats/describe?company_id=YOUR_ACCOUNT_ID" \
-  -H "Authorization: Bearer $WHOP_API_KEY"
-
-# What columns does a specific node have?
-curl "https://api.whop.com/api/v1/stats/describe?resource=receipts&company_id=YOUR_ACCOUNT_ID" \
-  -H "Authorization: Bearer $WHOP_API_KEY"
-
-# What parameters does a metric support?
-curl "https://api.whop.com/api/v1/stats/describe?resource=receipts:gross_revenue&company_id=YOUR_ACCOUNT_ID" \
+curl "https://api.whop.com/api/v1/stats" \
   -H "Authorization: Bearer $WHOP_API_KEY"
 ```
 
-The describe response tells you:
+Use a metric's `key`, such as `gross_revenue`, in the next request. Its `properties` array lists the properties you can filter or break down by.
 
-* Available columns and their types
-* Associations to other nodes (for joins)
-* Supported filters and breakdowns (for metrics)
-* Example data to understand the shape
+## Retrieve a time series
 
-<Info>
-  The API is designed to be AI-friendly. Point an AI assistant at the describe
-  endpoints and it can explore your data, understand the schema, and help you
-  build queries.
-</Info>
-
-## Querying raw data
-
-Fetch paginated rows from any node or view:
+Pass your account ID and a date range to [Retrieve metric](/api-reference/beta/stats/retrieve-metric):
 
 ```bash theme={null}
-# Basic query
-curl "https://api.whop.com/api/v1/stats/raw?resource=receipts&company_id=YOUR_ACCOUNT_ID" \
-  -H "Authorization: Bearer $WHOP_API_KEY"
-
-# With parameters
-curl "https://api.whop.com/api/v1/stats/raw?resource=receipts&limit=50&from=1704067200&to=1706745600&company_id=YOUR_ACCOUNT_ID" \
-  -H "Authorization: Bearer $WHOP_API_KEY"
+curl --get "https://api.whop.com/api/v1/stats/gross_revenue" \
+  -H "Authorization: Bearer $WHOP_API_KEY" \
+  --data-urlencode "account_id=YOUR_ACCOUNT_ID" \
+  --data-urlencode "from=2026-08-01" \
+  --data-urlencode "to=2026-08-31" \
+  --data-urlencode "interval=day" \
+  --data-urlencode "convert_to=usd"
 ```
 
-You can join related nodes by chaining paths with `:`:
+The response's `data.points` array contains a Unix `timestamp` in seconds and a `value` for each period. Read the value in the catalog's unit: `count` is a count, `currency` is a decimal amount, and `percent` is already in percentage points (`1.6` means 1.6%).
+
+Some metrics also return `data.totals` for the whole range. Use those totals when provided: averaging daily rates or summing daily unique counts doesn't give the whole-range result.
+
+## Filter and break down results
+
+Pass a property directly as a query parameter to filter it. Use `breakdown_by` to split each point by one property. This example filters gross revenue to card payments and splits it by the original transaction currency:
 
 ```bash theme={null}
-# Members with their receipts
-curl "https://api.whop.com/api/v1/stats/raw?resource=members:receipts&company_id=YOUR_ACCOUNT_ID" \
-  -H "Authorization: Bearer $WHOP_API_KEY"
+curl --get "https://api.whop.com/api/v1/stats/gross_revenue" \
+  -H "Authorization: Bearer $WHOP_API_KEY" \
+  --data-urlencode "account_id=YOUR_ACCOUNT_ID" \
+  --data-urlencode "from=2026-08-01" \
+  --data-urlencode "to=2026-08-31" \
+  --data-urlencode "payment_method=card" \
+  --data-urlencode "breakdown_by=currency"
 ```
 
-### Response format
+Each point includes a `breakdown` array of `{ name, value }` entries. Filtering or breaking down transaction metrics by `currency` reports their original currency amounts without conversion.
 
-```json theme={null}
-{
-  "columns": ["id", "status", "final_amount"],
-  "data": [["pay_abc123", "paid", 2999], ...],
-  "node": "receipts",
-  "debug": {
-    "engine": "planetscale",
-    "request_id": "2524d58d-e06e-4e27-ac7d-dcc2bc7f964e",
-    "sql": "SELECT ..."
-  },
-  "pagination": {
-    "next_cursor": "eyJpZCI6MTIzNDV9"
-  }
-}
-```
-
-Use `cursor` from the response for pagination:
-
-```bash theme={null}
-curl "https://api.whop.com/api/v1/stats/raw?resource=receipts&cursor=eyJpZCI6MTIzNDV9&company_id=YOUR_ACCOUNT_ID" \
-  -H "Authorization: Bearer $WHOP_API_KEY"
-```
-
-## Querying metrics
-
-Metrics are pre-defined aggregations. Call describe on a metric to see its available filters and breakdowns:
-
-```bash theme={null}
-# What can I filter/breakdown by?
-curl "https://api.whop.com/api/v1/stats/describe?resource=gross_revenue&company_id=YOUR_ACCOUNT_ID" \
-  -H "Authorization: Bearer $WHOP_API_KEY"
-
-# Query the metric
-curl "https://api.whop.com/api/v1/stats/metric?resource=gross_revenue&granularity=daily&company_id=YOUR_ACCOUNT_ID" \
-  -H "Authorization: Bearer $WHOP_API_KEY"
-
-# With breakdown
-curl "https://api.whop.com/api/v1/stats/metric?resource=gross_revenue&granularity=monthly&breakdowns[]=currency&company_id=YOUR_ACCOUNT_ID" \
-  -H "Authorization: Bearer $WHOP_API_KEY"
-
-# With filter
-curl "https://api.whop.com/api/v1/stats/metric?resource=gross_revenue&filters[currency]=usd&company_id=YOUR_ACCOUNT_ID" \
-  -H "Authorization: Bearer $WHOP_API_KEY"
-```
-
-Granularity options: `daily`, `weekly`, `monthly`
-
-## Common parameters
-
-| Parameter         | Description                                                                    |
-| ----------------- | ------------------------------------------------------------------------------ |
-| `company_id`      | Account to scope the query to (required unless using `user_id`)                |
-| `user_id`         | User to scope the query to                                                     |
-| `resource`        | Resource path using `:` as separator (e.g., `receipts`, `payments:membership`) |
-| `from`            | Start of time range (Unix timestamp)                                           |
-| `to`              | End of time range (Unix timestamp)                                             |
-| `limit`           | Records per page (default 10, maximum 10000)                                   |
-| `cursor`          | Pagination cursor from previous response                                       |
-| `sort`            | Column to sort by                                                              |
-| `sort_direction`  | `asc` or `desc`                                                                |
-| `granularity`     | For metrics: `daily`, `weekly`, `monthly`                                      |
-| `breakdowns[]`    | For metrics: columns to group by                                               |
-| `filters[column]` | For metrics: filter by column value                                            |
-
-## Error responses
-
-Errors include a `debug` field with a `request_id` for debugging:
-
-```json theme={null}
-{
-	"error": {
-		"message": "Unknown node: invalid_node",
-		"type": "bad_request",
-		"debug": {
-			"request_id": "2524d58d-e06e-4e27-ac7d-dcc2bc7f964e"
-		}
-	}
-}
-```
+Only use properties listed for the metric. An unsupported property returns `400`. An unknown metric key returns `404`. See the [query parameters](/api-reference/beta/stats/stats#query-parameters) and [metric reference](/api-reference/beta/stats/retrieve-metric) for time zones, intervals, snapshot windows, and metric-specific options.

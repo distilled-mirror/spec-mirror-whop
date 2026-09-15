@@ -275,8 +275,8 @@ The `business_type`, `industry_group`, and `industry_type` fields classify accou
 
               <Accordion title="Properties" defaultOpen={true}>
                 <ResponseField name="expires_at" type="string">
-                  When the signing URL expires, as an ISO 8601 timestamp. Present while `status`
-                  is `pending`.
+                  When the signing URL expires, as an ISO 8601 timestamp. Present only when the
+                  signing URL is included.
                 </ResponseField>
 
                 <ResponseField name="status" type="string" required>
@@ -286,7 +286,7 @@ The `business_type`, `industry_group`, and `industry_type` fields classify accou
                 </ResponseField>
 
                 <ResponseField name="url" type="string">
-                  Hosted signing URL where the founder completes the form. Present while `status` is `pending`.
+                  Hosted signing URL where the founder completes the form. Present while `status` is `pending` and the caller has `incorporation:write`. Omitted from webhooks.
                 </ResponseField>
               </Accordion>
             </ResponseField>
@@ -296,8 +296,8 @@ The `business_type`, `industry_group`, and `industry_type` fields classify accou
 
               <Accordion title="Properties" defaultOpen={true}>
                 <ResponseField name="expires_at" type="string">
-                  When the signing URL expires, as an ISO 8601 timestamp. Present while `status`
-                  is `pending`.
+                  When the signing URL expires, as an ISO 8601 timestamp. Present only when the
+                  signing URL is included.
                 </ResponseField>
 
                 <ResponseField name="status" type="string" required>
@@ -307,7 +307,7 @@ The `business_type`, `industry_group`, and `industry_type` fields classify accou
                 </ResponseField>
 
                 <ResponseField name="url" type="string">
-                  Hosted signing URL where the founder completes the form. Present while `status` is `pending`.
+                  Hosted signing URL where the founder completes the form. Present while `status` is `pending` and the caller has `incorporation:write`. Omitted from webhooks.
                 </ResponseField>
               </Accordion>
             </ResponseField>
@@ -1185,6 +1185,11 @@ The `business_type`, `industry_group`, and `industry_type` fields classify accou
         </ResponseField>
       </Accordion>
     </ResponseField>
+
+    <ResponseField name="website" type="string | null" required>
+      The account's business website URL, or `null` if none has been provided.
+      Setting it also adds a `website` entry to `social_links`.
+    </ResponseField>
   </Column>
 
   <Column>
@@ -1406,6 +1411,7 @@ The `business_type`, `industry_group`, and `industry_type` fields classify accou
       	],
       	"return_policy": null,
       	"route": "petal-post",
+      	"website": "https://petalpost.example",
       	"send_customer_emails": true,
       	"show_joined_whops": false,
       	"show_reviews_dtc": true,

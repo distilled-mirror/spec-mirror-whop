@@ -52,7 +52,7 @@
 <ResponseField name="role" type="AuthorizedUserRoles" required>
   The permission role assigned to this authorized user within the company.
 
-  Available options: `owner`, `admin`, `sales_manager`, `moderator`, `advertiser`, `app_manager`, `support`, `manager`, `workforce`, `custom`
+  Available options: `owner`, `admin`, `partner`, `sales_manager`, `moderator`, `advertiser`, `app_manager`, `support`, `manager`, `workforce`, `custom`
 </ResponseField>
 
 <ResponseField name="user" type="object" required>

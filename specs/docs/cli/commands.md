@@ -293,7 +293,7 @@ Work submitted to a bounty, from attempt to payout.
 
 The users and businesses you referred to Whop, and what you earn from them.
 
-`create` (enroll) · `get` · `list` · `earnings` · `referred_users` · `leaderboard`
+`create` (enroll) · `retrieve <id>` (your user ID or `me`) · `get` · `list` · `earnings` · `referred_users` · `leaderboard`
 
 ## Media
 

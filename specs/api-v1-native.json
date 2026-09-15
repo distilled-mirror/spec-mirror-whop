@@ -5,7 +5,7 @@
     "termsOfService": "https://whop.com/tos-developer-api/",
     "title": "Whop API",
     "version": "1.0.0",
-    "x-api-version-date": "2026-09-11-1"
+    "x-api-version-date": "2026-09-13"
   },
   "servers": [
     {
@@ -173,9 +173,9 @@
       "x-whop-summary": "Track the delivery of an order by its carrier tracking number."
     },
     {
-      "description": "The Partners API covers your Whop partner activity: the users you referred onto Whop, the businesses you referred and the earnings generated from their processing volume, and the partner leaderboard.\n\nUse it to enroll as a Whop partner, list the users you referred, list your referred businesses and review their earnings, and see the partner leaderboard.\n",
+      "description": "Get started at [whop.com/network](https://whop.com/network). A Partner is a user who refers people and businesses to Whop. The partner profile includes enrollment, active direct business referral counts, and default payout terms.\n\nRetrieve your profile with `/partners/{id}`. Use `/partners/links` for your standard referral URL and paginated promotion links, including reward amounts, requirements, redemption counts, and availability. You can also enroll in the partner program, review referred users and businesses, track earnings, and see the partner leaderboard.\n",
       "name": "Partners",
-      "x-whop-summary": "The users and businesses you referred to Whop, and what you earn from them."
+      "x-whop-summary": "Your partner profile, referral links, payout rates, and referred businesses."
     },
     {
       "description": "A Bounty is a paid task posted by an account or user. The reward is held in escrow when the bounty publishes, workers submit proof of completed work, and each accepted submission is paid out until every winner slot fills.\n\nUse the Bounties API to create and publish a bounty, list an account's bounties for reporting or dashboards, list the bounties a user can work or has participated in, and retrieve a single bounty by ID.\n",
@@ -648,7 +648,7 @@
                 "properties": {
                   "affiliate_code": {
                     "description": "The username, if any, of the partner who referred this account",
-                    "example": "random-username-38-xxxxxxxx",
+                    "example": "random-username-40-xxxxxxxx",
                     "type": [
                       "string",
                       "null"
@@ -690,6 +690,14 @@
                     "description": "The display name of the account. Defaults to `metadata.external_id` or the owner's email when omitted.",
                     "example": "Shine Time Auto Detailing",
                     "type": "string"
+                  },
+                  "website": {
+                    "description": "The account's business website, as an `http` or `https` URL of at most 255 characters. Also added to the account's `social_links` as a `website` entry.",
+                    "example": "https://shinetimedetail.com",
+                    "type": [
+                      "string",
+                      "null"
+                    ]
                   }
                 },
                 "type": "object"
@@ -2594,6 +2602,14 @@
                     "description": "Whether the account uses its logo as the fallback Open Graph image.",
                     "example": true,
                     "type": "boolean"
+                  },
+                  "website": {
+                    "description": "The account's business website, as an `http` or `https` URL of at most 255 characters. Also added to the account's `social_links` as a `website` entry. Pass `null` to clear the website; existing social links are left unchanged.",
+                    "example": "https://shinetimedetail.com",
+                    "type": [
+                      "string",
+                      "null"
+                    ]
                   }
                 },
                 "type": "object"
@@ -7660,9 +7676,10 @@
                       "2026-09-09",
                       "2026-09-09-1",
                       "2026-09-11",
-                      "2026-09-11-1"
+                      "2026-09-11-1",
+                      "2026-09-13"
                     ],
-                    "example": "2026-09-11-1",
+                    "example": "2026-09-13",
                     "type": "string"
                   },
                   "expires_at": {
@@ -8093,9 +8110,10 @@
                       "2026-09-09",
                       "2026-09-09-1",
                       "2026-09-11",
-                      "2026-09-11-1"
+                      "2026-09-11-1",
+                      "2026-09-13"
                     ],
-                    "example": "2026-09-11-1",
+                    "example": "2026-09-13",
                     "type": "string"
                   },
                   "expires_at": {
@@ -18985,7 +19003,7 @@
       ],
       "post": {
         "description": "Harnesses Economic Intelligence to generate recommended actions that lead the business down the most optimal path to the next dollar. Returns a `queued` recommendation right away. Poll the list endpoint until it is `ready` or `failed`.",
-        "operationId": "runEconomicIntelligence",
+        "operationId": "createEconomicIntelligence",
         "parameters": [
           {
             "$ref": "#/components/parameters/IdempotencyKey"
@@ -19003,7 +19021,7 @@
                   },
                   "input": {
                     "description": "What the owner wants, in their own words. Up to 1000 characters.",
-                    "example": "get more repeat buyers for my taurine supplement",
+                    "example": "I sell $79 customized gym straps. The number of purchases per day fell from 84 to 66 since June and my ads cost per signup doubled to $38. Half the leads never open the checkout. I want to win back churned visitors and lift conversion without cutting the price, and I can spend up to $500 this month on it.",
                     "maxLength": 1000,
                     "type": "string"
                   }
@@ -19048,15 +19066,109 @@
             ]
           }
         ],
-        "summary": "Run Economic Intelligence",
+        "summary": "Create Recommendations",
         "tags": [
           "Economic Intelligence"
-        ],
-        "x-mint": {
-          "metadata": {
-            "sidebarTitle": "Run"
+        ]
+      }
+    },
+    "/economic_intelligence/{id}": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/ApiVersionDate"
+        },
+        {
+          "description": "Recommendation ID, prefixed `reca_`.",
+          "in": "path",
+          "name": "id",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "description": "Account ID, prefixed `biz_`. Defaults to the API key's own account.",
+          "in": "query",
+          "name": "account_id",
+          "required": false,
+          "schema": {
+            "type": "string"
           }
         }
+      ],
+      "patch": {
+        "description": "Records approval with `executed`, or retires an unwanted recommendation with `superseded`. Both replenish the ready inventory. Supplying a rejection reason also allows retiring an executed recommendation.",
+        "operationId": "updateEconomicIntelligence",
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "reason": {
+                    "description": "Why the recommendation was rejected. Used as feedback when replenishing recommendations.",
+                    "example": "Wrong audience",
+                    "maxLength": 2000,
+                    "type": "string"
+                  },
+                  "status": {
+                    "description": "Use `executed` after approval to start the action, or `superseded` to reject it.",
+                    "enum": [
+                      "executed",
+                      "superseded"
+                    ],
+                    "example": "superseded",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "status"
+                ],
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EconomicIntelligence"
+                }
+              }
+            },
+            "description": "recommendation superseded"
+          },
+          "400": {
+            "$ref": "#/components/responses/InvalidParameters",
+            "description": "status is not a supported transition"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden",
+            "description": "the credential can read but not change the account"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound",
+            "description": "unknown id, or a recommendation of another account"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict",
+            "description": "the recommendation is not ready"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": [
+              "company:update"
+            ]
+          }
+        ],
+        "summary": "Update Recommendation",
+        "tags": [
+          "Economic Intelligence"
+        ]
       }
     },
     "/events": {
@@ -21411,7 +21523,7 @@
     },
     "/experiments/exposures": {
       "get": {
-        "description": "Evaluates and records an exposure without requiring authentication. When credentials resolve, their authentication method, API key ID, and signed-in user ID are recorded on the exposure event. Pass subject for bucketing identity and account_id for experiment ownership.\n\nPass `flag_key` to check a single flag, or omit it to fetch active flags in the account and related resource scope. Internal anonymous callers may use the `x-whop-anonymous-id` header or `ajs_anonymous_id` cookie; explicit `subject[anonymous_id]` takes precedence.\n\nAssignments use exactly the configured `bucket_by`: `subject[user_id]`, `subject[account_id]`, or `subject[anonymous_id]`. Internal user experiments derive identity from the signed-in session. Missing the required identity fails single evaluation and omits the experiment from batch evaluation. Subjects outside all treatment ranges receive control.\n\nPass `subject[account_id]` to enable account-level targeting rules. Pass `properties` as a JSON object to supply the values that `property` targeting conditions match against.\n",
+        "description": "Evaluates and records an exposure without requiring authentication. When credentials resolve, their authentication method, API key ID, and signed-in user ID are recorded on the exposure event. Pass subject for bucketing identity and account_id for experiment ownership.\n\nPass `flag_key` to check a single flag, or omit it to fetch active flags in the account and related resource scope. Internal anonymous callers may use the `x-whop-anonymous-id` header or `ajs_anonymous_id` cookie; explicit `subject[anonymous_id]` takes precedence.\n\nAssignments use exactly the configured `bucket_by`: `subject[user_id]`, `subject[account_id]`, or `subject[anonymous_id]`. Internal user experiments derive identity from the signed-in session. Missing the required identity fails single evaluation and omits the experiment from batch evaluation. Subjects outside all treatment ranges receive control.\n\nPass `subject[account_id]` to enable account-level targeting rules. Pass `properties` as a JSON object to supply the values that `property` targeting conditions match against.\n\nPass `log_exposure=false` to read an assignment without recording an exposure, for a client that caches assignments up front and records the exposure when the arm is actually rendered. Omitted records the exposure, so pinned callers are unchanged.\n",
         "operationId": "evaluateExperimentExposures",
         "parameters": [
           {
@@ -21480,6 +21592,15 @@
             "in": "query",
             "name": "properties",
             "required": false
+          },
+          {
+            "description": "Set false to evaluate without recording an exposure. Omitted records it.",
+            "in": "query",
+            "name": "log_exposure",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            }
           }
         ],
         "responses": {
@@ -22370,7 +22491,7 @@
                     "type": "array"
                   },
                   "filters": {
-                    "description": "Resource-specific filters. For native REST resources (`payouts`, `transfers`, `products`) these are the resource's own list query params; for dashboard tables they mirror the dashboard table filters.\n\n<details>\n<summary>Filters by resource (25)</summary>\n\n<details>\n<summary>ad_campaigns (4)</summary>\n\nMirrors the filtering query params of `GET /api/v1/ad_campaigns`.\n\n- `created_after` `string` — Only return campaigns created after this timestamp.\n- `created_before` `string` — Only return campaigns created before this timestamp.\n- `query` `string` — Filter campaigns by a title or ID substring.\n- `status` `string` — Only return campaigns with this status. One of `draft`, `active`, `paused`, `payment_failed`.\n\n</details>\n<details>\n<summary>ad_groups (6)</summary>\n\nMirrors the filtering query params of `GET /api/v1/ad_groups`.\n\n- `ad_campaign_id` `string` — Filter to ad groups in this campaign.\n- `ad_campaign_ids` `string[]` — Filter to ad groups in these campaigns (max 100). Repeat the parameter for each id (ad_campaign_ids=a&ad_campaign_ids=b).\n- `created_after` `string` — Only return ad groups created after this timestamp.\n- `created_before` `string` — Only return ad groups created before this timestamp.\n- `query` `string` — Filter ad groups by a title or ID substring.\n- `status` `string` — Filter to ad groups with this status. One of `active`, `paused`, `rejected`, `duplicating`.\n\n</details>\n<details>\n<summary>ads (8)</summary>\n\nMirrors the filtering query params of `GET /api/v1/ads`.\n\n- `ad_campaign_id` `string` — Only return ads in this ad campaign.\n- `ad_campaign_ids` `string[]` — Only return ads in these ad campaigns (max 100). Repeat the parameter for each id (ad_campaign_ids=a&ad_campaign_ids=b).\n- `ad_group_id` `string` — Only return ads in this ad group.\n- `ad_group_ids` `string[]` — Only return ads in these ad groups (max 100). Repeat the parameter for each id (ad_group_ids=a&ad_group_ids=b).\n- `created_after` `string` — Only return ads created after this timestamp.\n- `created_before` `string` — Only return ads created before this timestamp.\n- `query` `string` — Filter ads by a title or ID substring.\n- `status` `string` — Only return ads with this status. One of `active`, `paused`, `in_review`, `rejected`.\n\n</details>\n<details>\n<summary>apps (6)</summary>\n\nMirrors the filtering query params of `GET /api/v1/apps`.\n\n- `app_type` `string` — Filter apps by the type of end-user they are built for. Apps of type `website` are left out unless you ask for them by name. One of `b2b_app`, `b2c_app`, `company_app`, `component`, `website`.\n- `query` `string` — A search string matched against app names.\n- `recommended` `boolean` — Only return apps Whop recommends (or, with `false`, only those it does not), independently of verification status.\n- `verified` `boolean` — Only return apps whose Whop verification status matches this value. Omit this filter to include every verification status the caller can see.\n- `verified_apps_only` `boolean` — Legacy compatibility filter. Use `verified` for field equality. `true` returns verified apps; clients pinned before `2026-08-25-2` retain the earlier public website discovery behavior.\n- `view_type` `string` — Only return apps supporting this view type, such as `dashboard` or `hub`. One of `hub`, `discover`, `dash`, `dashboard`, `analytics`, `skills`, `openapi`.\n\n</details>\n<details>\n<summary>audiences (3)</summary>\n\nMirrors the filtering query params of `GET /api/v1/audiences`.\n\n- `audience_id` `string` — Audience ID, prefixed `adaud_`, used to filter the response to one audience.\n- `audience_type` `string` — Filter by custom or lookalike audiences. One of `custom`, `lookalike`.\n- `source_type` `string` — Filter by uploaded customer lists, Whop People filters, or social engagement. One of `csv_upload`, `people_filter`, `engagement`.\n\n</details>\n<details>\n<summary>bounties (8)</summary>\n\nMirrors the filtering query params of `GET /api/v1/bounties`.\n\n- `business_goal_type` `string` — Filter by the poster's declared goal. Bounties created before the goal taxonomy carry no goal and never match this filter. One of `clipping`, `post_engagement`, `owned_account_growth`, `ugc_content`, `local_activation`, `data_capture`, `other`.\n- `country` `string` — Only bounties workable from this country, as an ISO 3166-1 alpha-2 code. Bounties with no country targeting are workable worldwide and always match.\n- `created_after` `string` — Only bounties created after this ISO 8601 timestamp.\n- `created_before` `string` — Only bounties created before this ISO 8601 timestamp.\n- `experience_id` `string` — Only bounties posted to this forum experience, prefixed `exp_`. An unknown experience, or one outside the caller's scope, matches nothing.\n- `query` `string` — Substring match on the bounty title or ID.\n- `status` `string` — Filter by lifecycle state. One of `scheduled`, `open`, `closed`, `completed`, `canceled`.\n- `user_id` `string` — List the bounties this user participated in (`user_` tag). Must be the authenticated user.\n\n</details>\n<details>\n<summary>bounty_submissions (4)</summary>\n\nMirrors the filtering query params of `GET /api/v1/bounty_submissions`.\n\n- `bounty_id` `string` — Only submissions on this bounty (`bnty_` tag).\n- `created_after` `string` — Only submissions created after this ISO 8601 timestamp.\n- `created_before` `string` — Only submissions created before this ISO 8601 timestamp.\n- `status` `string` — Filter by lifecycle state. One of `in_progress`, `submitted`, `approved`, `denied`.\n\n</details>\n<details>\n<summary>card_transactions (6)</summary>\n\nMirrors the filtering query params of `GET /api/v1/card_transactions`.\n\n- `card_id` `string[]` — Return only transactions charged to these cards, each prefixed `icrd_`.\n- `cardholder_id` `string[]` — Return only transactions on cards assigned to these users, each prefixed `user_`.\n- `created_after` `string` — Return only transactions authorized at or after this ISO 8601 timestamp.\n- `created_before` `string` — Return only transactions authorized at or before this ISO 8601 timestamp.\n- `status` `string` — Return only transactions with this status. One of `pending`, `completed`, `reversed`, `declined`.\n- `transaction_ids` `string[]` — Return only these card transactions, each prefixed `citx_`. Repeat the parameter, or pass one comma-separated value.\n\n</details>\n<details>\n<summary>checkout_configurations (3)</summary>\n\nMirrors the filtering query params of `GET /api/v1/checkout_configurations`.\n\n- `created_after` `string` — Only return checkout configurations created after this ISO 8601 timestamp.\n- `created_before` `string` — Only return checkout configurations created before this ISO 8601 timestamp.\n- `plan_id` `string` — Only return checkout configurations for this plan ID, prefixed `plan_`.\n\n</details>\n<details>\n<summary>disputes (4)</summary>\n\nMirrors the filtering query params of `GET /api/v1/disputes`.\n\n- `created_after` `string` — Only disputes opened after this ISO 8601 timestamp.\n- `created_before` `string` — Only disputes opened before this ISO 8601 timestamp.\n- `currency` `string` — Only disputes in this three-letter ISO currency.\n- `status` `string[]` — Only disputes in these statuses. Repeat the parameter to pass several — one paginated list covers all of them. Covers both chargebacks and inquiries at each stage. A `needs_response` dispute whose evidence deadline has passed reports and filters as `under_review` instead.\n\n</details>\n<details>\n<summary>events (14)</summary>\n\nMirrors the filtering query params of `GET /api/v1/events`.\n\n- `attribution_model` `string` — Attribution model for the source filter (defaults to last_touch). One of `last_touch`, `first_touch`.\n- `browser` `string` — Browser families to filter by, comma-separated (e.g. Chrome, Mobile Safari).\n- `city` `string` — Cities to filter by, comma-separated.\n- `country` `string` — Country codes to filter by, comma-separated.\n- `device` `string` — Device families to filter by, comma-separated (e.g. iPhone, Mac).\n- `event` `string` — Full event names to filter by, comma-separated (payment.completed, pixel.lead, pixel.page, pixel.custom:<name>) — the same vocabulary the events / people metrics use.\n- `from` `string` — Start of the time range as an ISO 8601 timestamp. Required when identifier is omitted.\n- `hostname` `string` — Page hostnames to filter by, comma-separated.\n- `identifier` `string` — Any hard identifier of the person: a person ID (prsn_*), user ID, email, phone number, or a tracking cookie value (wuid, anonymous ID, fbp/fbc/ttp/ga). Omit to list recent events for the account.\n- `os` `string` — Operating system families to filter by, comma-separated (e.g. iOS, Windows).\n- `page` `string` — Page paths to filter by, comma-separated.\n- `source` `string` — Canonical source path, exact or with a trailing :* prefix (whop:<campaign>:*, ext:meta:*, referrer:<domain>, direct). Restricts the list to conversion targets attributed to that source — the debuggability twin of a metric cell's source parameter. A whop:... source combined with non-conversion event names (event=pixel.page) instead lists the events whose ad click resolved to that entity — the page views an ad drove.\n- `to` `string` — End of the time range as an ISO 8601 timestamp. Required when identifier is omitted; otherwise defaults to now.\n- `utm_source` `string` — utm_source values to filter by, comma-separated.\n\n</details>\n<details>\n<summary>financial-activity (12)</summary>\n\nMirrors the filtering query params of `GET /api/v1/financial-activity`.\n\n- `activity_id` `string` — Optional ledger activity ID (for example `line_3`). Returns at most that one activity.\n- `available_after` `string` — Only include rows whose funds became withdrawable on or after this `YYYY-MM-DD` settlement date (UTC), distinct from posted_at. Requires currency.\n- `available_before` `string` — Only include rows whose funds became withdrawable on or before this `YYYY-MM-DD` settlement date (UTC). Set equal to available_after for a single day. Requires currency.\n- `currency` `string` — Optional currency code filter, for example `usd`.\n- `exclude_internal_movements` `boolean` — Whether to exclude balance reservations and balanced movements between the account's own balances.\n- `include_owned_accounts` `boolean` — When true, aggregates the authenticated user's personal ledger with the businesses they own (owner role with balance read) into one feed. Requires user_id to be the authenticated user; cannot be combined with account_id or the settlement-date filters. Each returned row includes the owning `account`.\n- `include_resource` `boolean` — Whether to include the `resource` field in the response or not. Consider passing `false` if you need a fast response without as many rich details.\n- `line_types` `string[]` — Optional ledger line categories to include. Some categories (for example `onchain_deposit`, which covers inbound crypto deposits such as MoonPay onramps) are only returned when explicitly requested here.\n- `posted_after` `string` — Only include rows posted after this ISO 8601 timestamp.\n- `posted_before` `string` — Only include rows posted before this ISO 8601 timestamp.\n- `resource_id` `string` — Optional prefixed resource ID. Returns activity associated with that resource.\n- `user_id` `string` — The owning user ID (a user_ identifier). Provide this or account_id.\n\n</details>\n<details>\n<summary>members (6)</summary>\n\nMirrors the filtering query params of `GET /api/v1/members`.\n\n- `access_level` `string` — Filter by what the member can reach on the account. One of `no_access`, `admin`, `customer`.\n- `created_after` `string` — Only members who joined after this ISO 8601 timestamp.\n- `created_before` `string` — Only members who joined before this ISO 8601 timestamp.\n- `query` `string` — Search members by name or username. An exact email address also matches when the credential holds the member:email:read scope.\n- `status` `string` — Filter by whether the member is still part of the account. One of `joined`, `left`.\n- `user_ids` `string[]` — Only return members whose users match these `user_` identifiers.\n\n</details>\n<details>\n<summary>memberships (6)</summary>\n\nMirrors the filtering query params of `GET /api/v1/memberships`.\n\n- `created_after` `string` — Only memberships created after this ISO 8601 timestamp.\n- `created_before` `string` — Only memberships created before this ISO 8601 timestamp.\n- `plan_id` `string` — Filter to memberships of this plan (`plan_` tag). Repeat as plan_ids[] for several.\n- `product_id` `string` — Filter to memberships of this product (`prod_` tag). Repeat as product_ids[] for several.\n- `status` `string` — Filter by billing state. `canceling` matches active memberships set to cancel at period end; `paused` matches memberships with payment collection paused. One of `active`, `trialing`, `past_due`, `completed`, `canceled`, `expired`, `canceling`, `paused`.\n- `user_id` `string` — Narrow to one user's memberships (`user_` tag, or `me` for the caller). A user outside the caller's visible set returns an empty list.\n\n</details>\n<details>\n<summary>payouts (7)</summary>\n\nMirrors the filtering query params of `GET /api/v1/payouts`.\n\n- `created_after` `string` — Only payouts created at or after this ISO 8601 time (inclusive).\n- `created_before` `string` — Only payouts created before this ISO 8601 time (exclusive).\n- `currency` `string` — Optional currency code filter, for example `usd`.\n- `payout_method_id` `string` — Filter to payouts sent to one saved payout method (a pytk_ identifier). An unknown id matches nothing.\n- `source` `string` — Filter by how the payout was created. Payouts created before source tracking or through internal tooling carry no source and never match. One of `api`, `dashboard`, `automatic`.\n- `status` `string` — Filter to payouts whose `status` reads this word, matching exactly what this version displays — `reversed` finds settled payouts the bank later returned. Requires Api-Version-Date 2026-08-21 or later. One of `requested`, `in_review`, `processing`, `completed`, `reversed`, `canceled`, `failed`, `denied`.\n- `user_id` `string` — The owning user ID (a user_ identifier). Provide this or account_id.\n\n</details>\n<details>\n<summary>people (20)</summary>\n\nMirrors the filtering query params of `GET /api/v1/people`.\n\n- `attribution_model` `string` — Attribution model the source filter matches against (defaults to last_touch). One of `last_touch`, `first_touch`.\n- `audience_id` `string` — Only include people in this audience. An audience that keeps itself up to date resolves to the People filters that define it, so this always reflects who matches now; uploaded lists and point-in-time snapshots match their recorded members.\n- `contactable` `boolean` — true for people who have an email address or phone number — the ones an ad platform can match.\n- `country` `string` — Only include people whose most recent visit came from this ISO 3166-1 alpha-2 country code.\n- `custom_event` `string` — Only include people who fired this custom pixel event.\n- `email` `string` — Only include the person linked to this email address.\n- `event_from` `string` — With event_to plus an event or source filter, switches to exact-population mode: person ids are resolved and paginated on the events side within this window (the same query the people metric counts), then hydrated per page.\n- `event_name` `string[]` — Only include people who fired any of these events, e.g. payment.completed or page.checkout.view.\n- `event_to` `string` — The inclusive end of the event window for exact-population mode.\n- `first_seen_after` `string` — Only include people first seen at or after this ISO 8601 timestamp.\n- `first_seen_before` `string` — Only include people first seen before this ISO 8601 timestamp.\n- `first_seen_within_days` `integer` — Only include people first seen within this many days, as a rolling window.\n- `has_purchased` `boolean` — true for customers only, false for people who have never purchased.\n- `last_seen_after` `string` — Only include people last seen at or after this ISO 8601 timestamp.\n- `last_seen_before` `string` — Only include people last seen before this ISO 8601 timestamp.\n- `last_seen_within_days` `integer` — Only include people last seen within this many days, as a rolling window.\n- `phone` `string` — Only include the person linked to this phone number.\n- `query` `string` — Search people by name, email, phone, or whop user ID (case-insensitive substring match).\n- `source` `string[]` — Only include people acquired from any of these sources — canonical paths (whop:<campaign>:<group>:<ad>, ext:<platform>:..., referrer:<domain>, direct, other), exact or with a trailing :* prefix. The same vocabulary the events / people metrics use.\n- `user_id` `string` — Only include the person linked to this whop user ID.\n\n</details>\n<details>\n<summary>plans (6)</summary>\n\nMirrors the filtering query params of `GET /api/v1/plans`.\n\n- `created_after` `string` — Only return plans created after this timestamp.\n- `created_before` `string` — Only return plans created before this timestamp.\n- `plan_types` `string[]` — Filter to only plans matching these billing types.\n- `product_ids` `string[]` — Filter to only plans belonging to these product identifiers. When `account_id` is omitted, this is required and the response is publicly readable: only visible, non-invoice plans are returned.\n- `release_methods` `string[]` — Filter to only plans matching these release methods.\n- `visibilities` `string[]` — Filter to only plans matching these visibility states.\n\n</details>\n<details>\n<summary>products (10)</summary>\n\nMirrors the filtering query params of `GET /api/v1/products`.\n\n- `access_pass_types` `string[]` — Filter to only products matching these types.\n- `created_after` `string` — Only return products created after this ISO 8601 timestamp.\n- `created_before` `string` — Only return products created before this ISO 8601 timestamp.\n- `labels` `string[]` — Filter to only products carrying all of these labels. Labels are matched lowercased.\n- `marketplace_category_route` `string` — Only return marketplace products assigned to this category route, such as `trading`.\n- `plan_types` `string[]` — Filter to products with a buyable plan of these billing models, such as `one_time` or `renewal`.\n- `price_maximum` `number` — Only return products whose advertised buyable plan has a displayed price of at most this amount. Recurring plans use renewal price.\n- `price_minimum` `number` — Only return products whose advertised buyable plan has a displayed price of at least this amount. Recurring plans use renewal price.\n- `query` `string` — Ranked search against product title and headline. Omit to browse by recency.\n- `visibilities` `string[]` — Filter to only products matching these visibility states. Ignored on the public marketplace list, which only returns visible products.\n\n</details>\n<details>\n<summary>promo_codes (5)</summary>\n\nMirrors the filtering query params of `GET /api/v1/promo_codes`.\n\n- `created_after` `string` — Only promo codes created after this ISO 8601 timestamp.\n- `created_before` `string` — Only promo codes created before this ISO 8601 timestamp.\n- `plan_ids` `string[]` — Only promo codes scoped to these plan IDs.\n- `product_ids` `string[]` — Only promo codes scoped to these product IDs.\n- `status` `string` — Promo-code status. `expired` groups inactive and archived codes. One of `active`, `inactive`, `archived`, `expired`.\n\n</details>\n<details>\n<summary>resolution_center_cases (6)</summary>\n\nMirrors the filtering query params of `GET /api/v1/resolution_center_cases`.\n\n- `created_after` `string` — Only cases created after this ISO 8601 timestamp.\n- `created_before` `string` — Only cases created before this ISO 8601 timestamp.\n- `outcome` `string[]` — Only closed cases that ended these ways. Repeat the parameter to pass several.\n- `reason` `string[]` — Only cases opened for these reasons. Repeat the parameter to pass several.\n- `status` `string[]` — Only cases in these statuses. Repeat the parameter to pass several — one paginated list covers all of them.\n- `user_id` `string` — Only cases opened by this customer — a `user_` tag, or `me` for the calling user. It narrows what you can already read, so `me` lists the cases you opened without the ones on accounts you are a team member of.\n\n</details>\n<details>\n<summary>shipments (4)</summary>\n\nMirrors the filtering query params of `GET /api/v1/shipments`.\n\n- `created_after` `string` — Return shipments created after this ISO 8601 timestamp.\n- `created_before` `string` — Return shipments created before this ISO 8601 timestamp.\n- `payment_id` `string[]` — Only shipments fulfilling these payments, each prefixed `pay_`. Repeat the parameter to pass several, up to 100 per request — one paginated list covers all of them.\n- `status` `string` — Filter to shipments with this delivery status. One of `unknown`, `pre_transit`, `in_transit`, `out_for_delivery`, `delivered`, `available_for_pickup`, `return_to_sender`, `failure`, `cancelled`, `error`.\n\n</details>\n<details>\n<summary>social_accounts (4)</summary>\n\nMirrors the filtering query params of `GET /api/v1/social_accounts`.\n\n- `platform` `string` — Only return social accounts for the platform that is specified. One of `x`, `instagram`, `youtube`, `tiktok`, `facebook`, `discord`, `telegram`.\n- `scopes` `string[]` — Only return social accounts that have these scopes.\n- `user_id` `string` — The User that the social accounts are connected to. Provide either this or account_id.\n- `verified` `boolean` — Only return social accounts that are verified on the platform.\n\n</details>\n<details>\n<summary>team_members (5)</summary>\n\nMirrors the filtering query params of `GET /api/v1/team_members`.\n\n- `created_after` `string` — Only return members added after this ISO 8601 timestamp.\n- `created_before` `string` — Only return members added before this ISO 8601 timestamp.\n- `role` `string` — Only return members with this role. `custom` matches members on a dashboard-managed custom role. One of `owner`, `admin`, `sales_manager`, `moderator`, `advertiser`, `app_manager`, `support`, `manager`, `workforce`, `custom`.\n- `status` `string` — Only return members with this status: `joined` (accepted members) or `pending` (pending invites). Both are returned by default. One of `joined`, `pending`.\n- `user_id` `string` — Only return the membership for this user ID, prefixed `user_`.\n\n</details>\n<details>\n<summary>transfers (4)</summary>\n\nMirrors the filtering query params of `GET /api/v1/transfers`.\n\n- `created_after` `string` — Only transfers created strictly after this ISO 8601 timestamp.\n- `created_before` `string` — Only transfers created strictly before this ISO 8601 timestamp.\n- `destination_id` `string` — Filter to transfers received by this account. Provide this or origin_id.\n- `origin_id` `string` — Filter to transfers sent from this account. Provide this or destination_id.\n\n</details>\n<details>\n<summary>webhooks (3)</summary>\n\nMirrors the filtering query params of `GET /api/v1/webhooks`.\n\n- `app_id` `string` — Only return webhooks attached to this app. Omit to list the account's own webhooks.\n- `has_failures` `boolean` — Only return webhooks whose endpoint is currently failing — every delivery since the current failure streak began has been rejected. Clears as soon as a delivery succeeds.\n- `include_app_webhooks` `boolean` — Also return webhooks attached to the account's apps, not just the account's own. Cannot be combined with `app_id`.\n\n</details>\n</details>",
+                    "description": "Resource-specific filters. For native REST resources (`payouts`, `transfers`, `products`) these are the resource's own list query params; for dashboard tables they mirror the dashboard table filters.\n\n<details>\n<summary>Filters by resource (25)</summary>\n\n<details>\n<summary>ad_campaigns (4)</summary>\n\nMirrors the filtering query params of `GET /api/v1/ad_campaigns`.\n\n- `created_after` `string` — Only return campaigns created after this timestamp.\n- `created_before` `string` — Only return campaigns created before this timestamp.\n- `query` `string` — Filter campaigns by a title or ID substring.\n- `status` `string` — Only return campaigns with this status. One of `draft`, `active`, `paused`, `payment_failed`.\n\n</details>\n<details>\n<summary>ad_groups (6)</summary>\n\nMirrors the filtering query params of `GET /api/v1/ad_groups`.\n\n- `ad_campaign_id` `string` — Filter to ad groups in this campaign.\n- `ad_campaign_ids` `string[]` — Filter to ad groups in these campaigns (max 100). Repeat the parameter for each id (ad_campaign_ids=a&ad_campaign_ids=b).\n- `created_after` `string` — Only return ad groups created after this timestamp.\n- `created_before` `string` — Only return ad groups created before this timestamp.\n- `query` `string` — Filter ad groups by a title or ID substring.\n- `status` `string` — Filter to ad groups with this status. One of `active`, `paused`, `rejected`, `duplicating`.\n\n</details>\n<details>\n<summary>ads (8)</summary>\n\nMirrors the filtering query params of `GET /api/v1/ads`.\n\n- `ad_campaign_id` `string` — Only return ads in this ad campaign.\n- `ad_campaign_ids` `string[]` — Only return ads in these ad campaigns (max 100). Repeat the parameter for each id (ad_campaign_ids=a&ad_campaign_ids=b).\n- `ad_group_id` `string` — Only return ads in this ad group.\n- `ad_group_ids` `string[]` — Only return ads in these ad groups (max 100). Repeat the parameter for each id (ad_group_ids=a&ad_group_ids=b).\n- `created_after` `string` — Only return ads created after this timestamp.\n- `created_before` `string` — Only return ads created before this timestamp.\n- `query` `string` — Filter ads by a title or ID substring.\n- `status` `string` — Only return ads with this status. One of `active`, `paused`, `in_review`, `rejected`.\n\n</details>\n<details>\n<summary>apps (6)</summary>\n\nMirrors the filtering query params of `GET /api/v1/apps`.\n\n- `app_type` `string` — Filter apps by the type of end-user they are built for. Apps of type `website` are left out unless you ask for them by name. One of `b2b_app`, `b2c_app`, `company_app`, `component`, `website`.\n- `query` `string` — A search string matched against app names.\n- `recommended` `boolean` — Only return apps Whop recommends (or, with `false`, only those it does not), independently of verification status.\n- `verified` `boolean` — Only return apps whose Whop verification status matches this value. Omit this filter to include every verification status the caller can see.\n- `verified_apps_only` `boolean` — Legacy compatibility filter. Use `verified` for field equality. `true` returns verified apps; clients pinned before `2026-08-25-2` retain the earlier public website discovery behavior.\n- `view_type` `string` — Only return apps supporting this view type, such as `dashboard` or `hub`. One of `hub`, `discover`, `dash`, `dashboard`, `analytics`, `skills`, `openapi`.\n\n</details>\n<details>\n<summary>audiences (3)</summary>\n\nMirrors the filtering query params of `GET /api/v1/audiences`.\n\n- `audience_id` `string` — Audience ID, prefixed `adaud_`, used to filter the response to one audience.\n- `audience_type` `string` — Filter by custom or lookalike audiences. One of `custom`, `lookalike`.\n- `source_type` `string` — Filter by uploaded customer lists, Whop People filters, or social engagement. One of `csv_upload`, `people_filter`, `engagement`.\n\n</details>\n<details>\n<summary>bounties (8)</summary>\n\nMirrors the filtering query params of `GET /api/v1/bounties`.\n\n- `business_goal_type` `string` — Filter by the poster's declared goal. Bounties created before the goal taxonomy carry no goal and never match this filter. One of `clipping`, `post_engagement`, `owned_account_growth`, `ugc_content`, `local_activation`, `data_capture`, `other`.\n- `country` `string` — Only bounties workable from this country, as an ISO 3166-1 alpha-2 code. Bounties with no country targeting are workable worldwide and always match.\n- `created_after` `string` — Only bounties created after this ISO 8601 timestamp.\n- `created_before` `string` — Only bounties created before this ISO 8601 timestamp.\n- `experience_id` `string` — Only bounties posted to this forum experience, prefixed `exp_`. An unknown experience, or one outside the caller's scope, matches nothing.\n- `query` `string` — Substring match on the bounty title or ID.\n- `status` `string` — Filter by lifecycle state. One of `scheduled`, `open`, `closed`, `completed`, `canceled`.\n- `user_id` `string` — List the bounties this user participated in (`user_` tag). Must be the authenticated user.\n\n</details>\n<details>\n<summary>bounty_submissions (4)</summary>\n\nMirrors the filtering query params of `GET /api/v1/bounty_submissions`.\n\n- `bounty_id` `string` — Only submissions on this bounty (`bnty_` tag).\n- `created_after` `string` — Only submissions created after this ISO 8601 timestamp.\n- `created_before` `string` — Only submissions created before this ISO 8601 timestamp.\n- `status` `string` — Filter by lifecycle state. One of `in_progress`, `submitted`, `approved`, `denied`.\n\n</details>\n<details>\n<summary>card_transactions (6)</summary>\n\nMirrors the filtering query params of `GET /api/v1/card_transactions`.\n\n- `card_id` `string[]` — Return only transactions charged to these cards, each prefixed `icrd_`.\n- `cardholder_id` `string[]` — Return only transactions on cards assigned to these users, each prefixed `user_`.\n- `created_after` `string` — Return only transactions authorized at or after this ISO 8601 timestamp.\n- `created_before` `string` — Return only transactions authorized at or before this ISO 8601 timestamp.\n- `status` `string` — Return only transactions with this status. One of `pending`, `completed`, `reversed`, `declined`.\n- `transaction_ids` `string[]` — Return only these card transactions, each prefixed `citx_`. Repeat the parameter, or pass one comma-separated value.\n\n</details>\n<details>\n<summary>checkout_configurations (3)</summary>\n\nMirrors the filtering query params of `GET /api/v1/checkout_configurations`.\n\n- `created_after` `string` — Only return checkout configurations created after this ISO 8601 timestamp.\n- `created_before` `string` — Only return checkout configurations created before this ISO 8601 timestamp.\n- `plan_id` `string` — Only return checkout configurations for this plan ID, prefixed `plan_`.\n\n</details>\n<details>\n<summary>disputes (4)</summary>\n\nMirrors the filtering query params of `GET /api/v1/disputes`.\n\n- `created_after` `string` — Only disputes opened after this ISO 8601 timestamp.\n- `created_before` `string` — Only disputes opened before this ISO 8601 timestamp.\n- `currency` `string` — Only disputes in this three-letter ISO currency.\n- `status` `string[]` — Only disputes in these statuses. Repeat the parameter to pass several — one paginated list covers all of them. Covers both chargebacks and inquiries at each stage. A `needs_response` dispute whose evidence deadline has passed reports and filters as `under_review` instead.\n\n</details>\n<details>\n<summary>events (14)</summary>\n\nMirrors the filtering query params of `GET /api/v1/events`.\n\n- `attribution_model` `string` — Attribution model for the source filter (defaults to last_touch). One of `last_touch`, `first_touch`.\n- `browser` `string` — Browser families to filter by, comma-separated (e.g. Chrome, Mobile Safari).\n- `city` `string` — Cities to filter by, comma-separated.\n- `country` `string` — Country codes to filter by, comma-separated.\n- `device` `string` — Device families to filter by, comma-separated (e.g. iPhone, Mac).\n- `event` `string` — Full event names to filter by, comma-separated (payment.completed, pixel.lead, pixel.page, pixel.custom:<name>) — the same vocabulary the events / people metrics use.\n- `from` `string` — Start of the time range as an ISO 8601 timestamp. Required when identifier is omitted.\n- `hostname` `string` — Page hostnames to filter by, comma-separated.\n- `identifier` `string` — Any hard identifier of the person: a person ID (prsn_*), user ID, email, phone number, or a tracking cookie value (wuid, anonymous ID, fbp/fbc/ttp/ga). Omit to list recent events for the account.\n- `os` `string` — Operating system families to filter by, comma-separated (e.g. iOS, Windows).\n- `page` `string` — Page paths to filter by, comma-separated.\n- `source` `string` — Canonical source path, exact or with a trailing :* prefix (whop:<campaign>:*, ext:meta:*, referrer:<domain>, direct). Restricts the list to conversion targets attributed to that source — the debuggability twin of a metric cell's source parameter. A whop:... source combined with non-conversion event names (event=pixel.page) instead lists the events whose ad click resolved to that entity — the page views an ad drove.\n- `to` `string` — End of the time range as an ISO 8601 timestamp. Required when identifier is omitted; otherwise defaults to now.\n- `utm_source` `string` — utm_source values to filter by, comma-separated.\n\n</details>\n<details>\n<summary>financial-activity (12)</summary>\n\nMirrors the filtering query params of `GET /api/v1/financial-activity`.\n\n- `activity_id` `string` — Optional ledger activity ID (for example `line_3`). Returns at most that one activity.\n- `available_after` `string` — Only include rows whose funds became withdrawable on or after this `YYYY-MM-DD` settlement date (UTC), distinct from posted_at. Requires currency.\n- `available_before` `string` — Only include rows whose funds became withdrawable on or before this `YYYY-MM-DD` settlement date (UTC). Set equal to available_after for a single day. Requires currency.\n- `currency` `string` — Optional currency code filter, for example `usd`.\n- `exclude_internal_movements` `boolean` — Whether to exclude balance reservations and balanced movements between the account's own balances.\n- `include_owned_accounts` `boolean` — When true, aggregates the authenticated user's personal ledger with the businesses they own (owner role with balance read) into one feed. Requires user_id to be the authenticated user; cannot be combined with account_id or the settlement-date filters. Each returned row includes the owning `account`.\n- `include_resource` `boolean` — Whether to include the `resource` field in the response or not. Consider passing `false` if you need a fast response without as many rich details.\n- `line_types` `string[]` — Optional ledger line categories to include. Some categories (for example `onchain_deposit`, which covers inbound crypto deposits such as MoonPay onramps) are only returned when explicitly requested here.\n- `posted_after` `string` — Only include rows posted after this ISO 8601 timestamp.\n- `posted_before` `string` — Only include rows posted before this ISO 8601 timestamp.\n- `resource_id` `string` — Optional prefixed resource ID. Returns activity associated with that resource.\n- `user_id` `string` — The owning user ID (a user_ identifier). Provide this or account_id.\n\n</details>\n<details>\n<summary>members (6)</summary>\n\nMirrors the filtering query params of `GET /api/v1/members`.\n\n- `access_level` `string` — Filter by what the member can reach on the account. One of `no_access`, `admin`, `customer`.\n- `created_after` `string` — Only members who joined after this ISO 8601 timestamp.\n- `created_before` `string` — Only members who joined before this ISO 8601 timestamp.\n- `query` `string` — Search members by name or username. An exact email address also matches when the credential holds the member:email:read scope.\n- `status` `string` — Filter by whether the member is still part of the account. One of `joined`, `left`.\n- `user_ids` `string[]` — Only return members whose users match these `user_` identifiers.\n\n</details>\n<details>\n<summary>memberships (6)</summary>\n\nMirrors the filtering query params of `GET /api/v1/memberships`.\n\n- `created_after` `string` — Only memberships created after this ISO 8601 timestamp.\n- `created_before` `string` — Only memberships created before this ISO 8601 timestamp.\n- `plan_id` `string` — Filter to memberships of this plan (`plan_` tag). Repeat as plan_ids[] for several.\n- `product_id` `string` — Filter to memberships of this product (`prod_` tag). Repeat as product_ids[] for several.\n- `status` `string` — Filter by billing state. `canceling` matches active memberships set to cancel at period end; `paused` matches memberships with payment collection paused. One of `active`, `trialing`, `past_due`, `completed`, `canceled`, `expired`, `canceling`, `paused`.\n- `user_id` `string` — Narrow to one user's memberships (`user_` tag, or `me` for the caller). A user outside the caller's visible set returns an empty list.\n\n</details>\n<details>\n<summary>payouts (7)</summary>\n\nMirrors the filtering query params of `GET /api/v1/payouts`.\n\n- `created_after` `string` — Only payouts created at or after this ISO 8601 time (inclusive).\n- `created_before` `string` — Only payouts created before this ISO 8601 time (exclusive).\n- `currency` `string` — Optional currency code filter, for example `usd`.\n- `payout_method_id` `string` — Filter to payouts sent to one saved payout method (a pytk_ identifier). An unknown id matches nothing.\n- `source` `string` — Filter by how the payout was created. Payouts created before source tracking or through internal tooling carry no source and never match. One of `api`, `dashboard`, `automatic`.\n- `status` `string` — Filter to payouts whose `status` reads this word, matching exactly what this version displays — `reversed` finds settled payouts the bank later returned. Requires Api-Version-Date 2026-08-21 or later. One of `requested`, `in_review`, `processing`, `completed`, `reversed`, `canceled`, `failed`, `denied`.\n- `user_id` `string` — The owning user ID (a user_ identifier). Provide this or account_id.\n\n</details>\n<details>\n<summary>people (20)</summary>\n\nMirrors the filtering query params of `GET /api/v1/people`.\n\n- `attribution_model` `string` — Attribution model the source filter matches against (defaults to last_touch). One of `last_touch`, `first_touch`.\n- `audience_id` `string` — Only include people in this audience. An audience that keeps itself up to date resolves to the People filters that define it, so this always reflects who matches now; uploaded lists and point-in-time snapshots match their recorded members.\n- `contactable` `boolean` — true for people who have an email address or phone number — the ones an ad platform can match.\n- `country` `string` — Only include people whose most recent visit came from this ISO 3166-1 alpha-2 country code.\n- `custom_event` `string` — Only include people who fired this custom pixel event.\n- `email` `string` — Only include the person linked to this email address.\n- `event_from` `string` — With event_to plus an event or source filter, switches to exact-population mode: person ids are resolved and paginated on the events side within this window (the same query the people metric counts), then hydrated per page.\n- `event_name` `string[]` — Only include people who fired any of these events, e.g. payment.completed or page.checkout.view.\n- `event_to` `string` — The inclusive end of the event window for exact-population mode.\n- `first_seen_after` `string` — Only include people first seen at or after this ISO 8601 timestamp.\n- `first_seen_before` `string` — Only include people first seen before this ISO 8601 timestamp.\n- `first_seen_within_days` `integer` — Only include people first seen within this many days, as a rolling window.\n- `has_purchased` `boolean` — true for customers only, false for people who have never purchased.\n- `last_seen_after` `string` — Only include people last seen at or after this ISO 8601 timestamp.\n- `last_seen_before` `string` — Only include people last seen before this ISO 8601 timestamp.\n- `last_seen_within_days` `integer` — Only include people last seen within this many days, as a rolling window.\n- `phone` `string` — Only include the person linked to this phone number.\n- `query` `string` — Search people by name, email, phone, or whop user ID (case-insensitive substring match).\n- `source` `string[]` — Only include people acquired from any of these sources — canonical paths (whop:<campaign>:<group>:<ad>, ext:<platform>:..., referrer:<domain>, direct, other), exact or with a trailing :* prefix. The same vocabulary the events / people metrics use.\n- `user_id` `string` — Only include the person linked to this whop user ID.\n\n</details>\n<details>\n<summary>plans (6)</summary>\n\nMirrors the filtering query params of `GET /api/v1/plans`.\n\n- `created_after` `string` — Only return plans created after this timestamp.\n- `created_before` `string` — Only return plans created before this timestamp.\n- `plan_types` `string[]` — Filter to only plans matching these billing types.\n- `product_ids` `string[]` — Filter to only plans belonging to these product identifiers. When `account_id` is omitted, this is required and the response is publicly readable: only visible, non-invoice plans are returned.\n- `release_methods` `string[]` — Filter to only plans matching these release methods.\n- `visibilities` `string[]` — Filter to only plans matching these visibility states.\n\n</details>\n<details>\n<summary>products (10)</summary>\n\nMirrors the filtering query params of `GET /api/v1/products`.\n\n- `access_pass_types` `string[]` — Filter to only products matching these types.\n- `created_after` `string` — Only return products created after this ISO 8601 timestamp.\n- `created_before` `string` — Only return products created before this ISO 8601 timestamp.\n- `labels` `string[]` — Filter to only products carrying all of these labels. Labels are matched lowercased.\n- `marketplace_category_route` `string` — Only return marketplace products assigned to this category route, such as `trading`.\n- `plan_types` `string[]` — Filter to products with a buyable plan of these billing models, such as `one_time` or `renewal`.\n- `price_maximum` `number` — Only return products whose advertised buyable plan has a displayed price of at most this amount. Recurring plans use renewal price.\n- `price_minimum` `number` — Only return products whose advertised buyable plan has a displayed price of at least this amount. Recurring plans use renewal price.\n- `query` `string` — Ranked search against product title and headline. Omit to browse by recency.\n- `visibilities` `string[]` — Filter to only products matching these visibility states. Ignored on the public marketplace list, which only returns visible products.\n\n</details>\n<details>\n<summary>promo_codes (5)</summary>\n\nMirrors the filtering query params of `GET /api/v1/promo_codes`.\n\n- `created_after` `string` — Only promo codes created after this ISO 8601 timestamp.\n- `created_before` `string` — Only promo codes created before this ISO 8601 timestamp.\n- `plan_ids` `string[]` — Only promo codes scoped to these plan IDs.\n- `product_ids` `string[]` — Only promo codes scoped to these product IDs.\n- `status` `string` — Promo-code status. `expired` groups inactive and archived codes. One of `active`, `inactive`, `archived`, `expired`.\n\n</details>\n<details>\n<summary>resolution_center_cases (6)</summary>\n\nMirrors the filtering query params of `GET /api/v1/resolution_center_cases`.\n\n- `created_after` `string` — Only cases created after this ISO 8601 timestamp.\n- `created_before` `string` — Only cases created before this ISO 8601 timestamp.\n- `outcome` `string[]` — Only closed cases that ended these ways. Repeat the parameter to pass several.\n- `reason` `string[]` — Only cases opened for these reasons. Repeat the parameter to pass several.\n- `status` `string[]` — Only cases in these statuses. Repeat the parameter to pass several — one paginated list covers all of them.\n- `user_id` `string` — Only cases opened by this customer — a `user_` tag, or `me` for the calling user. It narrows what you can already read, so `me` lists the cases you opened without the ones on accounts you are a team member of.\n\n</details>\n<details>\n<summary>shipments (4)</summary>\n\nMirrors the filtering query params of `GET /api/v1/shipments`.\n\n- `created_after` `string` — Return shipments created after this ISO 8601 timestamp.\n- `created_before` `string` — Return shipments created before this ISO 8601 timestamp.\n- `payment_id` `string[]` — Only shipments fulfilling these payments, each prefixed `pay_`. Repeat the parameter to pass several, up to 100 per request — one paginated list covers all of them.\n- `status` `string` — Filter to shipments with this delivery status. One of `unknown`, `pre_transit`, `in_transit`, `out_for_delivery`, `delivered`, `available_for_pickup`, `return_to_sender`, `failure`, `cancelled`, `error`.\n\n</details>\n<details>\n<summary>social_accounts (4)</summary>\n\nMirrors the filtering query params of `GET /api/v1/social_accounts`.\n\n- `platform` `string` — Only return social accounts for the platform that is specified. One of `x`, `instagram`, `youtube`, `tiktok`, `facebook`, `discord`, `telegram`.\n- `scopes` `string[]` — Only return social accounts that have these scopes.\n- `user_id` `string` — The User that the social accounts are connected to. Provide either this or account_id.\n- `verified` `boolean` — Only return social accounts that are verified on the platform.\n\n</details>\n<details>\n<summary>team_members (5)</summary>\n\nMirrors the filtering query params of `GET /api/v1/team_members`.\n\n- `created_after` `string` — Only return members added after this ISO 8601 timestamp.\n- `created_before` `string` — Only return members added before this ISO 8601 timestamp.\n- `role` `string` — Only return members with this role. `custom` matches members on a dashboard-managed custom role. One of `owner`, `admin`, `partner`, `sales_manager`, `moderator`, `advertiser`, `app_manager`, `support`, `manager`, `workforce`, `custom`.\n- `status` `string` — Only return members with this status: `joined` (accepted members) or `pending` (pending invites). Both are returned by default. One of `joined`, `pending`.\n- `user_id` `string` — Only return the membership for this user ID, prefixed `user_`.\n\n</details>\n<details>\n<summary>transfers (4)</summary>\n\nMirrors the filtering query params of `GET /api/v1/transfers`.\n\n- `created_after` `string` — Only transfers created strictly after this ISO 8601 timestamp.\n- `created_before` `string` — Only transfers created strictly before this ISO 8601 timestamp.\n- `destination_id` `string` — Filter to transfers received by this account. Provide this or origin_id.\n- `origin_id` `string` — Filter to transfers sent from this account. Provide this or destination_id.\n\n</details>\n<details>\n<summary>webhooks (3)</summary>\n\nMirrors the filtering query params of `GET /api/v1/webhooks`.\n\n- `app_id` `string` — Only return webhooks attached to this app. Omit to list the account's own webhooks.\n- `has_failures` `boolean` — Only return webhooks whose endpoint is currently failing — every delivery since the current failure streak began has been rejected. Clears as soon as a delivery succeeds.\n- `include_app_webhooks` `boolean` — Also return webhooks attached to the account's apps, not just the account's own. Cannot be combined with `app_id`.\n\n</details>\n</details>",
                     "example": {
                       "include_resource": false,
                       "posted_after": "2026-01-01T12:00:00.000Z",
@@ -23367,6 +23488,8 @@
                   "card_spend_refund",
                   "card_unload_deposit",
                   "card_unload_transfer",
+                  "cashback",
+                  "cashback_funding",
                   "company_referral",
                   "connected_account_negative_balance",
                   "cross_border_percentage_fee",
@@ -23817,6 +23940,8 @@
                   "card_spend_refund",
                   "card_unload_deposit",
                   "card_unload_transfer",
+                  "cashback",
+                  "cashback_funding",
                   "company_referral",
                   "connected_account_negative_balance",
                   "cross_border_percentage_fee",
@@ -24176,6 +24301,9 @@
                               "card_spend_refund_offset",
                               "card_unload_deposit",
                               "card_unload_transfer",
+                              "cashback",
+                              "cashback_expense",
+                              "cashback_funding",
                               "clawback_fee",
                               "clawback_receivable",
                               "clawback_receivable_reversal",
@@ -24387,6 +24515,10 @@
                               "topup",
                               "topup_fee",
                               "topup_reversal",
+                              "trading_account_deposit",
+                              "trading_account_deposit_offset",
+                              "trading_account_withdrawal",
+                              "trading_account_withdrawal_offset",
                               "treasury_fee",
                               "treasury_payin",
                               "treasury_payin_receivable",
@@ -29434,57 +29566,169 @@
     },
     "/partners/links": {
       "get": {
-        "description": "Resolves the public reward terms and whether redemption capacity remains. Immediate rewards claim capacity at business creation; qualified rewards claim it when the business reaches the threshold.",
-        "operationId": "retrievePartnerLink",
+        "description": "Returns the authenticated user's standard referral URL and a page of their balance reward links, newest first. Expired and fully claimed rewards are included by default; deleted rewards are excluded. Filter status to narrow the promotion links. Users do not need to be enrolled to retrieve their links.",
+        "operationId": "listPartnerLinks",
+        "parameters": [
+          {
+            "description": "Filter promotion links by availability. Repeat the status parameter for multiple values.",
+            "explode": true,
+            "in": "query",
+            "name": "status",
+            "required": false,
+            "schema": {
+              "items": {
+                "enum": [
+                  "available",
+                  "fully_claimed",
+                  "expired",
+                  "unavailable"
+                ],
+                "type": "string"
+              },
+              "type": "array"
+            },
+            "style": "form"
+          },
+          {
+            "description": "Number of promotion links to return from the start of the window.",
+            "in": "query",
+            "name": "first",
+            "required": false,
+            "schema": {
+              "default": 20,
+              "maximum": 100,
+              "type": "integer"
+            }
+          },
+          {
+            "description": "Cursor to fetch the page after (from page_info.end_cursor).",
+            "in": "query",
+            "name": "after",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Number of promotion links to return from the end of the window.",
+            "in": "query",
+            "name": "last",
+            "required": false,
+            "schema": {
+              "maximum": 100,
+              "type": "integer"
+            }
+          },
+          {
+            "description": "Cursor to fetch the page before (from page_info.start_cursor).",
+            "in": "query",
+            "name": "before",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/OnboardingReward"
+                  "properties": {
+                    "base_referral_url": {
+                      "description": "The partner's standard shareable referral URL.",
+                      "example": "https://whop.com/network/",
+                      "type": "string"
+                    },
+                    "data": {
+                      "items": {
+                        "$ref": "#/components/schemas/PartnerRewardLink"
+                      },
+                      "type": "array"
+                    },
+                    "page_info": {
+                      "properties": {
+                        "end_cursor": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "has_next_page": {
+                          "example": false,
+                          "type": "boolean"
+                        },
+                        "has_previous_page": {
+                          "example": false,
+                          "type": "boolean"
+                        },
+                        "start_cursor": {
+                          "example": "WyJjdXJzb3IiLDFd",
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "has_next_page",
+                        "end_cursor",
+                        "has_previous_page",
+                        "start_cursor"
+                      ],
+                      "type": "object"
+                    }
+                  },
+                  "required": [
+                    "base_referral_url",
+                    "data",
+                    "page_info"
+                  ],
+                  "type": "object"
                 }
               }
             },
-            "description": "reward link verified"
+            "description": "partner links listed"
           },
-          "404": {
-            "$ref": "#/components/responses/NotFound",
-            "description": "reward link not found"
+          "400": {
+            "$ref": "#/components/responses/InvalidParameters",
+            "description": "invalid reward availability"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized",
+            "description": "missing or invalid authentication"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden",
+            "description": "missing partner read scope"
           }
         },
-        "security": [],
-        "summary": "Retrieve a partner reward link",
+        "security": [
+          {
+            "bearerAuth": [
+              "partner:basic:read"
+            ]
+          },
+          {
+            "bearerAuth": [
+              "referral:basic:read"
+            ]
+          }
+        ],
+        "summary": "List partner links",
         "tags": [
           "Partners"
         ],
         "x-mint": {
           "metadata": {
-            "title": "Retrieve a Partner Reward Link",
-            "sidebarTitle": "Retrieve a Partner Reward Link"
+            "title": "List Partner Links",
+            "sidebarTitle": "List Partner Links"
           }
         }
       },
       "parameters": [
         {
           "$ref": "#/components/parameters/ApiVersionDate"
-        },
-        {
-          "description": "Username from the partner link's `a` query parameter.",
-          "in": "query",
-          "name": "partner_username",
-          "required": true,
-          "schema": {
-            "type": "string"
-          }
-        },
-        {
-          "description": "Reward slug from the partner link's `reward` query parameter.",
-          "in": "query",
-          "name": "reward_slug",
-          "required": true,
-          "schema": {
-            "type": "string"
-          }
         }
       ]
     },
@@ -29717,6 +29961,73 @@
       "parameters": [
         {
           "$ref": "#/components/parameters/ApiVersionDate"
+        }
+      ]
+    },
+    "/partners/{id}": {
+      "get": {
+        "description": "Retrieves the authenticated user's public profile, enrollment date, active direct business referral count, and default payout rates. Use me or the authenticated user's own user ID; other users are not accessible. Users who have not enrolled have a null joined_at. Retrieve referral URLs and promotion links from GET /partners/links.",
+        "operationId": "retrievePartner",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Partner"
+                }
+              }
+            },
+            "description": "partner retrieved"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized",
+            "description": "missing or invalid authentication"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden",
+            "description": "missing partner read scope"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound",
+            "description": "partner is not accessible"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": [
+              "partner:basic:read"
+            ]
+          },
+          {
+            "bearerAuth": [
+              "referral:basic:read"
+            ]
+          }
+        ],
+        "summary": "Retrieve a partner",
+        "tags": [
+          "Partners"
+        ],
+        "x-mint": {
+          "metadata": {
+            "sidebarTitle": "Retrieve",
+            "title": "Retrieve a Partner"
+          }
+        }
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/ApiVersionDate"
+        },
+        {
+          "description": "The authenticated partner's user ID, prefixed user_, or me. Other users' profiles are not accessible.",
+          "example": "me",
+          "in": "path",
+          "name": "id",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
         }
       ]
     },
@@ -45061,6 +45372,7 @@
               "enum": [
                 "owner",
                 "admin",
+                "partner",
                 "sales_manager",
                 "moderator",
                 "advertiser",
@@ -45280,10 +45592,11 @@
                     "type": "string"
                   },
                   "role": {
-                    "description": "The system role to grant.",
+                    "description": "The system role to grant. Partners must pass all certification quizzes.",
                     "enum": [
                       "owner",
                       "admin",
+                      "partner",
                       "sales_manager",
                       "moderator",
                       "advertiser",
@@ -45508,10 +45821,11 @@
               "schema": {
                 "properties": {
                   "role": {
-                    "description": "The system role to grant.",
+                    "description": "The system role to grant. Partners must pass all certification quizzes.",
                     "enum": [
                       "owner",
                       "admin",
+                      "partner",
                       "sales_manager",
                       "moderator",
                       "advertiser",
@@ -48629,6 +48943,15 @@
             }
           },
           {
+            "description": "Compute live wallet and owned-account balances on the self view (default true). Set false for identity-only reads. Ignored when the id is not `me` or the caller lacks balance-read scope.",
+            "in": "query",
+            "name": "include_balance",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
             "description": "Also compute your balance history (opt-in; runs a heavier query). Only applies when the id is `me`; ignored for callers without balance-read scope.",
             "in": "query",
             "name": "include_balance_history",
@@ -51630,7 +51953,7 @@
                 "properties": {
                   "api_version_date": {
                     "description": "The dated API version (Api-Version-Date) to pin this webhook's payloads to. Omit to leave the webhook unpinned, tracking the current payload shape.",
-                    "example": "2026-09-11-1",
+                    "example": "2026-01-01",
                     "type": [
                       "string",
                       "null"
@@ -51999,7 +52322,7 @@
                 "properties": {
                   "api_version_date": {
                     "description": "The dated API version (Api-Version-Date) to pin this webhook's payloads to. Only valid for `v1` webhooks. Omit to leave the current pin unchanged, or pass `null` to unpin and track the current payload shape.",
-                    "example": "2026-09-11-1",
+                    "example": "2026-01-01",
                     "type": [
                       "string",
                       "null"
@@ -52746,7 +53069,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-11-1",
+                "api_version_date": "2026-09-13",
                 "data": {
                   "balances": [],
                   "banner_image_url": null,
@@ -52939,7 +53262,8 @@
                     "individual": null
                   },
                   "volume_usd": 0,
-                  "wallet": null
+                  "wallet": null,
+                  "website": null
                 },
                 "id": "msg_xxxxxxxxxxxxxxxxxxxxxxxx",
                 "timestamp": "2025-01-01T00:00:00.000Z",
@@ -53065,7 +53389,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-11-1",
+                "api_version_date": "2026-09-13",
                 "data": {
                   "balances": [],
                   "banner_image_url": null,
@@ -53258,7 +53582,8 @@
                     "individual": null
                   },
                   "volume_usd": 0,
-                  "wallet": null
+                  "wallet": null,
+                  "website": null
                 },
                 "id": "msg_xxxxxxxxxxxxxxxxxxxxxxxx",
                 "timestamp": "2025-01-01T00:00:00.000Z",
@@ -53384,7 +53709,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-11-1",
+                "api_version_date": "2026-09-13",
                 "data": {
                   "balances": [],
                   "banner_image_url": null,
@@ -53577,7 +53902,8 @@
                     "individual": null
                   },
                   "volume_usd": 0,
-                  "wallet": null
+                  "wallet": null,
+                  "website": null
                 },
                 "id": "msg_xxxxxxxxxxxxxxxxxxxxxxxx",
                 "previous_attributes": {
@@ -53703,7 +54029,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-11-1",
+                "api_version_date": "2026-09-13",
                 "data": {
                   "ad_campaign": {
                     "id": "adcamp_xxxxxxxxxxxxxx"
@@ -54128,7 +54454,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-11-1",
+                "api_version_date": "2026-09-13",
                 "data": {
                   "bid_type": null,
                   "budget_amount": 50,
@@ -54447,7 +54773,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-11-1",
+                "api_version_date": "2026-09-13",
                 "data": {
                   "bid_type": null,
                   "budget_amount": 50,
@@ -54766,7 +55092,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-11-1",
+                "api_version_date": "2026-09-13",
                 "data": {
                   "billing": null,
                   "canceled_at": null,
@@ -55162,7 +55488,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-11-1",
+                "api_version_date": "2026-09-13",
                 "data": {
                   "billing": null,
                   "canceled_at": null,
@@ -55558,7 +55884,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-11-1",
+                "api_version_date": "2026-09-13",
                 "data": {
                   "billing": null,
                   "canceled_at": null,
@@ -55954,7 +56280,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-11-1",
+                "api_version_date": "2026-09-13",
                 "data": {
                   "billing": null,
                   "canceled_at": null,
@@ -56350,7 +56676,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-11-1",
+                "api_version_date": "2026-09-13",
                 "data": {
                   "hosted_url": null,
                   "id": "ciac_xxxxxxxxxxxxxx",
@@ -56518,7 +56844,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-11-1",
+                "api_version_date": "2026-09-13",
                 "data": {
                   "hosted_url": null,
                   "id": "ciac_xxxxxxxxxxxxxx",
@@ -56686,7 +57012,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-11-1",
+                "api_version_date": "2026-09-13",
                 "data": {
                   "hosted_url": null,
                   "id": "ciac_xxxxxxxxxxxxxx",
@@ -56854,7 +57180,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-11-1",
+                "api_version_date": "2026-09-13",
                 "data": {
                   "hosted_url": null,
                   "id": "ciac_xxxxxxxxxxxxxx",
@@ -57022,7 +57348,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-11-1",
+                "api_version_date": "2026-09-13",
                 "data": {
                   "card_id": "icrd_xxxxxxxxxxxxxx",
                   "cardholder_id": null,
@@ -57160,7 +57486,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-11-1",
+                "api_version_date": "2026-09-13",
                 "data": {
                   "card_id": "icrd_xxxxxxxxxxxxxx",
                   "cardholder_id": null,
@@ -57298,7 +57624,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-11-1",
+                "api_version_date": "2026-09-13",
                 "data": {
                   "card_id": "icrd_xxxxxxxxxxxxxx",
                   "cardholder_id": null,
@@ -57436,7 +57762,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-11-1",
+                "api_version_date": "2026-09-13",
                 "data": {
                   "card_id": "icrd_xxxxxxxxxxxxxx",
                   "cardholder_id": null,
@@ -57574,7 +57900,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-11-1",
+                "api_version_date": "2026-09-13",
                 "data": {
                   "card_id": "icrd_xxxxxxxxxxxxxx",
                   "cardholder_id": null,
@@ -57712,7 +58038,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-11-1",
+                "api_version_date": "2026-09-13",
                 "data": {
                   "amount": "75000000000",
                   "available_at": null,
@@ -57852,7 +58178,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-11-1",
+                "api_version_date": "2026-09-13",
                 "data": {
                   "account_id": "biz_xxxxxxxxxxxxxx",
                   "amount": 150,
@@ -58039,7 +58365,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-11-1",
+                "api_version_date": "2026-09-13",
                 "data": {
                   "account_id": "biz_xxxxxxxxxxxxxx",
                   "amount": 150,
@@ -58226,7 +58552,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-11-1",
+                "api_version_date": "2026-09-13",
                 "data": {
                   "account_id": null,
                   "actionable": false,
@@ -58363,7 +58689,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-11-1",
+                "api_version_date": "2026-09-13",
                 "data": {
                   "created_at": "2026-01-01T12:00:00.000Z",
                   "download_url": "https://s3.amazonaws.com/uploads/exports/members-export.csv",
@@ -58492,7 +58818,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-11-1",
+                "api_version_date": "2026-09-13",
                 "data": {
                   "created_at": "2026-01-01T12:00:00.000Z",
                   "download_url": null,
@@ -58621,7 +58947,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-11-1",
+                "api_version_date": "2026-09-13",
                 "data": {
                   "amount": "512345000000",
                   "available_at": "2026-01-01T12:00:00.000Z",
@@ -58766,7 +59092,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-11-1",
+                "api_version_date": "2026-09-13",
                 "data": {
                   "id": "idpf_xxxxxxxxxxxxxx"
                 },
@@ -58897,7 +59223,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-11-1",
+                "api_version_date": "2026-09-13",
                 "data": {
                   "access_level": "customer",
                   "account_id": "biz_xxxxxxxxxxxxxx",
@@ -59035,7 +59361,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-11-1",
+                "api_version_date": "2026-09-13",
                 "data": {
                   "access_level": "customer",
                   "account_id": "biz_xxxxxxxxxxxxxx",
@@ -59173,7 +59499,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-11-1",
+                "api_version_date": "2026-09-13",
                 "data": {
                   "account": {
                     "id": "biz_xxxxxxxxxxxxxx",
@@ -59312,7 +59638,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-11-1",
+                "api_version_date": "2026-09-13",
                 "data": {
                   "account": {
                     "id": "biz_xxxxxxxxxxxxxx",
@@ -59457,7 +59783,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-11-1",
+                "api_version_date": "2026-09-13",
                 "data": {
                   "account": {
                     "id": "biz_xxxxxxxxxxxxxx",
@@ -59596,7 +59922,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-11-1",
+                "api_version_date": "2026-09-13",
                 "data": {
                   "account": {
                     "id": "biz_xxxxxxxxxxxxxx",
@@ -59741,7 +60067,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-11-1",
+                "api_version_date": "2026-09-13",
                 "data": {
                   "account_id": "biz_xxxxxxxxxxxxxx",
                   "amount_after_fees": {
@@ -59997,7 +60323,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-11-1",
+                "api_version_date": "2026-09-13",
                 "data": {
                   "account_id": "biz_xxxxxxxxxxxxxx",
                   "amount_after_fees": {
@@ -60253,7 +60579,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-11-1",
+                "api_version_date": "2026-09-13",
                 "data": {
                   "account_id": "biz_xxxxxxxxxxxxxx",
                   "amount_after_fees": {
@@ -60509,7 +60835,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-11-1",
+                "api_version_date": "2026-09-13",
                 "data": {
                   "account_id": "biz_xxxxxxxxxxxxxx",
                   "amount_after_fees": {
@@ -60765,7 +61091,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-11-1",
+                "api_version_date": "2026-09-13",
                 "data": {
                   "account_id": "biz_xxxxxxxxxxxxxx",
                   "amount_after_fees": {
@@ -61017,7 +61343,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-11-1",
+                "api_version_date": "2026-09-13",
                 "data": {
                   "account_id": "biz_xxxxxxxxxxxxxx",
                   "amount_after_fees": {
@@ -61273,7 +61599,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-11-1",
+                "api_version_date": "2026-09-13",
                 "data": {
                   "amount": "10.0",
                   "created_at": "2026-01-01T12:00:00.000Z",
@@ -61746,7 +62072,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-11-1",
+                "api_version_date": "2026-09-13",
                 "data": {
                   "amount": "10.0",
                   "created_at": "2026-01-01T12:00:00.000Z",
@@ -62216,7 +62542,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-11-1",
+                "api_version_date": "2026-09-13",
                 "data": {
                   "amount": "10.0",
                   "created_at": "2026-01-01T12:00:00.000Z",
@@ -62682,7 +63008,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-11-1",
+                "api_version_date": "2026-09-13",
                 "data": {
                   "account_reference": "4483",
                   "bank_verification_state": "no_data",
@@ -63232,7 +63558,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-11-1",
+                "api_version_date": "2026-09-13",
                 "data": {
                   "account": {
                     "id": "biz_xxxxxxxxxxxxxx",
@@ -63266,7 +63592,6 @@
                       "bancontact",
                       "bank_wire",
                       "billie",
-                      "bizum",
                       "blik",
                       "boleto",
                       "bre_b",
@@ -63363,6 +63688,7 @@
                       "sunbit",
                       "swish",
                       "tamara",
+                      "touch_n_go",
                       "twint",
                       "upi",
                       "us_bank_account",
@@ -63526,7 +63852,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-11-1",
+                "api_version_date": "2026-09-13",
                 "data": {
                   "account": {
                     "id": "biz_xxxxxxxxxxxxxx",
@@ -63560,7 +63886,6 @@
                       "bancontact",
                       "bank_wire",
                       "billie",
-                      "bizum",
                       "blik",
                       "boleto",
                       "bre_b",
@@ -63657,6 +63982,7 @@
                       "sunbit",
                       "swish",
                       "tamara",
+                      "touch_n_go",
                       "twint",
                       "upi",
                       "us_bank_account",
@@ -63820,7 +64146,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-11-1",
+                "api_version_date": "2026-09-13",
                 "data": {
                   "account": {
                     "id": "biz_xxxxxxxxxxxxxx",
@@ -63854,7 +64180,6 @@
                       "bancontact",
                       "bank_wire",
                       "billie",
-                      "bizum",
                       "blik",
                       "boleto",
                       "bre_b",
@@ -63951,6 +64276,7 @@
                       "sunbit",
                       "swish",
                       "tamara",
+                      "touch_n_go",
                       "twint",
                       "upi",
                       "us_bank_account",
@@ -64114,7 +64440,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-11-1",
+                "api_version_date": "2026-09-13",
                 "data": {
                   "account": {
                     "id": "biz_xxxxxxxxxxxxxx",
@@ -64271,7 +64597,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-11-1",
+                "api_version_date": "2026-09-13",
                 "data": {
                   "account": {
                     "id": "biz_xxxxxxxxxxxxxx",
@@ -64428,7 +64754,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-11-1",
+                "api_version_date": "2026-09-13",
                 "data": {
                   "account": {
                     "id": "biz_xxxxxxxxxxxxxx",
@@ -64585,7 +64911,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-11-1",
+                "api_version_date": "2026-09-13",
                 "data": {
                   "account": {
                     "id": "biz_xxxxxxxxxxxxxx",
@@ -64742,7 +65068,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-11-1",
+                "api_version_date": "2026-09-13",
                 "data": {
                   "account": {
                     "id": "biz_xxxxxxxxxxxxxx",
@@ -64899,7 +65225,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-11-1",
+                "api_version_date": "2026-09-13",
                 "data": {
                   "account": {
                     "id": "biz_xxxxxxxxxxxxxx",
@@ -65069,7 +65395,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-11-1",
+                "api_version_date": "2026-09-13",
                 "data": {
                   "account": {
                     "id": "biz_xxxxxxxxxxxxxx",
@@ -65235,7 +65561,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-11-1",
+                "api_version_date": "2026-09-13",
                 "data": {
                   "account": {
                     "id": "biz_xxxxxxxxxxxxxx",
@@ -65401,7 +65727,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-11-1",
+                "api_version_date": "2026-09-13",
                 "data": {
                   "account_id": "biz_xxxxxxxxxxxxxx",
                   "carrier": "ups",
@@ -65532,7 +65858,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-11-1",
+                "api_version_date": "2026-09-13",
                 "data": {
                   "account_id": "biz_xxxxxxxxxxxxxx",
                   "carrier": "ups",
@@ -65663,7 +65989,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-11-1",
+                "api_version_date": "2026-09-13",
                 "data": {
                   "account": {
                     "id": "biz_xxxxxxxxxxxxxx",
@@ -65881,7 +66207,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-11-1",
+                "api_version_date": "2026-09-13",
                 "data": {
                   "amount": 250,
                   "created_at": "2026-01-01T12:00:00.000Z",
@@ -66344,7 +66670,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-11-1",
+                "api_version_date": "2026-09-13",
                 "data": {
                   "amount": 250,
                   "created_at": "2026-01-01T12:00:00.000Z",
@@ -66807,7 +67133,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-11-1",
+                "api_version_date": "2026-09-13",
                 "data": {
                   "amount": 10,
                   "created_at": "2026-01-01T12:00:00.000Z",
@@ -67236,7 +67562,7 @@
         "name": "Api-Version-Date",
         "required": false,
         "schema": {
-          "example": "2026-09-11-1",
+          "example": "2026-09-13",
           "type": "string"
         }
       },
@@ -67834,6 +68160,14 @@
                 "type": "null"
               }
             ]
+          },
+          "website": {
+            "description": "The account's business website URL, or `null` if none has been provided. Setting it also adds a `website` entry to `social_links`.",
+            "example": "https://shinetimedetail.com",
+            "type": [
+              "string",
+              "null"
+            ]
           }
         },
         "required": [
@@ -67842,6 +68176,7 @@
           "title",
           "description",
           "route",
+          "website",
           "logo_url",
           "banner_image_url",
           "terms_of_service",
@@ -68272,7 +68607,7 @@
       "AccountCompanyFormationSignatureRequest": {
         "properties": {
           "expires_at": {
-            "description": "When the signing URL expires, as an ISO 8601 timestamp. Present while `status` is `pending`.",
+            "description": "When the signing URL expires, as an ISO 8601 timestamp. Present only when the signing URL is included.",
             "example": "2026-01-01T12:00:00.000Z",
             "type": "string"
           },
@@ -68286,7 +68621,7 @@
             "type": "string"
           },
           "url": {
-            "description": "Hosted signing URL where the founder completes the form. Present while `status` is `pending`.",
+            "description": "Hosted signing URL where the founder completes the form. Present while `status` is `pending` and the caller has `incorporation:write`. Omitted from webhooks.",
             "example": "https://sign.doola.com/shine-time-auto-detailing/form8821",
             "type": "string"
           }
@@ -72252,9 +72587,10 @@
               "2026-09-09",
               "2026-09-09-1",
               "2026-09-11",
-              "2026-09-11-1"
+              "2026-09-11-1",
+              "2026-09-13"
             ],
-            "example": "2026-09-11-1",
+            "example": "2026-09-13",
             "type": "string"
           },
           "created_at": {
@@ -77100,7 +77436,7 @@
           },
           "assignment_seed": {
             "description": "Assignment hashes UTF-8 seed + subject ID with CRC32 modulo 100 and selects the stored end-exclusive range.",
-            "example": "verb_end_exp1768435200",
+            "example": "checkout_redesign_v21768435200",
             "type": "string"
           },
           "bucket_by": {
@@ -77116,7 +77452,7 @@
           },
           "configuration_revision": {
             "description": "Revision of the serving configuration. Does not change the assignment seed.",
-            "example": 2,
+            "example": 1,
             "type": "integer"
           },
           "control": {
@@ -77160,7 +77496,7 @@
           },
           "flag_key": {
             "description": "Developer-chosen handle referenced from code. Anywhere the API takes an experiment identifier, the `expt_` id and the flag_key are interchangeable.",
-            "example": "verb_end_exp",
+            "example": "checkout_redesign_v2",
             "type": "string"
           },
           "hypothesis": {
@@ -77176,7 +77512,7 @@
           },
           "name": {
             "description": "Human-readable display name.",
-            "example": "Verb End",
+            "example": "Checkout Redesign V2",
             "type": "string"
           },
           "related_resource": {
@@ -77197,7 +77533,7 @@
               "paused",
               "ended"
             ],
-            "example": "ended",
+            "example": "draft",
             "type": "string"
           },
           "targeting_rules": {
@@ -77669,6 +78005,7 @@
           "requires_capture",
           "pending",
           "failed",
+          "blocked",
           "past_due",
           "canceled",
           "price_too_low",
@@ -77907,6 +78244,8 @@
               "card_spend_refund",
               "card_unload_deposit",
               "card_unload_transfer",
+              "cashback",
+              "cashback_funding",
               "company_referral",
               "connected_account_negative_balance",
               "cross_border_percentage_fee",
@@ -78852,7 +79191,7 @@
                 ]
               },
               "claim_url": {
-                "description": "Public claim URL for the airdrop link (airdrop_link sources only).",
+                "description": "The airdrop's claim URL. Null unless the caller can manage claim links on the funding company or withdraw from the funding personal balance.",
                 "example": "https://whop.com/claim",
                 "type": [
                   "string",
@@ -80143,10 +80482,124 @@
         ],
         "type": "object"
       },
-      "OnboardingReward": {
+      "Partner": {
+        "properties": {
+          "joined_at": {
+            "description": "When the user joined the partner program, as an ISO 8601 timestamp. Null when they have not joined.",
+            "example": "2026-01-01T12:00:00.000Z",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "payout_rates": {
+            "items": {
+              "$ref": "#/components/schemas/PartnerPayoutTier",
+              "description": "Default payout percentages grouped by referral tier, with one earning duration per tier. Existing businesses can have individual terms."
+            },
+            "type": "array"
+          },
+          "referred_businesses_count": {
+            "description": "Number of active first-tier business referrals attributed to the partner, excluding deleted businesses.",
+            "example": 1,
+            "type": "integer"
+          },
+          "user": {
+            "$ref": "#/components/schemas/UserSummary",
+            "description": "The authenticated partner's public profile."
+          }
+        },
+        "required": [
+          "joined_at",
+          "referred_businesses_count",
+          "payout_rates",
+          "user"
+        ],
+        "type": "object"
+      },
+      "PartnerPayoutDuration": {
+        "properties": {
+          "unit": {
+            "description": "Unit of the earning window. Month means a calendar month; day means a day.",
+            "enum": [
+              "day",
+              "month"
+            ],
+            "example": "month",
+            "type": "string"
+          },
+          "value": {
+            "description": "Number of units in the earning window.",
+            "example": 600,
+            "type": "integer"
+          }
+        },
+        "required": [
+          "unit",
+          "value"
+        ],
+        "type": "object"
+      },
+      "PartnerPayoutRate": {
+        "properties": {
+          "income_source": {
+            "description": "Income source that generates this percentage payout.",
+            "enum": [
+              "sales",
+              "transfer",
+              "card_interchange",
+              "ad_spend"
+            ],
+            "example": "card_interchange",
+            "type": "string"
+          },
+          "percentage": {
+            "description": "Partner's default percentage for this tier and income source. For example, 30 means 30%.",
+            "example": 10,
+            "type": "number"
+          }
+        },
+        "required": [
+          "income_source",
+          "percentage"
+        ],
+        "type": "object"
+      },
+      "PartnerPayoutTier": {
+        "properties": {
+          "duration": {
+            "$ref": "#/components/schemas/PartnerPayoutDuration",
+            "description": "Default period during which a new referred business can generate commissions, measured from its attribution start. This is not a payout delay. Individual business terms can differ."
+          },
+          "rates": {
+            "items": {
+              "$ref": "#/components/schemas/PartnerPayoutRate",
+              "description": "Default payout percentages for each income source in this referral tier."
+            },
+            "type": "array"
+          },
+          "tier": {
+            "description": "Referral tier: first for a directly referred business, or second for a business brought by a referred partner.",
+            "enum": [
+              "first",
+              "second"
+            ],
+            "example": "second",
+            "type": "string"
+          }
+        },
+        "required": [
+          "tier",
+          "duration",
+          "rates"
+        ],
+        "type": "object"
+      },
+      "PartnerRewardLink": {
         "properties": {
           "expires_at": {
             "description": "When the reward stops accepting new claims and qualifying volume, as an ISO 8601 timestamp. Null when it does not expire.",
+            "example": "2026-01-01T12:00:00.000Z",
             "type": [
               "string",
               "null"
@@ -80159,15 +80612,18 @@
           },
           "max_redemptions": {
             "description": "How many businesses can earn this reward in total. Null when unlimited.",
-            "example": 1,
             "type": [
               "integer",
               "null"
             ]
           },
-          "partner": {
-            "$ref": "#/components/schemas/UserSummary",
-            "description": "Partner whose link attributed this reward."
+          "name": {
+            "description": "Promotion name used in the reward link. Null when the reward has no slug.",
+            "example": "reward-1",
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "partner_reward_amount": {
             "description": "What the partner earns when a referred business qualifies for this reward. Null when the reward pays the business only.",
@@ -80198,41 +80654,28 @@
               "ad_spend",
               null
             ],
-            "example": "sales",
+            "example": "ad_spend",
             "type": [
               "string",
               "null"
             ]
           },
-          "qualification_met": {
-            "description": "Whether the attributed business met the requirement. Null before a business claims the link.",
-            "type": [
-              "boolean",
-              "null"
-            ]
-          },
-          "qualification_progress": {
-            "description": "Qualifying volume accumulated by the attributed business. Null before a business claims the link and for immediate rewards.",
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/Money"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "remaining_redemptions": {
-            "description": "How many rewards are still unclaimed. For rewards with a qualification, a business claims one only when it meets the requirement, so this can reach zero while other businesses are still working toward it. Null when unlimited.",
+          "redemptions": {
+            "description": "Number of businesses that have claimed this reward. Rewards with a qualification count when the reward is granted; immediate rewards count when the business is attributed.",
             "example": 0,
+            "type": "integer"
+          },
+          "referral_url": {
+            "description": "Shareable partner URL that applies this promotion to a referred business. Null when the reward has no slug.",
+            "example": "https://whop.com/start/",
             "type": [
-              "integer",
+              "string",
               "null"
             ]
           },
-          "reward_amount": {
+          "referred_business_reward_amount": {
             "$ref": "#/components/schemas/Money",
-            "description": "Reward value delivered after qualification."
+            "description": "Reward value delivered to the referred business after qualification."
           },
           "reward_type": {
             "description": "How the reward is delivered.",
@@ -80243,13 +80686,6 @@
             "example": "balance_credit",
             "type": "string"
           },
-          "rewarded": {
-            "description": "Whether the reward was credited to the attributed business. Null before a business claims the link.",
-            "type": [
-              "boolean",
-              "null"
-            ]
-          },
           "status": {
             "description": "Whether the reward can still be claimed: `available`, `fully_claimed`, `expired`, or `unavailable`.",
             "enum": [
@@ -80258,25 +80694,23 @@
               "expired",
               "unavailable"
             ],
-            "example": "fully_claimed",
+            "example": "expired",
             "type": "string"
           }
         },
         "required": [
           "id",
+          "name",
+          "referral_url",
           "status",
           "reward_type",
-          "reward_amount",
+          "referred_business_reward_amount",
           "partner_reward_amount",
           "qualification_income_source",
           "qualification_amount",
-          "qualification_progress",
-          "qualification_met",
-          "rewarded",
           "expires_at",
           "max_redemptions",
-          "remaining_redemptions",
-          "partner"
+          "redemptions"
         ],
         "type": "object"
       },
@@ -81666,7 +82100,6 @@
           "bancontact",
           "bank_wire",
           "billie",
-          "bizum",
           "blik",
           "boleto",
           "bre_b",
@@ -81764,6 +82197,7 @@
           "sunbit",
           "swish",
           "tamara",
+          "touch_n_go",
           "twint",
           "upi",
           "us_bank_account",
@@ -82273,7 +82707,8 @@
                 "admin",
                 "moderator",
                 "sales_manager",
-                "advertiser"
+                "advertiser",
+                "partner"
               ],
               "example": "owner",
               "type": "string"
@@ -86373,6 +86808,7 @@
             "enum": [
               "owner",
               "admin",
+              "partner",
               "sales_manager",
               "moderator",
               "advertiser",
@@ -86445,7 +86881,7 @@
       "User": {
         "properties": {
           "balance": {
-            "description": "The user's balance: personal cash + crypto + in-flight treasury deposits, plus account balances for accounts they own. Computed only on the self view (retrieved with the reserved id `me`) for callers with balance-read scope; `null` otherwise.",
+            "description": "The user's balance: personal cash + crypto + in-flight treasury deposits, plus account balances for accounts they own. Computed only on the self view (retrieved with the reserved id `me`) for callers with balance-read scope; `null` otherwise, or when `include_balance=false`.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/UserBalance"
@@ -87265,7 +87701,7 @@
           },
           "api_version_date": {
             "description": "The dated API version (Api-Version-Date) that v1 payloads for this endpoint are pinned to: events serialize exactly like a REST read at this version (the native serializer where the resource has one). Null when unpinned — legacy (v2/v5) webhooks, and v1 webhooks on the legacy payload shape.",
-            "example": "2026-09-11-1",
+            "example": "2026-01-01",
             "type": [
               "string",
               "null"
@@ -87691,7 +88127,7 @@
           },
           "api_version_date": {
             "description": "The dated API version (Api-Version-Date) that v1 payloads for this endpoint are pinned to: events serialize exactly like a REST read at this version (the native serializer where the resource has one). Null when unpinned — legacy (v2/v5) webhooks, and v1 webhooks on the legacy payload shape.",
-            "example": "2026-09-11-1",
+            "example": "2026-01-01",
             "type": [
               "string",
               "null"

@@ -61,7 +61,7 @@ Use the Team Members API to list an account's team, add a user to the team with 
     <ResponseField name="role" type="string" required>
       The member's role on the account. `custom` means a bespoke dashboard-managed role; the API can read but not grant it.
 
-      Available options: `owner`, `admin`, `sales_manager`, `moderator`, `advertiser`, `app_manager`, `support`, `manager`, `workforce`, `custom`
+      Available options: `owner`, `admin`, `partner`, `sales_manager`, `moderator`, `advertiser`, `app_manager`, `support`, `manager`, `workforce`, `custom`
     </ResponseField>
 
     <ResponseField name="status" type="string" required>

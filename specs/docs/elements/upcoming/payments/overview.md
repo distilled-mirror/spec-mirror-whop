@@ -4,7 +4,7 @@
 
 # Payments
 
-> Browse account payments with PaymentsElement, or collect a payment from a `plan_` ID or inline currency and amount. Mount PaymentElement, CardElement, or CardFields, then call `payments.createConfirmationToken` with billing details. Wallet selections open their sheet automatically. Confirm the token server-side, then pass the payment's `client_secret` to `handleNextAction` for any pending step.
+> Browse account payments with PaymentsElement, collect a payment from a `plan_` ID or inline currency and amount, or save a payment method without charging with `mode: "setup"`. Mount PaymentElement, CardElement, or CardFields, then call `payments.createConfirmationToken` with billing details. Wallet selections open their sheet automatically. Confirm the token server-side, then pass the payment's or setup intent's `client_secret` to `handleNextAction` for any pending step.
 
 ## Playground
 
@@ -50,6 +50,10 @@ Pass these to `whop.payments.create({ … })`, or as props on `<Payments>` in Re
   Account ID, prefixed `biz_`. Required for PaymentsElement; omit only when calling static methods without an account surface.
 </ResponseField>
 
+<ResponseField name="mode" type="&#x22;payment&#x22;">
+  Mount mode, `payment` by default. `setup` saves a payment method and charges nothing, now or later: only methods that can be saved are offered and amount bounds do not apply. Confirm with `createConfirmationToken()`, then create the setup intent server-side.
+</ResponseField>
+
 <ResponseField name="accessToken" type="string">
   Scoped bearer token for PaymentsElement. Requires `payment:basic:read`; buyer emails additionally require `member:email:read`. Omit only with a same-origin Whop session.
 </ResponseField>
@@ -67,7 +71,7 @@ Pass these to `whop.payments.create({ … })`, or as props on `<Payments>` in Re
 </ResponseField>
 
 <ResponseField name="setupFutureUsage" type="&#x22;off_session&#x22; | &#x22;on_session&#x22;">
-  Displays consent to save the payment method and marks the token for `off_session` or `on_session` use.
+  A setup saves the payment method for `off_session` use, the only usage a setup accepts, and displays the save consent.
 </ResponseField>
 
 <ResponseField name="previewWalletAvailability" type="WalletAvailability">
@@ -79,7 +83,7 @@ Pass these to `whop.payments.create({ … })`, or as props on `<Payments>` in Re
 </ResponseField>
 
 <ResponseField name="currency" type="string">
-  Lowercase three-letter ISO 4217 payment currency code. It filters the payment-method matrix.
+  Lowercase three-letter ISO 4217 currency code. It filters the payment-method matrix.
 </ResponseField>
 
 <ResponseField name="amount" type="number">
@@ -100,9 +104,10 @@ Pass these to `whop.payments.create({ … })`, or as props on `<Payments>` in Re
 
 <Note>The options are a union. Provide **exactly one** of these shapes, plus the shared event callbacks below:</Note>
 
-* `{ accountId: string; accessToken?: string; plan: string; offerAmounts?: undefined; returnUrl?: string; setupFutureUsage?: "off_session" | "on_session"; previewWalletAvailability?: WalletAvailability; checkoutSession?: { id: string; clientSecret: string; }; analytics?: false }`
-* `{ accountId: string; accessToken?: string; currency: string; amount: number; offerAmounts?: { feeInclusive: number; feeFree: number; }; paymentMethodConfiguration?: { enabled?: string[] | undefined; disabled?: string[] | undefined; include_platform_defaults?: boolean | undefined; }; returnUrl?: string; setupFutureUsage?: "off_session" | "on_session"; previewWalletAvailability?: WalletAvailability; checkoutSession?: { id: string; clientSecret: string; }; analytics?: false }`
-* `{ accountId?: string; accessToken?: string; plan?: undefined; currency?: undefined; amount?: undefined; offerAmounts?: undefined; paymentMethodConfiguration?: undefined; returnUrl?: string; setupFutureUsage?: "off_session" | "on_session"; previewWalletAvailability?: WalletAvailability; checkoutSession?: { id: string; clientSecret: string; }; analytics?: false }`
+* `{ accountId: string; mode?: "payment"; accessToken?: string; plan: string; offerAmounts?: undefined; returnUrl?: string; setupFutureUsage?: "off_session" | "on_session"; previewWalletAvailability?: WalletAvailability; checkoutSession?: { id: string; clientSecret: string; }; analytics?: false }`
+* `{ accountId: string; mode?: "payment"; accessToken?: string; currency: string; amount: number; offerAmounts?: { feeInclusive: number; feeFree: number; }; paymentMethodConfiguration?: { enabled?: string[] | undefined; disabled?: string[] | undefined; include_platform_defaults?: boolean | undefined; }; returnUrl?: string; setupFutureUsage?: "off_session" | "on_session"; previewWalletAvailability?: WalletAvailability; checkoutSession?: { id: string; clientSecret: string; }; analytics?: false }`
+* `{ accountId: string; mode: "setup"; accessToken?: string; currency: string; plan?: undefined; amount?: undefined; offerAmounts?: undefined; paymentMethodConfiguration?: { enabled?: string[] | undefined; disabled?: string[] | undefined; include_platform_defaults?: boolean | undefined; }; returnUrl?: string; setupFutureUsage?: "off_session"; previewWalletAvailability?: WalletAvailability; checkoutSession?: { id: string; clientSecret: string; }; analytics?: false }`
+* `{ accountId?: string; accessToken?: string; mode?: undefined; plan?: undefined; currency?: undefined; amount?: undefined; offerAmounts?: undefined; paymentMethodConfiguration?: undefined; returnUrl?: string; setupFutureUsage?: "off_session" | "on_session"; previewWalletAvailability?: WalletAvailability; checkoutSession?: { id: string; clientSecret: string; }; analytics?: false }`
 
 ## Events
 

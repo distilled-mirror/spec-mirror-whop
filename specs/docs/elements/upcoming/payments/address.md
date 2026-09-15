@@ -116,6 +116,10 @@
 <div data-whop-platform="web">
   ## Props
 
+  <ResponseField name="mode" type="&#x22;billing&#x22; | &#x22;shipping&#x22;">
+    Browser autocomplete purpose: `billing` (default) or `shipping`. Defaults to `"billing"`.
+  </ResponseField>
+
   <ResponseField name="line2" type="&#x22;never&#x22; | &#x22;toggle&#x22; | &#x22;always&#x22;">
     Address line 2: always visible (default), revealed by a text button (`toggle`), or never collected. Defaults to `"always"`.
   </ResponseField>
@@ -126,10 +130,6 @@
 
   <ResponseField name="layout" type="&#x22;full&#x22; | &#x22;compact&#x22;">
     `full` (default) stacks labeled fields. `compact` groups placeholder-labeled fields within one border. Defaults to `"full"`.
-  </ResponseField>
-
-  <ResponseField name="mode" type="&#x22;billing&#x22; | &#x22;shipping&#x22;">
-    Browser autocomplete purpose: `billing` (default) or `shipping`. Defaults to `"billing"`.
   </ResponseField>
 
   <ResponseField name="scope" type="&#x22;full&#x22; | &#x22;minimal&#x22;">

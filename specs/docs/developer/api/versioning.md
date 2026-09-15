@@ -35,7 +35,13 @@ Every version automatically gets new endpoints and optional fields. Breaking cha
 
 ## Changelog
 
-<Update label="2026-09-11-1" description="Triple Whale status renamed for white-label merchants" tags={["Latest"]}>
+<Update label="2026-09-13" description="Trading transfers have distinct financial-report categories" tags={["Latest"]}>
+  Financial-report rows distinguish `trading_account_deposit`, `trading_account_withdrawal`, and their `_offset` entries from other on-chain transfers. Amounts and balances are unchanged.
+
+  Earlier versions keep the existing categories: `topup` for account deposits and `onchain_withdrawal` for account withdrawals. Global reports use the corresponding `onchain_deposit`, `onchain_withdrawal`, and `_offset` categories. Matching rows are combined without dropping transferred amounts.
+</Update>
+
+<Update label="2026-09-11-1" description="Triple Whale status renamed for white-label merchants">
   Account preferences `ads_triple_whale_integration.status` reports `requires_shop_domain` instead of `requires_shopify_store`. A `shop_domain` can now be set explicitly on the integration, so a connected Shopify store is no longer the only way to supply one.
 </Update>
 
