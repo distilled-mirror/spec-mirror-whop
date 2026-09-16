@@ -18,12 +18,7 @@ Manage connected accounts from your **Dashboard** > **Balances** or **Affiliates
 
 ## Whop platform features
 
-<Info>
-  Access to the platforms API is currently invite only. Please contact
-  [sales@whop.com](mailto:sales@whop.com) to see if your use case is eligible.
-</Info>
-
-Whop for Platforms is a product similar to Stripe Connect that enables you to build marketplaces, platforms, and multi-tenant applications. With Whop for Platforms, you can onboard connected accounts and facilitate payments on their behalf.
+Whop for Platforms enables you to build marketplaces, platforms, and multi-tenant applications. With Whop for Platforms, you can onboard connected accounts and facilitate payments on their behalf.
 
 ### About platform payments
 

@@ -20,7 +20,7 @@ info:
   termsOfService: https://whop.com/tos-developer-api/
   title: Whop API
   version: 1.0.0
-  x-api-version-date: '2026-09-13'
+  x-api-version-date: '2026-09-15'
 servers:
   - description: Production Whop API
     url: https://api.whop.com/api/v1
@@ -84,13 +84,15 @@ tags:
       owner has said.
 
 
-      Use the Economic Intelligence API to list every recommendation the account
-      has been given and to run the engine toward what the owner wants, in their
-      own words. Running it returns a recommendation right away with status
-      `queued`; the engine moves it through `pending` to `ready`, or to `failed`
-      when it has nothing to recommend. A `ready` recommendation becomes
-      `executed` once the owner runs it from the dashboard, or `superseded` when
-      a newer one replaces it.
+      Use the Economic Intelligence API to list recommendations and to request
+      actions for a specific goal with POST. For callers with company:update
+      permission, listing automatically queues generation when no actions are
+      ready or in progress, with a ten-minute cooldown after an unsuccessful
+      request from the current pipeline version. A new request returns a
+      recommendation with status `queued`; the engine moves it through `pending`
+      to `ready`. Unsuccessful requests are omitted from the list. A `ready`
+      recommendation becomes `executed` once the owner runs it from the
+      dashboard, or `superseded` when a newer one replaces it.
     name: Economic Intelligence
     x-whop-summary: What an account should do next to grow, generated from its own data.
   - name: Webhooks
@@ -212,6 +214,20 @@ tags:
       `succeeded` the method is on file and can be charged.
     name: Setup Intents
     x-whop-summary: Saving a buyer's payment method without charging it.
+  - description: >
+      A Payment Rule lets an account act on its own payments before they reach
+      the bank: block them, let them through, or ask the buyer for 3D Secure.
+      Each rule matches on a small set of payment attributes, and every
+      condition must hold for it to apply.
+
+
+      A rule's definition is fixed once created, so the payments it decided keep
+      naming the rule that decided them. Use
+      [Replace](/api-reference/beta/payment-rules/replace) to change one, and
+      [List fields](/api-reference/beta/payment-rules/list-fields) for the
+      attributes, operators and values a condition can use.
+    name: Payment Rules
+    x-whop-summary: Rules an account writes to decide its own payments.
   - description: >
       A Dispute is a chargeback a customer files against a payment through their
       bank, or an inquiry that may become one. It carries the disputed payment,

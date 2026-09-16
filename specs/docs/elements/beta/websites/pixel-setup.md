@@ -6,7 +6,7 @@
 
 > Installs the Whop Pixel and wires conversion events: copy the snippet, check a page for it, confirm the events fire. Mount it inline, or inside your own overlay.
 
-<Info>This page documents `@whop/elements@1.0.0-beta.3` and `@whop/elements-react@1.0.0-beta.3`.</Info>
+<Info>This page documents `@whop/elements@1.0.0-beta.4` and `@whop/elements-react@1.0.0-beta.4`.</Info>
 
 *Pre-release, not yet part of a stable release.*
 
@@ -57,7 +57,7 @@ Mounts inside [`Websites`](/elements/beta/websites/overview). Pass props and cal
     <div data-whop-demo-shell style={{ position: "relative", minHeight: "320px", transition: "min-height 200ms ease" }}>
       <div data-whop-demo-skeleton style={{ position: "absolute", inset: "0", borderRadius: "12px", background: "rgba(140, 140, 140, 0.12)", pointerEvents: "none", transition: "opacity 200ms ease" }} />
 
-      <div data-whop-demo-native="element:websites/pixel-setup" data-whop-elements-version="1.0.0-beta.3" style={{ position: "relative" }} />
+      <div data-whop-demo-native="element:websites/pixel-setup" data-whop-elements-version="1.0.0-beta.4" style={{ position: "relative" }} />
     </div>
 
     <p style={{ fontSize: "0.8125rem", opacity: 0.7 }}>Example data. [Open the Playground](/elements/beta/websites/overview#playground).</p>

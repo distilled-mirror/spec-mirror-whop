@@ -6,7 +6,7 @@
 
 > Lists the account's active issued cards, most recently issued first. Needs an `accessToken`. The title and rows are click targets that emit events instead of navigating — a host wires up its own routing and card-detail UI.
 
-<Info>This page documents `@whop/elements@1.0.0-beta.3` and `@whop/elements-react@1.0.0-beta.3`.</Info>
+<Info>This page documents `@whop/elements@1.0.0-beta.4` and `@whop/elements-react@1.0.0-beta.4`.</Info>
 
 *Pre-release, not yet part of a stable release.*
 
@@ -54,7 +54,7 @@ Mounts inside [`Cards`](/elements/beta/wallet/cards), in [`Wallet`](/elements/be
     <div data-whop-demo-shell style={{ position: "relative", minHeight: "320px", transition: "min-height 200ms ease" }}>
       <div data-whop-demo-skeleton style={{ position: "absolute", inset: "0", borderRadius: "12px", background: "rgba(140, 140, 140, 0.12)", pointerEvents: "none", transition: "opacity 200ms ease" }} />
 
-      <div data-whop-demo-native="element:cards/cards" data-whop-elements-version="1.0.0-beta.3" style={{ position: "relative" }} />
+      <div data-whop-demo-native="element:cards/cards" data-whop-elements-version="1.0.0-beta.4" style={{ position: "relative" }} />
     </div>
 
     <p style={{ fontSize: "0.8125rem", opacity: 0.7 }}>Example data. [Open the Playground](/elements/beta/wallet/overview#playground).</p>

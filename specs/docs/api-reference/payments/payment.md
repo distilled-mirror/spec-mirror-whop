@@ -1050,10 +1050,7 @@
 </ResponseField>
 
 <ResponseField name="risk_signals" type="object | null" required>
-  A curated set of factors behind the risk score, grouped by category (business
-  transaction history, buyer, device). Each entry has a key, human-readable
-  label, category, and value. Null when there is no risk assessment for this
-  payment.
+  Deprecated. Always null.
 </ResponseField>
 
 <ResponseField name="settlement_amount" type="number" required>

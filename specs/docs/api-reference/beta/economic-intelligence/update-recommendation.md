@@ -4,7 +4,7 @@
 
 # Update Recommendation
 
-> Records approval with `executed`, or retires an unwanted recommendation with `superseded`. Both replenish the ready inventory. Supplying a rejection reason also allows retiring an executed recommendation.
+> Approves or rejects a recommendation and requests replacements.
 
 
 

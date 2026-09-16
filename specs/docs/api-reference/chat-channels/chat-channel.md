@@ -34,6 +34,7 @@
 
 <ResponseField name="banned_words" type="array<string>" required>
   A list of words that are automatically filtered from messages in this chat.
+  Empty unless the caller has permission to moderate this chat.
 </ResponseField>
 
 <ResponseField name="experience" type="object" required>

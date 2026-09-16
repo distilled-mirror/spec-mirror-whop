@@ -6,7 +6,7 @@
 
 > Install Whop Elements and mount your first element in React, JavaScript, Swift, or React Native.
 
-<Info>This page documents `@whop/elements@1.0.0-beta.3` and `@whop/elements-react@1.0.0-beta.3`.</Info>
+<Info>This page documents `@whop/elements@1.0.0-beta.4` and `@whop/elements-react@1.0.0-beta.4`.</Info>
 
 <div data-whop-platform="web">
   Whop Elements are hosted, themeable UI components you embed in your own site. Each element renders in an isolated frame served from Whop's CDN. You install a thin, fully typed package and the element code stays up to date on its own.
@@ -145,13 +145,14 @@
 
 <CodeGroup>
   ```tsx React theme={null}
-  import { WhopElements, Payments, PaymentElement, AddressElement, CardElement, EmailElement, TaxIdElement, BrandingElement } from "@whop/elements-react";
+  import { WhopElements, Payments, PaymentsElement, PaymentElement, AddressElement, CardElement, EmailElement, TaxIdElement, BrandingElement } from "@whop/elements-react";
   import { loadWhop } from "@whop/elements";
 
   function Example() {
     return (
       <WhopElements elements={loadWhop()}>
         <Payments /* options */>
+          <PaymentsElement />
           <PaymentElement />
           <AddressElement />
           <CardElement />
@@ -211,6 +212,7 @@
   <script src="https://js.whop.cloud/elements/amber/elements.js" data-whop-elements></script>
   <script type="module">
     const payments = window.WhopElements().payments.create({ /* options */ });
+    payments.create('payments').mount('#payments-payments');
     payments.create('payment').mount('#payments-payment');
     payments.create('address').mount('#payments-address');
     payments.create('card').mount('#payments-card');
@@ -271,20 +273,20 @@
 
   <CodeGroup>
     ```tsx React theme={null}
-    <Ads accountId="biz_xxxxxxxx" accessToken={token}>
+    <Payments accountId="biz_xxxxxxxx" accessToken={token}>
       {/* elements */}
-    </Ads>
+    </Payments>
     ```
 
     ```ts JavaScript theme={null}
-    const ads = whop.ads.create({ accountId: "biz_xxxxxxxx", accessToken });
+    const payments = whop.payments.create({ accountId: "biz_xxxxxxxx", accessToken });
     ```
   </CodeGroup>
 
   The token is a value you set, not a callback the SDK calls. Set a new one before it expires:
 
   ```ts theme={null}
-  ads.update({ accessToken: await createAccessToken() });
+  payments.update({ accessToken: await createAccessToken() });
   ```
 
   <Note>If you omit `accessToken`, requests use the viewer's session cookie instead. This works **only on whop.com**. The API does not send `Access-Control-Allow-Credentials` on cross-origin preflights, so a page on your own domain has no session to fall back to and must pass a token.</Note>
@@ -297,7 +299,7 @@
     Visual customization for every element — `theme` (light/dark + palettes), `variables` (CSS custom properties), and `classes` (per-part style declarations). The color scheme is applied before an element's first paint, so dark pages never flash light. See [Appearance](/elements/beta/appearance).
   </ResponseField>
 
-  <ResponseField name="locale" type="&#x22;en&#x22; | &#x22;es&#x22; | &#x22;zh&#x22; | &#x22;nl&#x22; | &#x22;pt&#x22; | &#x22;de&#x22; | &#x22;it&#x22; | &#x22;fr&#x22; | &#x22;ja&#x22; | &#x22;pl&#x22; | &#x22;tr&#x22;">
+  <ResponseField name="locale" type="&#x22;en&#x22; | &#x22;es&#x22; | &#x22;zh&#x22; | &#x22;nl&#x22; | &#x22;pt&#x22; | &#x22;de&#x22; | &#x22;hu&#x22; | &#x22;it&#x22; | &#x22;fr&#x22; | &#x22;ja&#x22; | &#x22;pl&#x22; | &#x22;tr&#x22;">
     Locale for element UI text — one of the app's built locales; any other value falls back to the default locale. Defaults to `"en"`.
   </ResponseField>
 
@@ -307,6 +309,10 @@
 
   <ResponseField name="toasts" type="boolean">
     Whether elements may show toast notifications on your page — brief status messages ("Payment method added", "Payment failed") rendered in the bottom-right corner. Set `false` to turn them off entirely. Defaults to `true`.
+  </ResponseField>
+
+  <ResponseField name="skipPixel" type="boolean">
+    Skip linking element analytics to the Whop pixel's visitor id on pages that run the pixel — a one-time identity link that makes element activity joinable to your ad-attribution data in Whop's identity graph. Usage analytics themselves are unaffected (turn those off per handle with `analytics: false`). Defaults to `false`.
   </ResponseField>
 
   ```ts theme={null}
@@ -323,7 +329,7 @@
   <div data-whop-demo-shell style={{ position: "relative", minHeight: "40px", transition: "min-height 200ms ease" }}>
     <div data-whop-demo-skeleton style={{ position: "absolute", inset: "0", borderRadius: "12px", background: "rgba(140, 140, 140, 0.12)", pointerEvents: "none", transition: "opacity 200ms ease" }} />
 
-    <div data-whop-demo-native="toast:button" data-whop-elements-version="1.0.0-beta.3" style={{ position: "relative" }} />
+    <div data-whop-demo-native="toast:button" data-whop-elements-version="1.0.0-beta.4" style={{ position: "relative" }} />
   </div>
 
   ## What the elements handle, and what you own
@@ -350,7 +356,7 @@
 
   <CardGroup cols={2}>
     <Card title="Payments" href="/elements/beta/payments/overview">
-      Collect a payment from a `plan_` ID or inline currency and amount.
+      Browse account payments with PaymentsElement, collect a payment from a `plan_` ID or inline currency and amount, or save a payment method without charging with `mode: "setup"`.
     </Card>
 
     <Card title="Verifications" href="/elements/beta/verifications/overview">
@@ -445,6 +451,44 @@
   * [`ActivityElement`](/elements/beta/wallet/activity#swift): the ledger activity feed
 
   `WhopChatView` and `WhopDMsListView` ship in the same package for viewer-authenticated chat. See the [README](https://github.com/whopio/whopsdk-elements-swift).
+
+  ## Payments on iOS
+
+  The payments elements ship from their own package, [`whopio/elements-swift`](https://github.com/whopio/elements-swift), vending an `Elements` module. The wallet SDK's module is `WhopElements`, so the two install side by side:
+
+  ```swift theme={null}
+  dependencies: [
+      .package(url: "https://github.com/whopio/elements-swift.git", from: "0.1.0")
+  ]
+  ```
+
+  The module is `Elements`, not `WhopElements`, so `import Elements` is the one line that changes. Setup differs too, and it splits the way SwiftUI splits: configuration inherits from the app root, and one charge is a scope. Nothing needs a token, because a confirmation token is minted from what the buyer typed and confirmed on your server:
+
+  ```swift theme={null}
+  // once, at the app root
+  WindowGroup {
+      CheckoutScreen()
+          .whopElements(environment: .production)
+  }
+
+  // one charge, and the elements that collect for it
+  WhopPayments(accountID: "biz_xxxxxxxx", charge: .plan(id: "plan_xxxxxxxx")) { payments in
+      WhopEmailElement()
+      WhopPaymentElement()
+      WhopBrandingElement()
+      Button("Pay") { Task { try await payments.createConfirmationToken() } }
+          .disabled(!payments.isComplete)
+  }
+  ```
+
+  * [`WhopPaymentElement`](/elements/beta/payments/payment#swift): the method tiles and whatever the selected method collects
+  * [`WhopCardElement`](/elements/beta/payments/card#swift) and [`WhopCardFields`](/elements/beta/payments/cardFields#swift): the hosted card inputs, as one unit or placed one by one
+  * [`WhopAddressElement`](/elements/beta/payments/address#swift): the billing address, in the country's own format
+  * [`WhopEmailElement`](/elements/beta/payments/email#swift) and [`WhopTaxIDElement`](/elements/beta/payments/taxId#swift)
+  * [`WhopBrandingElement`](/elements/beta/payments/branding#swift): required beside any payment surface
+  * [`WhopPaymentRequest`](/elements/beta/payments/paymentRequest#swift): Apple Pay with no element mounted
+
+  Card data is captured by PCI-isolated hosted inputs and never enters your process. Style everything with `.whopElementsAppearance(_:)` rather than `.whopTheme(_:)`.
 </div>
 
 <div data-whop-platform="react-native" style={{ display: "none" }}>
@@ -487,7 +531,7 @@
 
   ## Apple Pay and Google Pay
 
-  Wallet tiles appear only once the platform can present a sheet. Pass `applePayMerchantId` (and `googlePayMerchantName`) on `<Payments>`, add the **Apple Pay** capability with that merchant ID in Xcode, and the tile presents `PKPaymentAuthorizationController` with Google's `PayButton` as the Android counterpart.
+  Wallet tiles appear once the platform can present a sheet, and there is nothing to set up for either. Apple Pay uses the merchant registered on the Whop account, so your app needs no merchant identifier and no Xcode capability. `googlePayMerchantName` on `<Payments>` only sets the name shown in the sheet.
 
   ## Theming
 
@@ -503,7 +547,7 @@
   | ---------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
   | `BrandingRequiredError` on confirm | No `BrandingElement` is mounted. Mount one inside `<Payments>`.                                                                          |
   | `ChargeConfigError`                | `<Payments>` has neither a `plan` nor an `amount` and `currency` pair.                                                                   |
-  | No wallet tile                     | `applePayMerchantId` is unset, the Apple Pay capability is missing, or the device has no card.                                           |
+  | No wallet tile                     | The account has no Apple Pay merchant registered, or the device cannot present a sheet.                                                  |
   | Method tiles never arrive          | `getToken` is returning an API key rather than an access token, or the token is not scoped for the account.                              |
   | A blank card field                 | The native build predates the package. `@basis-theory/react-native-elements` installs with it, so rebuild rather than adding it by hand. |
 

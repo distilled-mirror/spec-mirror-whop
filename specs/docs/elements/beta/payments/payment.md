@@ -6,7 +6,7 @@
 
 > Shows available payment methods and collects the selected method's required fields and disclosures. Use `change` to enable your pay button. In its activation handler, call `payments.createConfirmationToken()`. Confirm the token server-side, then pass any pending step to `payments.handleNextAction(…)`. Use `addressChange` for address-dependent updates.
 
-<Info>This page documents `@whop/elements@1.0.0-beta.3` and `@whop/elements-react@1.0.0-beta.3`.</Info>
+<Info>This page documents `@whop/elements@1.0.0-beta.4` and `@whop/elements-react@1.0.0-beta.4`.</Info>
 
 *Pre-release, not yet part of a stable release.*
 
@@ -14,6 +14,10 @@
   Mounts inside [`Payments`](/elements/beta/payments/overview). Pass props and callbacks through the create options or React props. Keep the created handle, or React `ref`, to call `select()`.
 
   <Note>**Exclusive.** `PaymentElement` is an alternative to `CardElement` or `CardFields` in this Payments handle. Mount one at a time. Destroy it before mounting another.</Note>
+</div>
+
+<div data-whop-platform="swift" style={{ display: "none" }}>
+  Mounts inside a `WhopPayments` scope. Renders the method tiles the charge offers, then whatever the selected method collects: the card fields, the fields it declares, or the Apple Pay button.
 </div>
 
 <div data-whop-platform="react-native" style={{ display: "none" }}>
@@ -53,7 +57,6 @@
               ref={payments}
               accountId="biz_xxxxxxxx"
               plan="plan_xxxxxxxx"
-              applePayMerchantId="merchant.com.example"
               returnUrl="https://example.com/checkout/return"
             >
               <ScrollView>
@@ -83,6 +86,28 @@
           }).mount('#payments-payment');
         </script>
         ```
+
+        ```swift Swift theme={null}
+        import Elements
+        import SwiftUI
+
+        // .whopElements(environment:) runs once at the app root. See Getting started.
+        struct CheckoutScreen: View {
+            @State private var selection = WhopPaymentSelection(isComplete: false, type: nil, displayName: nil, category: nil)
+
+            var body: some View {
+                WhopPayments(accountID: "biz_xxxx", charge: .plan(id: "plan_xxxx")) { payments in
+                    ScrollView {
+                        VStack(alignment: .leading, spacing: 20) {
+                        WhopPaymentElement(selection: $selection)
+                            WhopBrandingElement()
+                        }
+                        .padding()
+                    }
+                }
+            }
+        }
+        ```
       </CodeGroup>
     </div>
   </div>
@@ -92,7 +117,7 @@
       <div data-whop-demo-shell style={{ position: "relative", minHeight: "320px", transition: "min-height 200ms ease" }}>
         <div data-whop-demo-skeleton style={{ position: "absolute", inset: "0", borderRadius: "12px", background: "rgba(140, 140, 140, 0.12)", pointerEvents: "none", transition: "opacity 200ms ease" }} />
 
-        <div data-whop-demo-native="element:payments/payment" data-whop-elements-version="1.0.0-beta.3" style={{ position: "relative" }} />
+        <div data-whop-demo-native="element:payments/payment" data-whop-elements-version="1.0.0-beta.4" style={{ position: "relative" }} />
       </div>
 
       <p style={{ fontSize: "0.8125rem", opacity: 0.7 }}>Example data. [Open the Playground](/elements/beta/payments/overview#playground).</p>
@@ -308,6 +333,53 @@
   In React, pass `appearance` to `<Payments>`. Set it globally with `WhopElements({ appearance })`.
 </div>
 
+<div data-whop-platform="swift" style={{ display: "none" }}>
+  ## Parameters
+
+  <ResponseField name="order" type="[WhopPaymentMethodType]">
+    Tile order for this mount, overriding the controller's `methodOrder`. Listed types take their list position; the rest keep their incoming order behind them.
+  </ResponseField>
+
+  <ResponseField name="selection" type="Binding<WhopPaymentSelection>?">
+    Reads the current selection and its completeness back out. The controller tracks both either way.
+  </ResponseField>
+
+  ## `WhopPaymentSelection`
+
+  What a selection hands back:
+
+  * `isComplete: Bool`: the selected method has everything it needs
+  * `type: WhopPaymentMethodType?`: the selected method
+  * `displayName: String?`: its label, as the matrix spells it
+  * `category: String?`: `card`, `wallet`, `bank_debit`, …
+
+  ## States
+
+  Shows skeleton tiles while the method matrix loads, and the failure message when the read fails. A method whose category this build cannot run is skipped rather than rendered as a broken tile. Selecting a wallet swaps the confirm surface for Apple Pay.
+
+  ## Good to know
+
+  * Apple Pay needs nothing from your app: no merchant identifier, no `In-App Payments` capability. The merchant is the one registered on the Whop account, and the tile renders whenever the device can pay.
+  * A method that declares a `secure` field renders it as a hosted input. Those values never enter your process.
+  * A signed-in buyer's stored methods appear above the fresh ones. Mount [`WhopEmailElement`](/elements/beta/payments/email#swift) to offer the sign-in that produces the credential; picking a stored row collects nothing and mints a reference.
+  * A card charge that publishes installment tiers shows a plan picker inside the card pane. A plan the buyer's card cannot take collapses rather than dimming, and a plan whose region does not pair with the billing country is refused before any tokenizer runs.
+  * A market that requires an identity document (an `ars` charge, today) renders the type picker and number field inside the pane. That number passes through your app on its way to the tokenizer, unlike the card, and still never reaches Whop.
+  * Card and secure-field values are tokenized before the mint, so the confirmation token is the only thing that crosses your app.
+  * Mount [`WhopAddressElement`](/elements/beta/payments/address#swift) beside it when a method needs a billing country: the tile list narrows to the methods that country allows.
+
+  ## Install
+
+  ```swift theme={null}
+  dependencies: [
+      .package(url: "https://github.com/whopio/elements-swift.git", from: "0.1.0")
+  ]
+  ```
+
+  <Note>
+    Mount it inside a `WhopPayments(accountID:charge:)` scope, which creates the controller and hands it to its content. `payments.buyer` is the signed-in buyer once an email sign-in has proven one. `WhopBrandingElement` has to be on screen too, because Whop is merchant of record on these sales and `createConfirmationToken` refuses without it. Style with `.whopElementsAppearance(_:)`. The module is `Elements`, not the wallet SDK's `WhopElements`. See [Getting started](/elements/beta/getting-started) and [Appearance](/elements/beta/appearance).
+  </Note>
+</div>
+
 <div data-whop-platform="react-native" style={{ display: "none" }}>
   ## Props
 
@@ -350,7 +422,7 @@
   ## Good to know
 
   * Card numbers never pass through your code. The fields are PCI-isolated native inputs, and the SDK hands Whop a token, so your app stays out of PCI scope.
-  * Apple Pay and Google Pay use the platform sheet through `PKPaymentAuthorizationController` and Google's `PaymentsClient`. Apple Pay needs a merchant identifier: it comes from the account's own Apple Pay registration, and `applePayMerchantId` on `<Payments>` overrides it, so the tile is hidden only when neither exists. Google Pay needs nothing from you; `googlePayMerchantName` only sets the name shown in the sheet, which defaults to Whop.
+  * Apple Pay and Google Pay both present the platform's own sheet. Neither needs anything from you: Apple Pay uses the merchant registered on the Whop account, so there is no merchant identifier to pass and no capability to add in Xcode, and `googlePayMerchantName` only sets the name shown in the sheet, which defaults to Whop.
   * Redirect methods and 3D Secure open `ASWebAuthenticationSession` on iOS and Custom Tabs on Android. The system browser, never a WebView, so the issuer's page stays outside your app's trust boundary.
   * Set `returnUrl` on `<Payments>` to an **https** URL you host. The API refuses anything but https or loopback (`PaymentsApi::ValidateReturnUrl`), so a custom app scheme is not available here. You do not register a deep link: after the issuer redirects, `handleNextAction` polls the payment to rest and closes the browser itself.
 

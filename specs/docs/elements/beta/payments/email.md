@@ -6,12 +6,16 @@
 
 > Collects the buyer's email and passes it to `payments.createConfirmationToken()` while mounted. Explicit `billingDetails.email` wins. A matching Whop account shows optional sign-in with code verification. Successful sign-in unlocks saved payment methods in the payment element. Buyers can continue as guests.
 
-<Info>This page documents `@whop/elements@1.0.0-beta.3` and `@whop/elements-react@1.0.0-beta.3`.</Info>
+<Info>This page documents `@whop/elements@1.0.0-beta.4` and `@whop/elements-react@1.0.0-beta.4`.</Info>
 
 *Pre-release, not yet part of a stable release.*
 
 <div data-whop-platform="web">
   Mounts inside [`Payments`](/elements/beta/payments/overview). Pass props and callbacks through the create options or React props.
+</div>
+
+<div data-whop-platform="swift" style={{ display: "none" }}>
+  Mounts inside a `WhopPayments` scope. Collects the buyer's email, which every confirmation token requires, and the controller reads it for the mint whether or not you bind it.
 </div>
 
 <div data-whop-platform="react-native" style={{ display: "none" }}>
@@ -56,6 +60,28 @@
           payments.create('email', { onChange: (e) => console.log(e) }).mount('#payments-email');
         </script>
         ```
+
+        ```swift Swift theme={null}
+        import Elements
+        import SwiftUI
+
+        // .whopElements(environment:) runs once at the app root. See Getting started.
+        struct CheckoutScreen: View {
+            @State private var email = ""
+
+            var body: some View {
+                WhopPayments(accountID: "biz_xxxx", charge: .plan(id: "plan_xxxx")) { payments in
+                    ScrollView {
+                        VStack(alignment: .leading, spacing: 20) {
+                        WhopEmailElement(email: $email)
+                            WhopBrandingElement()
+                        }
+                        .padding()
+                    }
+                }
+            }
+        }
+        ```
       </CodeGroup>
     </div>
   </div>
@@ -65,7 +91,7 @@
       <div data-whop-demo-shell style={{ position: "relative", minHeight: "320px", transition: "min-height 200ms ease" }}>
         <div data-whop-demo-skeleton style={{ position: "absolute", inset: "0", borderRadius: "12px", background: "rgba(140, 140, 140, 0.12)", pointerEvents: "none", transition: "opacity 200ms ease" }} />
 
-        <div data-whop-demo-native="element:payments/email" data-whop-elements-version="1.0.0-beta.3" style={{ position: "relative" }} />
+        <div data-whop-demo-native="element:payments/email" data-whop-elements-version="1.0.0-beta.4" style={{ position: "relative" }} />
       </div>
 
       <p style={{ fontSize: "0.8125rem", opacity: 0.7 }}>Example data. [Open the Playground](/elements/beta/payments/overview#playground).</p>
@@ -180,6 +206,46 @@
   ```
 
   In React, pass `appearance` to `<Payments>`. Set it globally with `WhopElements({ appearance })`.
+</div>
+
+<div data-whop-platform="swift" style={{ display: "none" }}>
+  ## Parameters
+
+  <ResponseField name="email" type="Binding<String>?">
+    Reads the value back out. The controller collects it either way.
+  </ResponseField>
+
+  <ResponseField name="showsLabel" type="Bool">
+    Set false when you supply your own label; the input keeps its accessibility label. Defaults to `true`.
+  </ResponseField>
+
+  <ResponseField name="placeholder" type="String?">
+    Empty renders `you@example.com`.
+  </ResponseField>
+
+  ## States
+
+  Renders immediately. An implausible address shows its error once the field loses focus, then live.
+
+  ## Good to know
+
+  * Without it, pass `billingDetails.email` to `createConfirmationToken` yourself. The mint refuses a token with no email.
+  * An explicit `billingDetails.email` at mint time wins over what this element collected.
+  * A plausible address is probed against the account directory, debounced and again on blur. A recognized one offers a sign-in, and the element presents the six-digit code sheet itself.
+  * A verified sign-in unlocks the buyer's saved payment methods in [`WhopPaymentElement`](/elements/beta/payments/payment#swift). Read `payments.buyer` for who they are, and `payments.signOut()` to forget them.
+  * The scoped token lasts an hour and does not refresh. When it lapses the saved lane comes back empty and the buyer pays with a fresh method, the same path a guest takes.
+
+  ## Install
+
+  ```swift theme={null}
+  dependencies: [
+      .package(url: "https://github.com/whopio/elements-swift.git", from: "0.1.0")
+  ]
+  ```
+
+  <Note>
+    Mount it inside a `WhopPayments(accountID:charge:)` scope, which creates the controller and hands it to its content. `payments.buyer` is the signed-in buyer once an email sign-in has proven one. `WhopBrandingElement` has to be on screen too, because Whop is merchant of record on these sales and `createConfirmationToken` refuses without it. Style with `.whopElementsAppearance(_:)`. The module is `Elements`, not the wallet SDK's `WhopElements`. See [Getting started](/elements/beta/getting-started) and [Appearance](/elements/beta/appearance).
+  </Note>
 </div>
 
 <div data-whop-platform="react-native" style={{ display: "none" }}>

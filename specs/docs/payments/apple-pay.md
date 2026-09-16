@@ -4,9 +4,9 @@
 
 # Enable Apple Pay
 
-> Enable Apple Pay for your embedded checkout by verifying your domain
+> Enable Apple Pay and Google Pay for your embedded checkout by verifying your domain
 
-Apple Pay lets customers pay using their Apple Wallet, providing a seamless checkout experience on Safari and iOS devices. To enable Apple Pay on your embedded checkout, you need to verify ownership of your domain.
+Apple Pay lets customers pay using their Apple Wallet, providing a seamless checkout experience on Safari and iOS devices. To enable Apple Pay and Google Pay on your embedded checkout, you need to verify ownership of your domain. The same verified domain clears both wallets for a page.
 
 <Note>
   Domain verification is only required for [embedded
@@ -68,7 +68,7 @@ If the domain actively serves traffic, consider lowering the TTL (time to live) 
 
 ### Step 1: Open payment domains settings
 
-Navigate to your [checkout settings](https://whop.com/dashboard/settings/checkout/) and find the **Apple Pay for embedded checkout** section. Select **Configure** to open the domain management panel.
+Navigate to your [checkout settings](https://whop.com/dashboard/settings/checkout/) and find the **Apple Pay and Google Pay for embedded checkout** section. Select **Configure** to open the domain management panel.
 
 <Frame>
   <img src="https://mintcdn.com/whop/qJMsh85qcrvhDnDi/images/apple-pay/payment-domains-settings.png?fit=max&auto=format&n=qJMsh85qcrvhDnDi&q=85&s=2797c1311a2bbd28cdef5e86929eb25f" alt="Payment domains settings showing the Configure button" width="2868" height="1654" data-path="images/apple-pay/payment-domains-settings.png" />
@@ -225,7 +225,7 @@ The file should download or display its contents without any errors.
 
 ### Step 4: Open payment domains settings
 
-Navigate to your [checkout settings](https://whop.com/dashboard/settings/checkout/) and find the **Apple Pay for embedded checkout** section. Select **Configure** to open the domain management panel.
+Navigate to your [checkout settings](https://whop.com/dashboard/settings/checkout/) and find the **Apple Pay and Google Pay for embedded checkout** section. Select **Configure** to open the domain management panel.
 
 <Frame>
   <img src="https://mintcdn.com/whop/qJMsh85qcrvhDnDi/images/apple-pay/payment-domains-settings.png?fit=max&auto=format&n=qJMsh85qcrvhDnDi&q=85&s=2797c1311a2bbd28cdef5e86929eb25f" alt="Payment domains settings showing the Configure button" width="2868" height="1654" data-path="images/apple-pay/payment-domains-settings.png" />

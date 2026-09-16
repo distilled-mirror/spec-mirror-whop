@@ -4,7 +4,7 @@
 
 # Create Recommendations
 
-> Harnesses Economic Intelligence to generate recommended actions that lead the business down the most optimal path to the next dollar. Returns a `queued` recommendation right away. Poll the list endpoint until it is `ready` or `failed`.
+> Generates a recommendation based on your input. Returns immediately; poll the list endpoint until its `status` is `ready`.
 
 
 

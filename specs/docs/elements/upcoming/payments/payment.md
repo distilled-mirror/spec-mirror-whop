@@ -136,8 +136,8 @@
     Controls display order in either layout. Listed types appear first in order. Unlisted types retain their relative order. Does not affect availability. Defaults to `[]`.
   </ResponseField>
 
-  <ResponseField name="fields" type="{ billingDetails?: &#x22;full&#x22; | &#x22;minimal&#x22; | &#x22;never&#x22; | undefined; }">
-    Controls billing-details collection. `billingDetails: 'minimal'` (default) follows each method's matrix. Methods collect name and the complete country format by default. An override may collect only the declared minimum or nothing. For cards, the minimum is name on card, country, and postal code. `'full'` requires name and the complete country format for every fresh method. `'never'` hides the block. Pass the address to `createConfirmationToken` instead. The country selector includes only countries supported by the method and payment currency. With an installment plan selected, it narrows to the countries the plan serves — the billing country is the transaction country the charge processes under. It locks when only one is available. Defaults to `{"billingDetails":"minimal"}`.
+  <ResponseField name="fields" type="{ billingDetails?: &#x22;full&#x22; | &#x22;minimal&#x22; | &#x22;never&#x22; | undefined; phone?: &#x22;never&#x22; | &#x22;auto&#x22; | undefined; }">
+    Controls billing-details collection. `billingDetails: 'minimal'` (default) follows each method's matrix. Methods collect name and the complete country format by default. An override may collect only the declared minimum or nothing. For cards, the minimum is name on card, country, and postal code. `'full'` requires name and the complete country format for every fresh method. `'never'` hides the block. `phone: 'never'` hides only the billing phone input when your form already collects it; pass `billingDetails.phone` to `createConfirmationToken` for methods that require it. Pass the address to `createConfirmationToken` instead. The country selector includes only countries supported by the method and payment currency. With an installment plan selected, it narrows to the countries the plan serves — the billing country is the transaction country the charge processes under. It locks when only one is available. Defaults to `{"billingDetails":"minimal"}`.
   </ResponseField>
 
   <ResponseField name="layout" type="&#x22;accordion&#x22; | &#x22;horizontal&#x22;">
@@ -158,9 +158,9 @@
 
   ### `onChange`
 
-  Fires when selection changes. `complete: true` means the buyer selected a method and completed its card fields or required inputs. Use it to enable confirmation. `method` provides category, per-currency countries, and amount bounds for dependent UI such as country fields. `supportsBuyerFee` indicates whether to include Whop's buyer service fee in the displayed total.
+  Fires when selection changes. `complete: true` means the buyer selected a method and completed its card fields or required inputs. Use it to enable confirmation. `method` provides category, per-currency countries, and amount bounds for dependent UI such as country fields. `requiresBillingPhone` indicates whether the selected method requires a phone in billing details, including when `fields.phone` disables its input. `supportsBuyerFee` indicates whether to include Whop's buyer service fee in the displayed total.
 
-  **Signature:** `((payload: { complete: boolean; type?: string | undefined; supportsBuyerFee?: boolean | undefined; method?: { type: string; category: string; template: string; display_name: string; countries: ({ country: string; min_amount: number | null; max_amount: number | null; })[]; min_amount: number | null; max_amount: number | null; } | undefined; }) => void)`
+  **Signature:** `((payload: { complete: boolean; type?: string | undefined; supportsBuyerFee?: boolean | undefined; requiresBillingPhone?: boolean | undefined; method?: { type: string; category: string; template: string; display_name: string; countries: ({ country: string; min_amount: number | null; max_amount: number | null; })[]; min_amount: number | null; max_amount: number | null; } | undefined; }) => void)`
 
   ### `onAddressChange`
 
@@ -306,7 +306,6 @@
   | `.whop-PaymentSavedMethodSeparated`   | The separated marker on a saved method specifically                                                                                                                             |
   | `.whop-PaymentSavedMore`              | The control that fetches the next page of saved payment methods                                                                                                                 |
   | `.whop-PaymentSavedMoreSpinner`       | The spinner shown while the next page of saved payment methods loads                                                                                                            |
-  | `.whop-PaymentSaveNotice`             | The save-for-future-purchases consent line closing the detail region                                                                                                            |
   | `.whop-PaymentSettlementNotice`       | The settlement-window hint on methods whose matrix configuration declares one                                                                                                   |
 
   ```ts theme={null}
@@ -320,7 +319,7 @@
     }
   });
 
-  // 88 classes use this shape
+  // 87 classes use this shape
   payments.update({
     appearance: { classes: { 'whop-Address': { fontWeight: '700' } } }
   });

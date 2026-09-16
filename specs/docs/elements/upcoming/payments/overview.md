@@ -71,7 +71,7 @@ Pass these to `whop.payments.create({ … })`, or as props on `<Payments>` in Re
 </ResponseField>
 
 <ResponseField name="setupFutureUsage" type="&#x22;off_session&#x22; | &#x22;on_session&#x22;">
-  A setup saves the payment method for `off_session` use, the only usage a setup accepts, and displays the save consent.
+  A setup saves the payment method for `off_session` use, the only usage a setup accepts.
 </ResponseField>
 
 <ResponseField name="previewWalletAvailability" type="WalletAvailability">
@@ -125,9 +125,9 @@ Call these on the Payments handle from `whop.payments.create({ … })` or `usePa
 
 ### `createConfirmationToken`
 
-Creates a confirmation token for the selected method from your pay button. Pass the checkout's billing details. They must include `email`. Cards also need `name` and an address containing `line1` and `country`. Wallet selections open their sheet during the pay-button interaction. Confirm the returned `confirmationToken` server-side, then call `WhopElements.payments.handleNextAction(…)`. Runs on your page (host-side), not in the controller iframe.
+Creates a confirmation token for the selected method from your pay button. Pass the checkout's billing details. They must include `email`. Supply `phone` for methods that require it when billing collection is disabled. Cards also need `name` and an address containing `line1` and `country`. Wallet selections open their sheet during the pay-button interaction. Confirm the returned `confirmationToken` server-side, then call `WhopElements.payments.handleNextAction(…)`. Runs on your page (host-side), not in the controller iframe.
 
-**Signature:** `(input: { billingDetails?: { email?: string | undefined; name?: string | undefined; address?: { country?: string | undefined; line1?: string | undefined; line2?: string | undefined; city?: string | undefined; state?: string | undefined; postal_code?: string | undefined; } | undefined; } | undefined; }) => Promise<{ confirmationToken: string; type: string; }>`
+**Signature:** `(input: { billingDetails?: { email?: string | undefined; name?: string | undefined; phone?: string | undefined; address?: { country?: string | undefined; line1?: string | undefined; line2?: string | undefined; city?: string | undefined; state?: string | undefined; postal_code?: string | undefined; } | undefined; } | undefined; }) => Promise<{ confirmationToken: string; type: string; }>`
 
 ### `update`
 
@@ -372,6 +372,10 @@ Call this exactly once. An event left unanswered keeps the current total when th
 The elements this group mounts. Each has its own page:
 
 <CardGroup cols={2}>
+  <Card title="PaymentDetailElement" href="/elements/upcoming/payments/paymentDetail">
+    A payment detail page with the dashboard breakdown, activity, customer, details, and customer journey. Each section can be hidden. Reads payment:basic:read; customer email needs member:email:read and journey needs member:basic:read. Action events let your application confirm and authorize changes; this element never refunds, retries, or voids a payment itself.
+  </Card>
+
   <Card title="PaymentsElement" href="/elements/upcoming/payments/payments">
     The dashboard payments table with status cards, search, filters, sorting, row selection, CSV export, column settings, and pagination. Reads all payment pages to compute complete counts and filter locally; intended for accounts with modest payment histories. Customer details and refunds are handed to your application through events.
   </Card>

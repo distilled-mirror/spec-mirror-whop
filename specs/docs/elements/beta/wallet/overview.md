@@ -4,9 +4,9 @@
 
 # Wallet
 
-> Drives an account's money surfaces. `required-actions` is the outstanding-action bar from Whop's balance dashboard. `actions` renders the Deposit, Accept, Send, and Convert controls: Deposit, Send, and Convert open their Wallet overlays, while Accept opens Whop's checkout-link creator for a business account or company creation for a personal account. `deposit` returns live funding rails; `convert` swaps USD with Gold or Bitcoin and exposes FX currencies only to gated first-party users; `send` moves money to a recipient or creates a public claim link; `withdraw` lists payout methods and creates the payout when the host does not already drive that API; `balances` holds two faces — the holdings list, and the balance block drawing value over a window; `cards` is the compact issued-card list; `cardsTable` renders the full sortable card roster; `cardsChart` plots card spend; `whopCard` renders one revealable card; `activity` lists ledger movements; `activityDetail` renders a prefetched movement, or retrieves one by activity ID or card transaction ID, in a standalone drawer; and `verification` is the identity-only nudge. Every data-backed surface can use the viewer's session when no token is provided.
+> Drives an account's money surfaces. `required-actions` is the outstanding-action bar from Whop's balance dashboard. `actions` renders the Deposit, Accept, Send, and Convert controls: Deposit, Send, and Convert open their Wallet overlays, while Accept opens Whop's checkout-link creator for a business account or company creation for a personal account. `deposit` returns live funding rails; `convert` swaps USD with Gold or Bitcoin and exposes FX currencies when the host enables `fxEnabled`; `send` moves money to a recipient or creates a public claim link; `withdraw` lists payout methods and creates the payout when the host does not already drive that API; `balances` holds two faces — the holdings list, and the balance block drawing value over a window; `cards` is the compact issued-card list; `cardsTable` renders the full sortable card roster; `cardsChart` plots card spend; `whopCard` renders one revealable card; `activity` lists ledger movements; `activityDetail` renders a prefetched movement, or retrieves one by activity ID or card transaction ID, in a standalone drawer; and `verification` is the identity-only nudge. Every data-backed surface can use the viewer's session when no token is provided.
 
-<Info>This page documents `@whop/elements@1.0.0-beta.3` and `@whop/elements-react@1.0.0-beta.3`.</Info>
+<Info>This page documents `@whop/elements@1.0.0-beta.4` and `@whop/elements-react@1.0.0-beta.4`.</Info>
 
 *Pre-release, not yet part of a stable release.*
 
@@ -17,7 +17,7 @@ Assemble the elements with example data. Drive the controls, add and arrange ele
 <div data-whop-demo-shell style={{ position: "relative", minHeight: "480px", transition: "min-height 200ms ease" }}>
   <div data-whop-demo-skeleton style={{ position: "absolute", inset: "0", borderRadius: "12px", background: "rgba(140, 140, 140, 0.12)", pointerEvents: "none", transition: "opacity 200ms ease" }} />
 
-  <div data-whop-demo-native="playground:wallet" data-whop-elements-version="1.0.0-beta.3" style={{ position: "relative" }} />
+  <div data-whop-demo-native="playground:wallet" data-whop-elements-version="1.0.0-beta.4" style={{ position: "relative" }} />
 </div>
 
 <div data-whop-usage="wallet/playground">
@@ -182,7 +182,7 @@ Ledger activity ID.
 
 The ledger line category this activity was posted under.
 
-**Signature:** `"platform_balance_transfer_outgoing" | "payment_gross" | "withdrawal" | "topup" | "payment_dispute" | "payment_revshare" | "card_spend_authorization" | "airdrop" | "onchain_swap_target" | "payment_gross_reversal" | "payment_refund" | "payment_refund_reversal" | "payment_dispute_reversal" | "payment_dispute_adjustment" | "dispute_hold_adjustment" | "topup_reversal" | "platform_balance_payment" | "platform_balance_payment_refund" | "platform_balance_transfer_incoming" | "internal_balance_transfer_incoming" | "internal_balance_transfer_outgoing" | "onchain_wallet_transfer_incoming" | "onchain_wallet_transfer_outgoing" | "withdrawal_reversal" | "withdrawal_clawback" | "withdrawal_clawback_reversal" | "payment_revshare_refund" | "payment_revshare_reversal" | "payment_referral" | "payment_referral_reversal" | "application_fee_payout" | "airdrop_reversal" | "airdrop_link_created" | "airdrop_link_returned" | "card_spend_authorization_void" | "card_spend_refund" | "onchain_deposit" | "bank_transfer" | "currency_conversion_outgoing" | "currency_conversion_incoming" | "airdrop_link_redeemed" | "resolution_center_refund" | "withdrawal_reclassification" | "payment_revshare_payout" | "platform_affiliate_payment" | "platform_affiliate_payment_reversal" | "onboarding_reward" | "platform_covered_dispute" | "treasury_payin" | "passthrough_gmv" | "promo_reversal" | "misc_reversal" | "ad_spend_charge" | "ad_campaign_budget" | "ad_budget_release" | "ad_publisher_payout" | "ad_publisher_payout_received" | "affiliate_fee" | "application_fee" | "billing_percentage_fee" | "buyer_fee" | "cross_border_percentage_fee" | "dispute_alert_fee" | "fraud_prevention_fee" | "fx_percentage_fee" | "high_risk_merchant_fee" | "orchestration_percentage_fee" | "payment_dispute_fee" | "payment_processing_fixed_fee" | "payment_processing_percentage_fee" | "payout_fee" | "revshare_percentage_fee" | "sales_tax_fee" | "sales_tax_remittance" | "sales_tax_remittance_reversal" | "stripe_domestic_processing_fee" | "stripe_international_processing_fee" | "three_ds_fixed_fee" | "whop_processing_fee" | "balance_reservation" | "balance_reservation_reversal" | "card_interchange" | "card_load_deposit" | "card_load_transfer" | "card_unload_deposit" | "card_unload_transfer" | "company_referral" | "connected_account_negative_balance" | "dispute_representment_fee" | "external_card_load_deposit" | "installment_default" | "internal_withdrawal" | "internal_withdrawal_complete" | "internal_withdrawal_fee" | "internal_withdrawal_fee_reversal" | "internal_withdrawal_in_transit" | "internal_withdrawal_in_transit_reversal" | "internal_withdrawal_markup_fee" | "internal_withdrawal_markup_fee_payout" | "internal_withdrawal_markup_fee_payout_reversal" | "internal_withdrawal_markup_fee_reversal" | "internal_withdrawal_reversal" | "legacy_crypto_payment" | "legacy_payment" | "legacy_payment_refund" | "license_sale" | "license_sale_commission" | "license_sale_revenue" | "marketplace_affiliate_fee" | "misc_purchase" | "misc_refund" | "onchain_swap_source" | "onchain_withdrawal" | "payment_referral_refund" | "platform_balance_transfer_fee" | "platform_earning" | "referral_bonus" | "software_rental_revshare" | "software_rental_transaction" | "swap_fee" | "topup_fee" | "withdrawal_fee" | "withdrawal_fee_reversal" | "withdrawal_markup_fee" | "withdrawal_markup_fee_payout" | "withdrawal_markup_fee_payout_reversal" | "withdrawal_markup_fee_reversal" | "withdrawal_topup_adjustment" | "deposit" | "wallet_transfer_incoming" | "wallet_transfer_outgoing" | "swap_source" | "swap_target"`
+**Signature:** `"platform_balance_transfer_outgoing" | "payment_gross" | "withdrawal" | "topup" | "payment_dispute" | "payment_revshare" | "card_spend_authorization" | "airdrop" | "onchain_swap_target" | "cashback" | "account_settlement" | "ad_budget_release" | "ad_campaign_budget" | "ad_publisher_payout" | "ad_publisher_payout_received" | "ad_spend_charge" | "affiliate_fee" | "airdrop_link_created" | "airdrop_link_redeemed" | "airdrop_link_returned" | "airdrop_reversal" | "application_fee" | "application_fee_payout" | "balance_reservation" | "balance_reservation_reversal" | "bank_transfer" | "billing_percentage_fee" | "buyer_fee" | "card_interchange" | "card_load_deposit" | "card_load_transfer" | "card_spend_authorization_void" | "card_spend_refund" | "card_unload_deposit" | "card_unload_transfer" | "cashback_funding" | "company_referral" | "connected_account_negative_balance" | "cross_border_percentage_fee" | "currency_conversion_incoming" | "currency_conversion_outgoing" | "dispute_alert_fee" | "dispute_hold_adjustment" | "dispute_representment_fee" | "external_card_load_deposit" | "fraud_prevention_fee" | "fx_percentage_fee" | "high_risk_merchant_fee" | "installment_default" | "internal_balance_transfer_incoming" | "internal_balance_transfer_outgoing" | "internal_withdrawal" | "internal_withdrawal_complete" | "internal_withdrawal_fee" | "internal_withdrawal_fee_reversal" | "internal_withdrawal_in_transit" | "internal_withdrawal_in_transit_reversal" | "internal_withdrawal_markup_fee" | "internal_withdrawal_markup_fee_payout" | "internal_withdrawal_markup_fee_payout_reversal" | "internal_withdrawal_markup_fee_reversal" | "internal_withdrawal_reversal" | "legacy_crypto_payment" | "legacy_payment" | "legacy_payment_refund" | "license_sale" | "license_sale_commission" | "license_sale_revenue" | "marketplace_affiliate_fee" | "misc_purchase" | "misc_refund" | "misc_reversal" | "onboarding_reward" | "onchain_deposit" | "onchain_swap_source" | "onchain_wallet_transfer_incoming" | "onchain_wallet_transfer_outgoing" | "onchain_withdrawal" | "orchestration_percentage_fee" | "passthrough_gmv" | "payment_dispute_adjustment" | "payment_dispute_fee" | "payment_dispute_reversal" | "payment_gross_reversal" | "payment_processing_fixed_fee" | "payment_processing_percentage_fee" | "payment_referral" | "payment_referral_refund" | "payment_referral_reversal" | "payment_refund" | "payment_refund_reversal" | "payment_revshare_payout" | "payment_revshare_refund" | "payment_revshare_reversal" | "payout_fee" | "platform_affiliate_payment" | "platform_affiliate_payment_reversal" | "platform_balance_payment" | "platform_balance_payment_refund" | "platform_balance_transfer_fee" | "platform_balance_transfer_incoming" | "platform_covered_dispute" | "platform_earning" | "platform_markup_fee" | "platform_markup_fee_payout" | "promo_reversal" | "referral_bonus" | "resolution_center_refund" | "revshare_percentage_fee" | "sales_tax_fee" | "sales_tax_remittance" | "sales_tax_remittance_reversal" | "software_rental_revshare" | "software_rental_transaction" | "stripe_domestic_processing_fee" | "stripe_international_processing_fee" | "swap_fee" | "three_ds_fixed_fee" | "topup_fee" | "topup_reversal" | "treasury_payin" | "whop_processing_fee" | "withdrawal_clawback" | "withdrawal_clawback_reversal" | "withdrawal_fee" | "withdrawal_fee_reversal" | "withdrawal_markup_fee" | "withdrawal_markup_fee_payout" | "withdrawal_markup_fee_payout_reversal" | "withdrawal_markup_fee_reversal" | "withdrawal_reclassification" | "withdrawal_reversal" | "withdrawal_topup_adjustment" | "deposit" | "wallet_transfer_incoming" | "wallet_transfer_outgoing" | "swap_source" | "swap_target"`
 
 ### `amount`
 
@@ -222,9 +222,9 @@ Resource associated with this ledger activity.
 
 ### `source`
 
-Source of this ledger activity.
+Source of this ledger activity. Platform markup fees use object platform\_fee and the ledger activity ID.
 
-**Signature:** `{ object: string; id: string; status?: string | null | undefined; payment_amount?: Money | null | undefined; payment_method_type?: string | null | undefined; payment_processor?: string | null | undefined; card_brand?: string | null | undefined; reason?: string | null | undefined; notes?: string | null | undefined; risk_review_hold?: boolean | null | undefined; claim_url?: string | null | undefined; amount_float?: number | null | undefined; created_at?: string | null | undefined; estimated_arrival?: string | null | undefined; payer_name?: string | null | undefined; payout_token_nickname?: string | null | undefined; tx_hash?: string | null | undefined; sender_address?: string | null | undefined; chain?: string | null | undefined; from_amount?: string | null | undefined; from_currency?: string | null | undefined; to_amount?: string | null | undefined; to_currency?: string | null | undefined; payout_destination?: { payer_name?: string | null | undefined; icon_url?: string | null | undefined; } | null | undefined; [key: string]: unknown; } | null`
+**Signature:** `{ object: string; id: string; fee_kind?: "transfer" | "card_spend" | "deposit" | "swap" | "payout" | null | undefined; status?: string | null | undefined; payment_amount?: Money | null | undefined; payment_method_type?: string | null | undefined; payment_processor?: string | null | undefined; card_brand?: string | null | undefined; reason?: string | null | undefined; notes?: string | null | undefined; risk_review_hold?: boolean | null | undefined; claim_url?: string | null | undefined; amount_float?: number | null | undefined; created_at?: string | null | undefined; estimated_arrival?: string | null | undefined; payer_name?: string | null | undefined; payout_token_nickname?: string | null | undefined; tx_hash?: string | null | undefined; sender_address?: string | null | undefined; chain?: string | null | undefined; from_amount?: string | null | undefined; from_currency?: string | null | undefined; to_amount?: string | null | undefined; to_currency?: string | null | undefined; payout_destination?: { payer_name?: string | null | undefined; icon_url?: string | null | undefined; } | null | undefined; [key: string]: unknown; } | null`
 
 ### `payment`
 
@@ -333,6 +333,22 @@ Flat fee in major units: `0.3` means \$0.30.
 ### `radarFee`
 
 Fraud-screening fee in major units.
+
+**Signature:** `number`
+
+## `DepositRailFee`
+
+Fields on `DepositRailFee`.
+
+### `percentageFee`
+
+Percentage POINTS, not a fraction: `1.5` means 1.5%.
+
+**Signature:** `number`
+
+### `fixedFeeUsd`
+
+Flat fee in USD major units: `2` means \$2.00, whatever the deposit currency.
 
 **Signature:** `number`
 
@@ -796,6 +812,62 @@ Billing region or state.
 
 **Signature:** `string | null`
 
+## `ReportActivityFilters`
+
+Fields on `ReportActivityFilters`.
+
+### `currency`
+
+**Signature:** `string | undefined`
+
+### `postedAfter`
+
+**Signature:** `string | undefined`
+
+### `postedBefore`
+
+**Signature:** `string | undefined`
+
+### `direction`
+
+**Signature:** `"money_in" | "money_out" | undefined`
+
+### `lineTypes`
+
+**Signature:** `("platform_balance_transfer_outgoing" | "payment_gross" | "withdrawal" | "topup" | "payment_dispute" | "payment_revshare" | "card_spend_authorization" | "airdrop" | "onchain_swap_target" | "cashback" | "account_settlement" | "ad_budget_release" | "ad_campaign_budget" | "ad_publisher_payout" | "ad_publisher_payout_received" | "ad_spend_charge" | "affiliate_fee" | "airdrop_link_created" | "airdrop_link_redeemed" | "airdrop_link_returned" | "airdrop_reversal" | "application_fee" | "application_fee_payout" | "balance_reservation" | "balance_reservation_reversal" | "bank_transfer" | "billing_percentage_fee" | "buyer_fee" | "card_interchange" | "card_load_deposit" | "card_load_transfer" | "card_spend_authorization_void" | "card_spend_refund" | "card_unload_deposit" | "card_unload_transfer" | "cashback_funding" | "company_referral" | "connected_account_negative_balance" | "cross_border_percentage_fee" | "currency_conversion_incoming" | "currency_conversion_outgoing" | "dispute_alert_fee" | "dispute_hold_adjustment" | "dispute_representment_fee" | "external_card_load_deposit" | "fees" | "fraud_prevention_fee" | "fx_percentage_fee" | "high_risk_merchant_fee" | "installment_default" | "internal_balance_transfer_incoming" | "internal_balance_transfer_outgoing" | "internal_withdrawal" | "internal_withdrawal_complete" | "internal_withdrawal_fee" | "internal_withdrawal_fee_reversal" | "internal_withdrawal_in_transit" | "internal_withdrawal_in_transit_reversal" | "internal_withdrawal_markup_fee" | "internal_withdrawal_markup_fee_payout" | "internal_withdrawal_markup_fee_payout_reversal" | "internal_withdrawal_markup_fee_reversal" | "internal_withdrawal_reversal" | "legacy_crypto_payment" | "legacy_payment" | "legacy_payment_refund" | "license_sale" | "license_sale_commission" | "license_sale_revenue" | "marketplace_affiliate_fee" | "misc_purchase" | "misc_refund" | "misc_reversal" | "onboarding_reward" | "onchain_deposit" | "onchain_swap_source" | "onchain_wallet_transfer_incoming" | "onchain_wallet_transfer_outgoing" | "onchain_withdrawal" | "orchestration_percentage_fee" | "passthrough_gmv" | "payment_dispute_adjustment" | "payment_dispute_fee" | "payment_dispute_reversal" | "payment_gross_reversal" | "payment_processing_fixed_fee" | "payment_processing_percentage_fee" | "payment_referral" | "payment_referral_refund" | "payment_referral_reversal" | "payment_refund" | "payment_refund_reversal" | "payment_revshare_payout" | "payment_revshare_refund" | "payment_revshare_reversal" | "payout_fee" | "platform_affiliate_payment" | "platform_affiliate_payment_reversal" | "platform_balance_payment" | "platform_balance_payment_refund" | "platform_balance_transfer_fee" | "platform_balance_transfer_incoming" | "platform_covered_dispute" | "platform_earning" | "platform_markup_fee" | "platform_markup_fee_payout" | "promo_reversal" | "referral_bonus" | "resolution_center_refund" | "revshare_percentage_fee" | "sales_tax_fee" | "sales_tax_remittance" | "sales_tax_remittance_reversal" | "software_rental_revshare" | "software_rental_transaction" | "stripe_domestic_processing_fee" | "stripe_international_processing_fee" | "swap_fee" | "three_ds_fixed_fee" | "topup_fee" | "topup_reversal" | "treasury_payin" | "whop_processing_fee" | "withdrawal_clawback" | "withdrawal_clawback_reversal" | "withdrawal_fee" | "withdrawal_fee_reversal" | "withdrawal_markup_fee" | "withdrawal_markup_fee_payout" | "withdrawal_markup_fee_payout_reversal" | "withdrawal_markup_fee_reversal" | "withdrawal_reclassification" | "withdrawal_reversal" | "withdrawal_topup_adjustment")[] | undefined`
+
+### `resourceId`
+
+**Signature:** `string | undefined`
+
+## `ReportPaymentsRequest`
+
+Fields on `ReportPaymentsRequest`.
+
+### `postedAfter`
+
+**Signature:** `string`
+
+### `postedBefore`
+
+**Signature:** `string`
+
+### `paymentMethod`
+
+**Signature:** `string`
+
+## `ReportExportReady`
+
+Fields on `ReportExportReady`.
+
+### `exportId`
+
+**Signature:** `string`
+
+### `downloadUrl`
+
+**Signature:** `string`
+
 ## Elements
 
 The elements this group mounts. Each has its own page:
@@ -811,6 +883,10 @@ The elements this group mounts. Each has its own page:
 
   <Card title="Balances" href="/elements/beta/wallet/balances">
     Three views of an account's money. The balance view shows the total, a chart of how it changed, and a picker for the time range. The list view shows the holdings that make up that total, valued in dollars. The breakdown view splits one currency into available, pending, reserve, and negative amounts without money-movement controls. When `openHoldingOnSelect` is on, a list row replaces this unit's canvas — the chart and the list — with that holding's balance page instead of only reporting the click. *(sub-controller, 4 elements)*
+  </Card>
+
+  <Card title="Reports" href="/elements/beta/wallet/reports">
+    Balance history and the financial activity behind it, including CSV exports. Account statements are available in the Whop dashboard. *(sub-controller, 2 elements)*
   </Card>
 
   <Card title="ActivityElement" href="/elements/beta/wallet/activity">
@@ -846,6 +922,6 @@ The elements this group mounts. Each has its own page:
   </Card>
 
   <Card title="VerificationElement" href="/elements/beta/wallet/verification">
-    A banner asking the account holder to verify their identity, shown only while verification is outstanding — an account that has already verified renders nothing at all, so the element can sit permanently in a layout. The headline and body come from the API, so they track the account's actual state: an unstarted account is invited to unlock cards and payouts, one under review reads as pending, and a failed or flagged one says so. Pressing the button reports `verificationRequested` and stays put, so the host mounts its own verification — the `verifications` controller's `kyc` element, say. Needs an `accessToken`. A failed read renders nothing rather than an error — a nudge should never become the loudest thing on the page.
+    A banner asking the account holder to verify their identity, shown only while verification is outstanding — an account that has already verified renders nothing at all, so the element can sit permanently in a layout. The headline and status messages come from the API, with a shorter description when inviting the account holder to start verification, so they track the account's actual state: an unstarted account is invited to unlock cards and payouts, one under review reads as pending, and a failed or flagged one says so. Pressing the button reports `verificationRequested` and stays put, so the host mounts its own verification — the `verifications` controller's `kyc` element, say. Needs an `accessToken`. A failed read renders nothing rather than an error — a nudge should never become the loudest thing on the page.
   </Card>
 </CardGroup>

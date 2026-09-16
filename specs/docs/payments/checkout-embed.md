@@ -1177,12 +1177,12 @@ Set callbacks via data attributes pointing to functions on `window`. Use `wco.ge
   `WhopCheckoutSetDisplayCurrencyError`.
 </Note>
 
-## Apple Pay
+## Apple Pay and Google Pay
 
-Apple Pay lets customers pay using their Apple Wallet, providing a seamless checkout experience on Safari and iOS devices. To enable Apple Pay on your embedded checkout, you need to verify ownership of your domain.
+Apple Pay and Google Pay let customers pay from the wallet already on their device, providing a seamless checkout experience. To enable them on your embedded checkout, you need to verify ownership of your domain.
 
-<Card title="Set up Apple Pay" icon="apple" href="/payments/apple-pay">
-  Learn how to verify your domain and enable Apple Pay for embedded checkout
+<Card title="Set up Apple Pay and Google Pay" icon="apple" href="/payments/apple-pay">
+  Learn how to verify your domain and enable Apple Pay and Google Pay for embedded checkout
 </Card>
 
 <Note>

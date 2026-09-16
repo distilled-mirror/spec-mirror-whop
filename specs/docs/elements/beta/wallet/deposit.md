@@ -6,7 +6,7 @@
 
 > Funds a Whop account. Renders an amount field and the account's live funding rails — crypto (a per-network deposit address with its QR) and bank transfer (the wire fields for each settlement currency). A business account's rails resolve with no credentials, so they work on any page; a personal (`user_`) account only reveals its rails to itself, so pass `accessToken` for it — omitted, the viewer's own same-origin session covers it. Cards and platform balance are opt-in: pass `savedCards`, `allowNewCard`, or `showPlatformBalance` and the element collects the amount and the choice, then emits `cardDepositRequested` / `addCardRequested` / `platformBalanceSelected` and waits for you to call `showStep({ step: 'amount' })` when your own screen is done.
 
-<Info>This page documents `@whop/elements@1.0.0-beta.3` and `@whop/elements-react@1.0.0-beta.3`.</Info>
+<Info>This page documents `@whop/elements@1.0.0-beta.4` and `@whop/elements-react@1.0.0-beta.4`.</Info>
 
 *Pre-release, not yet part of a stable release.*
 
@@ -58,7 +58,7 @@ Mounts inside [`Wallet`](/elements/beta/wallet/overview). `accountId` and `acces
     <div data-whop-demo-shell style={{ position: "relative", minHeight: "320px", transition: "min-height 200ms ease" }}>
       <div data-whop-demo-skeleton style={{ position: "absolute", inset: "0", borderRadius: "12px", background: "rgba(140, 140, 140, 0.12)", pointerEvents: "none", transition: "opacity 200ms ease" }} />
 
-      <div data-whop-demo-native="element:wallet/deposit" data-whop-elements-version="1.0.0-beta.3" style={{ position: "relative" }} />
+      <div data-whop-demo-native="element:wallet/deposit" data-whop-elements-version="1.0.0-beta.4" style={{ position: "relative" }} />
     </div>
 
     <p style={{ fontSize: "0.8125rem", opacity: 0.7 }}>Example data. [Open the Playground](/elements/beta/wallet/overview#playground).</p>
@@ -97,6 +97,10 @@ Mounts inside [`Wallet`](/elements/beta/wallet/overview). `accountId` and `acces
 
 <ResponseField name="cardFee" type="DepositCardFee | null">
   Processing fees to preview under the amount when a card row is selected. `percentageFee` is in percentage POINTS (`2.9` is 2.9%); `fixedFee` and `radarFee` are major units (`0.3` is \$0.30). Defaults to `null`.
+</ResponseField>
+
+<ResponseField name="depositRailFees" type="Partial<Record<&#x22;bank&#x22; | &#x22;crypto&#x22;, DepositRailFee>>">
+  Deposit fees to preview under the rail picker, keyed by rail (`bank`, `crypto`). `percentageFee` is in percentage POINTS (`1.5` is 1.5%); `fixedFeeUsd` is USD major units (`2` is \$2.00) whatever the deposit currency. Shows the rate before an amount is typed and the charged amount after. Defaults to `{}`.
 </ResponseField>
 
 <ResponseField name="preferredMethodId" type="string">

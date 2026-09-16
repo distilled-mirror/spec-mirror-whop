@@ -110,14 +110,14 @@
 <div data-whop-platform="react-native" style={{ display: "none" }}>
   ## Requirements
 
-  |              |                                            |
-  | ------------ | ------------------------------------------ |
-  | React Native | `0.87+`, New Architecture (Fabric) enabled |
-  | React        | `19.2.3+`                                  |
-  | iOS          | 15.1+, **Swift Package Manager only**      |
-  | Android      | `minSdk 24`, `compileSdk 37`               |
+  |              |                                                                                           |
+  | ------------ | ----------------------------------------------------------------------------------------- |
+  | React Native | `0.87+` on Swift Package Manager, `0.86+` on CocoaPods. New Architecture (Fabric) enabled |
+  | React        | `19.2.3+`                                                                                 |
+  | iOS          | 15.1+                                                                                     |
+  | Android      | `minSdk 24`, `compileSdk 37`                                                              |
 
-  <Warning>**Your iOS app must be on Swift Package Manager.** This package ships a `Package.swift` and no podspec, so an app still integrating through CocoaPods cannot link its native code — you would need to move the app to SPM first. `npx react-native spm add` performs that conversion, and the example app in the repo does exactly this if you want to see it end to end.</Warning>
+  <Note>**Either iOS dependency manager works.** The package ships both an `ios/Package.swift` and a podspec, and the toolchain picks one. React Native's Swift Package Manager autolinker prefers the `Package.swift`, so an app already on SPM is unaffected by the podspec. An app on CocoaPods, which includes every Expo app today, links through the podspec and needs nothing else. The React Native floor is higher on SPM because `Package.swift` links two header-only XCFrameworks that first shipped in 0.87.</Note>
 
   <Note>Native code is Swift and Kotlin generated through React Native Codegen: nothing here asks you to hand-edit Objective-C or Java, and there are no native peer dependencies to install.</Note>
 
@@ -143,13 +143,14 @@
 
 <CodeGroup>
   ```tsx React theme={null}
-  import { WhopElements, Payments, PaymentsElement, PaymentElement, AddressElement, CardElement, EmailElement, TaxIdElement, BrandingElement } from "@whop/elements-react";
+  import { WhopElements, Payments, PaymentDetailElement, PaymentsElement, PaymentElement, AddressElement, CardElement, EmailElement, TaxIdElement, BrandingElement } from "@whop/elements-react";
   import { loadWhop } from "@whop/elements";
 
   function Example() {
     return (
       <WhopElements elements={loadWhop()}>
         <Payments /* options */>
+          <PaymentDetailElement />
           <PaymentsElement />
           <PaymentElement />
           <AddressElement />
@@ -210,6 +211,7 @@
   <script src="https://js.whop.cloud/elements/amber/elements.js" data-whop-elements></script>
   <script type="module">
     const payments = window.WhopElements().payments.create({ /* options */ });
+    payments.create('paymentDetail').mount('#payments-paymentDetail');
     payments.create('payments').mount('#payments-payments');
     payments.create('payment').mount('#payments-payment');
     payments.create('address').mount('#payments-address');

@@ -96,7 +96,7 @@ Mounts inside [`Wallet`](/elements/upcoming/wallet/overview). `accountId` and `a
 </ResponseField>
 
 <ResponseField name="depositRailFees" type="Partial<Record<&#x22;bank&#x22; | &#x22;crypto&#x22;, DepositRailFee>>">
-  Deposit fees to preview under the rail picker, keyed by rail (`bank`, `crypto`). `percentageFee` is in percentage POINTS (`1.5` is 1.5%); `fixedFeeUsd` is USD major units (`2` is \$2.00) whatever the deposit currency. Shows the rate before an amount is typed and the charged amount after. Defaults to `{}`.
+  Override the account’s deposit fees under the rail picker, keyed by rail (`bank`, `crypto`). Omitted rails use the fees returned by the account. `percentageFee` is in percentage POINTS (`1.5` is 1.5%); `fixedFeeUsd` is USD major units (`2` is \$2.00) whatever the deposit currency. Shows the rate before an amount is typed and the charged amount after. Defaults to `{}`.
 </ResponseField>
 
 <ResponseField name="preferredMethodId" type="string">

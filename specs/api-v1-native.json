@@ -5,7 +5,7 @@
     "termsOfService": "https://whop.com/tos-developer-api/",
     "title": "Whop API",
     "version": "1.0.0",
-    "x-api-version-date": "2026-09-13"
+    "x-api-version-date": "2026-09-15"
   },
   "servers": [
     {
@@ -39,7 +39,7 @@
       "x-whop-summary": "One buyer's relationship with an account, across all their purchases."
     },
     {
-      "description": "Economic Intelligence is Whop's recommendation engine for an account. Each recommendation is a single action: a title the owner sees, a step-by-step brief Whop AI carries out, and the bet it makes on the account's ledger. Whop generates them from the account's sales, site, ads, and what its owner has said.\n\nUse the Economic Intelligence API to list every recommendation the account has been given and to run the engine toward what the owner wants, in their own words. Running it returns a recommendation right away with status `queued`; the engine moves it through `pending` to `ready`, or to `failed` when it has nothing to recommend. A `ready` recommendation becomes `executed` once the owner runs it from the dashboard, or `superseded` when a newer one replaces it.\n",
+      "description": "Economic Intelligence is Whop's recommendation engine for an account. Each recommendation is a single action: a title the owner sees, a step-by-step brief Whop AI carries out, and the bet it makes on the account's ledger. Whop generates them from the account's sales, site, ads, and what its owner has said.\n\nUse the Economic Intelligence API to list recommendations and to request actions for a specific goal with POST. For callers with company:update permission, listing automatically queues generation when no actions are ready or in progress, with a ten-minute cooldown after an unsuccessful request from the current pipeline version. A new request returns a recommendation with status `queued`; the engine moves it through `pending` to `ready`. Unsuccessful requests are omitted from the list. A `ready` recommendation becomes `executed` once the owner runs it from the dashboard, or `superseded` when a newer one replaces it.\n",
       "name": "Economic Intelligence",
       "x-whop-summary": "What an account should do next to grow, generated from its own data."
     },
@@ -86,6 +86,11 @@
       "description": "A Setup Intent saves a buyer's payment method for later without taking money now. It runs the same collection flow a payment does, so the buyer may still owe a step — 3D Secure on a card, a hosted enrollment, or linking a bank account.\n\nPoll [Retrieve status](/api-reference/beta/setup-intents/retrieve-status) for how far the setup has got and what is outstanding. Once it reaches `succeeded` the method is on file and can be charged.\n",
       "name": "Setup Intents",
       "x-whop-summary": "Saving a buyer's payment method without charging it."
+    },
+    {
+      "description": "A Payment Rule lets an account act on its own payments before they reach the bank: block them, let them through, or ask the buyer for 3D Secure. Each rule matches on a small set of payment attributes, and every condition must hold for it to apply.\n\nA rule's definition is fixed once created, so the payments it decided keep naming the rule that decided them. Use [Replace](/api-reference/beta/payment-rules/replace) to change one, and [List fields](/api-reference/beta/payment-rules/list-fields) for the attributes, operators and values a condition can use.\n",
+      "name": "Payment Rules",
+      "x-whop-summary": "Rules an account writes to decide its own payments."
     },
     {
       "description": "A Dispute is a chargeback a customer files against a payment through their bank, or an inquiry that may become one. It carries the disputed payment, a deadline to respond, your evidence, and the outcome once the processor rules.\n\nUse the Disputes API to list disputes, edit the evidence packet while a dispute is still contestable, and submit it for review.\n",
@@ -299,6 +304,7 @@
         "Refunds",
         "Confirmation Tokens",
         "Setup Intents",
+        "Payment Rules",
         "Disputes",
         "Dispute alerts",
         "Resolution Center Cases"
@@ -401,16 +407,18 @@
         "operationId": "listAccounts",
         "parameters": [
           {
-            "description": "The number of accounts to return (default 10, max 50).",
+            "description": "Number of results to return from the start of the range.",
             "in": "query",
             "name": "first",
             "required": false,
             "schema": {
+              "default": 10,
+              "maximum": 50,
               "type": "integer"
             }
           },
           {
-            "description": "A cursor; returns accounts after this position.",
+            "description": "Return results after this cursor. Use `page_info.end_cursor` from the previous response to fetch the next page.",
             "in": "query",
             "name": "after",
             "required": false,
@@ -419,16 +427,17 @@
             }
           },
           {
-            "description": "The number of accounts to return from the end of the range.",
+            "description": "Number of results to return from the end of the range.",
             "in": "query",
             "name": "last",
             "required": false,
             "schema": {
+              "maximum": 50,
               "type": "integer"
             }
           },
           {
-            "description": "A cursor; returns accounts before this position.",
+            "description": "Return results before this cursor. Use `page_info.start_cursor` from the previous response to fetch the previous page.",
             "in": "query",
             "name": "before",
             "required": false,
@@ -2580,9 +2589,12 @@
                     "type": "string"
                   },
                   "three_ds_level": {
-                    "description": "Account-level 3D Secure behavior. Set `mandate_challenge` to require cardholder verification on supported card payments, or `null` to use the standard checkout flow.",
+                    "description": "3D Secure behavior for supported on-session card payments. `mandate_challenge` requires a 3DS challenge before payment processing; `mandate_if_required` mandates a challenge only when the payment processor requires it; `frictionless_if_required` uses the regular frictionless 3DS flow. Payments of $1,000 or more use `mandate_if_required` unless `mandate_challenge` is selected. Risk and authentication recovery requirements can override the preference. `null` uses the standard checkout flow.",
                     "enum": [
-                      "mandate_challenge"
+                      "mandate_challenge",
+                      "mandate_if_required",
+                      "frictionless_if_required",
+                      null
                     ],
                     "example": "mandate_challenge",
                     "type": [
@@ -3474,7 +3486,7 @@
             }
           },
           {
-            "description": "The number of campaigns to return.",
+            "description": "Number of results to return from the start of the range.",
             "in": "query",
             "name": "first",
             "required": false,
@@ -3485,7 +3497,7 @@
             }
           },
           {
-            "description": "Cursor to fetch the page after (from page_info.end_cursor).",
+            "description": "Return results after this cursor. Use `page_info.end_cursor` from the previous response to fetch the next page.",
             "in": "query",
             "name": "after",
             "required": false,
@@ -3494,7 +3506,7 @@
             }
           },
           {
-            "description": "The number of campaigns to return from the end of the range.",
+            "description": "Number of results to return from the end of the range.",
             "in": "query",
             "name": "last",
             "required": false,
@@ -3504,7 +3516,7 @@
             }
           },
           {
-            "description": "Cursor to fetch the page before (from page_info.start_cursor).",
+            "description": "Return results before this cursor. Use `page_info.start_cursor` from the previous response to fetch the previous page.",
             "in": "query",
             "name": "before",
             "required": false,
@@ -4480,7 +4492,7 @@
             }
           },
           {
-            "description": "The number of ad groups to return.",
+            "description": "Number of results to return from the start of the range.",
             "in": "query",
             "name": "first",
             "required": false,
@@ -4491,7 +4503,7 @@
             }
           },
           {
-            "description": "Cursor to fetch the page after (from page_info.end_cursor).",
+            "description": "Return results after this cursor. Use `page_info.end_cursor` from the previous response to fetch the next page.",
             "in": "query",
             "name": "after",
             "required": false,
@@ -4500,7 +4512,7 @@
             }
           },
           {
-            "description": "The number of ad groups to return from the end of the range.",
+            "description": "Number of results to return from the end of the range.",
             "in": "query",
             "name": "last",
             "required": false,
@@ -4510,7 +4522,7 @@
             }
           },
           {
-            "description": "Cursor to fetch the page before (from page_info.start_cursor).",
+            "description": "Return results before this cursor. Use `page_info.start_cursor` from the previous response to fetch the previous page.",
             "in": "query",
             "name": "before",
             "required": false,
@@ -6000,7 +6012,7 @@
             }
           },
           {
-            "description": "The number of ads to return.",
+            "description": "Number of results to return from the start of the range.",
             "in": "query",
             "name": "first",
             "required": false,
@@ -6011,7 +6023,7 @@
             }
           },
           {
-            "description": "Cursor to fetch the page after (from page_info.end_cursor).",
+            "description": "Return results after this cursor. Use `page_info.end_cursor` from the previous response to fetch the next page.",
             "in": "query",
             "name": "after",
             "required": false,
@@ -6020,7 +6032,7 @@
             }
           },
           {
-            "description": "The number of ads to return from the end of the range.",
+            "description": "Number of results to return from the end of the range.",
             "in": "query",
             "name": "last",
             "required": false,
@@ -6030,7 +6042,7 @@
             }
           },
           {
-            "description": "Cursor to fetch the page before (from page_info.start_cursor).",
+            "description": "Return results before this cursor. Use `page_info.start_cursor` from the previous response to fetch the previous page.",
             "in": "query",
             "name": "before",
             "required": false,
@@ -7459,16 +7471,18 @@
             }
           },
           {
-            "description": "The number of API keys to return (default 20, max 100).",
+            "description": "Number of results to return from the start of the range.",
             "in": "query",
             "name": "first",
             "required": false,
             "schema": {
+              "default": 20,
+              "maximum": 100,
               "type": "integer"
             }
           },
           {
-            "description": "A cursor; returns API keys after this position.",
+            "description": "Return results after this cursor. Use `page_info.end_cursor` from the previous response to fetch the next page.",
             "in": "query",
             "name": "after",
             "required": false,
@@ -7477,16 +7491,17 @@
             }
           },
           {
-            "description": "The number of API keys to return from the end of the range.",
+            "description": "Number of results to return from the end of the range.",
             "in": "query",
             "name": "last",
             "required": false,
             "schema": {
+              "maximum": 100,
               "type": "integer"
             }
           },
           {
-            "description": "A cursor; returns API keys before this position.",
+            "description": "Return results before this cursor. Use `page_info.start_cursor` from the previous response to fetch the previous page.",
             "in": "query",
             "name": "before",
             "required": false,
@@ -7677,9 +7692,10 @@
                       "2026-09-09-1",
                       "2026-09-11",
                       "2026-09-11-1",
-                      "2026-09-13"
+                      "2026-09-13",
+                      "2026-09-15"
                     ],
-                    "example": "2026-09-13",
+                    "example": "2026-09-15",
                     "type": "string"
                   },
                   "expires_at": {
@@ -8111,9 +8127,10 @@
                       "2026-09-09-1",
                       "2026-09-11",
                       "2026-09-11-1",
-                      "2026-09-13"
+                      "2026-09-13",
+                      "2026-09-15"
                     ],
-                    "example": "2026-09-13",
+                    "example": "2026-09-15",
                     "type": "string"
                   },
                   "expires_at": {
@@ -8425,7 +8442,7 @@
             }
           },
           {
-            "description": "Number of logs to return.",
+            "description": "Number of results to return from the start of the range.",
             "in": "query",
             "name": "first",
             "required": false,
@@ -8436,7 +8453,7 @@
             }
           },
           {
-            "description": "Cursor to fetch the page after (from page_info.end_cursor).",
+            "description": "Return results after this cursor. Use `page_info.end_cursor` from the previous response to fetch the next page.",
             "in": "query",
             "name": "after",
             "required": false,
@@ -8677,16 +8694,18 @@
             }
           },
           {
-            "description": "The number of builds to return (default 20, max 100).",
+            "description": "Number of results to return from the start of the range.",
             "in": "query",
             "name": "first",
             "required": false,
             "schema": {
+              "default": 20,
+              "maximum": 100,
               "type": "integer"
             }
           },
           {
-            "description": "A cursor; returns builds after this position.",
+            "description": "Return results after this cursor. Use `page_info.end_cursor` from the previous response to fetch the next page.",
             "in": "query",
             "name": "after",
             "required": false,
@@ -8695,16 +8714,17 @@
             }
           },
           {
-            "description": "The number of builds to return from the end of the range.",
+            "description": "Number of results to return from the end of the range.",
             "in": "query",
             "name": "last",
             "required": false,
             "schema": {
+              "maximum": 100,
               "type": "integer"
             }
           },
           {
-            "description": "A cursor; returns builds before this position.",
+            "description": "Return results before this cursor. Use `page_info.start_cursor` from the previous response to fetch the previous page.",
             "in": "query",
             "name": "before",
             "required": false,
@@ -9222,16 +9242,18 @@
             }
           },
           {
-            "description": "The number of apps to return (default 20, max 100).",
+            "description": "Number of results to return from the start of the range.",
             "in": "query",
             "name": "first",
             "required": false,
             "schema": {
+              "default": 20,
+              "maximum": 100,
               "type": "integer"
             }
           },
           {
-            "description": "A cursor; returns apps after this position.",
+            "description": "Return results after this cursor. Use `page_info.end_cursor` from the previous response to fetch the next page.",
             "in": "query",
             "name": "after",
             "required": false,
@@ -9240,16 +9262,17 @@
             }
           },
           {
-            "description": "The number of apps to return from the end of the range.",
+            "description": "Number of results to return from the end of the range.",
             "in": "query",
             "name": "last",
             "required": false,
             "schema": {
+              "maximum": 100,
               "type": "integer"
             }
           },
           {
-            "description": "A cursor; returns apps before this position.",
+            "description": "Return results before this cursor. Use `page_info.start_cursor` from the previous response to fetch the previous page.",
             "in": "query",
             "name": "before",
             "required": false,
@@ -9988,16 +10011,18 @@
             }
           },
           {
-            "description": "The number of log lines to return (max 500).",
+            "description": "Number of results to return from the start of the range.",
             "in": "query",
             "name": "first",
             "required": false,
             "schema": {
+              "default": 100,
+              "maximum": 500,
               "type": "integer"
             }
           },
           {
-            "description": "A cursor for fetching logs after a previous page.",
+            "description": "Return results after this cursor. Use `page_info.end_cursor` from the previous response to fetch the next page.",
             "in": "query",
             "name": "after",
             "required": false,
@@ -10006,7 +10031,7 @@
             }
           },
           {
-            "description": "A cursor for fetching logs before a later page.",
+            "description": "Return results before this cursor. Use `page_info.start_cursor` from the previous response to fetch the previous page.",
             "in": "query",
             "name": "before",
             "required": false,
@@ -10371,16 +10396,18 @@
             }
           },
           {
-            "description": "Number of audiences to return. Defaults to 20; maximum 100.",
+            "description": "Number of results to return from the start of the range.",
             "in": "query",
             "name": "first",
             "required": false,
             "schema": {
+              "default": 20,
+              "maximum": 100,
               "type": "integer"
             }
           },
           {
-            "description": "Cursor for the next page of audiences.",
+            "description": "Return results after this cursor. Use `page_info.end_cursor` from the previous response to fetch the next page.",
             "in": "query",
             "name": "after",
             "required": false,
@@ -11071,7 +11098,7 @@
             }
           },
           {
-            "description": "Number of bounties to return from the start of the window.",
+            "description": "Number of results to return from the start of the range.",
             "in": "query",
             "name": "first",
             "required": false,
@@ -11082,7 +11109,7 @@
             }
           },
           {
-            "description": "Cursor to paginate forwards from.",
+            "description": "Return results after this cursor. Use `page_info.end_cursor` from the previous response to fetch the next page.",
             "in": "query",
             "name": "after",
             "required": false,
@@ -11091,7 +11118,7 @@
             }
           },
           {
-            "description": "Number of bounties to return from the end of the window.",
+            "description": "Number of results to return from the end of the range.",
             "in": "query",
             "name": "last",
             "required": false,
@@ -11101,7 +11128,7 @@
             }
           },
           {
-            "description": "Cursor to paginate backwards from.",
+            "description": "Return results before this cursor. Use `page_info.start_cursor` from the previous response to fetch the previous page.",
             "in": "query",
             "name": "before",
             "required": false,
@@ -11499,7 +11526,7 @@
             }
           },
           {
-            "description": "Number of submissions to return from the start of the window.",
+            "description": "Number of results to return from the start of the range.",
             "in": "query",
             "name": "first",
             "required": false,
@@ -11510,7 +11537,7 @@
             }
           },
           {
-            "description": "Cursor to paginate forwards from.",
+            "description": "Return results after this cursor. Use `page_info.end_cursor` from the previous response to fetch the next page.",
             "in": "query",
             "name": "after",
             "required": false,
@@ -11519,7 +11546,7 @@
             }
           },
           {
-            "description": "Number of submissions to return from the end of the window.",
+            "description": "Number of results to return from the end of the range.",
             "in": "query",
             "name": "last",
             "required": false,
@@ -11529,7 +11556,7 @@
             }
           },
           {
-            "description": "Cursor to paginate backwards from.",
+            "description": "Return results before this cursor. Use `page_info.start_cursor` from the previous response to fetch the previous page.",
             "in": "query",
             "name": "before",
             "required": false,
@@ -12049,7 +12076,7 @@
             }
           },
           {
-            "description": "Number of submissions to return from the start of the window.",
+            "description": "Number of results to return from the start of the range.",
             "in": "query",
             "name": "first",
             "required": false,
@@ -12060,7 +12087,7 @@
             }
           },
           {
-            "description": "Cursor to paginate forwards from.",
+            "description": "Return results after this cursor. Use `page_info.end_cursor` from the previous response to fetch the next page.",
             "in": "query",
             "name": "after",
             "required": false,
@@ -12069,7 +12096,7 @@
             }
           },
           {
-            "description": "Number of submissions to return from the end of the window.",
+            "description": "Number of results to return from the end of the range.",
             "in": "query",
             "name": "last",
             "required": false,
@@ -12079,7 +12106,7 @@
             }
           },
           {
-            "description": "Cursor to paginate backwards from.",
+            "description": "Return results before this cursor. Use `page_info.start_cursor` from the previous response to fetch the previous page.",
             "in": "query",
             "name": "before",
             "required": false,
@@ -12749,16 +12776,18 @@
             }
           },
           {
-            "description": "The number of card transactions to return.",
+            "description": "Number of results to return from the start of the range.",
             "in": "query",
             "name": "first",
             "required": false,
             "schema": {
+              "default": 20,
+              "maximum": 100,
               "type": "integer"
             }
           },
           {
-            "description": "A cursor; returns card transactions after this position.",
+            "description": "Return results after this cursor. Use `page_info.end_cursor` from the previous response to fetch the next page.",
             "in": "query",
             "name": "after",
             "required": false,
@@ -12767,16 +12796,17 @@
             }
           },
           {
-            "description": "The number of card transactions to return, counting back from the end.",
+            "description": "Number of results to return from the end of the range.",
             "in": "query",
             "name": "last",
             "required": false,
             "schema": {
+              "maximum": 100,
               "type": "integer"
             }
           },
           {
-            "description": "A cursor; returns card transactions before this position.",
+            "description": "Return results before this cursor. Use `page_info.start_cursor` from the previous response to fetch the previous page.",
             "in": "query",
             "name": "before",
             "required": false,
@@ -14715,16 +14745,18 @@
         "operationId": "listCashbackRules",
         "parameters": [
           {
-            "description": "Number of rules to return from the start of the page.",
+            "description": "Number of results to return from the start of the range.",
             "in": "query",
             "name": "first",
             "required": false,
             "schema": {
+              "default": 20,
+              "maximum": 100,
               "type": "integer"
             }
           },
           {
-            "description": "Return rules after this cursor.",
+            "description": "Return results after this cursor. Use `page_info.end_cursor` from the previous response to fetch the next page.",
             "in": "query",
             "name": "after",
             "required": false,
@@ -14733,16 +14765,17 @@
             }
           },
           {
-            "description": "Number of rules to return from the end of the page.",
+            "description": "Number of results to return from the end of the range.",
             "in": "query",
             "name": "last",
             "required": false,
             "schema": {
+              "maximum": 100,
               "type": "integer"
             }
           },
           {
-            "description": "Return rules before this cursor.",
+            "description": "Return results before this cursor. Use `page_info.start_cursor` from the previous response to fetch the previous page.",
             "in": "query",
             "name": "before",
             "required": false,
@@ -15042,16 +15075,18 @@
             }
           },
           {
-            "description": "Number of checkout configurations to return.",
+            "description": "Number of results to return from the start of the range.",
             "in": "query",
             "name": "first",
             "required": false,
             "schema": {
+              "default": 20,
+              "maximum": 100,
               "type": "integer"
             }
           },
           {
-            "description": "Cursor for the next page of results.",
+            "description": "Return results after this cursor. Use `page_info.end_cursor` from the previous response to fetch the next page.",
             "in": "query",
             "name": "after",
             "required": false,
@@ -15242,13 +15277,14 @@
                                 "type": "number"
                               },
                               "three_ds_level": {
-                                "description": "3D Secure behavior for this plan, or `null` to use the account default.",
+                                "description": "3D Secure behavior for supported on-session card payments. `mandate_challenge` requires a 3DS challenge before payment processing; `mandate_if_required` mandates a challenge only when the payment processor requires it; `frictionless_if_required` uses the regular frictionless 3DS flow. Payments of $1,000 or more use `mandate_if_required` unless `mandate_challenge` is selected. Risk and authentication recovery requirements can override the preference. `null` inherits the account default.",
                                 "enum": [
                                   "mandate_challenge",
-                                  "frictionless",
+                                  "mandate_if_required",
+                                  "frictionless_if_required",
                                   null
                                 ],
-                                "example": "frictionless",
+                                "example": "frictionless_if_required",
                                 "type": [
                                   "string",
                                   "null"
@@ -15310,13 +15346,14 @@
                             ]
                           },
                           "three_ds_level": {
-                            "description": "3D Secure behavior for this checkout, or `null` to use the account default.",
+                            "description": "3D Secure behavior for supported on-session card payments. `mandate_challenge` requires a 3DS challenge before payment processing; `mandate_if_required` mandates a challenge only when the payment processor requires it; `frictionless_if_required` uses the regular frictionless 3DS flow. Payments of $1,000 or more use `mandate_if_required` unless `mandate_challenge` is selected. Risk and authentication recovery requirements can override the preference. Applies in setup mode; `null` uses frictionless 3DS. Payment mode uses the plan policy.",
                             "enum": [
                               "mandate_challenge",
-                              "frictionless",
+                              "mandate_if_required",
+                              "frictionless_if_required",
                               null
                             ],
-                            "example": "frictionless",
+                            "example": "frictionless_if_required",
                             "type": [
                               "string",
                               "null"
@@ -15665,13 +15702,14 @@
                         ]
                       },
                       "three_ds_level": {
-                        "description": "3D Secure behavior for the inline plan, or `null` to use the account default.",
+                        "description": "3D Secure behavior for supported on-session card payments. `mandate_challenge` requires a 3DS challenge before payment processing; `mandate_if_required` mandates a challenge only when the payment processor requires it; `frictionless_if_required` uses the regular frictionless 3DS flow. Payments of $1,000 or more use `mandate_if_required` unless `mandate_challenge` is selected. Risk and authentication recovery requirements can override the preference. `null` inherits the account default.",
                         "enum": [
                           "mandate_challenge",
-                          "frictionless",
+                          "mandate_if_required",
+                          "frictionless_if_required",
                           null
                         ],
-                        "example": "frictionless",
+                        "example": "frictionless_if_required",
                         "type": [
                           "string",
                           "null"
@@ -15739,13 +15777,14 @@
                     ]
                   },
                   "three_ds_level": {
-                    "description": "3D Secure behavior for this checkout.",
+                    "description": "3D Secure behavior for supported on-session card payments. `mandate_challenge` requires a 3DS challenge before payment processing; `mandate_if_required` mandates a challenge only when the payment processor requires it; `frictionless_if_required` uses the regular frictionless 3DS flow. Payments of $1,000 or more use `mandate_if_required` unless `mandate_challenge` is selected. Risk and authentication recovery requirements can override the preference. Applies in setup mode; `null` uses frictionless 3DS. Payment mode uses the plan policy.",
                     "enum": [
                       "mandate_challenge",
-                      "frictionless",
+                      "mandate_if_required",
+                      "frictionless_if_required",
                       null
                     ],
-                    "example": "frictionless",
+                    "example": "frictionless_if_required",
                     "type": [
                       "string",
                       "null"
@@ -15936,13 +15975,14 @@
                           "type": "number"
                         },
                         "three_ds_level": {
-                          "description": "3D Secure behavior for this plan, or `null` to use the account default.",
+                          "description": "3D Secure behavior for supported on-session card payments. `mandate_challenge` requires a 3DS challenge before payment processing; `mandate_if_required` mandates a challenge only when the payment processor requires it; `frictionless_if_required` uses the regular frictionless 3DS flow. Payments of $1,000 or more use `mandate_if_required` unless `mandate_challenge` is selected. Risk and authentication recovery requirements can override the preference. `null` inherits the account default.",
                           "enum": [
                             "mandate_challenge",
-                            "frictionless",
+                            "mandate_if_required",
+                            "frictionless_if_required",
                             null
                           ],
-                          "example": "frictionless",
+                          "example": "frictionless_if_required",
                           "type": [
                             "string",
                             "null"
@@ -16004,10 +16044,11 @@
                       ]
                     },
                     "three_ds_level": {
-                      "description": "3D Secure behavior for this checkout, or `null` to use the account default.",
+                      "description": "3D Secure behavior for supported on-session card payments. `mandate_challenge` requires a 3DS challenge before payment processing; `mandate_if_required` mandates a challenge only when the payment processor requires it; `frictionless_if_required` uses the regular frictionless 3DS flow. Payments of $1,000 or more use `mandate_if_required` unless `mandate_challenge` is selected. Risk and authentication recovery requirements can override the preference. Applies in setup mode; `null` uses frictionless 3DS. Payment mode uses the plan policy.",
                       "enum": [
                         "mandate_challenge",
-                        "frictionless",
+                        "mandate_if_required",
+                        "frictionless_if_required",
                         null
                       ],
                       "example": "mandate_challenge",
@@ -16314,13 +16355,14 @@
                           "type": "number"
                         },
                         "three_ds_level": {
-                          "description": "3D Secure behavior for this plan, or `null` to use the account default.",
+                          "description": "3D Secure behavior for supported on-session card payments. `mandate_challenge` requires a 3DS challenge before payment processing; `mandate_if_required` mandates a challenge only when the payment processor requires it; `frictionless_if_required` uses the regular frictionless 3DS flow. Payments of $1,000 or more use `mandate_if_required` unless `mandate_challenge` is selected. Risk and authentication recovery requirements can override the preference. `null` inherits the account default.",
                           "enum": [
                             "mandate_challenge",
-                            "frictionless",
+                            "mandate_if_required",
+                            "frictionless_if_required",
                             null
                           ],
-                          "example": "frictionless",
+                          "example": "frictionless_if_required",
                           "type": [
                             "string",
                             "null"
@@ -16382,13 +16424,14 @@
                       ]
                     },
                     "three_ds_level": {
-                      "description": "3D Secure behavior for this checkout, or `null` to use the account default.",
+                      "description": "3D Secure behavior for supported on-session card payments. `mandate_challenge` requires a 3DS challenge before payment processing; `mandate_if_required` mandates a challenge only when the payment processor requires it; `frictionless_if_required` uses the regular frictionless 3DS flow. Payments of $1,000 or more use `mandate_if_required` unless `mandate_challenge` is selected. Risk and authentication recovery requirements can override the preference. Applies in setup mode; `null` uses frictionless 3DS. Payment mode uses the plan policy.",
                       "enum": [
                         "mandate_challenge",
-                        "frictionless",
+                        "mandate_if_required",
+                        "frictionless_if_required",
                         null
                       ],
-                      "example": "frictionless",
+                      "example": "frictionless_if_required",
                       "type": [
                         "string",
                         "null"
@@ -17244,16 +17287,18 @@
             }
           },
           {
-            "description": "The number of alerts to return (default 20, max 100).",
+            "description": "Number of results to return from the start of the range.",
             "in": "query",
             "name": "first",
             "required": false,
             "schema": {
+              "default": 20,
+              "maximum": 100,
               "type": "integer"
             }
           },
           {
-            "description": "A cursor; returns alerts after this position.",
+            "description": "Return results after this cursor. Use `page_info.end_cursor` from the previous response to fetch the next page.",
             "in": "query",
             "name": "after",
             "required": false,
@@ -17262,16 +17307,17 @@
             }
           },
           {
-            "description": "The number of alerts to return from the end of the range.",
+            "description": "Number of results to return from the end of the range.",
             "in": "query",
             "name": "last",
             "required": false,
             "schema": {
+              "maximum": 100,
               "type": "integer"
             }
           },
           {
-            "description": "A cursor; returns alerts before this position.",
+            "description": "Return results before this cursor. Use `page_info.start_cursor` from the previous response to fetch the previous page.",
             "in": "query",
             "name": "before",
             "required": false,
@@ -17503,16 +17549,18 @@
             }
           },
           {
-            "description": "The number of disputes to return (default 20, max 100).",
+            "description": "Number of results to return from the start of the range.",
             "in": "query",
             "name": "first",
             "required": false,
             "schema": {
+              "default": 20,
+              "maximum": 100,
               "type": "integer"
             }
           },
           {
-            "description": "A cursor; returns disputes after this position.",
+            "description": "Return results after this cursor. Use `page_info.end_cursor` from the previous response to fetch the next page.",
             "in": "query",
             "name": "after",
             "required": false,
@@ -17521,16 +17569,17 @@
             }
           },
           {
-            "description": "The number of disputes to return from the end of the range.",
+            "description": "Number of results to return from the end of the range.",
             "in": "query",
             "name": "last",
             "required": false,
             "schema": {
+              "maximum": 100,
               "type": "integer"
             }
           },
           {
-            "description": "A cursor; returns disputes before this position.",
+            "description": "Return results before this cursor. Use `page_info.start_cursor` from the previous response to fetch the previous page.",
             "in": "query",
             "name": "before",
             "required": false,
@@ -18500,16 +18549,18 @@
             }
           },
           {
-            "description": "Number of domains from the start of the page.",
+            "description": "Number of results to return from the start of the range.",
             "in": "query",
             "name": "first",
             "required": false,
             "schema": {
+              "default": 20,
+              "maximum": 100,
               "type": "integer"
             }
           },
           {
-            "description": "Cursor for the next page.",
+            "description": "Return results after this cursor. Use `page_info.end_cursor` from the previous response to fetch the next page.",
             "in": "query",
             "name": "after",
             "required": false,
@@ -18518,16 +18569,17 @@
             }
           },
           {
-            "description": "Number of domains from the end of the page.",
+            "description": "Number of results to return from the end of the range.",
             "in": "query",
             "name": "last",
             "required": false,
             "schema": {
+              "maximum": 100,
               "type": "integer"
             }
           },
           {
-            "description": "Cursor for the previous page.",
+            "description": "Return results before this cursor. Use `page_info.start_cursor` from the previous response to fetch the previous page.",
             "in": "query",
             "name": "before",
             "required": false,
@@ -18841,11 +18893,11 @@
     },
     "/economic_intelligence": {
       "get": {
-        "description": "Lists all recommended actions Economic Intelligence has generated for the account, newest first. Filter with `status=ready` for actions that are current.",
+        "description": "Lists an account's recommendations and generation requests, newest first. Without an account, signed-out visitors receive a business-setup template and eligible users receive their saved setup recommendation.",
         "operationId": "listEconomicIntelligence",
         "parameters": [
           {
-            "description": "Account ID, prefixed `biz_`. Defaults to the API key's own account.",
+            "description": "Account ID, prefixed `biz_`. Defaults to the API key's own account; omit for personal onboarding.",
             "in": "query",
             "name": "account_id",
             "required": false,
@@ -18854,7 +18906,7 @@
             }
           },
           {
-            "description": "Only recommendations in this state. `ready` for the cards the owner can run now.",
+            "description": "Filter recommendations by their current status.",
             "in": "query",
             "name": "status",
             "required": false,
@@ -18864,23 +18916,24 @@
                 "pending",
                 "ready",
                 "executed",
-                "superseded",
-                "failed"
+                "superseded"
               ],
               "type": "string"
             }
           },
           {
-            "description": "The number of recommendations to return (default 20, max 100).",
+            "description": "Number of results to return from the start of the range.",
             "in": "query",
             "name": "first",
             "required": false,
             "schema": {
+              "default": 20,
+              "maximum": 100,
               "type": "integer"
             }
           },
           {
-            "description": "A cursor; returns recommendations after this position.",
+            "description": "Return results after this cursor. Use `page_info.end_cursor` from the previous response to fetch the next page.",
             "in": "query",
             "name": "after",
             "required": false,
@@ -18889,16 +18942,17 @@
             }
           },
           {
-            "description": "The number of recommendations to return from the end of the range.",
+            "description": "Number of results to return from the end of the range.",
             "in": "query",
             "name": "last",
             "required": false,
             "schema": {
+              "maximum": 100,
               "type": "integer"
             }
           },
           {
-            "description": "A cursor; returns recommendations before this position.",
+            "description": "Return results before this cursor. Use `page_info.start_cursor` from the previous response to fetch the previous page.",
             "in": "query",
             "name": "before",
             "required": false,
@@ -18984,7 +19038,13 @@
             "bearerAuth": [
               "company:basic:read"
             ]
-          }
+          },
+          {
+            "bearerAuth": [
+              "ai_chat:create"
+            ]
+          },
+          {}
         ],
         "summary": "List Economic Intelligence",
         "tags": [
@@ -19002,7 +19062,7 @@
         }
       ],
       "post": {
-        "description": "Harnesses Economic Intelligence to generate recommended actions that lead the business down the most optimal path to the next dollar. Returns a `queued` recommendation right away. Poll the list endpoint until it is `ready` or `failed`.",
+        "description": "Generates a recommendation based on your input. Returns immediately; poll the list endpoint until its `status` is `ready`.",
         "operationId": "createEconomicIntelligence",
         "parameters": [
           {
@@ -19097,7 +19157,7 @@
         }
       ],
       "patch": {
-        "description": "Records approval with `executed`, or retires an unwanted recommendation with `superseded`. Both replenish the ready inventory. Supplying a rejection reason also allows retiring an executed recommendation.",
+        "description": "Approves or rejects a recommendation and requests replacements.",
         "operationId": "updateEconomicIntelligence",
         "parameters": [],
         "requestBody": {
@@ -19112,7 +19172,7 @@
                     "type": "string"
                   },
                   "status": {
-                    "description": "Use `executed` after approval to start the action, or `superseded` to reject it.",
+                    "description": "Use `executed` to record approval, or `superseded` to reject the recommendation.",
                     "enum": [
                       "executed",
                       "superseded"
@@ -19147,7 +19207,7 @@
           },
           "403": {
             "$ref": "#/components/responses/Forbidden",
-            "description": "the credential can read but not change the account"
+            "description": "account has no recommended actions entitlement"
           },
           "404": {
             "$ref": "#/components/responses/NotFound",
@@ -19161,7 +19221,7 @@
         "security": [
           {
             "bearerAuth": [
-              "company:update"
+              "company:basic:read"
             ]
           }
         ],
@@ -19215,16 +19275,18 @@
             }
           },
           {
-            "description": "The number of events to return.",
+            "description": "Number of results to return from the start of the range.",
             "in": "query",
             "name": "first",
             "required": false,
             "schema": {
+              "default": 500,
+              "maximum": 500,
               "type": "integer"
             }
           },
           {
-            "description": "A cursor for fetching events after a previous page.",
+            "description": "Return results after this cursor. Use `page_info.end_cursor` from the previous response to fetch the next page.",
             "in": "query",
             "name": "after",
             "required": false,
@@ -19233,7 +19295,7 @@
             }
           },
           {
-            "description": "A cursor for fetching events before a later page.",
+            "description": "Return results before this cursor. Use `page_info.start_cursor` from the previous response to fetch the previous page.",
             "in": "query",
             "name": "before",
             "required": false,
@@ -20871,16 +20933,18 @@
             }
           },
           {
-            "description": "The number of events to return.",
+            "description": "Number of results to return from the start of the range.",
             "in": "query",
             "name": "first",
             "required": false,
             "schema": {
+              "default": 50,
+              "maximum": 50,
               "type": "integer"
             }
           },
           {
-            "description": "A cursor for fetching events after a previous page.",
+            "description": "Return results after this cursor. Use `page_info.end_cursor` from the previous response to fetch the next page.",
             "in": "query",
             "name": "after",
             "required": false,
@@ -20889,7 +20953,7 @@
             }
           },
           {
-            "description": "A cursor for fetching events before a later page.",
+            "description": "Return results before this cursor. Use `page_info.start_cursor` from the previous response to fetch the previous page.",
             "in": "query",
             "name": "before",
             "required": false,
@@ -21178,16 +21242,18 @@
             }
           },
           {
-            "description": "The number of experiments to return (default 20, max 100).",
+            "description": "Number of results to return from the start of the range.",
             "in": "query",
             "name": "first",
             "required": false,
             "schema": {
+              "default": 20,
+              "maximum": 100,
               "type": "integer"
             }
           },
           {
-            "description": "A cursor; returns experiments after this position.",
+            "description": "Return results after this cursor. Use `page_info.end_cursor` from the previous response to fetch the next page.",
             "in": "query",
             "name": "after",
             "required": false,
@@ -21196,16 +21262,17 @@
             }
           },
           {
-            "description": "The number of experiments to return from the end of the range.",
+            "description": "Number of results to return from the end of the range.",
             "in": "query",
             "name": "last",
             "required": false,
             "schema": {
+              "maximum": 100,
               "type": "integer"
             }
           },
           {
-            "description": "A cursor; returns experiments before this position.",
+            "description": "Return results before this cursor. Use `page_info.start_cursor` from the previous response to fetch the previous page.",
             "in": "query",
             "name": "before",
             "required": false,
@@ -21934,7 +22001,12 @@
         "summary": "Activate Experiment",
         "tags": [
           "Experiments"
-        ]
+        ],
+        "x-mint": {
+          "metadata": {
+            "sidebarTitle": "Activate"
+          }
+        }
       }
     },
     "/experiments/{id}/end": {
@@ -23029,16 +23101,17 @@
             }
           },
           {
-            "description": "The number of files to return.",
+            "description": "Number of results to return from the start of the range.",
             "in": "query",
             "name": "first",
             "required": false,
             "schema": {
+              "maximum": 100,
               "type": "integer"
             }
           },
           {
-            "description": "A cursor; returns files after this position.",
+            "description": "Return results after this cursor. Use `page_info.end_cursor` from the previous response to fetch the next page.",
             "in": "query",
             "name": "after",
             "required": false,
@@ -23047,16 +23120,17 @@
             }
           },
           {
-            "description": "The number of files to return from the end of the range.",
+            "description": "Number of results to return from the end of the range.",
             "in": "query",
             "name": "last",
             "required": false,
             "schema": {
+              "maximum": 100,
               "type": "integer"
             }
           },
           {
-            "description": "A cursor; returns files before this position.",
+            "description": "Return results before this cursor. Use `page_info.start_cursor` from the previous response to fetch the previous page.",
             "in": "query",
             "name": "before",
             "required": false,
@@ -24467,6 +24541,8 @@
                               "psp_payout_settlement_reversal",
                               "psp_pool_clearing",
                               "psp_pool_dispute_settlement",
+                              "psp_pool_refund_clearing",
+                              "psp_pool_refund_settlement",
                               "psp_pool_settlement",
                               "psp_processing_fee",
                               "psp_receivable_pooled",
@@ -25311,7 +25387,7 @@
             }
           },
           {
-            "description": "Number of members to return from the start of the window.",
+            "description": "Number of results to return from the start of the range.",
             "in": "query",
             "name": "first",
             "required": false,
@@ -25322,7 +25398,7 @@
             }
           },
           {
-            "description": "Cursor to paginate forwards from.",
+            "description": "Return results after this cursor. Use `page_info.end_cursor` from the previous response to fetch the next page.",
             "in": "query",
             "name": "after",
             "required": false,
@@ -25331,7 +25407,7 @@
             }
           },
           {
-            "description": "Number of members to return from the end of the window.",
+            "description": "Number of results to return from the end of the range.",
             "in": "query",
             "name": "last",
             "required": false,
@@ -25341,7 +25417,7 @@
             }
           },
           {
-            "description": "Cursor to paginate backwards from.",
+            "description": "Return results before this cursor. Use `page_info.start_cursor` from the previous response to fetch the previous page.",
             "in": "query",
             "name": "before",
             "required": false,
@@ -25515,7 +25591,7 @@
         "operationId": "listMemberLogs",
         "parameters": [
           {
-            "description": "Number of log entries to return from the start of the window.",
+            "description": "Number of results to return from the start of the range.",
             "in": "query",
             "name": "first",
             "required": false,
@@ -25526,7 +25602,7 @@
             }
           },
           {
-            "description": "Cursor to paginate forwards from.",
+            "description": "Return results after this cursor. Use `page_info.end_cursor` from the previous response to fetch the next page.",
             "in": "query",
             "name": "after",
             "required": false,
@@ -25535,7 +25611,7 @@
             }
           },
           {
-            "description": "Number of log entries to return from the end of the window.",
+            "description": "Number of results to return from the end of the range.",
             "in": "query",
             "name": "last",
             "required": false,
@@ -25545,7 +25621,7 @@
             }
           },
           {
-            "description": "Cursor to paginate backwards from.",
+            "description": "Return results before this cursor. Use `page_info.start_cursor` from the previous response to fetch the previous page.",
             "in": "query",
             "name": "before",
             "required": false,
@@ -25810,7 +25886,7 @@
             }
           },
           {
-            "description": "Number of memberships to return from the start of the window.",
+            "description": "Number of results to return from the start of the range.",
             "in": "query",
             "name": "first",
             "required": false,
@@ -25821,7 +25897,7 @@
             }
           },
           {
-            "description": "Cursor to paginate forwards from.",
+            "description": "Return results after this cursor. Use `page_info.end_cursor` from the previous response to fetch the next page.",
             "in": "query",
             "name": "after",
             "required": false,
@@ -25830,7 +25906,7 @@
             }
           },
           {
-            "description": "Number of memberships to return from the end of the window.",
+            "description": "Number of results to return from the end of the range.",
             "in": "query",
             "name": "last",
             "required": false,
@@ -25840,7 +25916,7 @@
             }
           },
           {
-            "description": "Cursor to paginate backwards from.",
+            "description": "Return results before this cursor. Use `page_info.start_cursor` from the previous response to fetch the previous page.",
             "in": "query",
             "name": "before",
             "required": false,
@@ -26707,7 +26783,7 @@
     },
     "/notifications": {
       "get": {
-        "description": "Lists the authenticated user's notifications, newest first. Requires a user credential — an account API key has no notification feed. Without filters the feed spans every experience the user belongs to plus the teams they are a member of.",
+        "description": "Lists the authenticated user's notifications, newest first. Requires a user credential — an account API key has no notification feed. Without filters the feed spans every experience the user belongs to plus the teams they are a member of. The `after` cursor is a notification `id` from a previous response; subsequent pages contain older notifications.",
         "operationId": "listNotifications",
         "parameters": [
           {
@@ -26747,16 +26823,18 @@
             }
           },
           {
-            "description": "The number of notifications to return (default 20, max 100).",
+            "description": "Number of results to return from the start of the range.",
             "in": "query",
             "name": "first",
             "required": false,
             "schema": {
+              "default": 20,
+              "maximum": 100,
               "type": "integer"
             }
           },
           {
-            "description": "A cursor (a notification `id` from a previous page); returns notifications older than it.",
+            "description": "Return results after this cursor. Use `page_info.end_cursor` from the previous response to fetch the next page.",
             "in": "query",
             "name": "after",
             "required": false,
@@ -27200,16 +27278,18 @@
             }
           },
           {
-            "description": "The number of topics to return (default 20, max 100).",
+            "description": "Number of results to return from the start of the range.",
             "in": "query",
             "name": "first",
             "required": false,
             "schema": {
+              "default": 20,
+              "maximum": 100,
               "type": "integer"
             }
           },
           {
-            "description": "A cursor; returns topics after this position.",
+            "description": "Return results after this cursor. Use `page_info.end_cursor` from the previous response to fetch the next page.",
             "in": "query",
             "name": "after",
             "required": false,
@@ -27481,7 +27561,7 @@
             }
           },
           {
-            "description": "Number of partner businesses to return from the start of the window.",
+            "description": "Number of results to return from the start of the range.",
             "in": "query",
             "name": "first",
             "required": false,
@@ -27492,7 +27572,7 @@
             }
           },
           {
-            "description": "Cursor to fetch the page after (from page_info.end_cursor).",
+            "description": "Return results after this cursor. Use `page_info.end_cursor` from the previous response to fetch the next page.",
             "in": "query",
             "name": "after",
             "required": false,
@@ -27501,7 +27581,7 @@
             }
           },
           {
-            "description": "Number of partner businesses to return from the end of the window.",
+            "description": "Number of results to return from the end of the range.",
             "in": "query",
             "name": "last",
             "required": false,
@@ -27511,7 +27591,7 @@
             }
           },
           {
-            "description": "Cursor to fetch the page before (from page_info.start_cursor).",
+            "description": "Return results before this cursor. Use `page_info.start_cursor` from the previous response to fetch the previous page.",
             "in": "query",
             "name": "before",
             "required": false,
@@ -28666,6 +28746,7 @@
             "style": "form"
           },
           {
+            "description": "Number of results to return from the start of the range.",
             "in": "query",
             "name": "first",
             "required": false,
@@ -28676,6 +28757,7 @@
             }
           },
           {
+            "description": "Return results after this cursor. Use `page_info.end_cursor` from the previous response to fetch the next page.",
             "in": "query",
             "name": "after",
             "required": false,
@@ -28684,6 +28766,7 @@
             }
           },
           {
+            "description": "Number of results to return from the end of the range.",
             "in": "query",
             "name": "last",
             "required": false,
@@ -28693,6 +28776,7 @@
             }
           },
           {
+            "description": "Return results before this cursor. Use `page_info.start_cursor` from the previous response to fetch the previous page.",
             "in": "query",
             "name": "before",
             "required": false,
@@ -29590,7 +29674,7 @@
             "style": "form"
           },
           {
-            "description": "Number of promotion links to return from the start of the window.",
+            "description": "Number of results to return from the start of the range.",
             "in": "query",
             "name": "first",
             "required": false,
@@ -29601,7 +29685,7 @@
             }
           },
           {
-            "description": "Cursor to fetch the page after (from page_info.end_cursor).",
+            "description": "Return results after this cursor. Use `page_info.end_cursor` from the previous response to fetch the next page.",
             "in": "query",
             "name": "after",
             "required": false,
@@ -29610,7 +29694,7 @@
             }
           },
           {
-            "description": "Number of promotion links to return from the end of the window.",
+            "description": "Number of results to return from the end of the range.",
             "in": "query",
             "name": "last",
             "required": false,
@@ -29620,7 +29704,7 @@
             }
           },
           {
-            "description": "Cursor to fetch the page before (from page_info.start_cursor).",
+            "description": "Return results before this cursor. Use `page_info.start_cursor` from the previous response to fetch the previous page.",
             "in": "query",
             "name": "before",
             "required": false,
@@ -29756,7 +29840,7 @@
             }
           },
           {
-            "description": "Number of referred users to return from the start of the window.",
+            "description": "Number of results to return from the start of the range.",
             "in": "query",
             "name": "first",
             "required": false,
@@ -29767,7 +29851,7 @@
             }
           },
           {
-            "description": "Cursor to fetch the page after (from page_info.end_cursor).",
+            "description": "Return results after this cursor. Use `page_info.end_cursor` from the previous response to fetch the next page.",
             "in": "query",
             "name": "after",
             "required": false,
@@ -29776,7 +29860,7 @@
             }
           },
           {
-            "description": "Number of referred users to return from the end of the window.",
+            "description": "Number of results to return from the end of the range.",
             "in": "query",
             "name": "last",
             "required": false,
@@ -29786,7 +29870,7 @@
             }
           },
           {
-            "description": "Cursor to fetch the page before (from page_info.start_cursor).",
+            "description": "Return results before this cursor. Use `page_info.start_cursor` from the previous response to fetch the previous page.",
             "in": "query",
             "name": "before",
             "required": false,
@@ -30127,7 +30211,7 @@
             }
           },
           {
-            "description": "Number of domains to return from the start of the window.",
+            "description": "Number of results to return from the start of the range.",
             "in": "query",
             "name": "first",
             "required": false,
@@ -30138,7 +30222,7 @@
             }
           },
           {
-            "description": "Cursor to paginate forwards from.",
+            "description": "Return results after this cursor. Use `page_info.end_cursor` from the previous response to fetch the next page.",
             "in": "query",
             "name": "after",
             "required": false,
@@ -30147,7 +30231,7 @@
             }
           },
           {
-            "description": "Number of domains to return from the end of the window.",
+            "description": "Number of results to return from the end of the range.",
             "in": "query",
             "name": "last",
             "required": false,
@@ -30157,7 +30241,7 @@
             }
           },
           {
-            "description": "Cursor to paginate backwards from.",
+            "description": "Return results before this cursor. Use `page_info.start_cursor` from the previous response to fetch the previous page.",
             "in": "query",
             "name": "before",
             "required": false,
@@ -30556,6 +30640,813 @@
         ]
       }
     },
+    "/payment_rules": {
+      "get": {
+        "operationId": "listPaymentRules",
+        "parameters": [
+          {
+            "description": "Only return rules belonging to this account. Defaults to the account the request is acting for.",
+            "in": "query",
+            "name": "account_id",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Only return rules with this status.",
+            "in": "query",
+            "name": "status",
+            "required": false,
+            "schema": {
+              "enum": [
+                "active",
+                "inactive",
+                "deleted"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "description": "Only return rules that take this action.",
+            "in": "query",
+            "name": "action",
+            "required": false,
+            "schema": {
+              "enum": [
+                "allow",
+                "block",
+                "enforce_3ds"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "description": "The field to sort by.",
+            "in": "query",
+            "name": "order",
+            "required": false,
+            "schema": {
+              "enum": [
+                "created_at"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "description": "The sort direction.",
+            "in": "query",
+            "name": "direction",
+            "required": false,
+            "schema": {
+              "enum": [
+                "asc",
+                "desc"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "description": "Number of results to return from the start of the range.",
+            "in": "query",
+            "name": "first",
+            "required": false,
+            "schema": {
+              "default": 20,
+              "maximum": 100,
+              "type": "integer"
+            }
+          },
+          {
+            "description": "Return results after this cursor. Use `page_info.end_cursor` from the previous response to fetch the next page.",
+            "in": "query",
+            "name": "after",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Number of results to return from the end of the range.",
+            "in": "query",
+            "name": "last",
+            "required": false,
+            "schema": {
+              "maximum": 100,
+              "type": "integer"
+            }
+          },
+          {
+            "description": "Return results before this cursor. Use `page_info.start_cursor` from the previous response to fetch the previous page.",
+            "in": "query",
+            "name": "before",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "data": {
+                      "items": {
+                        "$ref": "#/components/schemas/PaymentRule"
+                      },
+                      "type": "array"
+                    },
+                    "page_info": {
+                      "properties": {
+                        "end_cursor": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "has_next_page": {
+                          "example": false,
+                          "type": "boolean"
+                        },
+                        "has_previous_page": {
+                          "example": false,
+                          "type": "boolean"
+                        },
+                        "start_cursor": {
+                          "example": "WyJjdXJzb3IiLDFd",
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "end_cursor",
+                        "start_cursor",
+                        "has_next_page",
+                        "has_previous_page"
+                      ],
+                      "type": "object"
+                    }
+                  },
+                  "required": [
+                    "data",
+                    "page_info"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "A list of payment rules"
+          },
+          "400": {
+            "$ref": "#/components/responses/InvalidParameters",
+            "description": "The status filter is not a known status"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "List payment rules",
+        "tags": [
+          "Payment Rules"
+        ],
+        "x-mint": {
+          "metadata": {
+            "sidebarTitle": "List",
+            "title": "List Payment Rules"
+          }
+        }
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/ApiVersionDate"
+        }
+      ],
+      "post": {
+        "operationId": "createPaymentRule",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/IdempotencyKey"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "additionalProperties": false,
+                "properties": {
+                  "account_id": {
+                    "description": "The account to create the rule on. Defaults to the account the request is acting for.",
+                    "example": "biz_xxxxxxxxxxxxxx",
+                    "type": "string"
+                  },
+                  "action": {
+                    "description": "What happens to a payment when every condition matches. An `allow` overrides this account's other rules only, never Whop's own fraud controls. An `enforce_3ds` is skipped where the payment cannot carry a challenge.",
+                    "enum": [
+                      "allow",
+                      "block",
+                      "enforce_3ds"
+                    ],
+                    "example": "block",
+                    "type": "string"
+                  },
+                  "conditions": {
+                    "additionalProperties": false,
+                    "description": "The conditions a payment is matched against. Up to 10 conditions, and 8 KiB once serialized.",
+                    "properties": {
+                      "all": {
+                        "items": {
+                          "additionalProperties": false,
+                          "properties": {
+                            "field": {
+                              "description": "The payment attribute this condition reads.",
+                              "enum": [
+                                "risk_score",
+                                "card_country",
+                                "customer_email"
+                              ],
+                              "example": "risk_score",
+                              "type": "string"
+                            },
+                            "operator": {
+                              "description": "How the payment attribute is compared to the value.",
+                              "enum": [
+                                "eq",
+                                "neq",
+                                "gt",
+                                "gte",
+                                "lt",
+                                "lte",
+                                "in",
+                                "not_in",
+                                "contains",
+                                "starts_with",
+                                "ends_with"
+                              ],
+                              "example": "gte",
+                              "type": "string"
+                            },
+                            "value": {
+                              "$ref": "#/components/schemas/PaymentRuleConditionValue"
+                            }
+                          },
+                          "required": [
+                            "field",
+                            "operator",
+                            "value"
+                          ],
+                          "type": "object"
+                        },
+                        "maxItems": 10,
+                        "minItems": 1,
+                        "type": "array"
+                      }
+                    },
+                    "required": [
+                      "all"
+                    ],
+                    "type": "object"
+                  },
+                  "metadata": {
+                    "additionalProperties": {
+                      "type": "string"
+                    },
+                    "description": "Custom string-to-string values for your integration. Maximum 50 keys, 40 characters per key, 500 characters per value.",
+                    "example": {
+                      "team": "risk"
+                    },
+                    "type": "object"
+                  },
+                  "name": {
+                    "description": "A name for this rule. Up to 255 characters.",
+                    "example": "Block high risk",
+                    "maxLength": 255,
+                    "minLength": 1,
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "name",
+                  "action",
+                  "conditions"
+                ],
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaymentRule"
+                }
+              }
+            },
+            "description": "The created rule"
+          },
+          "400": {
+            "$ref": "#/components/responses/InvalidParameters",
+            "description": "The action is not a supported action"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden",
+            "description": "The caller cannot write to this account"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Create a payment rule",
+        "tags": [
+          "Payment Rules"
+        ],
+        "x-mint": {
+          "metadata": {
+            "sidebarTitle": "Create",
+            "title": "Create a Payment Rule"
+          }
+        }
+      }
+    },
+    "/payment_rules/fields": {
+      "get": {
+        "description": "Small and returned in full on one page.",
+        "operationId": "listPaymentRuleFields",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "data": {
+                      "items": {
+                        "$ref": "#/components/schemas/PaymentRuleField"
+                      },
+                      "type": "array"
+                    },
+                    "page_info": {
+                      "properties": {
+                        "end_cursor": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "has_next_page": {
+                          "example": false,
+                          "type": "boolean"
+                        },
+                        "has_previous_page": {
+                          "example": false,
+                          "type": "boolean"
+                        },
+                        "start_cursor": {
+                          "example": "WyJjdXJzb3IiLDFd",
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "end_cursor",
+                        "start_cursor",
+                        "has_next_page",
+                        "has_previous_page"
+                      ],
+                      "type": "object"
+                    }
+                  },
+                  "required": [
+                    "data",
+                    "page_info"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "The fields a condition can read, with the operators and values each one accepts"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "List fields",
+        "tags": [
+          "Payment Rules"
+        ],
+        "x-mint": {
+          "metadata": {
+            "title": "List Fields",
+            "sidebarTitle": "List Fields"
+          }
+        }
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/ApiVersionDate"
+        }
+      ]
+    },
+    "/payment_rules/{id}": {
+      "delete": {
+        "description": "The rule stops applying to new payments and is kept, so the payments it already decided still name it.",
+        "operationId": "deletePaymentRule",
+        "responses": {
+          "200": {
+            "description": "The deleted rule"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Delete a payment rule",
+        "tags": [
+          "Payment Rules"
+        ],
+        "x-mint": {
+          "metadata": {
+            "sidebarTitle": "Delete",
+            "title": "Delete a Payment Rule"
+          }
+        }
+      },
+      "get": {
+        "operationId": "retrievePaymentRule",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaymentRule"
+                }
+              }
+            },
+            "description": "A partner can read a rule without being able to write one"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound",
+            "description": "No rule with this ID"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Retrieve a payment rule",
+        "tags": [
+          "Payment Rules"
+        ],
+        "x-mint": {
+          "metadata": {
+            "sidebarTitle": "Retrieve",
+            "title": "Retrieve a Payment Rule"
+          }
+        }
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/ApiVersionDate"
+        },
+        {
+          "description": "The payment rule ID.",
+          "in": "path",
+          "name": "id",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "patch": {
+        "description": "Changes the rule's name or metadata, keeping its ID and everything recorded against it. What the rule *does* is fixed once created, so the payments it decided keep naming the rule that decided them; use replace to change that.",
+        "operationId": "updatePaymentRule",
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "additionalProperties": false,
+                "properties": {
+                  "metadata": {
+                    "additionalProperties": {
+                      "type": "string"
+                    },
+                    "description": "Custom string-to-string values for your integration. Maximum 50 keys, 40 characters per key, 500 characters per value.",
+                    "example": {
+                      "team": "risk"
+                    },
+                    "type": "object"
+                  },
+                  "name": {
+                    "description": "A name for this rule. Up to 255 characters.",
+                    "example": "Block high risk",
+                    "maxLength": 255,
+                    "minLength": 1,
+                    "type": "string"
+                  }
+                },
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaymentRule"
+                }
+              }
+            },
+            "description": "The updated rule"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Update a payment rule",
+        "tags": [
+          "Payment Rules"
+        ],
+        "x-mint": {
+          "metadata": {
+            "sidebarTitle": "Update",
+            "title": "Update a Payment Rule"
+          }
+        }
+      }
+    },
+    "/payment_rules/{id}/activate": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/ApiVersionDate"
+        },
+        {
+          "description": "The payment rule ID.",
+          "in": "path",
+          "name": "id",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "post": {
+        "operationId": "activatePaymentRule",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/IdempotencyKey"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaymentRule"
+                }
+              }
+            },
+            "description": "The activated rule"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Activate a payment rule",
+        "tags": [
+          "Payment Rules"
+        ],
+        "x-mint": {
+          "metadata": {
+            "sidebarTitle": "Activate",
+            "title": "Activate a Payment Rule"
+          }
+        }
+      }
+    },
+    "/payment_rules/{id}/deactivate": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/ApiVersionDate"
+        },
+        {
+          "description": "The payment rule ID.",
+          "in": "path",
+          "name": "id",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "post": {
+        "description": "The rule stops applying to new payments. It keeps its ID and can be activated again.",
+        "operationId": "deactivatePaymentRule",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/IdempotencyKey"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaymentRule"
+                }
+              }
+            },
+            "description": "The deactivated rule"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Deactivate a payment rule",
+        "tags": [
+          "Payment Rules"
+        ],
+        "x-mint": {
+          "metadata": {
+            "sidebarTitle": "Deactivate",
+            "title": "Deactivate a Payment Rule"
+          }
+        }
+      }
+    },
+    "/payment_rules/{id}/replace": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/ApiVersionDate"
+        },
+        {
+          "description": "The payment rule ID.",
+          "in": "path",
+          "name": "id",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "post": {
+        "description": "Deletes this rule and creates its successor in one step. The successor carries a new ID and the metadata of the rule it replaced,.",
+        "operationId": "replacePaymentRule",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/IdempotencyKey"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "additionalProperties": false,
+                "properties": {
+                  "action": {
+                    "description": "What happens to a payment when every condition matches. An `allow` overrides this account's other rules only, never Whop's own fraud controls. An `enforce_3ds` is skipped where the payment cannot carry a challenge.",
+                    "enum": [
+                      "allow",
+                      "block",
+                      "enforce_3ds"
+                    ],
+                    "example": "block",
+                    "type": "string"
+                  },
+                  "conditions": {
+                    "additionalProperties": false,
+                    "description": "The conditions a payment is matched against. Up to 10 conditions, and 8 KiB once serialized.",
+                    "properties": {
+                      "all": {
+                        "items": {
+                          "additionalProperties": false,
+                          "properties": {
+                            "field": {
+                              "description": "The payment attribute this condition reads.",
+                              "enum": [
+                                "risk_score",
+                                "card_country",
+                                "customer_email"
+                              ],
+                              "example": "risk_score",
+                              "type": "string"
+                            },
+                            "operator": {
+                              "description": "How the payment attribute is compared to the value.",
+                              "enum": [
+                                "eq",
+                                "neq",
+                                "gt",
+                                "gte",
+                                "lt",
+                                "lte",
+                                "in",
+                                "not_in",
+                                "contains",
+                                "starts_with",
+                                "ends_with"
+                              ],
+                              "example": "gte",
+                              "type": "string"
+                            },
+                            "value": {
+                              "$ref": "#/components/schemas/PaymentRuleConditionValue"
+                            }
+                          },
+                          "required": [
+                            "field",
+                            "operator",
+                            "value"
+                          ],
+                          "type": "object"
+                        },
+                        "maxItems": 10,
+                        "minItems": 1,
+                        "type": "array"
+                      }
+                    },
+                    "required": [
+                      "all"
+                    ],
+                    "type": "object"
+                  }
+                },
+                "required": [
+                  "action",
+                  "conditions"
+                ],
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaymentRule"
+                }
+              }
+            },
+            "description": "The rule that replaced this one"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict",
+            "description": "The rule was already replaced or deleted"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Replace a payment rule",
+        "tags": [
+          "Payment Rules"
+        ],
+        "x-mint": {
+          "metadata": {
+            "sidebarTitle": "Replace",
+            "title": "Replace a Payment Rule"
+          }
+        }
+      }
+    },
     "/payments": {
       "get": {
         "description": "Lists payments, newest first. Without filters this is every payment the caller can read: a company credential's own account, or for a user every account they can read payments for. Filters narrow by account, buyer, product, plan, membership, status, billing reason, currency, and creation window. Filtering by `billing_reason=subscription_cycle` also matches renewals recorded as `subscription_update`. `settlement_time_at` is null on list rows — retrieve the payment for it.",
@@ -30716,16 +31607,18 @@
             }
           },
           {
-            "description": "The number of payments to return.",
+            "description": "Number of results to return from the start of the range.",
             "in": "query",
             "name": "first",
             "required": false,
             "schema": {
+              "default": 20,
+              "maximum": 100,
               "type": "integer"
             }
           },
           {
-            "description": "A cursor; returns payments after this position.",
+            "description": "Return results after this cursor. Use `page_info.end_cursor` from the previous response to fetch the next page.",
             "in": "query",
             "name": "after",
             "required": false,
@@ -30734,16 +31627,17 @@
             }
           },
           {
-            "description": "The number of payments to return from the end of the range.",
+            "description": "Number of results to return from the end of the range.",
             "in": "query",
             "name": "last",
             "required": false,
             "schema": {
+              "maximum": 100,
               "type": "integer"
             }
           },
           {
-            "description": "A cursor; returns payments before this position.",
+            "description": "Return results before this cursor. Use `page_info.start_cursor` from the previous response to fetch the previous page.",
             "in": "query",
             "name": "before",
             "required": false,
@@ -32071,7 +32965,7 @@
             }
           },
           {
-            "description": "Number of payouts to return from the start of the window.",
+            "description": "Number of results to return from the start of the range.",
             "in": "query",
             "name": "first",
             "required": false,
@@ -32082,7 +32976,7 @@
             }
           },
           {
-            "description": "Cursor to fetch the page after (from page_info.end_cursor).",
+            "description": "Return results after this cursor. Use `page_info.end_cursor` from the previous response to fetch the next page.",
             "in": "query",
             "name": "after",
             "required": false,
@@ -32091,7 +32985,7 @@
             }
           },
           {
-            "description": "Number of payouts to return from the end of the window.",
+            "description": "Number of results to return from the end of the range.",
             "in": "query",
             "name": "last",
             "required": false,
@@ -32101,7 +32995,7 @@
             }
           },
           {
-            "description": "Cursor to fetch the page before (from page_info.start_cursor).",
+            "description": "Return results before this cursor. Use `page_info.start_cursor` from the previous response to fetch the previous page.",
             "in": "query",
             "name": "before",
             "required": false,
@@ -33106,7 +34000,7 @@
             }
           },
           {
-            "description": "Number of payout methods to return from the start of the window.",
+            "description": "Number of results to return from the start of the range.",
             "in": "query",
             "name": "first",
             "required": false,
@@ -33117,7 +34011,7 @@
             }
           },
           {
-            "description": "Cursor to fetch the page after (from page_info.end_cursor).",
+            "description": "Return results after this cursor. Use `page_info.end_cursor` from the previous response to fetch the next page.",
             "in": "query",
             "name": "after",
             "required": false,
@@ -33126,7 +34020,7 @@
             }
           },
           {
-            "description": "Number of payout methods to return from the end of the window.",
+            "description": "Number of results to return from the end of the range.",
             "in": "query",
             "name": "last",
             "required": false,
@@ -33136,7 +34030,7 @@
             }
           },
           {
-            "description": "Cursor to fetch the page before (from page_info.start_cursor).",
+            "description": "Return results before this cursor. Use `page_info.start_cursor` from the previous response to fetch the previous page.",
             "in": "query",
             "name": "before",
             "required": false,
@@ -34774,7 +35668,7 @@
             }
           },
           {
-            "description": "Number of supported payout methods to return from the start of the window.",
+            "description": "Number of results to return from the start of the range.",
             "in": "query",
             "name": "first",
             "required": false,
@@ -34785,7 +35679,7 @@
             }
           },
           {
-            "description": "Cursor to fetch the page after (from page_info.end_cursor).",
+            "description": "Return results after this cursor. Use `page_info.end_cursor` from the previous response to fetch the next page.",
             "in": "query",
             "name": "after",
             "required": false,
@@ -34794,7 +35688,7 @@
             }
           },
           {
-            "description": "Number of supported payout methods to return from the end of the window.",
+            "description": "Number of results to return from the end of the range.",
             "in": "query",
             "name": "last",
             "required": false,
@@ -34804,7 +35698,7 @@
             }
           },
           {
-            "description": "Cursor to fetch the page before (from page_info.start_cursor).",
+            "description": "Return results before this cursor. Use `page_info.start_cursor` from the previous response to fetch the previous page.",
             "in": "query",
             "name": "before",
             "required": false,
@@ -36212,16 +37106,18 @@
             }
           },
           {
-            "description": "The number of people to return (default 100, max 100).",
+            "description": "Number of results to return from the start of the range.",
             "in": "query",
             "name": "first",
             "required": false,
             "schema": {
+              "default": 100,
+              "maximum": 100,
               "type": "integer"
             }
           },
           {
-            "description": "A cursor for fetching people after a previous page.",
+            "description": "Return results after this cursor. Use `page_info.end_cursor` from the previous response to fetch the next page.",
             "in": "query",
             "name": "after",
             "required": false,
@@ -36230,7 +37126,7 @@
             }
           },
           {
-            "description": "A cursor for fetching people before a later page.",
+            "description": "Return results before this cursor. Use `page_info.start_cursor` from the previous response to fetch the previous page.",
             "in": "query",
             "name": "before",
             "required": false,
@@ -38054,16 +38950,18 @@
             }
           },
           {
-            "description": "The number of plans to return (default and max 100).",
+            "description": "Number of results to return from the start of the range.",
             "in": "query",
             "name": "first",
             "required": false,
             "schema": {
+              "default": 20,
+              "maximum": 100,
               "type": "integer"
             }
           },
           {
-            "description": "A cursor; returns plans after this position.",
+            "description": "Return results after this cursor. Use `page_info.end_cursor` from the previous response to fetch the next page.",
             "in": "query",
             "name": "after",
             "required": false,
@@ -38072,16 +38970,17 @@
             }
           },
           {
-            "description": "The number of plans to return from the end of the range.",
+            "description": "Number of results to return from the end of the range.",
             "in": "query",
             "name": "last",
             "required": false,
             "schema": {
+              "maximum": 100,
               "type": "integer"
             }
           },
           {
-            "description": "A cursor; returns plans before this position.",
+            "description": "Return results before this cursor. Use `page_info.start_cursor` from the previous response to fetch the previous page.",
             "in": "query",
             "name": "before",
             "required": false,
@@ -38417,12 +39316,14 @@
                     ]
                   },
                   "three_ds_level": {
-                    "description": "3D Secure behavior for this plan. Send `null` to inherit the account default.",
+                    "description": "3D Secure behavior for supported on-session card payments. `mandate_challenge` requires a 3DS challenge before payment processing; `mandate_if_required` mandates a challenge only when the payment processor requires it; `frictionless_if_required` uses the regular frictionless 3DS flow. Payments of $1,000 or more use `mandate_if_required` unless `mandate_challenge` is selected. Risk and authentication recovery requirements can override the preference. Send `null` to inherit the account default.",
                     "enum": [
                       "mandate_challenge",
-                      "frictionless"
+                      "mandate_if_required",
+                      "frictionless_if_required",
+                      null
                     ],
-                    "example": "frictionless",
+                    "example": "frictionless_if_required",
                     "type": [
                       "string",
                       "null"
@@ -38874,12 +39775,14 @@
                     ]
                   },
                   "three_ds_level": {
-                    "description": "3D Secure behavior for this plan. Send `null` to inherit the account default.",
+                    "description": "3D Secure behavior for supported on-session card payments. `mandate_challenge` requires a 3DS challenge before payment processing; `mandate_if_required` mandates a challenge only when the payment processor requires it; `frictionless_if_required` uses the regular frictionless 3DS flow. Payments of $1,000 or more use `mandate_if_required` unless `mandate_challenge` is selected. Risk and authentication recovery requirements can override the preference. Send `null` to inherit the account default.",
                     "enum": [
                       "mandate_challenge",
-                      "frictionless"
+                      "mandate_if_required",
+                      "frictionless_if_required",
+                      null
                     ],
-                    "example": "frictionless",
+                    "example": "frictionless_if_required",
                     "type": [
                       "string",
                       "null"
@@ -39430,16 +40333,18 @@
             }
           },
           {
-            "description": "The number of products to return (default and max 100).",
+            "description": "Number of results to return from the start of the range.",
             "in": "query",
             "name": "first",
             "required": false,
             "schema": {
+              "default": 20,
+              "maximum": 100,
               "type": "integer"
             }
           },
           {
-            "description": "A cursor; returns products after this position.",
+            "description": "Return results after this cursor. Use `page_info.end_cursor` from the previous response to fetch the next page.",
             "in": "query",
             "name": "after",
             "required": false,
@@ -39448,16 +40353,17 @@
             }
           },
           {
-            "description": "The number of products to return from the end of the range.",
+            "description": "Number of results to return from the end of the range.",
             "in": "query",
             "name": "last",
             "required": false,
             "schema": {
+              "maximum": 100,
               "type": "integer"
             }
           },
           {
-            "description": "A cursor; returns products before this position.",
+            "description": "Return results before this cursor. Use `page_info.start_cursor` from the previous response to fetch the previous page.",
             "in": "query",
             "name": "before",
             "required": false,
@@ -40344,7 +41250,7 @@
             }
           },
           {
-            "description": "Number of promo codes to return from the start of the window.",
+            "description": "Number of results to return from the start of the range.",
             "in": "query",
             "name": "first",
             "required": false,
@@ -40355,7 +41261,7 @@
             }
           },
           {
-            "description": "Cursor to paginate forwards from.",
+            "description": "Return results after this cursor. Use `page_info.end_cursor` from the previous response to fetch the next page.",
             "in": "query",
             "name": "after",
             "required": false,
@@ -40364,7 +41270,7 @@
             }
           },
           {
-            "description": "Number of promo codes to return from the end of the window.",
+            "description": "Number of results to return from the end of the range.",
             "in": "query",
             "name": "last",
             "required": false,
@@ -40374,7 +41280,7 @@
             }
           },
           {
-            "description": "Cursor to paginate backwards from.",
+            "description": "Return results before this cursor. Use `page_info.start_cursor` from the previous response to fetch the previous page.",
             "in": "query",
             "name": "before",
             "required": false,
@@ -40881,6 +41787,11 @@
         "tags": [
           "Promo Codes"
         ],
+        "x-mint": {
+          "metadata": {
+            "sidebarTitle": "Activate"
+          }
+        },
         "x-codeSamples": [
           {
             "lang": "TypeScript",
@@ -40938,6 +41849,11 @@
         "tags": [
           "Promo Codes"
         ],
+        "x-mint": {
+          "metadata": {
+            "sidebarTitle": "Deactivate"
+          }
+        },
         "x-codeSamples": [
           {
             "lang": "TypeScript",
@@ -41024,16 +41940,18 @@
             }
           },
           {
-            "description": "The number of refunds to return.",
+            "description": "Number of results to return from the start of the range.",
             "in": "query",
             "name": "first",
             "required": false,
             "schema": {
+              "default": 20,
+              "maximum": 100,
               "type": "integer"
             }
           },
           {
-            "description": "A cursor; returns refunds after this position.",
+            "description": "Return results after this cursor. Use `page_info.end_cursor` from the previous response to fetch the next page.",
             "in": "query",
             "name": "after",
             "required": false,
@@ -41042,16 +41960,17 @@
             }
           },
           {
-            "description": "The number of refunds to return from the end of the range.",
+            "description": "Number of results to return from the end of the range.",
             "in": "query",
             "name": "last",
             "required": false,
             "schema": {
+              "maximum": 100,
               "type": "integer"
             }
           },
           {
-            "description": "A cursor; returns refunds before this position.",
+            "description": "Return results before this cursor. Use `page_info.start_cursor` from the previous response to fetch the previous page.",
             "in": "query",
             "name": "before",
             "required": false,
@@ -41244,16 +42163,18 @@
             }
           },
           {
-            "description": "The number of cases to return (default 20, max 100).",
+            "description": "Number of results to return from the start of the range.",
             "in": "query",
             "name": "first",
             "required": false,
             "schema": {
+              "default": 20,
+              "maximum": 100,
               "type": "integer"
             }
           },
           {
-            "description": "A cursor; returns cases after this position.",
+            "description": "Return results after this cursor. Use `page_info.end_cursor` from the previous response to fetch the next page.",
             "in": "query",
             "name": "after",
             "required": false,
@@ -41262,16 +42183,17 @@
             }
           },
           {
-            "description": "The number of cases to return from the end of the range.",
+            "description": "Number of results to return from the end of the range.",
             "in": "query",
             "name": "last",
             "required": false,
             "schema": {
+              "maximum": 100,
               "type": "integer"
             }
           },
           {
-            "description": "A cursor; returns cases before this position.",
+            "description": "Return results before this cursor. Use `page_info.start_cursor` from the previous response to fetch the previous page.",
             "in": "query",
             "name": "before",
             "required": false,
@@ -42215,16 +43137,18 @@
             "$ref": "#/components/parameters/ApiVersionDate"
           },
           {
-            "description": "The number of events to return (default 20, max 100).",
+            "description": "Number of results to return from the start of the range.",
             "in": "query",
             "name": "first",
             "required": false,
             "schema": {
+              "default": 20,
+              "maximum": 100,
               "type": "integer"
             }
           },
           {
-            "description": "A cursor; returns events after this position.",
+            "description": "Return results after this cursor. Use `page_info.end_cursor` from the previous response to fetch the next page.",
             "in": "query",
             "name": "after",
             "required": false,
@@ -42233,16 +43157,17 @@
             }
           },
           {
-            "description": "The number of events to return from the end of the range.",
+            "description": "Number of results to return from the end of the range.",
             "in": "query",
             "name": "last",
             "required": false,
             "schema": {
+              "maximum": 100,
               "type": "integer"
             }
           },
           {
-            "description": "A cursor; returns events before this position.",
+            "description": "Return results before this cursor. Use `page_info.start_cursor` from the previous response to fetch the previous page.",
             "in": "query",
             "name": "before",
             "required": false,
@@ -42846,16 +43771,18 @@
             }
           },
           {
-            "description": "The number of shipments to return.",
+            "description": "Number of results to return from the start of the range.",
             "in": "query",
             "name": "first",
             "required": false,
             "schema": {
+              "default": 20,
+              "maximum": 100,
               "type": "integer"
             }
           },
           {
-            "description": "A cursor; returns shipments after this position.",
+            "description": "Return results after this cursor. Use `page_info.end_cursor` from the previous response to fetch the next page.",
             "in": "query",
             "name": "after",
             "required": false,
@@ -42864,16 +43791,17 @@
             }
           },
           {
-            "description": "The number of shipments to return from the end of the range.",
+            "description": "Number of results to return from the end of the range.",
             "in": "query",
             "name": "last",
             "required": false,
             "schema": {
+              "maximum": 100,
               "type": "integer"
             }
           },
           {
-            "description": "A cursor; returns shipments before this position.",
+            "description": "Return results before this cursor. Use `page_info.start_cursor` from the previous response to fetch the previous page.",
             "in": "query",
             "name": "before",
             "required": false,
@@ -43282,7 +44210,7 @@
             }
           },
           {
-            "description": "The number of social accounts to return.",
+            "description": "Number of results to return from the start of the range.",
             "in": "query",
             "name": "first",
             "required": false,
@@ -43293,7 +44221,7 @@
             }
           },
           {
-            "description": "Cursor to fetch the page after (from page_info.end_cursor).",
+            "description": "Return results after this cursor. Use `page_info.end_cursor` from the previous response to fetch the next page.",
             "in": "query",
             "name": "after",
             "required": false,
@@ -43302,7 +44230,7 @@
             }
           },
           {
-            "description": "The number of social accounts to return from the end of the range.",
+            "description": "Number of results to return from the end of the range.",
             "in": "query",
             "name": "last",
             "required": false,
@@ -43312,7 +44240,7 @@
             }
           },
           {
-            "description": "Cursor to fetch the page before (from page_info.start_cursor).",
+            "description": "Return results before this cursor. Use `page_info.start_cursor` from the previous response to fetch the previous page.",
             "in": "query",
             "name": "before",
             "required": false,
@@ -43860,7 +44788,7 @@
             }
           },
           {
-            "description": "The number of posts to return.",
+            "description": "Number of results to return from the start of the range.",
             "in": "query",
             "name": "first",
             "required": false,
@@ -43871,7 +44799,7 @@
             }
           },
           {
-            "description": "Cursor to fetch the page after (from page_info.end_cursor).",
+            "description": "Return results after this cursor. Use `page_info.end_cursor` from the previous response to fetch the next page.",
             "in": "query",
             "name": "after",
             "required": false,
@@ -45431,16 +46359,18 @@
             }
           },
           {
-            "description": "Number of members to return. Defaults to 20; maximum 100.",
+            "description": "Number of results to return from the start of the range.",
             "in": "query",
             "name": "first",
             "required": false,
             "schema": {
+              "default": 20,
+              "maximum": 100,
               "type": "integer"
             }
           },
           {
-            "description": "Cursor for the next page of members.",
+            "description": "Return results after this cursor. Use `page_info.end_cursor` from the previous response to fetch the next page.",
             "in": "query",
             "name": "after",
             "required": false,
@@ -45449,7 +46379,7 @@
             }
           },
           {
-            "description": "Number of members to return from the end of the window.",
+            "description": "Number of results to return from the end of the range.",
             "in": "query",
             "name": "last",
             "required": false,
@@ -45459,7 +46389,7 @@
             }
           },
           {
-            "description": "Cursor to paginate backwards from.",
+            "description": "Return results before this cursor. Use `page_info.start_cursor` from the previous response to fetch the previous page.",
             "in": "query",
             "name": "before",
             "required": false,
@@ -45956,18 +46886,18 @@
             }
           },
           {
-            "description": "Number of transfers to return from the start of the window.",
+            "description": "Number of results to return from the start of the range.",
             "in": "query",
             "name": "first",
             "required": false,
             "schema": {
-              "default": 50,
-              "maximum": 50,
+              "default": 20,
+              "maximum": 100,
               "type": "integer"
             }
           },
           {
-            "description": "Cursor to fetch the page after (from page_info.end_cursor).",
+            "description": "Return results after this cursor. Use `page_info.end_cursor` from the previous response to fetch the next page.",
             "in": "query",
             "name": "after",
             "required": false,
@@ -45976,17 +46906,17 @@
             }
           },
           {
-            "description": "Number of transfers to return from the end of the window.",
+            "description": "Number of results to return from the end of the range.",
             "in": "query",
             "name": "last",
             "required": false,
             "schema": {
-              "maximum": 50,
+              "maximum": 100,
               "type": "integer"
             }
           },
           {
-            "description": "Cursor to fetch the page before (from page_info.start_cursor).",
+            "description": "Return results before this cursor. Use `page_info.start_cursor` from the previous response to fetch the previous page.",
             "in": "query",
             "name": "before",
             "required": false,
@@ -46878,7 +47808,7 @@
             }
           },
           {
-            "description": "Search anyone on Whop by name or username, plus your own accounts by name or ID. An exact business ID (`biz_`) returns that business first. Omit it to get the team around the balance, the people you follow, and your own accounts. The list is the same whether the balance belongs to a company or to you. Searching from a `biz_` origin additionally requires the member:basic:read scope. A credential scoped to a single company is the exception to the search itself: it only ever sees that company's own people. Complete email addresses return no matches.",
+            "description": "Search anyone on Whop by name or username, plus your own accounts by name or ID. An exact business ID (`biz_`) returns that business first. Omit it to get the team around the balance, the people you follow, and your own accounts. The list is the same whether the balance belongs to a company or to you. Searching from a `biz_` origin additionally requires the member:basic:read scope. A credential scoped to a single company is the exception to the search itself: it only ever sees that company's own people. Complete email addresses return no matches. Search results are limited to 20 recipients.",
             "in": "query",
             "name": "query",
             "required": false,
@@ -46887,7 +47817,7 @@
             }
           },
           {
-            "description": "Number of recipients per page. Search queries preserve the dashboard's 20-result maximum.",
+            "description": "Number of results to return from the start of the range.",
             "in": "query",
             "name": "first",
             "required": false,
@@ -46898,7 +47828,7 @@
             }
           },
           {
-            "description": "Cursor to fetch the page after (from page_info.end_cursor).",
+            "description": "Return results after this cursor. Use `page_info.end_cursor` from the previous response to fetch the next page.",
             "in": "query",
             "name": "after",
             "required": false,
@@ -47495,16 +48425,18 @@
             }
           },
           {
-            "description": "The number of users to return (max 50).",
+            "description": "Number of results to return from the start of the range.",
             "in": "query",
             "name": "first",
             "required": false,
             "schema": {
+              "default": 20,
+              "maximum": 100,
               "type": "integer"
             }
           },
           {
-            "description": "A cursor; returns users after this position.",
+            "description": "Return results after this cursor. Use `page_info.end_cursor` from the previous response to fetch the next page.",
             "in": "query",
             "name": "after",
             "required": false,
@@ -47513,16 +48445,17 @@
             }
           },
           {
-            "description": "The number of users to return from the end of the range.",
+            "description": "Number of results to return from the end of the range.",
             "in": "query",
             "name": "last",
             "required": false,
             "schema": {
+              "maximum": 100,
               "type": "integer"
             }
           },
           {
-            "description": "A cursor; returns users before this position.",
+            "description": "Return results before this cursor. Use `page_info.start_cursor` from the previous response to fetch the previous page.",
             "in": "query",
             "name": "before",
             "required": false,
@@ -47635,16 +48568,18 @@
             }
           },
           {
-            "description": "The number of grants to return (default 20, max 100).",
+            "description": "Number of results to return from the start of the range.",
             "in": "query",
             "name": "first",
             "required": false,
             "schema": {
+              "default": 20,
+              "maximum": 100,
               "type": "integer"
             }
           },
           {
-            "description": "A cursor; returns grants after this position.",
+            "description": "Return results after this cursor. Use `page_info.end_cursor` from the previous response to fetch the next page.",
             "in": "query",
             "name": "after",
             "required": false,
@@ -47653,16 +48588,17 @@
             }
           },
           {
-            "description": "The number of grants to return from the end of the range.",
+            "description": "Number of results to return from the end of the range.",
             "in": "query",
             "name": "last",
             "required": false,
             "schema": {
+              "maximum": 100,
               "type": "integer"
             }
           },
           {
-            "description": "A cursor; returns grants before this position.",
+            "description": "Return results before this cursor. Use `page_info.start_cursor` from the previous response to fetch the previous page.",
             "in": "query",
             "name": "before",
             "required": false,
@@ -47930,16 +48866,18 @@
         "operationId": "listPasskeys",
         "parameters": [
           {
-            "description": "The number of passkeys to return (default 20, max 100).",
+            "description": "Number of results to return from the start of the range.",
             "in": "query",
             "name": "first",
             "required": false,
             "schema": {
+              "default": 20,
+              "maximum": 100,
               "type": "integer"
             }
           },
           {
-            "description": "A cursor; returns passkeys after this position.",
+            "description": "Return results after this cursor. Use `page_info.end_cursor` from the previous response to fetch the next page.",
             "in": "query",
             "name": "after",
             "required": false,
@@ -47948,16 +48886,17 @@
             }
           },
           {
-            "description": "The number of passkeys to return from the end of the range.",
+            "description": "Number of results to return from the end of the range.",
             "in": "query",
             "name": "last",
             "required": false,
             "schema": {
+              "maximum": 100,
               "type": "integer"
             }
           },
           {
-            "description": "A cursor; returns passkeys before this position.",
+            "description": "Return results before this cursor. Use `page_info.start_cursor` from the previous response to fetch the previous page.",
             "in": "query",
             "name": "before",
             "required": false,
@@ -48667,16 +49606,18 @@
         "operationId": "listUserNotificationExperiencePreferences",
         "parameters": [
           {
-            "description": "The number of preferences to return.",
+            "description": "Number of results to return from the start of the range.",
             "in": "query",
             "name": "first",
             "required": false,
             "schema": {
+              "default": 20,
+              "maximum": 100,
               "type": "integer"
             }
           },
           {
-            "description": "A cursor; returns preferences after this position.",
+            "description": "Return results after this cursor. Use `page_info.end_cursor` from the previous response to fetch the next page.",
             "in": "query",
             "name": "after",
             "required": false,
@@ -48825,16 +49766,18 @@
             }
           },
           {
-            "description": "The number of preferences to return.",
+            "description": "Number of results to return from the start of the range.",
             "in": "query",
             "name": "first",
             "required": false,
             "schema": {
+              "default": 20,
+              "maximum": 100,
               "type": "integer"
             }
           },
           {
-            "description": "A cursor; returns preferences after this position.",
+            "description": "Return results after this cursor. Use `page_info.end_cursor` from the previous response to fetch the next page.",
             "in": "query",
             "name": "after",
             "required": false,
@@ -51802,16 +52745,18 @@
             }
           },
           {
-            "description": "The number of webhooks to return (default 20, max 100).",
+            "description": "Number of results to return from the start of the range.",
             "in": "query",
             "name": "first",
             "required": false,
             "schema": {
+              "default": 20,
+              "maximum": 100,
               "type": "integer"
             }
           },
           {
-            "description": "A cursor; returns webhooks after this position.",
+            "description": "Return results after this cursor. Use `page_info.end_cursor` from the previous response to fetch the next page.",
             "in": "query",
             "name": "after",
             "required": false,
@@ -51820,16 +52765,17 @@
             }
           },
           {
-            "description": "The number of webhooks to return from the end of the range.",
+            "description": "Number of results to return from the end of the range.",
             "in": "query",
             "name": "last",
             "required": false,
             "schema": {
+              "maximum": 100,
               "type": "integer"
             }
           },
           {
-            "description": "A cursor; returns webhooks before this position.",
+            "description": "Return results before this cursor. Use `page_info.start_cursor` from the previous response to fetch the previous page.",
             "in": "query",
             "name": "before",
             "required": false,
@@ -52541,16 +53487,18 @@
         "operationId": "listWebhookDeliveries",
         "parameters": [
           {
-            "description": "The number of deliveries to return (default 50, max 100).",
+            "description": "Number of results to return from the start of the range.",
             "in": "query",
             "name": "first",
             "required": false,
             "schema": {
+              "default": 50,
+              "maximum": 100,
               "type": "integer"
             }
           },
           {
-            "description": "A cursor; returns deliveries after this position.",
+            "description": "Return results after this cursor. Use `page_info.end_cursor` from the previous response to fetch the next page.",
             "in": "query",
             "name": "after",
             "required": false,
@@ -53069,7 +54017,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-13",
+                "api_version_date": "2026-09-15",
                 "data": {
                   "balances": [],
                   "banner_image_url": null,
@@ -53389,7 +54337,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-13",
+                "api_version_date": "2026-09-15",
                 "data": {
                   "balances": [],
                   "banner_image_url": null,
@@ -53709,7 +54657,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-13",
+                "api_version_date": "2026-09-15",
                 "data": {
                   "balances": [],
                   "banner_image_url": null,
@@ -54029,7 +54977,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-13",
+                "api_version_date": "2026-09-15",
                 "data": {
                   "ad_campaign": {
                     "id": "adcamp_xxxxxxxxxxxxxx"
@@ -54454,7 +55402,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-13",
+                "api_version_date": "2026-09-15",
                 "data": {
                   "bid_type": null,
                   "budget_amount": 50,
@@ -54773,7 +55721,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-13",
+                "api_version_date": "2026-09-15",
                 "data": {
                   "bid_type": null,
                   "budget_amount": 50,
@@ -55092,7 +56040,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-13",
+                "api_version_date": "2026-09-15",
                 "data": {
                   "billing": null,
                   "canceled_at": null,
@@ -55488,7 +56436,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-13",
+                "api_version_date": "2026-09-15",
                 "data": {
                   "billing": null,
                   "canceled_at": null,
@@ -55884,7 +56832,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-13",
+                "api_version_date": "2026-09-15",
                 "data": {
                   "billing": null,
                   "canceled_at": null,
@@ -56280,7 +57228,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-13",
+                "api_version_date": "2026-09-15",
                 "data": {
                   "billing": null,
                   "canceled_at": null,
@@ -56676,7 +57624,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-13",
+                "api_version_date": "2026-09-15",
                 "data": {
                   "hosted_url": null,
                   "id": "ciac_xxxxxxxxxxxxxx",
@@ -56844,7 +57792,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-13",
+                "api_version_date": "2026-09-15",
                 "data": {
                   "hosted_url": null,
                   "id": "ciac_xxxxxxxxxxxxxx",
@@ -57012,7 +57960,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-13",
+                "api_version_date": "2026-09-15",
                 "data": {
                   "hosted_url": null,
                   "id": "ciac_xxxxxxxxxxxxxx",
@@ -57180,7 +58128,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-13",
+                "api_version_date": "2026-09-15",
                 "data": {
                   "hosted_url": null,
                   "id": "ciac_xxxxxxxxxxxxxx",
@@ -57348,7 +58296,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-13",
+                "api_version_date": "2026-09-15",
                 "data": {
                   "card_id": "icrd_xxxxxxxxxxxxxx",
                   "cardholder_id": null,
@@ -57486,7 +58434,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-13",
+                "api_version_date": "2026-09-15",
                 "data": {
                   "card_id": "icrd_xxxxxxxxxxxxxx",
                   "cardholder_id": null,
@@ -57624,7 +58572,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-13",
+                "api_version_date": "2026-09-15",
                 "data": {
                   "card_id": "icrd_xxxxxxxxxxxxxx",
                   "cardholder_id": null,
@@ -57762,7 +58710,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-13",
+                "api_version_date": "2026-09-15",
                 "data": {
                   "card_id": "icrd_xxxxxxxxxxxxxx",
                   "cardholder_id": null,
@@ -57900,7 +58848,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-13",
+                "api_version_date": "2026-09-15",
                 "data": {
                   "card_id": "icrd_xxxxxxxxxxxxxx",
                   "cardholder_id": null,
@@ -58038,7 +58986,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-13",
+                "api_version_date": "2026-09-15",
                 "data": {
                   "amount": "75000000000",
                   "available_at": null,
@@ -58178,7 +59126,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-13",
+                "api_version_date": "2026-09-15",
                 "data": {
                   "account_id": "biz_xxxxxxxxxxxxxx",
                   "amount": 150,
@@ -58365,7 +59313,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-13",
+                "api_version_date": "2026-09-15",
                 "data": {
                   "account_id": "biz_xxxxxxxxxxxxxx",
                   "amount": 150,
@@ -58552,7 +59500,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-13",
+                "api_version_date": "2026-09-15",
                 "data": {
                   "account_id": null,
                   "actionable": false,
@@ -58689,7 +59637,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-13",
+                "api_version_date": "2026-09-15",
                 "data": {
                   "created_at": "2026-01-01T12:00:00.000Z",
                   "download_url": "https://s3.amazonaws.com/uploads/exports/members-export.csv",
@@ -58818,7 +59766,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-13",
+                "api_version_date": "2026-09-15",
                 "data": {
                   "created_at": "2026-01-01T12:00:00.000Z",
                   "download_url": null,
@@ -58947,7 +59895,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-13",
+                "api_version_date": "2026-09-15",
                 "data": {
                   "amount": "512345000000",
                   "available_at": "2026-01-01T12:00:00.000Z",
@@ -59092,7 +60040,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-13",
+                "api_version_date": "2026-09-15",
                 "data": {
                   "id": "idpf_xxxxxxxxxxxxxx"
                 },
@@ -59223,7 +60171,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-13",
+                "api_version_date": "2026-09-15",
                 "data": {
                   "access_level": "customer",
                   "account_id": "biz_xxxxxxxxxxxxxx",
@@ -59361,7 +60309,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-13",
+                "api_version_date": "2026-09-15",
                 "data": {
                   "access_level": "customer",
                   "account_id": "biz_xxxxxxxxxxxxxx",
@@ -59499,7 +60447,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-13",
+                "api_version_date": "2026-09-15",
                 "data": {
                   "account": {
                     "id": "biz_xxxxxxxxxxxxxx",
@@ -59638,7 +60586,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-13",
+                "api_version_date": "2026-09-15",
                 "data": {
                   "account": {
                     "id": "biz_xxxxxxxxxxxxxx",
@@ -59783,7 +60731,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-13",
+                "api_version_date": "2026-09-15",
                 "data": {
                   "account": {
                     "id": "biz_xxxxxxxxxxxxxx",
@@ -59922,7 +60870,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-13",
+                "api_version_date": "2026-09-15",
                 "data": {
                   "account": {
                     "id": "biz_xxxxxxxxxxxxxx",
@@ -60067,7 +61015,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-13",
+                "api_version_date": "2026-09-15",
                 "data": {
                   "account_id": "biz_xxxxxxxxxxxxxx",
                   "amount_after_fees": {
@@ -60323,7 +61271,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-13",
+                "api_version_date": "2026-09-15",
                 "data": {
                   "account_id": "biz_xxxxxxxxxxxxxx",
                   "amount_after_fees": {
@@ -60579,7 +61527,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-13",
+                "api_version_date": "2026-09-15",
                 "data": {
                   "account_id": "biz_xxxxxxxxxxxxxx",
                   "amount_after_fees": {
@@ -60835,7 +61783,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-13",
+                "api_version_date": "2026-09-15",
                 "data": {
                   "account_id": "biz_xxxxxxxxxxxxxx",
                   "amount_after_fees": {
@@ -61091,7 +62039,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-13",
+                "api_version_date": "2026-09-15",
                 "data": {
                   "account_id": "biz_xxxxxxxxxxxxxx",
                   "amount_after_fees": {
@@ -61343,7 +62291,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-13",
+                "api_version_date": "2026-09-15",
                 "data": {
                   "account_id": "biz_xxxxxxxxxxxxxx",
                   "amount_after_fees": {
@@ -61599,7 +62547,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-13",
+                "api_version_date": "2026-09-15",
                 "data": {
                   "amount": "10.0",
                   "created_at": "2026-01-01T12:00:00.000Z",
@@ -62072,7 +63020,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-13",
+                "api_version_date": "2026-09-15",
                 "data": {
                   "amount": "10.0",
                   "created_at": "2026-01-01T12:00:00.000Z",
@@ -62542,7 +63490,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-13",
+                "api_version_date": "2026-09-15",
                 "data": {
                   "amount": "10.0",
                   "created_at": "2026-01-01T12:00:00.000Z",
@@ -63008,7 +63956,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-13",
+                "api_version_date": "2026-09-15",
                 "data": {
                   "account_reference": "4483",
                   "bank_verification_state": "no_data",
@@ -63558,7 +64506,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-13",
+                "api_version_date": "2026-09-15",
                 "data": {
                   "account": {
                     "id": "biz_xxxxxxxxxxxxxx",
@@ -63852,7 +64800,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-13",
+                "api_version_date": "2026-09-15",
                 "data": {
                   "account": {
                     "id": "biz_xxxxxxxxxxxxxx",
@@ -64146,7 +65094,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-13",
+                "api_version_date": "2026-09-15",
                 "data": {
                   "account": {
                     "id": "biz_xxxxxxxxxxxxxx",
@@ -64440,7 +65388,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-13",
+                "api_version_date": "2026-09-15",
                 "data": {
                   "account": {
                     "id": "biz_xxxxxxxxxxxxxx",
@@ -64597,7 +65545,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-13",
+                "api_version_date": "2026-09-15",
                 "data": {
                   "account": {
                     "id": "biz_xxxxxxxxxxxxxx",
@@ -64754,7 +65702,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-13",
+                "api_version_date": "2026-09-15",
                 "data": {
                   "account": {
                     "id": "biz_xxxxxxxxxxxxxx",
@@ -64911,7 +65859,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-13",
+                "api_version_date": "2026-09-15",
                 "data": {
                   "account": {
                     "id": "biz_xxxxxxxxxxxxxx",
@@ -65068,7 +66016,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-13",
+                "api_version_date": "2026-09-15",
                 "data": {
                   "account": {
                     "id": "biz_xxxxxxxxxxxxxx",
@@ -65225,7 +66173,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-13",
+                "api_version_date": "2026-09-15",
                 "data": {
                   "account": {
                     "id": "biz_xxxxxxxxxxxxxx",
@@ -65395,7 +66343,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-13",
+                "api_version_date": "2026-09-15",
                 "data": {
                   "account": {
                     "id": "biz_xxxxxxxxxxxxxx",
@@ -65561,7 +66509,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-13",
+                "api_version_date": "2026-09-15",
                 "data": {
                   "account": {
                     "id": "biz_xxxxxxxxxxxxxx",
@@ -65727,7 +66675,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-13",
+                "api_version_date": "2026-09-15",
                 "data": {
                   "account_id": "biz_xxxxxxxxxxxxxx",
                   "carrier": "ups",
@@ -65858,7 +66806,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-13",
+                "api_version_date": "2026-09-15",
                 "data": {
                   "account_id": "biz_xxxxxxxxxxxxxx",
                   "carrier": "ups",
@@ -65989,7 +66937,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-13",
+                "api_version_date": "2026-09-15",
                 "data": {
                   "account": {
                     "id": "biz_xxxxxxxxxxxxxx",
@@ -66207,7 +67155,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-13",
+                "api_version_date": "2026-09-15",
                 "data": {
                   "amount": 250,
                   "created_at": "2026-01-01T12:00:00.000Z",
@@ -66670,7 +67618,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-13",
+                "api_version_date": "2026-09-15",
                 "data": {
                   "amount": 250,
                   "created_at": "2026-01-01T12:00:00.000Z",
@@ -67133,7 +68081,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-13",
+                "api_version_date": "2026-09-15",
                 "data": {
                   "amount": 10,
                   "created_at": "2026-01-01T12:00:00.000Z",
@@ -67562,7 +68510,7 @@
         "name": "Api-Version-Date",
         "required": false,
         "schema": {
-          "example": "2026-09-13",
+          "example": "2026-09-15",
           "type": "string"
         }
       },
@@ -68098,9 +69046,11 @@
             ]
           },
           "three_ds_level": {
-            "description": "Account-level 3D Secure behavior. `mandate_challenge` requires cardholder verification on supported card payments; `null` uses the standard checkout flow.",
+            "description": "3D Secure behavior for supported on-session card payments. `mandate_challenge` requires a 3DS challenge before payment processing; `mandate_if_required` mandates a challenge only when the payment processor requires it; `frictionless_if_required` uses the regular frictionless 3DS flow. Payments of $1,000 or more use `mandate_if_required` unless `mandate_challenge` is selected. Risk and authentication recovery requirements can override the preference. `null` uses the standard checkout flow.",
             "enum": [
               "mandate_challenge",
+              "mandate_if_required",
+              "frictionless_if_required",
               null
             ],
             "example": "mandate_challenge",
@@ -72588,9 +73538,10 @@
               "2026-09-09-1",
               "2026-09-11",
               "2026-09-11-1",
-              "2026-09-13"
+              "2026-09-13",
+              "2026-09-15"
             ],
-            "example": "2026-09-13",
+            "example": "2026-09-15",
             "type": "string"
           },
           "created_at": {
@@ -77296,25 +78247,38 @@
       "EconomicIntelligence": {
         "properties": {
           "account_id": {
-            "description": "The account this recommendation is for, prefixed `biz_`",
+            "description": "ID of the account this recommendation is for, prefixed `biz_`, or null for personal onboarding.",
             "example": "biz_xxxxxxxxxxxxxx",
-            "type": "string"
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "action_type": {
-            "description": "The playbook action this card recommends, or `null` for an untyped card; new values may be added, so handle unknown types gracefully",
+            "description": "Type of action recommended, or `null` when no type is assigned. New values may be added; handle unknown types gracefully.",
             "example": "improve_landing_page",
             "type": [
               "string",
               "null"
             ]
           },
+          "ai_chat_id": {
+            "description": "The chat to resume after its initial message is accepted, or null before a chat is ready.",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
           "created_at": {
-            "description": "When the recommendation was created, as an ISO 8601 timestamp.",
+            "description": "When the recommendation was created, as an ISO 8601 timestamp, or null for an unsaved recommendation.",
             "example": "2026-01-01T12:00:00.000Z",
-            "type": "string"
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "executed_at": {
-            "description": "When the card was run, as an ISO 8601 timestamp, or `null`",
+            "description": "When the recommendation was approved, as an ISO 8601 timestamp, or `null` if it has not been approved.",
             "example": "2026-01-01T12:00:00.000Z",
             "type": [
               "string",
@@ -77322,12 +78286,12 @@
             ]
           },
           "id": {
-            "description": "Economic intelligence ID, prefixed `reca_`",
+            "description": "Recommendation ID, prefixed `reca_`, or `create_business` for an unsaved setup recommendation. Authenticate and list again before executing an unsaved recommendation.",
             "example": "reca_xxxxxxxxxxxxxx",
             "type": "string"
           },
           "input": {
-            "description": "What the owner asked for, in their own words, when this recommendation was requested, or `null` when the engine chose the action on its own",
+            "description": "What you requested, in your own words, or `null` for recommendations generated without your input.",
             "example": "Grow revenue",
             "type": [
               "string",
@@ -77335,7 +78299,7 @@
             ]
           },
           "prompt": {
-            "description": "The step-by-step brief Whop AI executes when the card is run, or `null`",
+            "description": "Step-by-step instructions for Whop AI, or `null` when no instructions are available.",
             "example": "Create a 20% off promo code for my members.",
             "type": [
               "string",
@@ -77343,7 +78307,7 @@
             ]
           },
           "reasoning": {
-            "description": "The signal and number the recommendation rests on, or `null`",
+            "description": "Evidence and metrics supporting the recommendation, or `null` when no reasoning was provided.",
             "example": "Revenue fell by 20%.",
             "type": [
               "string",
@@ -77351,20 +78315,19 @@
             ]
           },
           "status": {
-            "description": "`queued` once requested and not yet picked up; `pending` while the engine is generating; `ready` when the card is written and the owner can run it; `executed` once it was run; `superseded` when a newer card of the same action type replaced it; `failed` when the engine had nothing to recommend for the request",
+            "description": "`queued` when awaiting generation; `pending` while generating; `ready` when available for approval; `executed` when approved; `superseded` when rejected or replaced.",
             "enum": [
               "queued",
               "pending",
               "ready",
               "executed",
-              "superseded",
-              "failed"
+              "superseded"
             ],
             "example": "superseded",
             "type": "string"
           },
           "superseded_at": {
-            "description": "When a newer card replaced this one, as an ISO 8601 timestamp, or `null`",
+            "description": "When the recommendation was rejected or replaced, as an ISO 8601 timestamp, or `null` if neither has occurred.",
             "example": "2026-01-01T12:00:00.000Z",
             "type": [
               "string",
@@ -77372,7 +78335,7 @@
             ]
           },
           "title": {
-            "description": "The recommendation as the owner sees it: one command with the payoff, or `null` until the engine has written the card",
+            "description": "Recommended action and its expected benefit, or `null` until generated.",
             "example": "Move $180 from 3 dead ad groups into BATCH#3, +1.7x return",
             "type": [
               "string",
@@ -77391,6 +78354,7 @@
           "status",
           "executed_at",
           "superseded_at",
+          "ai_chat_id",
           "created_at"
         ],
         "type": "object"
@@ -81033,14 +81997,15 @@
             "type": "boolean"
           },
           "risk_score": {
-            "description": "Whop's fraud risk score from 0 (lowest) to 100 (highest), or null when the payment was not scored.",
+            "description": "Whop's published risk index from 0 (lowest) to 100 (highest), including enforced decision floors. This is not a fraud probability. Null when no score is available.",
             "type": [
               "number",
               "null"
             ]
           },
           "risk_signals": {
-            "description": "The factors behind `risk_score`, grouped by category, or null.",
+            "deprecated": true,
+            "description": "Deprecated. Risk score explanations are no longer provided; always null.\nDEPRECATED: Risk score explanations are no longer provided. Always null.",
             "type": [
               "object",
               "null"
@@ -82450,6 +83415,258 @@
         "title": "QR",
         "type": "object"
       },
+      "PaymentRule": {
+        "properties": {
+          "account_id": {
+            "description": "Account ID, prefixed `biz_`.",
+            "example": "biz_xxxxxxxxxxxxxx",
+            "type": "string"
+          },
+          "action": {
+            "description": "What happens to a payment when every condition matches. An `allow` overrides this account's other rules only, never Whop's own fraud controls. An `enforce_3ds` is skipped where the payment cannot carry a challenge.",
+            "enum": [
+              "allow",
+              "block",
+              "enforce_3ds"
+            ],
+            "example": "block",
+            "type": "string"
+          },
+          "conditions": {
+            "$ref": "#/components/schemas/PaymentRuleConditions",
+            "description": "The conditions a payment is matched against. Up to 10 conditions, and 8 KiB once serialized."
+          },
+          "created_at": {
+            "description": "When the rule was created, as an ISO 8601 timestamp.",
+            "example": "2026-01-01T12:00:00.000Z",
+            "type": "string"
+          },
+          "deleted_at": {
+            "description": "When the rule was deleted, as an ISO 8601 timestamp. `null` unless `status` is `deleted`.",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "id": {
+            "description": "Payment rule ID, prefixed `prule_`.",
+            "example": "prule_xxxxxxxxxxxxxx",
+            "type": "string"
+          },
+          "metadata": {
+            "description": "Custom string-to-string values for your integration. Maximum 50 keys, 40 characters per key, 500 characters per value.",
+            "example": {},
+            "type": "object"
+          },
+          "name": {
+            "description": "A name for this rule. Up to 255 characters.",
+            "example": "Block high risk",
+            "type": "string"
+          },
+          "status": {
+            "description": "Whether the rule is applied to payments. A `deleted` rule is kept so the payments it already decided still name it.",
+            "enum": [
+              "active",
+              "inactive",
+              "deleted"
+            ],
+            "example": "active",
+            "type": "string"
+          },
+          "updated_at": {
+            "description": "When the rule was last changed, as an ISO 8601 timestamp.",
+            "example": "2026-01-01T12:00:00.000Z",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "account_id",
+          "name",
+          "status",
+          "action",
+          "conditions",
+          "metadata",
+          "created_at",
+          "updated_at",
+          "deleted_at"
+        ],
+        "type": "object"
+      },
+      "PaymentRuleCondition": {
+        "properties": {
+          "field": {
+            "description": "The payment attribute this condition reads.",
+            "enum": [
+              "risk_score",
+              "card_country",
+              "customer_email"
+            ],
+            "example": "risk_score",
+            "type": "string"
+          },
+          "operator": {
+            "description": "How the payment attribute is compared to the value.",
+            "enum": [
+              "eq",
+              "neq",
+              "gt",
+              "gte",
+              "lt",
+              "lte",
+              "in",
+              "not_in",
+              "contains",
+              "starts_with",
+              "ends_with"
+            ],
+            "example": "gte",
+            "type": "string"
+          },
+          "value": {
+            "$ref": "#/components/schemas/PaymentRuleConditionValue",
+            "description": "The value to compare against."
+          }
+        },
+        "required": [
+          "field",
+          "operator",
+          "value"
+        ],
+        "type": "object"
+      },
+      "PaymentRuleConditionValue": {
+        "description": "The value to compare against. A number for `risk_score`, a string for the other fields, and an array of strings for the `in` and `not_in` operators.",
+        "oneOf": [
+          {
+            "maximum": 100,
+            "minimum": 0,
+            "type": "integer"
+          },
+          {
+            "type": "string"
+          },
+          {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          }
+        ]
+      },
+      "PaymentRuleConditions": {
+        "properties": {
+          "all": {
+            "items": {
+              "$ref": "#/components/schemas/PaymentRuleCondition",
+              "description": "Conditions that must all match for the rule to apply. A payment attribute the rule cannot read does not match."
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "all"
+        ],
+        "type": "object"
+      },
+      "PaymentRuleField": {
+        "properties": {
+          "field": {
+            "description": "The payment attribute this condition reads.",
+            "enum": [
+              "risk_score",
+              "card_country",
+              "customer_email"
+            ],
+            "example": "risk_score",
+            "type": "string"
+          },
+          "maximum": {
+            "description": "The largest value this field accepts, or `null` when the field is not numeric.",
+            "example": 100,
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "minimum": {
+            "description": "The smallest value this field accepts, or `null` when the field is not numeric.",
+            "example": 0,
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "operators": {
+            "items": {
+              "description": "The operators this field accepts. Any other operator is rejected.",
+              "enum": [
+                "eq",
+                "neq",
+                "gt",
+                "gte",
+                "lt",
+                "lte",
+                "in",
+                "not_in",
+                "contains",
+                "starts_with",
+                "ends_with"
+              ],
+              "example": "eq",
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "options": {
+            "items": {
+              "$ref": "#/components/schemas/PaymentRuleFieldOption",
+              "description": "The values this field accepts, or `null` when the field is free-form."
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "type": {
+            "description": "The type of value this field compares against.",
+            "enum": [
+              "integer",
+              "string"
+            ],
+            "example": "integer",
+            "type": "string"
+          }
+        },
+        "required": [
+          "field",
+          "type",
+          "operators",
+          "minimum",
+          "maximum",
+          "options"
+        ],
+        "type": "object"
+      },
+      "PaymentRuleFieldOption": {
+        "properties": {
+          "label": {
+            "description": "The name to display for this value.",
+            "example": "Abkhazia",
+            "type": "string"
+          },
+          "value": {
+            "description": "The value to send in a condition.",
+            "example": "AB",
+            "type": "string"
+          }
+        },
+        "required": [
+          "value",
+          "label"
+        ],
+        "type": "object"
+      },
       "PaymentStatus": {
         "properties": {
           "account": {
@@ -83717,13 +84934,14 @@
             "type": "string"
           },
           "three_ds_level": {
-            "description": "3D Secure behavior for this plan; `null` inherits the account default.",
+            "description": "3D Secure behavior for supported on-session card payments. `mandate_challenge` requires a 3DS challenge before payment processing; `mandate_if_required` mandates a challenge only when the payment processor requires it; `frictionless_if_required` uses the regular frictionless 3DS flow. Payments of $1,000 or more use `mandate_if_required` unless `mandate_challenge` is selected. Risk and authentication recovery requirements can override the preference. `null` inherits the account default.",
             "enum": [
               "mandate_challenge",
-              "frictionless",
+              "mandate_if_required",
+              "frictionless_if_required",
               null
             ],
-            "example": "frictionless",
+            "example": "frictionless_if_required",
             "type": [
               "string",
               "null"
@@ -84107,13 +85325,14 @@
             ]
           },
           "three_ds_level": {
-            "description": "3D Secure behavior for this plan; `null` inherits the account default.",
+            "description": "3D Secure behavior for supported on-session card payments. `mandate_challenge` requires a 3DS challenge before payment processing; `mandate_if_required` mandates a challenge only when the payment processor requires it; `frictionless_if_required` uses the regular frictionless 3DS flow. Payments of $1,000 or more use `mandate_if_required` unless `mandate_challenge` is selected. Risk and authentication recovery requirements can override the preference. `null` inherits the account default.",
             "enum": [
               "mandate_challenge",
-              "frictionless",
+              "mandate_if_required",
+              "frictionless_if_required",
               null
             ],
-            "example": "frictionless",
+            "example": "frictionless_if_required",
             "type": [
               "string",
               "null"

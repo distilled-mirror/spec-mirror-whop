@@ -6,12 +6,16 @@
 
 > PCI-isolated hosted card expiration field.
 
-<Info>This page documents `@whop/elements@1.0.0-beta.3` and `@whop/elements-react@1.0.0-beta.3`.</Info>
+<Info>This page documents `@whop/elements@1.0.0-beta.4` and `@whop/elements-react@1.0.0-beta.4`.</Info>
 
 *Pre-release, not yet part of a stable release.*
 
 <div data-whop-platform="web">
   Mounts inside [`CardFields`](/elements/beta/payments/cardFields), in [`Payments`](/elements/beta/payments/overview). Pass props and callbacks through the create options or React props.
+</div>
+
+<div data-whop-platform="swift" style={{ display: "none" }}>
+  Goes inside a [`WhopCardFields`](/elements/beta/payments/cardFields#swift) builder. The hosted expiry input.
 </div>
 
 <div data-whop-platform="react-native" style={{ display: "none" }}>
@@ -55,6 +59,33 @@
           cardFields.create('cardExpiry').mount('#payments-cardFields-cardExpiry');
         </script>
         ```
+
+        ```swift Swift theme={null}
+        import Elements
+        import SwiftUI
+
+        // .whopElements(environment:) runs once at the app root. See Getting started.
+        struct CheckoutScreen: View {
+
+            var body: some View {
+                WhopPayments(accountID: "biz_xxxx", charge: .plan(id: "plan_xxxx")) { payments in
+                    ScrollView {
+                        VStack(alignment: .leading, spacing: 20) {
+                        WhopCardFields {
+                            WhopCardNumberElement()
+                            HStack(alignment: .top, spacing: 8) {
+                                WhopCardExpiryElement()
+                                WhopCardCVCElement()
+                            }
+                        }
+                            WhopBrandingElement()
+                        }
+                        .padding()
+                    }
+                }
+            }
+        }
+        ```
       </CodeGroup>
     </div>
   </div>
@@ -64,7 +95,7 @@
       <div data-whop-demo-shell style={{ position: "relative", minHeight: "320px", transition: "min-height 200ms ease" }}>
         <div data-whop-demo-skeleton style={{ position: "absolute", inset: "0", borderRadius: "12px", background: "rgba(140, 140, 140, 0.12)", pointerEvents: "none", transition: "opacity 200ms ease" }} />
 
-        <div data-whop-demo-native="element:card-fields/cardExpiry" data-whop-elements-version="1.0.0-beta.3" style={{ position: "relative" }} />
+        <div data-whop-demo-native="element:card-fields/cardExpiry" data-whop-elements-version="1.0.0-beta.4" style={{ position: "relative" }} />
       </div>
 
       <p style={{ fontSize: "0.8125rem", opacity: 0.7 }}>Example data. [Open the Playground](/elements/beta/payments/overview#playground).</p>
@@ -159,6 +190,28 @@
   ```
 
   In React, pass `appearance` to `<Payments>`. Set it globally with `WhopElements({ appearance })`.
+</div>
+
+<div data-whop-platform="swift" style={{ display: "none" }}>
+  ## States
+
+  Renders immediately. A date in the past or a malformed one shows its error under the field.
+
+  ## Good to know
+
+  * Outside a `WhopCardFields` builder it renders nothing: it reads the card unit that builder creates.
+
+  ## Install
+
+  ```swift theme={null}
+  dependencies: [
+      .package(url: "https://github.com/whopio/elements-swift.git", from: "0.1.0")
+  ]
+  ```
+
+  <Note>
+    Mount it inside a `WhopPayments(accountID:charge:)` scope, which creates the controller and hands it to its content. `payments.buyer` is the signed-in buyer once an email sign-in has proven one. `WhopBrandingElement` has to be on screen too, because Whop is merchant of record on these sales and `createConfirmationToken` refuses without it. Style with `.whopElementsAppearance(_:)`. The module is `Elements`, not the wallet SDK's `WhopElements`. See [Getting started](/elements/beta/getting-started) and [Appearance](/elements/beta/appearance).
+  </Note>
 </div>
 
 <div data-whop-platform="react-native" style={{ display: "none" }}>

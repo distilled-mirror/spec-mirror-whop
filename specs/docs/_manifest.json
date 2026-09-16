@@ -3,7 +3,7 @@
     "https://docs.whop.com/llms.txt",
     "https://docs.whop.com/sitemap.xml"
   ],
-  "count": 1035,
+  "count": 1049,
   "pages": [
     {
       "page": "https://docs.whop.com/account-settings/account-security/delete-your-account",
@@ -2472,6 +2472,87 @@
       "page": "https://docs.whop.com/api-reference/beta/payment-method-domains/verify-payment-method-domain",
       "markdown": "https://docs.whop.com/api-reference/beta/payment-method-domains/verify-payment-method-domain.md",
       "file": "api-reference/beta/payment-method-domains/verify-payment-method-domain.md",
+      "indexes": [
+        "llms.txt",
+        "sitemap"
+      ]
+    },
+    {
+      "page": "https://docs.whop.com/api-reference/beta/payment-rules/activate-a-payment-rule",
+      "markdown": "https://docs.whop.com/api-reference/beta/payment-rules/activate-a-payment-rule.md",
+      "file": "api-reference/beta/payment-rules/activate-a-payment-rule.md",
+      "indexes": [
+        "llms.txt",
+        "sitemap"
+      ]
+    },
+    {
+      "page": "https://docs.whop.com/api-reference/beta/payment-rules/create-a-payment-rule",
+      "markdown": "https://docs.whop.com/api-reference/beta/payment-rules/create-a-payment-rule.md",
+      "file": "api-reference/beta/payment-rules/create-a-payment-rule.md",
+      "indexes": [
+        "llms.txt",
+        "sitemap"
+      ]
+    },
+    {
+      "page": "https://docs.whop.com/api-reference/beta/payment-rules/deactivate-a-payment-rule",
+      "markdown": "https://docs.whop.com/api-reference/beta/payment-rules/deactivate-a-payment-rule.md",
+      "file": "api-reference/beta/payment-rules/deactivate-a-payment-rule.md",
+      "indexes": [
+        "llms.txt",
+        "sitemap"
+      ]
+    },
+    {
+      "page": "https://docs.whop.com/api-reference/beta/payment-rules/delete-a-payment-rule",
+      "markdown": "https://docs.whop.com/api-reference/beta/payment-rules/delete-a-payment-rule.md",
+      "file": "api-reference/beta/payment-rules/delete-a-payment-rule.md",
+      "indexes": [
+        "llms.txt",
+        "sitemap"
+      ]
+    },
+    {
+      "page": "https://docs.whop.com/api-reference/beta/payment-rules/list-fields",
+      "markdown": "https://docs.whop.com/api-reference/beta/payment-rules/list-fields.md",
+      "file": "api-reference/beta/payment-rules/list-fields.md",
+      "indexes": [
+        "llms.txt",
+        "sitemap"
+      ]
+    },
+    {
+      "page": "https://docs.whop.com/api-reference/beta/payment-rules/list-payment-rules",
+      "markdown": "https://docs.whop.com/api-reference/beta/payment-rules/list-payment-rules.md",
+      "file": "api-reference/beta/payment-rules/list-payment-rules.md",
+      "indexes": [
+        "llms.txt",
+        "sitemap"
+      ]
+    },
+    {
+      "page": "https://docs.whop.com/api-reference/beta/payment-rules/replace-a-payment-rule",
+      "markdown": "https://docs.whop.com/api-reference/beta/payment-rules/replace-a-payment-rule.md",
+      "file": "api-reference/beta/payment-rules/replace-a-payment-rule.md",
+      "indexes": [
+        "llms.txt",
+        "sitemap"
+      ]
+    },
+    {
+      "page": "https://docs.whop.com/api-reference/beta/payment-rules/retrieve-a-payment-rule",
+      "markdown": "https://docs.whop.com/api-reference/beta/payment-rules/retrieve-a-payment-rule.md",
+      "file": "api-reference/beta/payment-rules/retrieve-a-payment-rule.md",
+      "indexes": [
+        "llms.txt",
+        "sitemap"
+      ]
+    },
+    {
+      "page": "https://docs.whop.com/api-reference/beta/payment-rules/update-a-payment-rule",
+      "markdown": "https://docs.whop.com/api-reference/beta/payment-rules/update-a-payment-rule.md",
+      "file": "api-reference/beta/payment-rules/update-a-payment-rule.md",
       "indexes": [
         "llms.txt",
         "sitemap"
@@ -7266,6 +7347,15 @@
       ]
     },
     {
+      "page": "https://docs.whop.com/elements/beta/payments/payments",
+      "markdown": "https://docs.whop.com/elements/beta/payments/payments.md",
+      "file": "elements/beta/payments/payments.md",
+      "indexes": [
+        "llms.txt",
+        "sitemap"
+      ]
+    },
+    {
       "page": "https://docs.whop.com/elements/beta/payments/taxId",
       "markdown": "https://docs.whop.com/elements/beta/payments/taxId.md",
       "file": "elements/beta/payments/taxId.md",
@@ -7509,6 +7599,33 @@
       ]
     },
     {
+      "page": "https://docs.whop.com/elements/beta/wallet/reports",
+      "markdown": "https://docs.whop.com/elements/beta/wallet/reports.md",
+      "file": "elements/beta/wallet/reports.md",
+      "indexes": [
+        "llms.txt",
+        "sitemap"
+      ]
+    },
+    {
+      "page": "https://docs.whop.com/elements/beta/wallet/reports-balanceReport",
+      "markdown": "https://docs.whop.com/elements/beta/wallet/reports-balanceReport.md",
+      "file": "elements/beta/wallet/reports-balanceReport.md",
+      "indexes": [
+        "llms.txt",
+        "sitemap"
+      ]
+    },
+    {
+      "page": "https://docs.whop.com/elements/beta/wallet/reports-reportActivity",
+      "markdown": "https://docs.whop.com/elements/beta/wallet/reports-reportActivity.md",
+      "file": "elements/beta/wallet/reports-reportActivity.md",
+      "indexes": [
+        "llms.txt",
+        "sitemap"
+      ]
+    },
+    {
       "page": "https://docs.whop.com/elements/beta/wallet/required-actions",
       "markdown": "https://docs.whop.com/elements/beta/wallet/required-actions.md",
       "file": "elements/beta/wallet/required-actions.md",
@@ -7735,6 +7852,14 @@
       "page": "https://docs.whop.com/elements/upcoming/payments/payment",
       "markdown": "https://docs.whop.com/elements/upcoming/payments/payment.md",
       "file": "elements/upcoming/payments/payment.md",
+      "indexes": [
+        "llms.txt"
+      ]
+    },
+    {
+      "page": "https://docs.whop.com/elements/upcoming/payments/paymentDetail",
+      "markdown": "https://docs.whop.com/elements/upcoming/payments/paymentDetail.md",
+      "file": "elements/upcoming/payments/paymentDetail.md",
       "indexes": [
         "llms.txt"
       ]

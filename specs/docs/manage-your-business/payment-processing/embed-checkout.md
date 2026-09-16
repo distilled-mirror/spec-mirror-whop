@@ -909,10 +909,10 @@ Individual properties take precedence over their shorthand equivalents.
 
 ## Digital wallet payments
 
-Customers can pay using Apple Pay in their Apple Wallet, which provides a seamless checkout experience on Safari and iOS devices. To enable Apple Pay on your embedded checkout, verify ownership of your domain.
+Customers can pay with Apple Pay or Google Pay from the wallet already on their device, which provides a seamless checkout experience. To enable them on your embedded checkout, verify ownership of your domain.
 
-<Card title="Set up Apple Pay" icon="apple" href="/payments/apple-pay">
-  Learn how to verify your domain and enable Apple Pay for embedded checkout
+<Card title="Set up Apple Pay and Google Pay" icon="apple" href="/payments/apple-pay">
+  Learn how to verify your domain and enable Apple Pay and Google Pay for embedded checkout
 </Card>
 
 <Note>

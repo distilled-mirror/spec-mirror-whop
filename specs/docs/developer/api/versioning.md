@@ -35,7 +35,19 @@ Every version automatically gets new endpoints and optional fields. Breaking cha
 
 ## Changelog
 
-<Update label="2026-09-13" description="Trading transfers have distinct financial-report categories" tags={["Latest"]}>
+<Update label="2026-09-15" description="Three distinct 3D Secure policies" tags={["Latest"]}>
+  Accounts, plans, checkout configurations, and checkout sessions expose three 3D Secure choices:
+
+  * `mandate_challenge` requests a challenge before processing a supported on-session card payment.
+  * `mandate_if_required` mandates a challenge only when the payment processor requires it.
+  * `frictionless_if_required` uses the regular frictionless 3DS flow.
+
+  Payments of \$1,000 or more use at least `mandate_if_required`. Risk and authentication recovery requirements can override the preference. Explicit mandatory challenges are rejected until enabled on the platform.
+
+  Older API versions keep their existing values: new `mandate_challenge` selections remain conditional, existing mandatory preferences are preserved, and `frictionless` remains `frictionless`. Accounts on older versions represent frictionless as `null`.
+</Update>
+
+<Update label="2026-09-13" description="Trading transfers have distinct financial-report categories">
   Financial-report rows distinguish `trading_account_deposit`, `trading_account_withdrawal`, and their `_offset` entries from other on-chain transfers. Amounts and balances are unchanged.
 
   Earlier versions keep the existing categories: `topup` for account deposits and `onchain_withdrawal` for account withdrawals. Global reports use the corresponding `onchain_deposit`, `onchain_withdrawal`, and `_offset` categories. Matching rows are combined without dropping transferred amounts.

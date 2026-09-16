@@ -142,9 +142,9 @@ Use the Checkout Configurations API to create checkout links for an existing or 
         </ResponseField>
 
         <ResponseField name="three_ds_level" type="string | null" required>
-          3D Secure behavior for this plan, or `null` to use the account default.
+          3D Secure behavior for supported on-session card payments. `mandate_challenge` requires a 3DS challenge before payment processing; `mandate_if_required` mandates a challenge only when the payment processor requires it; `frictionless_if_required` uses the regular frictionless 3DS flow. Payments of \$1,000 or more use `mandate_if_required` unless `mandate_challenge` is selected. Risk and authentication recovery requirements can override the preference. `null` inherits the account default.
 
-          Available options: `mandate_challenge`, `frictionless`
+          Available options: `mandate_challenge`, `mandate_if_required`, `frictionless_if_required`
         </ResponseField>
 
         <ResponseField name="trial_period_days" type="integer | null" required>
@@ -169,9 +169,9 @@ Use the Checkout Configurations API to create checkout links for an existing or 
     </ResponseField>
 
     <ResponseField name="three_ds_level" type="string | null">
-      3D Secure behavior for this checkout, or `null` to use the account default.
+      3D Secure behavior for supported on-session card payments. `mandate_challenge` requires a 3DS challenge before payment processing; `mandate_if_required` mandates a challenge only when the payment processor requires it; `frictionless_if_required` uses the regular frictionless 3DS flow. Payments of \$1,000 or more use `mandate_if_required` unless `mandate_challenge` is selected. Risk and authentication recovery requirements can override the preference. Applies in setup mode; `null` uses frictionless 3DS. Payment mode uses the plan policy.
 
-      Available options: `mandate_challenge`, `frictionless`
+      Available options: `mandate_challenge`, `mandate_if_required`, `frictionless_if_required`
     </ResponseField>
 
     <ResponseField name="updated_at" type="string" required>
@@ -213,12 +213,12 @@ Use the Checkout Configurations API to create checkout links for an existing or 
       		"initial_price": 29,
       		"renewal_price": 29,
       		"trial_period_days": 7,
-      		"three_ds_level": "frictionless",
+      		"three_ds_level": "frictionless_if_required",
       		"adaptive_pricing_enabled": true
       	},
       	"purchase_url": "https://whop.com/checkout/plan_xxxxxxxxxxxxx/?session=ch_xxxxxxxxxxxxxx",
       	"redirect_url": "https://pickaxe.example/welcome",
-      	"three_ds_level": "frictionless",
+      	"three_ds_level": "frictionless_if_required",
       	"updated_at": "2026-07-02T12:00:00Z"
       }
       ```

@@ -4,9 +4,9 @@
 
 # Payments
 
-> Collect a payment from a `plan_` ID or inline currency and amount. Mount PaymentElement, CardElement, or CardFields, then call `payments.createConfirmationToken` with billing details. Wallet selections open their sheet automatically. Confirm the token server-side, then pass the payment's `client_secret` to `handleNextAction` for any pending step.
+> Browse account payments with PaymentsElement, collect a payment from a `plan_` ID or inline currency and amount, or save a payment method without charging with `mode: "setup"`. Mount PaymentElement, CardElement, or CardFields, then call `payments.createConfirmationToken` with billing details. Wallet selections open their sheet automatically. Confirm the token server-side, then pass the payment's or setup intent's `client_secret` to `handleNextAction` for any pending step.
 
-<Info>This page documents `@whop/elements@1.0.0-beta.3` and `@whop/elements-react@1.0.0-beta.3`.</Info>
+<Info>This page documents `@whop/elements@1.0.0-beta.4` and `@whop/elements-react@1.0.0-beta.4`.</Info>
 
 *Pre-release, not yet part of a stable release.*
 
@@ -17,7 +17,7 @@ Assemble the elements with example data. Drive the controls, add and arrange ele
 <div data-whop-demo-shell style={{ position: "relative", minHeight: "480px", transition: "min-height 200ms ease" }}>
   <div data-whop-demo-skeleton style={{ position: "absolute", inset: "0", borderRadius: "12px", background: "rgba(140, 140, 140, 0.12)", pointerEvents: "none", transition: "opacity 200ms ease" }} />
 
-  <div data-whop-demo-native="playground:payments" data-whop-elements-version="1.0.0-beta.3" style={{ position: "relative" }} />
+  <div data-whop-demo-native="playground:payments" data-whop-elements-version="1.0.0-beta.4" style={{ position: "relative" }} />
 </div>
 
 <div data-whop-usage="payments/playground">
@@ -51,7 +51,15 @@ Assemble the elements with example data. Drive the controls, add and arrange ele
 Pass these to `whop.payments.create({ … })`, or as props on `<Payments>` in React.
 
 <ResponseField name="accountId" type="string">
-  Account ID, prefixed `biz_`. Omit only when calling static methods without a collection surface.
+  Account ID, prefixed `biz_`. Required for PaymentsElement; omit only when calling static methods without an account surface.
+</ResponseField>
+
+<ResponseField name="mode" type="&#x22;payment&#x22;">
+  Mount mode, `payment` by default. `setup` saves a payment method and charges nothing, now or later: only methods that can be saved are offered and amount bounds do not apply. Confirm with `createConfirmationToken()`, then create the setup intent server-side.
+</ResponseField>
+
+<ResponseField name="accessToken" type="string">
+  Scoped bearer token for PaymentsElement. Requires `payment:basic:read`; buyer emails additionally require `member:email:read`. Omit only with a same-origin Whop session.
 </ResponseField>
 
 <ResponseField name="plan" type="string">
@@ -67,7 +75,7 @@ Pass these to `whop.payments.create({ … })`, or as props on `<Payments>` in Re
 </ResponseField>
 
 <ResponseField name="setupFutureUsage" type="&#x22;off_session&#x22; | &#x22;on_session&#x22;">
-  Displays consent to save the payment method and marks the token for `off_session` or `on_session` use.
+  A setup saves the payment method for `off_session` use, the only usage a setup accepts, and displays the save consent.
 </ResponseField>
 
 <ResponseField name="previewWalletAvailability" type="WalletAvailability">
@@ -79,7 +87,7 @@ Pass these to `whop.payments.create({ … })`, or as props on `<Payments>` in Re
 </ResponseField>
 
 <ResponseField name="currency" type="string">
-  Lowercase three-letter ISO 4217 payment currency code. It filters the payment-method matrix.
+  Lowercase three-letter ISO 4217 currency code. It filters the payment-method matrix.
 </ResponseField>
 
 <ResponseField name="amount" type="number">
@@ -100,9 +108,10 @@ Pass these to `whop.payments.create({ … })`, or as props on `<Payments>` in Re
 
 <Note>The options are a union. Provide **exactly one** of these shapes, plus the shared event callbacks below:</Note>
 
-* `{ accountId: string; plan: string; offerAmounts?: undefined; returnUrl?: string; setupFutureUsage?: "off_session" | "on_session"; previewWalletAvailability?: WalletAvailability; checkoutSession?: { id: string; clientSecret: string; }; analytics?: false }`
-* `{ accountId: string; currency: string; amount: number; offerAmounts?: { feeInclusive: number; feeFree: number; }; paymentMethodConfiguration?: { enabled?: string[] | undefined; disabled?: string[] | undefined; include_platform_defaults?: boolean | undefined; }; returnUrl?: string; setupFutureUsage?: "off_session" | "on_session"; previewWalletAvailability?: WalletAvailability; checkoutSession?: { id: string; clientSecret: string; }; analytics?: false }`
-* `{ accountId?: undefined; plan?: undefined; currency?: undefined; amount?: undefined; offerAmounts?: undefined; paymentMethodConfiguration?: undefined; returnUrl?: string; setupFutureUsage?: "off_session" | "on_session"; previewWalletAvailability?: WalletAvailability; checkoutSession?: { id: string; clientSecret: string; }; analytics?: false }`
+* `{ accountId: string; mode?: "payment"; accessToken?: string; plan: string; offerAmounts?: undefined; returnUrl?: string; setupFutureUsage?: "off_session" | "on_session"; previewWalletAvailability?: WalletAvailability; checkoutSession?: { id: string; clientSecret: string; }; analytics?: false }`
+* `{ accountId: string; mode?: "payment"; accessToken?: string; currency: string; amount: number; offerAmounts?: { feeInclusive: number; feeFree: number; }; paymentMethodConfiguration?: { enabled?: string[] | undefined; disabled?: string[] | undefined; include_platform_defaults?: boolean | undefined; }; returnUrl?: string; setupFutureUsage?: "off_session" | "on_session"; previewWalletAvailability?: WalletAvailability; checkoutSession?: { id: string; clientSecret: string; }; analytics?: false }`
+* `{ accountId: string; mode: "setup"; accessToken?: string; currency: string; plan?: undefined; amount?: undefined; offerAmounts?: undefined; paymentMethodConfiguration?: { enabled?: string[] | undefined; disabled?: string[] | undefined; include_platform_defaults?: boolean | undefined; }; returnUrl?: string; setupFutureUsage?: "off_session"; previewWalletAvailability?: WalletAvailability; checkoutSession?: { id: string; clientSecret: string; }; analytics?: false }`
+* `{ accountId?: string; accessToken?: string; mode?: undefined; plan?: undefined; currency?: undefined; amount?: undefined; offerAmounts?: undefined; paymentMethodConfiguration?: undefined; returnUrl?: string; setupFutureUsage?: "off_session" | "on_session"; previewWalletAvailability?: WalletAvailability; checkoutSession?: { id: string; clientSecret: string; }; analytics?: false }`
 
 ## Events
 
@@ -142,7 +151,7 @@ Call these without mounting: `whop.payments.<method>(…)` in vanilla or `useWho
 
 ### `handleNextAction`
 
-Completes a confirmed payment's pending step without mounting an element. `clientSecret` identifies the payment. You don't need a payment ID. Inline steps open in a dialog and resolve with `redirected: false`. Dismissing the dialog returns the payment's current status, which can remain pending. Full-page steps redirect with `redirected: true` to `return_url`, or a hosted receipt when the payment has no return URL. Inside an iframe they navigate the top-level tab. If the embedding page refuses that navigation, they reject with code `TAB_NAVIGATION_BLOCKED`, and the payment stays pending. Set `returnUrl` to update the destination before presentation. An update failure rejects before any step runs. Inline steps never navigate to that URL. A payment with no pending step resolves immediately.
+Completes a confirmed payment's pending step without mounting an element. `clientSecret` identifies the payment. You don't need a payment ID. Inline steps open in a dialog and resolve with `redirected: false`. Dismissing the dialog returns the payment's current status, which can remain pending. Full-page steps redirect with `redirected: true` to `return_url`, or a hosted receipt when the payment has no return URL. Inside an iframe they navigate the top-level tab. If the embedding page refuses that navigation, they reject with code `TAB_NAVIGATION_BLOCKED`, and the payment stays pending. Set `returnUrl` to update the destination before presentation. An update failure rejects before any step runs. Inline steps never navigate to that URL. A payment whose charge is still being decided is polled until a step appears or it settles; a decided payment with no step resolves immediately.
 
 **Signature:** `(input: { clientSecret: string; returnUrl?: string | undefined; pollIntervalMs?: number | undefined; }) => Promise<{ status: string; redirected: boolean; lastPaymentError: { code?: string | null | undefined; decline_code?: string | null | undefined; message?: string | null | undefined; } | null; }>`
 
@@ -278,7 +287,7 @@ Confirmation token ID, prefixed `ctok_`. Confirm it server-side with your secret
 
 ### `payer`
 
-**Signature:** `{ email?: string | undefined; name?: string | undefined; phone?: string | undefined; }`
+**Signature:** `{ email?: string | undefined; name?: string | undefined; phone?: string | undefined; country?: string | undefined; }`
 
 ### `shipping`
 
@@ -367,6 +376,10 @@ Call this exactly once. An event left unanswered keeps the current total when th
 The elements this group mounts. Each has its own page:
 
 <CardGroup cols={2}>
+  <Card title="PaymentsElement" href="/elements/beta/payments/payments">
+    The dashboard payments table with status cards, search, filters, sorting, row selection, CSV export, column settings, and pagination. Reads all payment pages to compute complete counts and filter locally; intended for accounts with modest payment histories. Customer details and refunds are handed to your application through events.
+  </Card>
+
   <Card title="AddressElement" href="/elements/beta/payments/address">
     Collects a billing or shipping address. Fields, order, and validation follow the selected country. Includes street autocomplete and methods to read or validate the address.
   </Card>

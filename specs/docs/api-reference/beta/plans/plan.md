@@ -243,9 +243,9 @@ Use the Plans API to create plans for products, list existing plans, retrieve or
     </ResponseField>
 
     <ResponseField name="three_ds_level" type="string | null" required>
-      3D Secure behavior for this plan; `null` inherits the account default.
+      3D Secure behavior for supported on-session card payments. `mandate_challenge` requires a 3DS challenge before payment processing; `mandate_if_required` mandates a challenge only when the payment processor requires it; `frictionless_if_required` uses the regular frictionless 3DS flow. Payments of \$1,000 or more use `mandate_if_required` unless `mandate_challenge` is selected. Risk and authentication recovery requirements can override the preference. `null` inherits the account default.
 
-      Available options: `mandate_challenge`, `frictionless`
+      Available options: `mandate_challenge`, `mandate_if_required`, `frictionless_if_required`
     </ResponseField>
 
     <ResponseField name="title" type="string | null" required>
@@ -339,7 +339,7 @@ Use the Plans API to create plans for products, list existing plans, retrieve or
       	"strike_through_initial_price": null,
       	"strike_through_renewal_price": null,
       	"tax_type": "exclusive",
-      	"three_ds_level": "frictionless",
+      	"three_ds_level": "frictionless_if_required",
       	"title": "Monthly",
       	"trial_period_days": 7,
       	"unlimited_stock": true,

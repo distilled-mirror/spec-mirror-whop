@@ -177,7 +177,6 @@
   | `.whop-CardFieldInputFocused` | Focused PCI input container                               |
   | `.whop-CardFieldInputInvalid` | Invalid or incomplete PCI input container                 |
   | `.whop-CardFieldRow`          | Compact card number, expiration, and security code row    |
-  | `.whop-CardSaveNotice`        | Payment method saving consent                             |
 
   ```ts theme={null}
   const payments = whop.payments.create({
@@ -190,7 +189,7 @@
     }
   });
 
-  // 10 classes use this shape
+  // 9 classes use this shape
   payments.update({
     appearance: { classes: { 'whop-Card': { fontWeight: '700' } } }
   });
