@@ -118,7 +118,7 @@ Fields on `ActionRequiredItem`.
 
 ### `source`
 
-**Signature:** `"identity" | "payout" | "audit" | "card_issuing" | "bank" | "ads" | "application" | undefined`
+**Signature:** `"identity" | "payout" | "audit" | "card_issuing" | "bank" | "ads" | "application" | "airwallex" | undefined`
 
 ### `optional`
 

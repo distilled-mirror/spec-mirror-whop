@@ -88,7 +88,7 @@
       "x-whop-summary": "Saving a buyer's payment method without charging it."
     },
     {
-      "description": "A Payment Rule lets an account act on its own payments before they reach the bank: block them, let them through, or ask the buyer for 3D Secure. Each rule matches on a small set of payment attributes, and every condition must hold for it to apply.\n\nA rule's definition is fixed once created, so the payments it decided keep naming the rule that decided them. Use [Replace](/api-reference/beta/payment-rules/replace) to change one, and [List fields](/api-reference/beta/payment-rules/list-fields) for the attributes, operators and values a condition can use.\n",
+      "description": "A Payment Rule lets an account act on its own payments before they reach the bank: block them, let them through, send them to review, or ask the buyer for 3D Secure. Each rule matches on a small set of payment attributes, and every condition must hold for it to apply.\n\nA rule's definition is fixed once created, so the payments it decided keep naming the rule that decided them. Use [Replace](/api-reference/beta/payment-rules/replace-a-payment-rule) to change one, and [List fields](/api-reference/beta/payment-rules/list-fields) for the attributes, operators and values a condition can use.\n",
       "name": "Payment Rules",
       "x-whop-summary": "Rules an account writes to decide its own payments."
     },
@@ -19857,6 +19857,13 @@
                                     "example": "pay_xxxxxxxxxxxxxx",
                                     "type": "string"
                                   },
+                                  "line_items": {
+                                    "description": "Everything this payment charged for, in purchase order, including quantities. Older payments fall back to their original plan.",
+                                    "items": {
+                                      "$ref": "#/components/schemas/ReceiptLineItem"
+                                    },
+                                    "type": "array"
+                                  },
                                   "provider": {
                                     "example": "stripe",
                                     "type": [
@@ -23955,13 +23962,14 @@
             }
           },
           {
-            "description": "Grouping granularity for report rows.",
+            "description": "Grouping granularity for report rows. Hourly grouping is supported for account-level balance activity reports only; hourly periods are timestamps in the requested timezone.",
             "in": "query",
             "name": "group_by",
             "required": false,
             "schema": {
               "default": "month",
               "enum": [
+                "hour",
                 "day",
                 "week",
                 "month"
@@ -24803,6 +24811,7 @@
             "schema": {
               "default": "month",
               "enum": [
+                "hour",
                 "day",
                 "week",
                 "month"
@@ -30050,7 +30059,7 @@
     },
     "/partners/{id}": {
       "get": {
-        "description": "Retrieves the authenticated user's public profile, enrollment date, active direct business referral count, and default payout rates. Use me or the authenticated user's own user ID; other users are not accessible. Users who have not enrolled have a null joined_at. Retrieve referral URLs and promotion links from GET /partners/links.",
+        "description": "Retrieves the authenticated user's public profile, enrollment date, partner verification timestamp, verification waitlist status, active direct business referral count, and default payout rates. Use me or the authenticated user's own user ID; other users are not accessible. Users who have not enrolled have a null joined_at. Retrieve referral URLs and promotion links from GET /partners/links.",
         "operationId": "retrievePartner",
         "responses": {
           "200": {
@@ -30676,6 +30685,7 @@
               "enum": [
                 "allow",
                 "block",
+                "review",
                 "enforce_3ds"
               ],
               "type": "string"
@@ -30846,18 +30856,28 @@
                     "type": "string"
                   },
                   "action": {
-                    "description": "What happens to a payment when every condition matches. An `allow` overrides this account's other rules only, never Whop's own fraud controls. An `enforce_3ds` is skipped where the payment cannot carry a challenge.",
+                    "description": "What this account's rule requests when every condition matches. One applicable account-rule action wins, in this order: `allow`, `block`, `review`, `enforce_3ds`. An `allow` overrides this account's other rules, never Whop's own fraud controls. A `review` requests authorization without capture for an eligible on-session card payment through Whop Payments. Automatic capture is scheduled for 48 hours after authorization; capture or void the payment before then to decide sooner. Capture may complete later or fail. Review is skipped for unsupported methods, off-session payments, and payments already configured for manual capture. An `enforce_3ds` is skipped when the account rule cannot apply a challenge. Other 3DS requirements still apply.",
                     "enum": [
                       "allow",
                       "block",
+                      "review",
                       "enforce_3ds"
                     ],
-                    "example": "block",
+                    "example": "review",
                     "type": "string"
                   },
                   "conditions": {
                     "additionalProperties": false,
                     "description": "The conditions a payment is matched against. Up to 10 conditions, and 8 KiB once serialized.",
+                    "example": {
+                      "all": [
+                        {
+                          "field": "risk_score",
+                          "operator": "gte",
+                          "value": 70
+                        }
+                      ]
+                    },
                     "properties": {
                       "all": {
                         "items": {
@@ -30867,8 +30887,10 @@
                               "description": "The payment attribute this condition reads.",
                               "enum": [
                                 "risk_score",
+                                "amount_in_usd",
                                 "card_country",
-                                "customer_email"
+                                "customer_email",
+                                "ip_address"
                               ],
                               "example": "risk_score",
                               "type": "string"
@@ -30886,7 +30908,8 @@
                                 "not_in",
                                 "contains",
                                 "starts_with",
-                                "ends_with"
+                                "ends_with",
+                                "in_cidr"
                               ],
                               "example": "gte",
                               "type": "string"
@@ -30924,7 +30947,7 @@
                   },
                   "name": {
                     "description": "A name for this rule. Up to 255 characters.",
-                    "example": "Block high risk",
+                    "example": "Review risky cards",
                     "maxLength": 255,
                     "minLength": 1,
                     "type": "string"
@@ -31158,7 +31181,7 @@
                   },
                   "name": {
                     "description": "A name for this rule. Up to 255 characters.",
-                    "example": "Block high risk",
+                    "example": "Review risky cards",
                     "maxLength": 255,
                     "minLength": 1,
                     "type": "string"
@@ -31337,18 +31360,28 @@
                 "additionalProperties": false,
                 "properties": {
                   "action": {
-                    "description": "What happens to a payment when every condition matches. An `allow` overrides this account's other rules only, never Whop's own fraud controls. An `enforce_3ds` is skipped where the payment cannot carry a challenge.",
+                    "description": "What this account's rule requests when every condition matches. One applicable account-rule action wins, in this order: `allow`, `block`, `review`, `enforce_3ds`. An `allow` overrides this account's other rules, never Whop's own fraud controls. A `review` requests authorization without capture for an eligible on-session card payment through Whop Payments. Automatic capture is scheduled for 48 hours after authorization; capture or void the payment before then to decide sooner. Capture may complete later or fail. Review is skipped for unsupported methods, off-session payments, and payments already configured for manual capture. An `enforce_3ds` is skipped when the account rule cannot apply a challenge. Other 3DS requirements still apply.",
                     "enum": [
                       "allow",
                       "block",
+                      "review",
                       "enforce_3ds"
                     ],
-                    "example": "block",
+                    "example": "review",
                     "type": "string"
                   },
                   "conditions": {
                     "additionalProperties": false,
                     "description": "The conditions a payment is matched against. Up to 10 conditions, and 8 KiB once serialized.",
+                    "example": {
+                      "all": [
+                        {
+                          "field": "risk_score",
+                          "operator": "gte",
+                          "value": 70
+                        }
+                      ]
+                    },
                     "properties": {
                       "all": {
                         "items": {
@@ -31358,8 +31391,10 @@
                               "description": "The payment attribute this condition reads.",
                               "enum": [
                                 "risk_score",
+                                "amount_in_usd",
                                 "card_country",
-                                "customer_email"
+                                "customer_email",
+                                "ip_address"
                               ],
                               "example": "risk_score",
                               "type": "string"
@@ -31377,7 +31412,8 @@
                                 "not_in",
                                 "contains",
                                 "starts_with",
-                                "ends_with"
+                                "ends_with",
+                                "in_cidr"
                               ],
                               "example": "gte",
                               "type": "string"
@@ -31756,8 +31792,18 @@
                     "example": "biz_xxxxxxxxxxxxxx",
                     "type": "string"
                   },
+                  "auto_capture_after_minutes": {
+                    "description": "Minutes after authorization at which Whop captures the hold automatically unless it has been voided. Requires `capture: false`. Between 5 and 5760 (4 days).",
+                    "example": 60,
+                    "maximum": 5760,
+                    "minimum": 5,
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  },
                   "capture": {
-                    "description": "Whether to capture a card payment immediately. Defaults to true. Pass false to place an authorization hold that must be captured in full within five days via the capture endpoint.",
+                    "description": "Whether to capture a card payment immediately. Defaults to true. Pass false to place an authorization hold that must be captured in full within five days via the capture endpoint, or automatically after `auto_capture_after_minutes`.",
                     "example": false,
                     "type": [
                       "boolean",
@@ -45416,12 +45462,12 @@
                             "properties": {
                               "name": {
                                 "description": "The property value this total is for, or the metric's name when it isn't split by a property.",
-                                "example": "spend",
+                                "example": "wins",
                                 "type": "string"
                               },
                               "value": {
                                 "description": "The metric's whole-window value for this entry.",
-                                "example": 2.82,
+                                "example": 4,
                                 "nullable": true,
                                 "type": "number"
                               }
@@ -50436,6 +50482,25 @@
                             "description": "What Whop still needs before review can continue — one requirement per entry. Answer with Update Verification; nothing from the response is echoed back. Keys that don't apply are omitted.",
                             "items": {
                               "properties": {
+                                "action_url": {
+                                  "description": "URL for a related action, such as completing liveness verification or viewing a payment. Absent when no action is available.",
+                                  "type": "string"
+                                },
+                                "details_label": {
+                                  "description": "Follow-up prompt shown with this requirement.",
+                                  "type": "string"
+                                },
+                                "details_required": {
+                                  "description": "Whether the follow-up response is required when visible.",
+                                  "type": "boolean"
+                                },
+                                "details_visible_for": {
+                                  "description": "Selected option values that make the follow-up prompt visible.",
+                                  "items": {
+                                    "type": "string"
+                                  },
+                                  "type": "array"
+                                },
                                 "errors": {
                                   "description": "Present after a rejected submission.",
                                   "items": {
@@ -50483,8 +50548,52 @@
                                   "example": "bank_statement",
                                   "type": "string"
                                 },
+                                "response_type": {
+                                  "description": "Optional native input format for a text response.",
+                                  "enum": [
+                                    "yes_no",
+                                    "yes_no_na",
+                                    "date",
+                                    "url",
+                                    "number",
+                                    "tel"
+                                  ],
+                                  "example": "yes_no",
+                                  "type": "string"
+                                },
+                                "selection_mode": {
+                                  "description": "Whether a question with `options` accepts one value or multiple values.",
+                                  "enum": [
+                                    "single",
+                                    "multiple"
+                                  ],
+                                  "example": "single",
+                                  "type": "string"
+                                },
+                                "supporting_documents": {
+                                  "description": "Documents supplied with the requirement for context.",
+                                  "items": {
+                                    "$ref": "#/components/schemas/File"
+                                  },
+                                  "type": "array"
+                                },
+                                "supporting_files_explanation_allowed": {
+                                  "description": "Whether a written explanation may replace required supporting files.",
+                                  "type": "boolean"
+                                },
+                                "supporting_files_required": {
+                                  "description": "Whether this requirement also needs supporting files.",
+                                  "type": "boolean"
+                                },
+                                "supporting_files_visible_for": {
+                                  "description": "Selected option values that make the supporting-file input visible.",
+                                  "items": {
+                                    "type": "string"
+                                  },
+                                  "type": "array"
+                                },
                                 "type": {
-                                  "description": "What to send as the answer, so you never have to infer it: `files` (a document, as a list of its pages), `id_document` (send `documents` with the slot keys for the ID you are uploading), `text`, `date`, `phone` or `select` (send `value`), or `address` (send `address`).",
+                                  "description": "What to send as the answer, so you never have to infer it: `files` (a document, as a list of its pages), `id_document` (send `documents` with the slot keys for the ID you are uploading), `text`, `date`, `phone` or `select` (send `value`), `text_with_files` (send `value` and optional `files`), `address` (send `address`), or `liveness` (open `action_url`, then send `value` as `true` after completion).",
                                   "example": "files",
                                   "type": "string"
                                 }
@@ -51093,6 +51202,25 @@
                       "description": "What Whop still needs before review can continue — one requirement per entry. Answer with Update Verification; nothing from the response is echoed back. Keys that don't apply are omitted.",
                       "items": {
                         "properties": {
+                          "action_url": {
+                            "description": "URL for a related action, such as completing liveness verification or viewing a payment. Absent when no action is available.",
+                            "type": "string"
+                          },
+                          "details_label": {
+                            "description": "Follow-up prompt shown with this requirement.",
+                            "type": "string"
+                          },
+                          "details_required": {
+                            "description": "Whether the follow-up response is required when visible.",
+                            "type": "boolean"
+                          },
+                          "details_visible_for": {
+                            "description": "Selected option values that make the follow-up prompt visible.",
+                            "items": {
+                              "type": "string"
+                            },
+                            "type": "array"
+                          },
                           "errors": {
                             "description": "Present after a rejected submission.",
                             "items": {
@@ -51140,8 +51268,52 @@
                             "example": "bank_statement",
                             "type": "string"
                           },
+                          "response_type": {
+                            "description": "Optional native input format for a text response.",
+                            "enum": [
+                              "yes_no",
+                              "yes_no_na",
+                              "date",
+                              "url",
+                              "number",
+                              "tel"
+                            ],
+                            "example": "yes_no",
+                            "type": "string"
+                          },
+                          "selection_mode": {
+                            "description": "Whether a question with `options` accepts one value or multiple values.",
+                            "enum": [
+                              "single",
+                              "multiple"
+                            ],
+                            "example": "single",
+                            "type": "string"
+                          },
+                          "supporting_documents": {
+                            "description": "Documents supplied with the requirement for context.",
+                            "items": {
+                              "$ref": "#/components/schemas/File"
+                            },
+                            "type": "array"
+                          },
+                          "supporting_files_explanation_allowed": {
+                            "description": "Whether a written explanation may replace required supporting files.",
+                            "type": "boolean"
+                          },
+                          "supporting_files_required": {
+                            "description": "Whether this requirement also needs supporting files.",
+                            "type": "boolean"
+                          },
+                          "supporting_files_visible_for": {
+                            "description": "Selected option values that make the supporting-file input visible.",
+                            "items": {
+                              "type": "string"
+                            },
+                            "type": "array"
+                          },
                           "type": {
-                            "description": "What to send as the answer, so you never have to infer it: `files` (a document, as a list of its pages), `id_document` (send `documents` with the slot keys for the ID you are uploading), `text`, `date`, `phone` or `select` (send `value`), or `address` (send `address`).",
+                            "description": "What to send as the answer, so you never have to infer it: `files` (a document, as a list of its pages), `id_document` (send `documents` with the slot keys for the ID you are uploading), `text`, `date`, `phone` or `select` (send `value`), `text_with_files` (send `value` and optional `files`), `address` (send `address`), or `liveness` (open `action_url`, then send `value` as `true` after completion).",
                             "example": "files",
                             "type": "string"
                           }
@@ -51363,6 +51535,25 @@
                       "description": "What Whop still needs before review can continue — one requirement per entry. Answer with Update Verification; nothing from the response is echoed back. Keys that don't apply are omitted.",
                       "items": {
                         "properties": {
+                          "action_url": {
+                            "description": "URL for a related action, such as completing liveness verification or viewing a payment. Absent when no action is available.",
+                            "type": "string"
+                          },
+                          "details_label": {
+                            "description": "Follow-up prompt shown with this requirement.",
+                            "type": "string"
+                          },
+                          "details_required": {
+                            "description": "Whether the follow-up response is required when visible.",
+                            "type": "boolean"
+                          },
+                          "details_visible_for": {
+                            "description": "Selected option values that make the follow-up prompt visible.",
+                            "items": {
+                              "type": "string"
+                            },
+                            "type": "array"
+                          },
                           "errors": {
                             "description": "Present after a rejected submission.",
                             "items": {
@@ -51410,8 +51601,52 @@
                             "example": "bank_statement",
                             "type": "string"
                           },
+                          "response_type": {
+                            "description": "Optional native input format for a text response.",
+                            "enum": [
+                              "yes_no",
+                              "yes_no_na",
+                              "date",
+                              "url",
+                              "number",
+                              "tel"
+                            ],
+                            "example": "yes_no",
+                            "type": "string"
+                          },
+                          "selection_mode": {
+                            "description": "Whether a question with `options` accepts one value or multiple values.",
+                            "enum": [
+                              "single",
+                              "multiple"
+                            ],
+                            "example": "single",
+                            "type": "string"
+                          },
+                          "supporting_documents": {
+                            "description": "Documents supplied with the requirement for context.",
+                            "items": {
+                              "$ref": "#/components/schemas/File"
+                            },
+                            "type": "array"
+                          },
+                          "supporting_files_explanation_allowed": {
+                            "description": "Whether a written explanation may replace required supporting files.",
+                            "type": "boolean"
+                          },
+                          "supporting_files_required": {
+                            "description": "Whether this requirement also needs supporting files.",
+                            "type": "boolean"
+                          },
+                          "supporting_files_visible_for": {
+                            "description": "Selected option values that make the supporting-file input visible.",
+                            "items": {
+                              "type": "string"
+                            },
+                            "type": "array"
+                          },
                           "type": {
-                            "description": "What to send as the answer, so you never have to infer it: `files` (a document, as a list of its pages), `id_document` (send `documents` with the slot keys for the ID you are uploading), `text`, `date`, `phone` or `select` (send `value`), or `address` (send `address`).",
+                            "description": "What to send as the answer, so you never have to infer it: `files` (a document, as a list of its pages), `id_document` (send `documents` with the slot keys for the ID you are uploading), `text`, `date`, `phone` or `select` (send `value`), `text_with_files` (send `value` and optional `files`), `address` (send `address`), or `liveness` (open `action_url`, then send `value` as `true` after completion).",
                             "example": "files",
                             "type": "string"
                           }
@@ -51693,6 +51928,25 @@
                       "description": "What Whop still needs before review can continue — one requirement per entry. Answer with Update Verification; nothing from the response is echoed back. Keys that don't apply are omitted.",
                       "items": {
                         "properties": {
+                          "action_url": {
+                            "description": "URL for a related action, such as completing liveness verification or viewing a payment. Absent when no action is available.",
+                            "type": "string"
+                          },
+                          "details_label": {
+                            "description": "Follow-up prompt shown with this requirement.",
+                            "type": "string"
+                          },
+                          "details_required": {
+                            "description": "Whether the follow-up response is required when visible.",
+                            "type": "boolean"
+                          },
+                          "details_visible_for": {
+                            "description": "Selected option values that make the follow-up prompt visible.",
+                            "items": {
+                              "type": "string"
+                            },
+                            "type": "array"
+                          },
                           "errors": {
                             "description": "Present after a rejected submission.",
                             "items": {
@@ -51740,8 +51994,52 @@
                             "example": "bank_statement",
                             "type": "string"
                           },
+                          "response_type": {
+                            "description": "Optional native input format for a text response.",
+                            "enum": [
+                              "yes_no",
+                              "yes_no_na",
+                              "date",
+                              "url",
+                              "number",
+                              "tel"
+                            ],
+                            "example": "yes_no",
+                            "type": "string"
+                          },
+                          "selection_mode": {
+                            "description": "Whether a question with `options` accepts one value or multiple values.",
+                            "enum": [
+                              "single",
+                              "multiple"
+                            ],
+                            "example": "single",
+                            "type": "string"
+                          },
+                          "supporting_documents": {
+                            "description": "Documents supplied with the requirement for context.",
+                            "items": {
+                              "$ref": "#/components/schemas/File"
+                            },
+                            "type": "array"
+                          },
+                          "supporting_files_explanation_allowed": {
+                            "description": "Whether a written explanation may replace required supporting files.",
+                            "type": "boolean"
+                          },
+                          "supporting_files_required": {
+                            "description": "Whether this requirement also needs supporting files.",
+                            "type": "boolean"
+                          },
+                          "supporting_files_visible_for": {
+                            "description": "Selected option values that make the supporting-file input visible.",
+                            "items": {
+                              "type": "string"
+                            },
+                            "type": "array"
+                          },
                           "type": {
-                            "description": "What to send as the answer, so you never have to infer it: `files` (a document, as a list of its pages), `id_document` (send `documents` with the slot keys for the ID you are uploading), `text`, `date`, `phone` or `select` (send `value`), or `address` (send `address`).",
+                            "description": "What to send as the answer, so you never have to infer it: `files` (a document, as a list of its pages), `id_document` (send `documents` with the slot keys for the ID you are uploading), `text`, `date`, `phone` or `select` (send `value`), `text_with_files` (send `value` and optional `files`), `address` (send `address`), or `liveness` (open `action_url`, then send `value` as `true` after completion).",
                             "example": "files",
                             "type": "string"
                           }
@@ -52051,6 +52349,10 @@
                               },
                               "type": "object"
                             },
+                            "document_number": {
+                              "description": "Identity number for an `id_document` answer.",
+                              "type": "string"
+                            },
                             "documents": {
                               "description": "Answer for an `id_document` item: the same slot keys Create Verification takes, so the key names both the document and the side. Send every slot for the ID you are uploading — `PASSPORT` is `passport_front`; `ID_CARD`, `DRIVERS` and `RESIDENCE_PERMIT` take a front and a back. Each value is a direct upload ID, or a `file_`-prefixed attachment ID to reuse an uploaded document.",
                               "properties": {
@@ -52093,7 +52395,7 @@
                               "type": "object"
                             },
                             "files": {
-                              "description": "Answer for a `files` item — one document, as a list of its pages, first page first. Each entry is a direct upload ID, or a `file_`-prefixed attachment ID to reuse an uploaded document.",
+                              "description": "Answer for a `files` item, or optional supporting documents for `text_with_files` — a list of pages, first page first. Each entry is a direct upload ID, or a `file_`-prefixed attachment ID to reuse an uploaded document.",
                               "items": {
                                 "description": "A direct upload ID, or a `file_`-prefixed attachment ID to reuse an uploaded document.",
                                 "example": "file_xxxxxxxxxxxxxx",
@@ -52106,8 +52408,12 @@
                               "example": "inrqi_xxxxxxxxxxxxxx",
                               "type": "string"
                             },
+                            "issuing_country": {
+                              "description": "Two-letter ISO 3166-1 issuing country for an `id_document` answer.",
+                              "type": "string"
+                            },
                             "value": {
-                              "description": "Answer for `text`, `date`, `phone`, and `select` items, and the chosen document type for a `file` item that lists `options`.",
+                              "description": "Answer for `text`, `text_with_files`, `date`, `phone`, and `select` items, and the chosen document type for a `file` item that lists `options`.",
                               "example": "Mobile detailing only; no retail storefront.",
                               "type": "string"
                             },
@@ -52292,6 +52598,10 @@
                               },
                               "type": "object"
                             },
+                            "document_number": {
+                              "description": "Identity number for an `id_document` answer.",
+                              "type": "string"
+                            },
                             "documents": {
                               "description": "Answer for an `id_document` item: the same slot keys Create Verification takes, so the key names both the document and the side. Send every slot for the ID you are uploading — `PASSPORT` is `passport_front`; `ID_CARD`, `DRIVERS` and `RESIDENCE_PERMIT` take a front and a back. Each value is a direct upload ID, or a `file_`-prefixed attachment ID to reuse an uploaded document.",
                               "properties": {
@@ -52334,7 +52644,7 @@
                               "type": "object"
                             },
                             "files": {
-                              "description": "Answer for a `files` item — one document, as a list of its pages, first page first. Each entry is a direct upload ID, or a `file_`-prefixed attachment ID to reuse an uploaded document.",
+                              "description": "Answer for a `files` item, or optional supporting documents for `text_with_files` — a list of pages, first page first. Each entry is a direct upload ID, or a `file_`-prefixed attachment ID to reuse an uploaded document.",
                               "items": {
                                 "description": "A direct upload ID, or a `file_`-prefixed attachment ID to reuse an uploaded document.",
                                 "example": "file_xxxxxxxxxxxxxx",
@@ -52347,8 +52657,12 @@
                               "example": "inrqi_xxxxxxxxxxxxxx",
                               "type": "string"
                             },
+                            "issuing_country": {
+                              "description": "Two-letter ISO 3166-1 issuing country for an `id_document` answer.",
+                              "type": "string"
+                            },
                             "value": {
-                              "description": "Answer for `text`, `date`, `phone`, and `select` items, and the chosen document type for a `file` item that lists `options`.",
+                              "description": "Answer for `text`, `text_with_files`, `date`, `phone`, and `select` items, and the chosen document type for a `file` item that lists `options`.",
                               "example": "Mobile detailing only; no retail storefront.",
                               "type": "string"
                             },
@@ -52534,6 +52848,25 @@
                       "description": "What Whop still needs before review can continue — one requirement per entry. Answer with Update Verification; nothing from the response is echoed back. Keys that don't apply are omitted.",
                       "items": {
                         "properties": {
+                          "action_url": {
+                            "description": "URL for a related action, such as completing liveness verification or viewing a payment. Absent when no action is available.",
+                            "type": "string"
+                          },
+                          "details_label": {
+                            "description": "Follow-up prompt shown with this requirement.",
+                            "type": "string"
+                          },
+                          "details_required": {
+                            "description": "Whether the follow-up response is required when visible.",
+                            "type": "boolean"
+                          },
+                          "details_visible_for": {
+                            "description": "Selected option values that make the follow-up prompt visible.",
+                            "items": {
+                              "type": "string"
+                            },
+                            "type": "array"
+                          },
                           "errors": {
                             "description": "Present after a rejected submission.",
                             "items": {
@@ -52581,8 +52914,52 @@
                             "example": "bank_statement",
                             "type": "string"
                           },
+                          "response_type": {
+                            "description": "Optional native input format for a text response.",
+                            "enum": [
+                              "yes_no",
+                              "yes_no_na",
+                              "date",
+                              "url",
+                              "number",
+                              "tel"
+                            ],
+                            "example": "yes_no",
+                            "type": "string"
+                          },
+                          "selection_mode": {
+                            "description": "Whether a question with `options` accepts one value or multiple values.",
+                            "enum": [
+                              "single",
+                              "multiple"
+                            ],
+                            "example": "single",
+                            "type": "string"
+                          },
+                          "supporting_documents": {
+                            "description": "Documents supplied with the requirement for context.",
+                            "items": {
+                              "$ref": "#/components/schemas/File"
+                            },
+                            "type": "array"
+                          },
+                          "supporting_files_explanation_allowed": {
+                            "description": "Whether a written explanation may replace required supporting files.",
+                            "type": "boolean"
+                          },
+                          "supporting_files_required": {
+                            "description": "Whether this requirement also needs supporting files.",
+                            "type": "boolean"
+                          },
+                          "supporting_files_visible_for": {
+                            "description": "Selected option values that make the supporting-file input visible.",
+                            "items": {
+                              "type": "string"
+                            },
+                            "type": "array"
+                          },
                           "type": {
-                            "description": "What to send as the answer, so you never have to infer it: `files` (a document, as a list of its pages), `id_document` (send `documents` with the slot keys for the ID you are uploading), `text`, `date`, `phone` or `select` (send `value`), or `address` (send `address`).",
+                            "description": "What to send as the answer, so you never have to infer it: `files` (a document, as a list of its pages), `id_document` (send `documents` with the slot keys for the ID you are uploading), `text`, `date`, `phone` or `select` (send `value`), `text_with_files` (send `value` and optional `files`), `address` (send `address`), or `liveness` (open `action_url`, then send `value` as `true` after completion).",
                             "example": "files",
                             "type": "string"
                           }
@@ -52972,6 +53349,7 @@
                         "payout_account.status_updated",
                         "payment.authorized",
                         "payment.canceled",
+                        "payment.requires_action",
                         "resolution_center_case.created",
                         "resolution_center_case.updated",
                         "resolution_center_case.decided",
@@ -53341,6 +53719,7 @@
                         "payout_account.status_updated",
                         "payment.authorized",
                         "payment.canceled",
+                        "payment.requires_action",
                         "resolution_center_case.created",
                         "resolution_center_case.updated",
                         "resolution_center_case.decided",
@@ -61087,6 +61466,7 @@
                   },
                   "payment_method_id": null,
                   "payment_method_type": "card",
+                  "payment_rule_matches": [],
                   "payments_failed": 0,
                   "plan_id": "plan_xxxxxxxxxxxxxx",
                   "presentment_total": {
@@ -61343,6 +61723,7 @@
                   },
                   "payment_method_id": null,
                   "payment_method_type": "card",
+                  "payment_rule_matches": [],
                   "payments_failed": 0,
                   "plan_id": "plan_xxxxxxxxxxxxxx",
                   "presentment_total": {
@@ -61599,6 +61980,7 @@
                   },
                   "payment_method_id": null,
                   "payment_method_type": "card",
+                  "payment_rule_matches": [],
                   "payments_failed": 0,
                   "plan_id": "plan_xxxxxxxxxxxxxx",
                   "presentment_total": {
@@ -61855,6 +62237,7 @@
                   },
                   "payment_method_id": null,
                   "payment_method_type": "card",
+                  "payment_rule_matches": [],
                   "payments_failed": 1,
                   "plan_id": "plan_xxxxxxxxxxxxxx",
                   "presentment_total": {
@@ -62107,6 +62490,7 @@
                   },
                   "payment_method_id": null,
                   "payment_method_type": "us_bank_account",
+                  "payment_rule_matches": [],
                   "payments_failed": 0,
                   "plan_id": "plan_xxxxxxxxxxxxxx",
                   "presentment_total": {
@@ -62250,6 +62634,269 @@
         ]
       }
     },
+    "payment.requires_action": {
+      "post": {
+        "description": "Sent when the bank asks the buyer to verify an off-session charge, such as a subscription renewal or a saved-card payment your server made. `data.recovery_url` is the Whop link where the buyer signs in and completes 3D Secure; the event is only sent while that link exists, so it is null only when you lack `member:basic:read`. Then handle `payment.succeeded` or `payment.failed` for the outcome.\n\nRequired permissions:\n - `payment:basic:read`\n - `plan:basic:read`\n - `access_pass:basic:read`\n - `member:email:read`\n - `member:basic:read`\n - `member:phone:read`\n - `promo_code:basic:read`\n - `shipment:basic:read`\n - `payment:dispute:read`\n - `payment:resolution_center_case:read`\n - `webhook_receive:payments`",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "webhook-id",
+            "required": true,
+            "schema": {
+              "description": "A unique identifier for this webhook request",
+              "example": "msg_xxxxxxxxxxxxxxxxxxxxxxxx",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "webhook-signature",
+            "required": true,
+            "schema": {
+              "description": "The signature of the webhook request with the webhook version prepended",
+              "example": "v1,BASE64ENCODEDSIGNATURE",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "webhook-timestamp",
+            "required": true,
+            "schema": {
+              "description": "The timestamp in seconds since the Unix epoch that the webhook was sent at on the server",
+              "example": "1727606400",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "example": {
+                "account_id": "biz_xxxxxxxxxxxxxx",
+                "api_version": "v1",
+                "api_version_date": "2026-09-15",
+                "data": {
+                  "account_id": "biz_xxxxxxxxxxxxxx",
+                  "amount_after_fees": {
+                    "amount": "50.00",
+                    "currency": "usd",
+                    "decimals": 2,
+                    "display_decimals": 2
+                  },
+                  "auto_refunded": false,
+                  "billing_address": null,
+                  "billing_reason": "subscription_cycle",
+                  "checkout_configuration_id": null,
+                  "client_secret": null,
+                  "created_at": "2026-01-01T12:00:00.000Z",
+                  "currency": "usd",
+                  "customer_email": "marcus@shinetime.example",
+                  "customer_phone": null,
+                  "decline_code": null,
+                  "dispute_alerted_at": null,
+                  "failure_message": null,
+                  "financing_installments_count": null,
+                  "id": "pay_xxxxxxxxxxxxxx",
+                  "last_payment_attempt_at": null,
+                  "member_id": "mber_xxxxxxxxxxxxxx",
+                  "membership_id": null,
+                  "metadata": {},
+                  "needs_tracking": false,
+                  "next_payment_attempt_at": null,
+                  "paid_at": null,
+                  "payment_instrument": {
+                    "card": {
+                      "brand": "visa",
+                      "issuer_identification_number": null,
+                      "last4": "4242"
+                    },
+                    "display_name": "Visa •••• 4242",
+                    "icons": {
+                      "card": {
+                        "dark": {
+                          "png_1x": "https://content.whop.com/payment_methods/visa/icons/card_dark_30.png",
+                          "png_2x": "https://content.whop.com/payment_methods/visa/icons/card_dark_60.png",
+                          "png_4x": "https://content.whop.com/payment_methods/visa/icons/card_dark_120.png",
+                          "svg": "https://content.whop.com/payment_methods/visa/icons/card_dark.svg"
+                        },
+                        "light": {
+                          "png_1x": "https://content.whop.com/payment_methods/visa/icons/card_light_30.png",
+                          "png_2x": "https://content.whop.com/payment_methods/visa/icons/card_light_60.png",
+                          "png_4x": "https://content.whop.com/payment_methods/visa/icons/card_light_120.png",
+                          "svg": "https://content.whop.com/payment_methods/visa/icons/card_light.svg"
+                        }
+                      },
+                      "square": {
+                        "dark": {
+                          "png_1x": "https://content.whop.com/payment_methods/visa/icons/square_dark_32.png",
+                          "png_2x": "https://content.whop.com/payment_methods/visa/icons/square_dark_64.png",
+                          "png_4x": "https://content.whop.com/payment_methods/visa/icons/square_dark_128.png",
+                          "svg": "https://content.whop.com/payment_methods/visa/icons/square_dark.svg"
+                        },
+                        "light": {
+                          "png_1x": "https://content.whop.com/payment_methods/visa/icons/square_light_32.png",
+                          "png_2x": "https://content.whop.com/payment_methods/visa/icons/square_light_64.png",
+                          "png_4x": "https://content.whop.com/payment_methods/visa/icons/square_light_128.png",
+                          "svg": "https://content.whop.com/payment_methods/visa/icons/square_light.svg"
+                        }
+                      }
+                    },
+                    "installment_count": null,
+                    "payment_method_type": "card"
+                  },
+                  "payment_method_id": null,
+                  "payment_method_type": "card",
+                  "payment_rule_matches": [],
+                  "payments_failed": 0,
+                  "plan_id": "plan_xxxxxxxxxxxxxx",
+                  "presentment_total": {
+                    "amount": "50.00",
+                    "currency": "usd",
+                    "decimals": 2,
+                    "display_decimals": 2
+                  },
+                  "product_id": "prod_xxxxxxxxxxxxxx",
+                  "promo_code_id": null,
+                  "recovery_url": "https://whop.com/billing/manage/mber_xxxxxxxxxxxxxx/verify-payment/",
+                  "refundable": false,
+                  "refunded_amount": {
+                    "amount": "0.00",
+                    "currency": "usd",
+                    "decimals": 2,
+                    "display_decimals": 2
+                  },
+                  "refunded_at": null,
+                  "retryable": false,
+                  "risk_score": null,
+                  "risk_signals": null,
+                  "settlement_time_at": null,
+                  "shipment_id": null,
+                  "shipping_address": null,
+                  "status": "open",
+                  "substatus": "incomplete",
+                  "subtotal": {
+                    "amount": "50.00",
+                    "currency": "usd",
+                    "decimals": 2,
+                    "display_decimals": 2
+                  },
+                  "tax_amount": null,
+                  "tax_behavior": null,
+                  "tax_refunded_amount": {
+                    "amount": "0.00",
+                    "currency": "usd",
+                    "decimals": 2,
+                    "display_decimals": 2
+                  },
+                  "three_ds_verified": false,
+                  "total": {
+                    "amount": "50.00",
+                    "currency": "usd",
+                    "decimals": 2,
+                    "display_decimals": 2
+                  },
+                  "updated_at": "2026-01-01T12:00:00.000Z",
+                  "usd_total": {
+                    "amount": "50.00",
+                    "currency": "usd",
+                    "decimals": 2,
+                    "display_decimals": 2
+                  },
+                  "user": {
+                    "id": "user_xxxxxxxxxxxxxx",
+                    "name": "Marcus Webb",
+                    "profile_picture": {
+                      "url": "https://ui-avatars.com/api/"
+                    },
+                    "username": "marcuswebb"
+                  },
+                  "verification_checks": null,
+                  "voidable": false
+                },
+                "id": "msg_xxxxxxxxxxxxxxxxxxxxxxxx",
+                "timestamp": "2025-01-01T00:00:00.000Z",
+                "type": "payment.requires_action"
+              },
+              "schema": {
+                "properties": {
+                  "account_id": {
+                    "description": "The account ID that this webhook event is associated with",
+                    "example": "biz_xxxxxxxxxxxxxx",
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "api_version": {
+                    "const": "v1",
+                    "description": "The API version for this webhook",
+                    "example": "v1",
+                    "type": "string"
+                  },
+                  "api_version_date": {
+                    "description": "The dated API version (Api-Version-Date) the payload is serialized to",
+                    "example": "2026-07-20",
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "data": {
+                    "$ref": "#/components/schemas/Payment"
+                  },
+                  "id": {
+                    "description": "A unique ID for every single webhook request",
+                    "example": "msg_xxxxxxxxxxxxxxxxxxxxxxxx",
+                    "type": "string"
+                  },
+                  "previous_attributes": {
+                    "description": "For some `.updated` events, the old values of the payload fields that changed, keyed by field name. Omitted when no capture is available for the event",
+                    "type": "object"
+                  },
+                  "timestamp": {
+                    "description": "The timestamp in ISO 8601 format that the webhook was sent at on the server",
+                    "example": "2025-01-01T00:00:00.000Z",
+                    "format": "date-time",
+                    "type": "string"
+                  },
+                  "type": {
+                    "const": "payment.requires_action",
+                    "description": "The webhook event type",
+                    "example": "payment.requires_action",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "id",
+                  "api_version",
+                  "api_version_date",
+                  "timestamp",
+                  "type",
+                  "data"
+                ],
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Return a 200 status to indicate that the data was received successfully"
+          }
+        },
+        "summary": "Payment Requires action",
+        "tags": [
+          "Payments"
+        ],
+        "x-mint": {
+          "metadata": {
+            "title": "Payment Requires Action",
+            "sidebarTitle": "Payment Requires Action"
+          }
+        }
+      }
+    },
     "payment.succeeded": {
       "post": {
         "description": "Sent when a payment is succeeded\n\nRequired permissions:\n - `payment:basic:read`\n - `plan:basic:read`\n - `access_pass:basic:read`\n - `member:email:read`\n - `member:basic:read`\n - `member:phone:read`\n - `promo_code:basic:read`\n - `shipment:basic:read`\n - `payment:dispute:read`\n - `payment:resolution_center_case:read`\n - `webhook_receive:payments`",
@@ -62363,6 +63010,7 @@
                   },
                   "payment_method_id": null,
                   "payment_method_type": "card",
+                  "payment_rule_matches": [],
                   "payments_failed": 0,
                   "plan_id": "plan_xxxxxxxxxxxxxx",
                   "presentment_total": {
@@ -69900,7 +70548,8 @@
               "connect_fulfillment_tracker",
               "setup_apple_pay_domains",
               "configure_tax_remitter",
-              "add_vat_registration"
+              "add_vat_registration",
+              "enable_two_factor_authentication"
             ],
             "example": "verify_identity",
             "type": "string"
@@ -78256,7 +78905,7 @@
           },
           "action_type": {
             "description": "Type of action recommended, or `null` when no type is assigned. New values may be added; handle unknown types gracefully.",
-            "example": "improve_landing_page",
+            "example": "cut_losing_ad_spend",
             "type": [
               "string",
               "null"
@@ -78329,6 +78978,14 @@
           "superseded_at": {
             "description": "When the recommendation was rejected or replaced, as an ISO 8601 timestamp, or `null` if neither has occurred.",
             "example": "2026-01-01T12:00:00.000Z",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "target_url": {
+            "description": "Website URL selected for pixel setup, or `null` when no website was captured for this recommendation.",
+            "example": "https://example.com/join",
             "type": [
               "string",
               "null"
@@ -81471,10 +82128,24 @@
           "user": {
             "$ref": "#/components/schemas/UserSummary",
             "description": "The authenticated partner's public profile."
+          },
+          "verification_waitlist_joined": {
+            "description": "Whether the user has a pending or approved personal entry on the Verified Partner waitlist.",
+            "example": false,
+            "type": "boolean"
+          },
+          "whop_partner_verified_at": {
+            "description": "When the user became a verified Whop Partner, as an ISO 8601 timestamp. `null` if not verified.",
+            "type": [
+              "string",
+              "null"
+            ]
           }
         },
         "required": [
           "joined_at",
+          "whop_partner_verified_at",
+          "verification_waitlist_joined",
           "referred_businesses_count",
           "payout_rates",
           "user"
@@ -81922,6 +82593,13 @@
               }
             ]
           },
+          "payment_rule_matches": {
+            "items": {
+              "$ref": "#/components/schemas/PaymentRuleMatch",
+              "description": "The account's own payment rules that matched this payment, recorded when they ran. Empty when none matched, when the account had no rules, or when Whop blocked the payment before they ran."
+            },
+            "type": "array"
+          },
           "payments_failed": {
             "description": "How many charge attempts have failed on this payment.",
             "example": 0,
@@ -82184,6 +82862,7 @@
           "three_ds_verified",
           "verification_checks",
           "risk_score",
+          "payment_rule_matches",
           "risk_signals",
           "financing_installments_count",
           "metadata",
@@ -83423,10 +84102,11 @@
             "type": "string"
           },
           "action": {
-            "description": "What happens to a payment when every condition matches. An `allow` overrides this account's other rules only, never Whop's own fraud controls. An `enforce_3ds` is skipped where the payment cannot carry a challenge.",
+            "description": "What this account's rule requests when every condition matches. One applicable account-rule action wins, in this order: `allow`, `block`, `review`, `enforce_3ds`. An `allow` overrides this account's other rules, never Whop's own fraud controls. A `review` requests authorization without capture for an eligible on-session card payment through Whop Payments. Automatic capture is scheduled for 48 hours after authorization; capture or void the payment before then to decide sooner. Capture may complete later or fail. Review is skipped for unsupported methods, off-session payments, and payments already configured for manual capture. An `enforce_3ds` is skipped when the account rule cannot apply a challenge. Other 3DS requirements still apply.",
             "enum": [
               "allow",
               "block",
+              "review",
               "enforce_3ds"
             ],
             "example": "block",
@@ -83499,8 +84179,10 @@
             "description": "The payment attribute this condition reads.",
             "enum": [
               "risk_score",
+              "amount_in_usd",
               "card_country",
-              "customer_email"
+              "customer_email",
+              "ip_address"
             ],
             "example": "risk_score",
             "type": "string"
@@ -83518,7 +84200,8 @@
               "not_in",
               "contains",
               "starts_with",
-              "ends_with"
+              "ends_with",
+              "in_cidr"
             ],
             "example": "gte",
             "type": "string"
@@ -83575,8 +84258,10 @@
             "description": "The payment attribute this condition reads.",
             "enum": [
               "risk_score",
+              "amount_in_usd",
               "card_country",
-              "customer_email"
+              "customer_email",
+              "ip_address"
             ],
             "example": "risk_score",
             "type": "string"
@@ -83611,7 +84296,8 @@
                 "not_in",
                 "contains",
                 "starts_with",
-                "ends_with"
+                "ends_with",
+                "in_cidr"
               ],
               "example": "eq",
               "type": "string"
@@ -83632,6 +84318,7 @@
             "description": "The type of value this field compares against.",
             "enum": [
               "integer",
+              "number",
               "string"
             ],
             "example": "integer",
@@ -83667,6 +84354,38 @@
         ],
         "type": "object"
       },
+      "PaymentRuleMatch": {
+        "properties": {
+          "action": {
+            "description": "What the rule asked for.",
+            "enum": [
+              "allow",
+              "block",
+              "review",
+              "enforce_3ds"
+            ],
+            "example": "allow",
+            "type": "string"
+          },
+          "id": {
+            "description": "Payment rule ID, prefixed `prule_`.",
+            "type": "string"
+          },
+          "name": {
+            "description": "The rule's name when it matched. Renaming the rule afterwards does not rewrite this.",
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "action"
+        ],
+        "type": "object"
+      },
       "PaymentStatus": {
         "properties": {
           "account": {
@@ -83678,6 +84397,13 @@
               {
                 "type": "null"
               }
+            ]
+          },
+          "auto_capture_at": {
+            "description": "When Whop will capture this authorization automatically, as an ISO 8601 timestamp. `null` when no automatic capture was requested.",
+            "type": [
+              "string",
+              "null"
             ]
           },
           "capture_expires_at": {
@@ -83763,7 +84489,8 @@
           "processing_details",
           "last_payment_error",
           "return_url",
-          "capture_expires_at"
+          "capture_expires_at",
+          "auto_capture_at"
         ],
         "type": "object"
       },
@@ -84500,7 +85227,7 @@
           },
           "installed": {
             "description": "Whether the pixel was seen. Without a `url` this answers for the whole account: true when it has sent events recently. With a `url` it answers for THAT page only — true when the page is hosted on Whop, when the page itself has sent events recently, or when the pixel was found in its source. Events the account sent from other pages do not make a given `url` installed.",
-            "example": true,
+            "example": false,
             "type": "boolean"
           },
           "last_fired_days": {
@@ -84541,7 +85268,7 @@
           },
           "url": {
             "description": "The URL that was checked, after normalization. `null` when the request didn't include one.",
-            "example": "https://shinetime.example/checkout/complete",
+            "example": "https://shinetime.example/",
             "type": [
               "string",
               "null"
@@ -89026,6 +89753,7 @@
                 "payout_account.status_updated",
                 "payment.authorized",
                 "payment.canceled",
+                "payment.requires_action",
                 "resolution_center_case.created",
                 "resolution_center_case.updated",
                 "resolution_center_case.decided",
@@ -89163,6 +89891,7 @@
                 "payout_account.status_updated",
                 "payment.authorized",
                 "payment.canceled",
+                "payment.requires_action",
                 "resolution_center_case.created",
                 "resolution_center_case.updated",
                 "resolution_center_case.decided",
@@ -89452,6 +90181,7 @@
                 "payout_account.status_updated",
                 "payment.authorized",
                 "payment.canceled",
+                "payment.requires_action",
                 "resolution_center_case.created",
                 "resolution_center_case.updated",
                 "resolution_center_case.decided",

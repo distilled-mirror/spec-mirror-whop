@@ -14,6 +14,7 @@ Payments is how you charge customers on Whop: one-time purchases, subscriptions,
 * **Sell subscriptions** and manage their lifecycle: pause, resume, cancel, restore, add free days.
 * **Save payment methods** to charge customers again later.
 * **Handle the edge cases**: issue refunds, respond to disputes with evidence, and react to chargebacks as they happen.
+* **Manage fraud** with payment rules that block, challenge, or allow checkouts on your own terms.
 
 ## Core objects
 
@@ -36,5 +37,9 @@ Checkout configuration, plan, product, membership, payment. Each is defined in [
 
   <Card title="Refunds and disputes" icon="shield" href="/developer/guides/refunds-and-disputes">
     Handle refunds, disputes, and chargebacks.
+  </Card>
+
+  <Card title="Manage fraud" icon="user-shield" href="/developer/guides/manage-fraud">
+    Block, challenge, or allow checkouts with your own payment rules.
   </Card>
 </Columns>

@@ -19918,6 +19918,7 @@
           "stripe_payout_fee",
           "dispute_fee",
           "dispute_alert_fee",
+          "dispute_representment_fee",
           "apple_processing_fee",
           "buyer_fee",
           "sezzle_processing_fee",
@@ -20640,6 +20641,7 @@
           "payout_account.status_updated",
           "payment.authorized",
           "payment.canceled",
+          "payment.requires_action",
           "resolution_center_case.created",
           "resolution_center_case.updated",
           "resolution_center_case.decided",
@@ -116466,6 +116468,250 @@
           }
         },
         "summary": "Payment Pending",
+        "tags": [
+          "Payments"
+        ]
+      }
+    },
+    "payment.requires_action": {
+      "post": {
+        "description": "Sent when the bank asks the buyer to verify an off-session charge, such as a subscription renewal or a saved-card payment your server made. `data.recovery_url` is the Whop link where the buyer signs in and completes 3D Secure; the event is only sent while that link exists, so it is null only when you lack `member:basic:read`. Then handle `payment.succeeded` or `payment.failed` for the outcome.\n\nRequired permissions:\n - `payment:basic:read`\n - `plan:basic:read`\n - `access_pass:basic:read`\n - `member:email:read`\n - `member:basic:read`\n - `member:phone:read`\n - `promo_code:basic:read`\n - `shipment:basic:read`\n - `payment:dispute:read`\n - `payment:resolution_center_case:read`\n - `webhook_receive:payments`",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "webhook-id",
+            "required": true,
+            "schema": {
+              "description": "A unique identifier for this webhook request",
+              "example": "msg_xxxxxxxxxxxxxxxxxxxxxxxx",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "webhook-signature",
+            "required": true,
+            "schema": {
+              "description": "The signature of the webhook request with the webhook version prepended",
+              "example": "v1,BASE64ENCODEDSIGNATURE",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "webhook-timestamp",
+            "required": true,
+            "schema": {
+              "description": "The timestamp in seconds since the Unix epoch that the webhook was sent at on the server",
+              "example": "1727606400",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "example": {
+                "api_version": "v1",
+                "api_version_date": null,
+                "company_id": "biz_xxxxxxxxxxxxxx",
+                "data": {
+                  "amount_after_fees": 50,
+                  "application_fee": null,
+                  "auto_refunded": false,
+                  "billing_address": null,
+                  "billing_reason": "subscription_cycle",
+                  "card_brand": "visa",
+                  "card_exp_month": null,
+                  "card_exp_year": null,
+                  "card_last4": "4242",
+                  "checkout_configuration_id": null,
+                  "company": {
+                    "id": "biz_xxxxxxxxxxxxxx",
+                    "route": "biz_xxxxxxxxxxxxxx",
+                    "title": "Shine Time Auto Detailing"
+                  },
+                  "created_at": "2026-01-01T12:00:00.000Z",
+                  "currency": "usd",
+                  "customer_phone": null,
+                  "decline_code": null,
+                  "dispute_alerted_at": null,
+                  "disputes": [],
+                  "failure_message": null,
+                  "fees": [],
+                  "financing_installments_count": null,
+                  "financing_transactions": [],
+                  "id": "pay_xxxxxxxxxxxxxx",
+                  "last_payment_attempt": null,
+                  "member": {
+                    "id": "mber_xxxxxxxxxxxxxx",
+                    "phone": null
+                  },
+                  "membership": null,
+                  "metadata": {},
+                  "needs_tracking": false,
+                  "next_payment_attempt": null,
+                  "paid_at": null,
+                  "payment_instrument": {
+                    "card": {
+                      "brand": "visa",
+                      "last4": "4242"
+                    },
+                    "display_name": "Visa •••• 4242",
+                    "icons": {
+                      "card": {
+                        "dark": {
+                          "png_1x": "https://content.whop.com/payment_methods/visa/icons/card_dark_30.png",
+                          "png_2x": "https://content.whop.com/payment_methods/visa/icons/card_dark_60.png",
+                          "png_4x": "https://content.whop.com/payment_methods/visa/icons/card_dark_120.png",
+                          "svg": "https://content.whop.com/payment_methods/visa/icons/card_dark.svg"
+                        },
+                        "light": {
+                          "png_1x": "https://content.whop.com/payment_methods/visa/icons/card_light_30.png",
+                          "png_2x": "https://content.whop.com/payment_methods/visa/icons/card_light_60.png",
+                          "png_4x": "https://content.whop.com/payment_methods/visa/icons/card_light_120.png",
+                          "svg": "https://content.whop.com/payment_methods/visa/icons/card_light.svg"
+                        }
+                      },
+                      "square": {
+                        "dark": {
+                          "png_1x": "https://content.whop.com/payment_methods/visa/icons/square_dark_32.png",
+                          "png_2x": "https://content.whop.com/payment_methods/visa/icons/square_dark_64.png",
+                          "png_4x": "https://content.whop.com/payment_methods/visa/icons/square_dark_128.png",
+                          "svg": "https://content.whop.com/payment_methods/visa/icons/square_dark.svg"
+                        },
+                        "light": {
+                          "png_1x": "https://content.whop.com/payment_methods/visa/icons/square_light_32.png",
+                          "png_2x": "https://content.whop.com/payment_methods/visa/icons/square_light_64.png",
+                          "png_4x": "https://content.whop.com/payment_methods/visa/icons/square_light_128.png",
+                          "svg": "https://content.whop.com/payment_methods/visa/icons/square_light.svg"
+                        }
+                      }
+                    },
+                    "installment_count": null,
+                    "payment_method_type": "card"
+                  },
+                  "payment_method": null,
+                  "payment_method_type": "card",
+                  "payments_failed": 0,
+                  "plan": {
+                    "id": "plan_xxxxxxxxxxxxxx",
+                    "internal_notes": "Maintenance tier. Upsell the interior shampoo add-on at renewal.",
+                    "metadata": {}
+                  },
+                  "product": {
+                    "id": "prod_xxxxxxxxxxxxxx",
+                    "metadata": {},
+                    "route": "ceramic-coating-package",
+                    "title": "Ceramic Coating Package"
+                  },
+                  "promo_code": null,
+                  "recovery_url": "https://whop.com/billing/manage/mber_xxxxxxxxxxxxxx/verify-payment/",
+                  "refundable": false,
+                  "refunded_amount": 0,
+                  "refunded_at": null,
+                  "refunds": [],
+                  "resolutions": [],
+                  "retryable": false,
+                  "risk_score": null,
+                  "risk_signals": null,
+                  "settlement_amount": 50,
+                  "settlement_currency": "usd",
+                  "settlement_exchange_rate": null,
+                  "settlement_time_at": null,
+                  "shipment": null,
+                  "shipping_address": null,
+                  "status": "open",
+                  "substatus": "incomplete",
+                  "subtotal": 50,
+                  "tax_amount": null,
+                  "tax_behavior": null,
+                  "tax_refunded_amount": 0,
+                  "three_ds_verified": false,
+                  "total": 50,
+                  "updated_at": "2026-01-01T12:00:00.000Z",
+                  "usd_total": 50,
+                  "user": {
+                    "email": "marcus@shinetime.example",
+                    "id": "user_xxxxxxxxxxxxxx",
+                    "name": "Marcus Webb",
+                    "username": "marcuswebb"
+                  },
+                  "verification_checks": null,
+                  "voidable": false
+                },
+                "id": "msg_xxxxxxxxxxxxxxxxxxxxxxxx",
+                "timestamp": "2025-01-01T00:00:00.000Z",
+                "type": "payment.requires_action"
+              },
+              "schema": {
+                "properties": {
+                  "api_version": {
+                    "const": "v1",
+                    "description": "The API version for this webhook",
+                    "example": "v1",
+                    "type": "string"
+                  },
+                  "api_version_date": {
+                    "description": "The dated API version (Api-Version-Date) the payload is serialized to",
+                    "example": "2026-07-20",
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "company_id": {
+                    "description": "The account ID that this webhook event is associated with",
+                    "example": "biz_xxxxxxxxxxxxxx",
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "data": {
+                    "$ref": "#/components/schemas/Payment"
+                  },
+                  "id": {
+                    "description": "A unique ID for every single webhook request",
+                    "example": "msg_xxxxxxxxxxxxxxxxxxxxxxxx",
+                    "type": "string"
+                  },
+                  "previous_attributes": {
+                    "description": "For some `.updated` events, the old values of the payload fields that changed, keyed by field name. Omitted when no capture is available for the event",
+                    "type": "object"
+                  },
+                  "timestamp": {
+                    "description": "The timestamp in ISO 8601 format that the webhook was sent at on the server",
+                    "example": "2025-01-01T00:00:00.000Z",
+                    "format": "date-time",
+                    "type": "string"
+                  },
+                  "type": {
+                    "const": "payment.requires_action",
+                    "description": "The webhook event type",
+                    "example": "payment.requires_action",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "id",
+                  "api_version",
+                  "api_version_date",
+                  "timestamp",
+                  "type",
+                  "data"
+                ],
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Return a 200 status to indicate that the data was received successfully"
+          }
+        },
+        "summary": "Payment Requires action",
         "tags": [
           "Payments"
         ]

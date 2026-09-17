@@ -364,7 +364,7 @@
     </Card>
 
     <Card title="Checkout" href="/elements/upcoming/checkout/overview">
-      Drives a full hosted checkout for one plan — price summary, promo codes, the currency the buyer pays in, and the whole payment collection surface (the payments elements, composed inside) — against the Whop checkout sessions API.
+      Drives a full hosted checkout for one or more plans — itemized price summary, promo codes, the currency the buyer pays in, and the whole payment collection surface (the payments elements, composed inside) — against the Whop checkout sessions API.
     </Card>
 
     <Card title="Ads" href="/elements/upcoming/ads/overview">

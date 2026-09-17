@@ -106,6 +106,16 @@ Retrieve your profile with `/partners/{id}`. Use `/partners/links` for your stan
         </ResponseField>
       </Accordion>
     </ResponseField>
+
+    <ResponseField name="verification_waitlist_joined" type="boolean" required>
+      Whether the user has a pending or approved personal entry on the Verified
+      Partner waitlist.
+    </ResponseField>
+
+    <ResponseField name="whop_partner_verified_at" type="string | null" required>
+      When the user became a verified Whop Partner, as an ISO 8601 timestamp. `null`
+      if not verified.
+    </ResponseField>
   </Column>
 
   <Column>
@@ -121,6 +131,8 @@ Retrieve your profile with `/partners/{id}`. Use `/partners/links` for your stan
       		}
       	},
       	"joined_at": "2026-09-01T12:00:00.000Z",
+      	"whop_partner_verified_at": null,
+      	"verification_waitlist_joined": false,
       	"referred_businesses_count": 12,
       	"payout_rates": [
       		{

@@ -3,7 +3,7 @@
     "https://docs.whop.com/llms.txt",
     "https://docs.whop.com/sitemap.xml"
   ],
-  "count": 1049,
+  "count": 1053,
   "pages": [
     {
       "page": "https://docs.whop.com/account-settings/account-security/delete-your-account",
@@ -2532,6 +2532,15 @@
       ]
     },
     {
+      "page": "https://docs.whop.com/api-reference/beta/payment-rules/payment-rule",
+      "markdown": "https://docs.whop.com/api-reference/beta/payment-rules/payment-rule.md",
+      "file": "api-reference/beta/payment-rules/payment-rule.md",
+      "indexes": [
+        "llms.txt",
+        "sitemap"
+      ]
+    },
+    {
       "page": "https://docs.whop.com/api-reference/beta/payment-rules/replace-a-payment-rule",
       "markdown": "https://docs.whop.com/api-reference/beta/payment-rules/replace-a-payment-rule.md",
       "file": "api-reference/beta/payment-rules/replace-a-payment-rule.md",
@@ -2630,6 +2639,14 @@
       "page": "https://docs.whop.com/api-reference/beta/payments/payment-pending",
       "markdown": "https://docs.whop.com/api-reference/beta/payments/payment-pending.md",
       "file": "api-reference/beta/payments/payment-pending.md",
+      "indexes": [
+        "sitemap"
+      ]
+    },
+    {
+      "page": "https://docs.whop.com/api-reference/beta/payments/payment-requires-action",
+      "markdown": "https://docs.whop.com/api-reference/beta/payments/payment-requires-action.md",
+      "file": "api-reference/beta/payments/payment-requires-action.md",
       "indexes": [
         "sitemap"
       ]
@@ -5549,6 +5566,15 @@
       ]
     },
     {
+      "page": "https://docs.whop.com/api-reference/payments/payment-requires-action",
+      "markdown": "https://docs.whop.com/api-reference/payments/payment-requires-action.md",
+      "file": "api-reference/payments/payment-requires-action.md",
+      "indexes": [
+        "llms.txt",
+        "sitemap"
+      ]
+    },
+    {
       "page": "https://docs.whop.com/api-reference/payments/payment-succeeded",
       "markdown": "https://docs.whop.com/api-reference/payments/payment-succeeded.md",
       "file": "api-reference/payments/payment-succeeded.md",
@@ -6801,6 +6827,15 @@
       "page": "https://docs.whop.com/developer/guides/ledger-stats",
       "markdown": "https://docs.whop.com/developer/guides/ledger-stats.md",
       "file": "developer/guides/ledger-stats.md",
+      "indexes": [
+        "llms.txt",
+        "sitemap"
+      ]
+    },
+    {
+      "page": "https://docs.whop.com/developer/guides/manage-fraud",
+      "markdown": "https://docs.whop.com/developer/guides/manage-fraud.md",
+      "file": "developer/guides/manage-fraud.md",
       "indexes": [
         "llms.txt",
         "sitemap"

@@ -105,6 +105,23 @@ Use the Verifications API to start or resume a hosted verification session, chec
           Requested information item ID, prefixed `inrqi_`.
         </ResponseField>
 
+        <ResponseField name="action_url" type="string">
+          URL for a related action, such as completing liveness verification or viewing
+          a payment. Absent when no action is available.
+        </ResponseField>
+
+        <ResponseField name="details_label" type="string">
+          Follow-up prompt shown with this requirement.
+        </ResponseField>
+
+        <ResponseField name="details_required" type="boolean">
+          Whether the follow-up response is required when visible.
+        </ResponseField>
+
+        <ResponseField name="details_visible_for" type="string[]">
+          Selected option values that make the follow-up prompt visible.
+        </ResponseField>
+
         <ResponseField name="errors" type="object[]">
           Present after a rejected submission.
 
@@ -139,8 +156,112 @@ Use the Verifications API to start or resume a hosted verification session, chec
           as `ssn` or `identity_document`. Handle unrecognized values by `type`.
         </ResponseField>
 
+        <ResponseField name="response_type" type="string">
+          Optional native input format for a text response.
+
+          Available options: `yes_no`, `yes_no_na`, `date`, `url`, `number`, `tel`
+        </ResponseField>
+
+        <ResponseField name="selection_mode" type="string">
+          Whether a question with `options` accepts one value or multiple values.
+
+          Available options: `single`, `multiple`
+        </ResponseField>
+
+        <ResponseField name="supporting_documents" type="object[]">
+          Documents supplied with the requirement for context.
+
+          <Accordion title="Properties" defaultOpen={true}>
+            <ResponseField name="id" type="string" required>
+              The file's ID, prefixed `file_`.
+            </ResponseField>
+
+            <ResponseField name="content_type" type="string | null" required>
+              The file's MIME type, e.g. `application/pdf`.
+            </ResponseField>
+
+            <ResponseField name="created_at" type="string" required>
+              When the file was created, as an ISO 8601 timestamp.
+            </ResponseField>
+
+            <ResponseField name="filename" type="string | null" required>
+              The original filename, including its extension.
+            </ResponseField>
+
+            <ResponseField name="multipart_chunk_size" type="integer | null">
+              The byte size each part (except the last) must be. Present only on create, and
+              only for multipart uploads.
+            </ResponseField>
+
+            <ResponseField name="multipart_upload_id" type="string | null">
+              The ID of the multipart upload, passed back to `complete`. Present only on
+              create, and only for multipart uploads.
+            </ResponseField>
+
+            <ResponseField name="multipart_upload_urls" type="object[] | null">
+              The presigned URL for each part. Present only on create, and only for multipart uploads.
+
+              <Accordion title="Properties" defaultOpen={true}>
+                <ResponseField name="part_number" type="integer" required>
+                  The 1-based index of this part within the multipart upload.
+                </ResponseField>
+
+                <ResponseField name="url" type="string" required>
+                  The presigned URL to PUT this part's bytes to.
+                </ResponseField>
+              </Accordion>
+            </ResponseField>
+
+            <ResponseField name="object" type="string" required>
+              The type of this object, always `file`.
+            </ResponseField>
+
+            <ResponseField name="size" type="integer | null" required>
+              The file size in bytes. `null` until the upload has finished.
+            </ResponseField>
+
+            <ResponseField name="upload_headers" type="object">
+              Headers to send with the upload PUT. Present only on create.
+            </ResponseField>
+
+            <ResponseField name="upload_status" type="string" required>
+              Where the file is in its upload lifecycle.
+
+              Available options: `pending`, `processing`, `ready`, `failed`
+            </ResponseField>
+
+            <ResponseField name="upload_url" type="string | null">
+              Presigned URL to PUT the file's bytes to. Present only on create, and only for
+              single-part uploads.
+            </ResponseField>
+
+            <ResponseField name="url" type="string | null" required>
+              A URL to download the file: a permanent CDN URL for public files, a signed
+              expiring URL for private ones. `null` until the upload has finished.
+            </ResponseField>
+
+            <ResponseField name="visibility" type="string" required>
+              `public` files are served via an unsigned CDN URL; `private` files via a signed, expiring URL.
+
+              Available options: `public`, `private`
+            </ResponseField>
+          </Accordion>
+        </ResponseField>
+
+        <ResponseField name="supporting_files_explanation_allowed" type="boolean">
+          Whether a written explanation may replace required supporting files.
+        </ResponseField>
+
+        <ResponseField name="supporting_files_required" type="boolean">
+          Whether this requirement also needs supporting files.
+        </ResponseField>
+
+        <ResponseField name="supporting_files_visible_for" type="string[]">
+          Selected option values that make the supporting-file input visible.
+        </ResponseField>
+
         <ResponseField name="type" type="string" required>
-          What to send as the answer, so you never have to infer it: `files` (a document, as a list of its pages), `id_document` (send `documents` with the slot keys for the ID you are uploading), `text`, `date`, `phone` or `select` (send `value`), or `address` (send `address`).
+          What to send as the answer, so you never have to infer it: `files` (a document, as a list of its pages), `id_document` (send `documents` with the slot keys for the ID you are uploading), `text`, `date`, `phone` or `select` (send `value`), `text_with_files` (send `value` and optional `files`), `address` (send `address`), or `liveness` (open `action_url`, then send `value` as `true` after completion).
         </ResponseField>
       </Accordion>
     </ResponseField>

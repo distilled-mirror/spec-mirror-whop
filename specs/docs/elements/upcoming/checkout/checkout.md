@@ -53,7 +53,13 @@ Mounts inside [`Checkout`](/elements/upcoming/checkout/overview). Pass props and
 
 ## Props
 
-*This element takes no consumer props.*
+<ResponseField name="buyerEmail" type="string">
+  Prefills the buyer email the host page already knows: the authenticated first-party viewer’s, the one a checkout link carried, or the one a merchant page collected before mounting. A session that already holds its buyer’s email wins over it. Empty (default) leaves the field for the buyer. Defaults to `""`.
+</ResponseField>
+
+<ResponseField name="lockBuyerEmail" type="boolean">
+  Keeps the buyer from editing the prefilled `buyerEmail` — an invoice link names who it was issued to. Only holds while the field still shows that email; a session email that already differs is never locked to it, and without a `buyerEmail` there is nothing to lock. Defaults to `false`.
+</ResponseField>
 
 ## Events
 
@@ -137,6 +143,8 @@ Style these parts through `appearance.classes`. Use camel case or kebab case for
 | `.whop-CheckoutBreakdownPending`        | The placeholder shown for a figure that is still being calculated                                                                                                                 |
 | `.whop-CheckoutBreakdownRows`           | The opened price breakdown — the item’s own subtotal and the service fee                                                                                                          |
 | `.whop-CheckoutBreakdownToggle`         | The "Price breakdown" disclosure that opens the subtotal and service fee rows                                                                                                     |
+| `.whop-CheckoutCartItem`                | One product, quantity, and server-priced amount in a multi-item cart                                                                                                              |
+| `.whop-CheckoutCartItems`               | The itemized cart directly below the total for a checkout containing multiple items                                                                                               |
 | `.whop-CheckoutClaimOffer`              | The embedded claim-offer line on the success face                                                                                                                                 |
 | `.whop-CheckoutCollection`              | The collection column — email, payment methods, and the pay flow                                                                                                                  |
 | `.whop-CheckoutCompanyPurchase`         | The company-purchase block — the checkbox and the tax registration fields it reveals                                                                                              |
@@ -342,7 +350,7 @@ const checkout = whop.checkout.create({
   }
 });
 
-// 225 classes use this shape
+// 227 classes use this shape
 checkout.update({
   appearance: { classes: { 'whop-Address': { fontWeight: '700' } } }
 });

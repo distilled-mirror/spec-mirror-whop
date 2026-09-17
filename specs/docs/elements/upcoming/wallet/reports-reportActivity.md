@@ -64,7 +64,7 @@ Pass callbacks in the create options or React props.
 
 ### `onExportReady`
 
-The CSV is ready; downloadUrl also appears as a clickable link.
+The CSV is ready and its download has started.
 
 **Signature:** `((payload: ReportExportReady) => void)`
 
