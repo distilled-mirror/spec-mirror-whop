@@ -143,15 +143,13 @@
 
 <CodeGroup>
   ```tsx React theme={null}
-  import { WhopElements, Payments, PaymentDetailElement, PaymentsElement, PaymentElement, AddressElement, CardElement, EmailElement, TaxIdElement, BrandingElement } from "@whop/elements-react";
+  import { WhopElements, Payments, PaymentElement, AddressElement, CardElement, EmailElement, TaxIdElement, BrandingElement } from "@whop/elements-react";
   import { loadWhop } from "@whop/elements";
 
   function Example() {
     return (
       <WhopElements elements={loadWhop()}>
         <Payments /* options */>
-          <PaymentDetailElement />
-          <PaymentsElement />
           <PaymentElement />
           <AddressElement />
           <CardElement />
@@ -211,8 +209,6 @@
   <script src="https://js.whop.cloud/elements/amber/elements.js" data-whop-elements></script>
   <script type="module">
     const payments = window.WhopElements().payments.create({ /* options */ });
-    payments.create('paymentDetail').mount('#payments-paymentDetail');
-    payments.create('payments').mount('#payments-payments');
     payments.create('payment').mount('#payments-payment');
     payments.create('address').mount('#payments-address');
     payments.create('card').mount('#payments-card');
@@ -273,20 +269,20 @@
 
   <CodeGroup>
     ```tsx React theme={null}
-    <Payments accountId="biz_xxxxxxxx" accessToken={token}>
+    <Ads accountId="biz_xxxxxxxx" accessToken={token}>
       {/* elements */}
-    </Payments>
+    </Ads>
     ```
 
     ```ts JavaScript theme={null}
-    const payments = whop.payments.create({ accountId: "biz_xxxxxxxx", accessToken });
+    const ads = whop.ads.create({ accountId: "biz_xxxxxxxx", accessToken });
     ```
   </CodeGroup>
 
   The token is a value you set, not a callback the SDK calls. Set a new one before it expires:
 
   ```ts theme={null}
-  payments.update({ accessToken: await createAccessToken() });
+  ads.update({ accessToken: await createAccessToken() });
   ```
 
   <Note>If you omit `accessToken`, requests use the viewer's session cookie instead. This works **only on whop.com**. The API does not send `Access-Control-Allow-Credentials` on cross-origin preflights, so a page on your own domain has no session to fall back to and must pass a token.</Note>
@@ -356,7 +352,7 @@
 
   <CardGroup cols={2}>
     <Card title="Payments" href="/elements/upcoming/payments/overview">
-      Browse account payments with PaymentsElement, collect a payment from a `plan_` ID or inline currency and amount, or save a payment method without charging with `mode: "setup"`.
+      Collect a payment from a `plan_` ID or inline currency and amount, or save a payment method without charging with `mode: "setup"`.
     </Card>
 
     <Card title="Verifications" href="/elements/upcoming/verifications/overview">
@@ -381,6 +377,10 @@
 
     <Card title="Websites" href="/elements/upcoming/websites/overview">
       An account's websites: every site built on whop.site plus every domain the Whop Pixel reports, with traffic and attributed revenue per domain.
+    </Card>
+
+    <Card title="Dashboard" href="/elements/upcoming/dashboard/overview">
+      An account's own dashboard surfaces, embedded on your site.
     </Card>
   </CardGroup>
 

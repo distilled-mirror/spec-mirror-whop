@@ -12,8 +12,8 @@ Use the Cashback Rules API to create future-dated rules, update their merchant n
 
 | Endpoint                                                                        | Request                                                                     |
 | ------------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
-| [Create Cashback Rule](/api-reference/beta/cashback-rules/create-cashback-rule) | <Badge color="green" size="sm" stroke>POST</Badge> `/cashback_rule`         |
 | [List Cashback Rules](/api-reference/beta/cashback-rules/list-cashback-rules)   | <Badge color="blue" size="sm" stroke>GET</Badge> `/cashback_rules`          |
+| [Create Cashback Rule](/api-reference/beta/cashback-rules/create-cashback-rule) | <Badge color="green" size="sm" stroke>POST</Badge> `/cashback_rule`         |
 | [Update Cashback Rule](/api-reference/beta/cashback-rules/update-cashback-rule) | <Badge color="orange" size="sm" stroke>PATCH</Badge> `/cashback_rules/{id}` |
 
 ## Attributes

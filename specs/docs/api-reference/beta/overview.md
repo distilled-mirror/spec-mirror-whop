@@ -100,7 +100,7 @@ Accept payments from buyers and handle what comes after.
 | [Payments](/api-reference/beta/payments/list-payments)                                              | A charge against a buyer, and the step they still owe.                     |
 | [Refunds](/api-reference/beta/refunds/list-refunds)                                                 | Money returned to a buyer from a payment.                                  |
 | [Confirmation Tokens](/api-reference/beta/confirmation-tokens/confirmation-token)                   | A short-lived reference to payment details collected from a buyer.         |
-| [Setup Intents](/api-reference/beta/setup-intents/update-setup-return-url)                          | Saving a buyer's payment method without charging it.                       |
+| [Setup Intents](/api-reference/beta/setup-intents/retrieve-setup-status)                            | Saving a buyer's payment method without charging it.                       |
 | [Payment Rules](/api-reference/beta/payment-rules/payment-rule)                                     | Rules an account writes to decide its own payments.                        |
 | [Disputes](/api-reference/beta/disputes/dispute)                                                    | Chargebacks filed against an account, with evidence and outcomes.          |
 | [Dispute Alerts](/api-reference/beta/dispute-alerts/dispute-alert)                                  | Issuer warnings that arrive before a chargeback does.                      |
@@ -138,9 +138,10 @@ Sell products and get paid.
 
 Refer users and businesses to Whop and track what you earn.
 
-| Resource                                         | What it's for                                                                |
-| ------------------------------------------------ | ---------------------------------------------------------------------------- |
-| [Partners](/api-reference/beta/partners/partner) | Your partner profile, referral links, payout rates, and referred businesses. |
+| Resource                                                                                                  | What it's for                                                                |
+| --------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
+| [Partner Referral Requests](/api-reference/beta/partner-referral-requests/list-partner-referral-requests) | Request business attribution and manage owner approval.                      |
+| [Partners](/api-reference/beta/partners/partner)                                                          | Your partner profile, referral links, payout rates, and referred businesses. |
 
 ### Workforce
 

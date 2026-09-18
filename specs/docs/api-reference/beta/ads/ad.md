@@ -13,13 +13,13 @@ Use the Ads API to list ads for an account, create ads inside ad groups, retriev
 | Endpoint                                                   | Request                                                                  |
 | ---------------------------------------------------------- | ------------------------------------------------------------------------ |
 | [List Ads](/api-reference/beta/ads/list-ads)               | <Badge color="blue" size="sm" stroke>GET</Badge> `/ads`                  |
-| [Create an Ad](/api-reference/beta/ads/create-an-ad)       | <Badge color="green" size="sm" stroke>POST</Badge> `/ads`                |
 | [Retrieve an Ad](/api-reference/beta/ads/retrieve-an-ad)   | <Badge color="blue" size="sm" stroke>GET</Badge> `/ads/{id}`             |
-| [Update an Ad](/api-reference/beta/ads/update-an-ad)       | <Badge color="orange" size="sm" stroke>PATCH</Badge> `/ads/{id}`         |
-| [Delete an Ad](/api-reference/beta/ads/delete-an-ad)       | <Badge color="red" size="sm" stroke>DELETE</Badge> `/ads/{id}`           |
+| [Create an Ad](/api-reference/beta/ads/create-an-ad)       | <Badge color="green" size="sm" stroke>POST</Badge> `/ads`                |
 | [Duplicate an Ad](/api-reference/beta/ads/duplicate-an-ad) | <Badge color="green" size="sm" stroke>POST</Badge> `/ads/{id}/duplicate` |
 | [Pause an Ad](/api-reference/beta/ads/pause-an-ad)         | <Badge color="green" size="sm" stroke>POST</Badge> `/ads/{id}/pause`     |
 | [Unpause an Ad](/api-reference/beta/ads/unpause-an-ad)     | <Badge color="green" size="sm" stroke>POST</Badge> `/ads/{id}/unpause`   |
+| [Update an Ad](/api-reference/beta/ads/update-an-ad)       | <Badge color="orange" size="sm" stroke>PATCH</Badge> `/ads/{id}`         |
+| [Delete an Ad](/api-reference/beta/ads/delete-an-ad)       | <Badge color="red" size="sm" stroke>DELETE</Badge> `/ads/{id}`           |
 
 ## Attributes
 

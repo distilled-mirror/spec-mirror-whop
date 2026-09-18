@@ -3,7 +3,7 @@
     "https://docs.whop.com/llms.txt",
     "https://docs.whop.com/sitemap.xml"
   ],
-  "count": 1053,
+  "count": 1063,
   "pages": [
     {
       "page": "https://docs.whop.com/account-settings/account-security/delete-your-account",
@@ -563,6 +563,15 @@
       ]
     },
     {
+      "page": "https://docs.whop.com/api-reference/beta/accounts/retrieve-account-fees",
+      "markdown": "https://docs.whop.com/api-reference/beta/accounts/retrieve-account-fees.md",
+      "file": "api-reference/beta/accounts/retrieve-account-fees.md",
+      "indexes": [
+        "llms.txt",
+        "sitemap"
+      ]
+    },
+    {
       "page": "https://docs.whop.com/api-reference/beta/accounts/retrieve-account-preferences",
       "markdown": "https://docs.whop.com/api-reference/beta/accounts/retrieve-account-preferences.md",
       "file": "api-reference/beta/accounts/retrieve-account-preferences.md",
@@ -593,6 +602,15 @@
       "page": "https://docs.whop.com/api-reference/beta/accounts/update-account",
       "markdown": "https://docs.whop.com/api-reference/beta/accounts/update-account.md",
       "file": "api-reference/beta/accounts/update-account.md",
+      "indexes": [
+        "llms.txt",
+        "sitemap"
+      ]
+    },
+    {
+      "page": "https://docs.whop.com/api-reference/beta/accounts/update-account-fees",
+      "markdown": "https://docs.whop.com/api-reference/beta/accounts/update-account-fees.md",
+      "file": "api-reference/beta/accounts/update-account-fees.md",
       "indexes": [
         "llms.txt",
         "sitemap"
@@ -1562,15 +1580,6 @@
       ]
     },
     {
-      "page": "https://docs.whop.com/api-reference/beta/confirmation-tokens/create-confirmation-token",
-      "markdown": "https://docs.whop.com/api-reference/beta/confirmation-tokens/create-confirmation-token.md",
-      "file": "api-reference/beta/confirmation-tokens/create-confirmation-token.md",
-      "indexes": [
-        "llms.txt",
-        "sitemap"
-      ]
-    },
-    {
       "page": "https://docs.whop.com/api-reference/beta/confirmation-tokens/retrieve-confirmation-token",
       "markdown": "https://docs.whop.com/api-reference/beta/confirmation-tokens/retrieve-confirmation-token.md",
       "file": "api-reference/beta/confirmation-tokens/retrieve-confirmation-token.md",
@@ -2337,6 +2346,60 @@
       "page": "https://docs.whop.com/api-reference/beta/overview",
       "markdown": "https://docs.whop.com/api-reference/beta/overview.md",
       "file": "api-reference/beta/overview.md",
+      "indexes": [
+        "llms.txt",
+        "sitemap"
+      ]
+    },
+    {
+      "page": "https://docs.whop.com/api-reference/beta/partner-referral-requests/accept-a-partner-referral-request",
+      "markdown": "https://docs.whop.com/api-reference/beta/partner-referral-requests/accept-a-partner-referral-request.md",
+      "file": "api-reference/beta/partner-referral-requests/accept-a-partner-referral-request.md",
+      "indexes": [
+        "llms.txt",
+        "sitemap"
+      ]
+    },
+    {
+      "page": "https://docs.whop.com/api-reference/beta/partner-referral-requests/cancel-a-partner-referral-request",
+      "markdown": "https://docs.whop.com/api-reference/beta/partner-referral-requests/cancel-a-partner-referral-request.md",
+      "file": "api-reference/beta/partner-referral-requests/cancel-a-partner-referral-request.md",
+      "indexes": [
+        "llms.txt",
+        "sitemap"
+      ]
+    },
+    {
+      "page": "https://docs.whop.com/api-reference/beta/partner-referral-requests/create-a-partner-referral-request",
+      "markdown": "https://docs.whop.com/api-reference/beta/partner-referral-requests/create-a-partner-referral-request.md",
+      "file": "api-reference/beta/partner-referral-requests/create-a-partner-referral-request.md",
+      "indexes": [
+        "llms.txt",
+        "sitemap"
+      ]
+    },
+    {
+      "page": "https://docs.whop.com/api-reference/beta/partner-referral-requests/decline-a-partner-referral-request",
+      "markdown": "https://docs.whop.com/api-reference/beta/partner-referral-requests/decline-a-partner-referral-request.md",
+      "file": "api-reference/beta/partner-referral-requests/decline-a-partner-referral-request.md",
+      "indexes": [
+        "llms.txt",
+        "sitemap"
+      ]
+    },
+    {
+      "page": "https://docs.whop.com/api-reference/beta/partner-referral-requests/list-partner-referral-requests",
+      "markdown": "https://docs.whop.com/api-reference/beta/partner-referral-requests/list-partner-referral-requests.md",
+      "file": "api-reference/beta/partner-referral-requests/list-partner-referral-requests.md",
+      "indexes": [
+        "llms.txt",
+        "sitemap"
+      ]
+    },
+    {
+      "page": "https://docs.whop.com/api-reference/beta/partner-referral-requests/retrieve-a-partner-referral-request",
+      "markdown": "https://docs.whop.com/api-reference/beta/partner-referral-requests/retrieve-a-partner-referral-request.md",
+      "file": "api-reference/beta/partner-referral-requests/retrieve-a-partner-referral-request.md",
       "indexes": [
         "llms.txt",
         "sitemap"
@@ -7274,6 +7337,33 @@
       ]
     },
     {
+      "page": "https://docs.whop.com/elements/beta/dashboard/overview",
+      "markdown": "https://docs.whop.com/elements/beta/dashboard/overview.md",
+      "file": "elements/beta/dashboard/overview.md",
+      "indexes": [
+        "llms.txt",
+        "sitemap"
+      ]
+    },
+    {
+      "page": "https://docs.whop.com/elements/beta/dashboard/paymentDetail",
+      "markdown": "https://docs.whop.com/elements/beta/dashboard/paymentDetail.md",
+      "file": "elements/beta/dashboard/paymentDetail.md",
+      "indexes": [
+        "llms.txt",
+        "sitemap"
+      ]
+    },
+    {
+      "page": "https://docs.whop.com/elements/beta/dashboard/paymentsTable",
+      "markdown": "https://docs.whop.com/elements/beta/dashboard/paymentsTable.md",
+      "file": "elements/beta/dashboard/paymentsTable.md",
+      "indexes": [
+        "llms.txt",
+        "sitemap"
+      ]
+    },
+    {
       "page": "https://docs.whop.com/elements/beta/getting-started",
       "markdown": "https://docs.whop.com/elements/beta/getting-started.md",
       "file": "elements/beta/getting-started.md",
@@ -7376,15 +7466,6 @@
       "page": "https://docs.whop.com/elements/beta/payments/paymentRequest",
       "markdown": "https://docs.whop.com/elements/beta/payments/paymentRequest.md",
       "file": "elements/beta/payments/paymentRequest.md",
-      "indexes": [
-        "llms.txt",
-        "sitemap"
-      ]
-    },
-    {
-      "page": "https://docs.whop.com/elements/beta/payments/payments",
-      "markdown": "https://docs.whop.com/elements/beta/payments/payments.md",
-      "file": "elements/beta/payments/payments.md",
       "indexes": [
         "llms.txt",
         "sitemap"
@@ -7804,6 +7885,46 @@
       ]
     },
     {
+      "page": "https://docs.whop.com/elements/upcoming/dashboard/overview",
+      "markdown": "https://docs.whop.com/elements/upcoming/dashboard/overview.md",
+      "file": "elements/upcoming/dashboard/overview.md",
+      "indexes": [
+        "llms.txt"
+      ]
+    },
+    {
+      "page": "https://docs.whop.com/elements/upcoming/dashboard/paymentDetail",
+      "markdown": "https://docs.whop.com/elements/upcoming/dashboard/paymentDetail.md",
+      "file": "elements/upcoming/dashboard/paymentDetail.md",
+      "indexes": [
+        "llms.txt"
+      ]
+    },
+    {
+      "page": "https://docs.whop.com/elements/upcoming/dashboard/paymentsTable",
+      "markdown": "https://docs.whop.com/elements/upcoming/dashboard/paymentsTable.md",
+      "file": "elements/upcoming/dashboard/paymentsTable.md",
+      "indexes": [
+        "llms.txt"
+      ]
+    },
+    {
+      "page": "https://docs.whop.com/elements/upcoming/dashboard/required-actions",
+      "markdown": "https://docs.whop.com/elements/upcoming/dashboard/required-actions.md",
+      "file": "elements/upcoming/dashboard/required-actions.md",
+      "indexes": [
+        "llms.txt"
+      ]
+    },
+    {
+      "page": "https://docs.whop.com/elements/upcoming/dashboard/verification",
+      "markdown": "https://docs.whop.com/elements/upcoming/dashboard/verification.md",
+      "file": "elements/upcoming/dashboard/verification.md",
+      "indexes": [
+        "llms.txt"
+      ]
+    },
+    {
       "page": "https://docs.whop.com/elements/upcoming/getting-started",
       "markdown": "https://docs.whop.com/elements/upcoming/getting-started.md",
       "file": "elements/upcoming/getting-started.md",
@@ -7892,25 +8013,9 @@
       ]
     },
     {
-      "page": "https://docs.whop.com/elements/upcoming/payments/paymentDetail",
-      "markdown": "https://docs.whop.com/elements/upcoming/payments/paymentDetail.md",
-      "file": "elements/upcoming/payments/paymentDetail.md",
-      "indexes": [
-        "llms.txt"
-      ]
-    },
-    {
       "page": "https://docs.whop.com/elements/upcoming/payments/paymentRequest",
       "markdown": "https://docs.whop.com/elements/upcoming/payments/paymentRequest.md",
       "file": "elements/upcoming/payments/paymentRequest.md",
-      "indexes": [
-        "llms.txt"
-      ]
-    },
-    {
-      "page": "https://docs.whop.com/elements/upcoming/payments/payments",
-      "markdown": "https://docs.whop.com/elements/upcoming/payments/payments.md",
-      "file": "elements/upcoming/payments/payments.md",
       "indexes": [
         "llms.txt"
       ]
@@ -8156,25 +8261,9 @@
       ]
     },
     {
-      "page": "https://docs.whop.com/elements/upcoming/wallet/required-actions",
-      "markdown": "https://docs.whop.com/elements/upcoming/wallet/required-actions.md",
-      "file": "elements/upcoming/wallet/required-actions.md",
-      "indexes": [
-        "llms.txt"
-      ]
-    },
-    {
       "page": "https://docs.whop.com/elements/upcoming/wallet/send",
       "markdown": "https://docs.whop.com/elements/upcoming/wallet/send.md",
       "file": "elements/upcoming/wallet/send.md",
-      "indexes": [
-        "llms.txt"
-      ]
-    },
-    {
-      "page": "https://docs.whop.com/elements/upcoming/wallet/verification",
-      "markdown": "https://docs.whop.com/elements/upcoming/wallet/verification.md",
-      "file": "elements/upcoming/wallet/verification.md",
       "indexes": [
         "llms.txt"
       ]

@@ -13,15 +13,15 @@ Use the Ad Groups API to create ad groups in campaigns, list or retrieve targeti
 | Endpoint                                                                           | Request                                                                         |
 | ---------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
 | [List Ad Groups](/api-reference/beta/ad-groups/list-ad-groups)                     | <Badge color="blue" size="sm" stroke>GET</Badge> `/ad_groups`                   |
-| [Create an Ad Group](/api-reference/beta/ad-groups/create-an-ad-group)             | <Badge color="green" size="sm" stroke>POST</Badge> `/ad_groups`                 |
 | [Retrieve an Ad Group](/api-reference/beta/ad-groups/retrieve-an-ad-group)         | <Badge color="blue" size="sm" stroke>GET</Badge> `/ad_groups/{id}`              |
-| [Update an Ad Group](/api-reference/beta/ad-groups/update-an-ad-group)             | <Badge color="orange" size="sm" stroke>PATCH</Badge> `/ad_groups/{id}`          |
-| [Delete an Ad Group](/api-reference/beta/ad-groups/delete-an-ad-group)             | <Badge color="red" size="sm" stroke>DELETE</Badge> `/ad_groups/{id}`            |
+| [Search Targeting Options](/api-reference/beta/ad-groups/search-targeting-options) | <Badge color="blue" size="sm" stroke>GET</Badge> `/ad_groups/targeting_options` |
+| [Create an Ad Group](/api-reference/beta/ad-groups/create-an-ad-group)             | <Badge color="green" size="sm" stroke>POST</Badge> `/ad_groups`                 |
 | [Duplicate an Ad Group](/api-reference/beta/ad-groups/duplicate-an-ad-group)       | <Badge color="green" size="sm" stroke>POST</Badge> `/ad_groups/{id}/duplicate`  |
 | [Pause an Ad Group](/api-reference/beta/ad-groups/pause-an-ad-group)               | <Badge color="green" size="sm" stroke>POST</Badge> `/ad_groups/{id}/pause`      |
 | [Unpause an Ad Group](/api-reference/beta/ad-groups/unpause-an-ad-group)           | <Badge color="green" size="sm" stroke>POST</Badge> `/ad_groups/{id}/unpause`    |
 | [Estimate Ad Group Reach](/api-reference/beta/ad-groups/estimate-ad-group-reach)   | <Badge color="green" size="sm" stroke>POST</Badge> `/ad_groups/estimate_reach`  |
-| [Search Targeting Options](/api-reference/beta/ad-groups/search-targeting-options) | <Badge color="blue" size="sm" stroke>GET</Badge> `/ad_groups/targeting_options` |
+| [Update an Ad Group](/api-reference/beta/ad-groups/update-an-ad-group)             | <Badge color="orange" size="sm" stroke>PATCH</Badge> `/ad_groups/{id}`          |
+| [Delete an Ad Group](/api-reference/beta/ad-groups/delete-an-ad-group)             | <Badge color="red" size="sm" stroke>DELETE</Badge> `/ad_groups/{id}`            |
 
 ## Attributes
 

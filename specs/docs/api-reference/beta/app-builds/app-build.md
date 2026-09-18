@@ -19,6 +19,6 @@ Use the App Builds API to upload a build for an app, list an app's builds with p
 | Endpoint                                                                | Request                                                                       |
 | ----------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
 | [List App Builds](/api-reference/beta/app-builds/list-app-builds)       | <Badge color="blue" size="sm" stroke>GET</Badge> `/app_builds`                |
-| [Create App Build](/api-reference/beta/app-builds/create-app-build)     | <Badge color="green" size="sm" stroke>POST</Badge> `/app_builds`              |
 | [Retrieve App Build](/api-reference/beta/app-builds/retrieve-app-build) | <Badge color="blue" size="sm" stroke>GET</Badge> `/app_builds/{id}`           |
+| [Create App Build](/api-reference/beta/app-builds/create-app-build)     | <Badge color="green" size="sm" stroke>POST</Badge> `/app_builds`              |
 | [Promote App Build](/api-reference/beta/app-builds/promote-app-build)   | <Badge color="green" size="sm" stroke>POST</Badge> `/app_builds/{id}/promote` |

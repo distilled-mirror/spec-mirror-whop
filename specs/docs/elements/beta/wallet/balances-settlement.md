@@ -6,7 +6,7 @@
 
 > The account balance details shown by Whop's dashboard: available funds, pending settlement dates, reserve terms, and any negative balance. It opens as a 550px modal and uses the balances handle's account, currency, and credential.
 
-<Info>This page documents `@whop/elements@1.0.0-beta.4` and `@whop/elements-react@1.0.0-beta.4`.</Info>
+<Info>This page documents `@whop/elements@1.0.0-beta.5` and `@whop/elements-react@1.0.0-beta.5`.</Info>
 
 *Pre-release, not yet part of a stable release.*
 
@@ -51,7 +51,7 @@ Opens as a modal from [`Balances`](/elements/beta/wallet/balances), in [`Wallet`
     <div data-whop-demo-shell style={{ position: "relative", minHeight: "320px", transition: "min-height 200ms ease" }}>
       <div data-whop-demo-skeleton style={{ position: "absolute", inset: "0", borderRadius: "12px", background: "rgba(140, 140, 140, 0.12)", pointerEvents: "none", transition: "opacity 200ms ease" }} />
 
-      <div data-whop-demo-native="element:balances/settlement" data-whop-elements-version="1.0.0-beta.4" style={{ position: "relative" }} />
+      <div data-whop-demo-native="element:balances/settlement" data-whop-elements-version="1.0.0-beta.5" style={{ position: "relative" }} />
     </div>
 
     <p style={{ fontSize: "0.8125rem", opacity: 0.7 }}>Example data. [Open the Playground](/elements/beta/wallet/overview#playground).</p>

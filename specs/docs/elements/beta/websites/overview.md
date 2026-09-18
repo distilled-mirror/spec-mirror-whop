@@ -6,7 +6,7 @@
 
 > An account's websites: every site built on whop.site plus every domain the Whop Pixel reports, with traffic and attributed revenue per domain. Mount `websites` and it lists them with visitors, page views, sales, revenue, trend, and most-viewed pages. Mount `pixel-setup` alongside it and a site whose pixel the wizard just proved live gets a waiting row automatically, because its first events take a few minutes to reach the stats API and the site would otherwise look lost — you wire nothing up for that, and the row is kept on your page so it is still there if the merchant reloads. Reading stats is privileged, so it needs an `accessToken` — except inside Whop's own app, where the viewer's session carries the read.
 
-<Info>This page documents `@whop/elements@1.0.0-beta.4` and `@whop/elements-react@1.0.0-beta.4`.</Info>
+<Info>This page documents `@whop/elements@1.0.0-beta.5` and `@whop/elements-react@1.0.0-beta.5`.</Info>
 
 *Pre-release, not yet part of a stable release.*
 
@@ -17,7 +17,7 @@ Assemble the elements with example data. Drive the controls, add and arrange ele
 <div data-whop-demo-shell style={{ position: "relative", minHeight: "480px", transition: "min-height 200ms ease" }}>
   <div data-whop-demo-skeleton style={{ position: "absolute", inset: "0", borderRadius: "12px", background: "rgba(140, 140, 140, 0.12)", pointerEvents: "none", transition: "opacity 200ms ease" }} />
 
-  <div data-whop-demo-native="playground:websites" data-whop-elements-version="1.0.0-beta.4" style={{ position: "relative" }} />
+  <div data-whop-demo-native="playground:websites" data-whop-elements-version="1.0.0-beta.5" style={{ position: "relative" }} />
 </div>
 
 <div data-whop-usage="websites/playground">

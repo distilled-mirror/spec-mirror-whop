@@ -17,9 +17,9 @@ Each API key stores an `api_version_date`. Requests authenticated with the key u
 | Endpoint                                                                                | Request                                                                    |
 | --------------------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
 | [List API Keys](/api-reference/beta/api-keys/list-api-keys)                             | <Badge color="blue" size="sm" stroke>GET</Badge> `/api_keys`               |
-| [Create API Key](/api-reference/beta/api-keys/create-api-key)                           | <Badge color="green" size="sm" stroke>POST</Badge> `/api_keys`             |
 | [Retrieve API Key](/api-reference/beta/api-keys/retrieve-api-key)                       | <Badge color="blue" size="sm" stroke>GET</Badge> `/api_keys/{id}`          |
+| [List the Permission Catalog](/api-reference/beta/api-keys/list-the-permission-catalog) | <Badge color="blue" size="sm" stroke>GET</Badge> `/api_keys/permissions`   |
+| [Create API Key](/api-reference/beta/api-keys/create-api-key)                           | <Badge color="green" size="sm" stroke>POST</Badge> `/api_keys`             |
+| [Rotate API Key](/api-reference/beta/api-keys/rotate-api-key)                           | <Badge color="green" size="sm" stroke>POST</Badge> `/api_keys/{id}/rotate` |
 | [Update API Key](/api-reference/beta/api-keys/update-api-key)                           | <Badge color="orange" size="sm" stroke>PATCH</Badge> `/api_keys/{id}`      |
 | [Delete API Key](/api-reference/beta/api-keys/delete-api-key)                           | <Badge color="red" size="sm" stroke>DELETE</Badge> `/api_keys/{id}`        |
-| [Rotate API Key](/api-reference/beta/api-keys/rotate-api-key)                           | <Badge color="green" size="sm" stroke>POST</Badge> `/api_keys/{id}/rotate` |
-| [List the Permission Catalog](/api-reference/beta/api-keys/list-the-permission-catalog) | <Badge color="blue" size="sm" stroke>GET</Badge> `/api_keys/permissions`   |

@@ -63,7 +63,7 @@ Opens as a modal from [`Wallet`](/elements/upcoming/wallet/overview): `wallet.cr
   A scoped token for the card and its transactions — needs `payout:account:read`. Omitted, calls carry the viewer's own session, which only answers same-origin.
 </ResponseField>
 
-<ResponseField name="card" type="{ status: &#x22;active&#x22; | &#x22;frozen&#x22; | &#x22;canceled&#x22; | &#x22;invited&#x22; | &#x22;denied&#x22; | null; name: string | null; id: string; last4: string | null; billing: Billing | null; expiration_month: string | null; expiration_year: string | null; }">
+<ResponseField name="card" type="{ name: string | null; id: string; status: &#x22;active&#x22; | &#x22;frozen&#x22; | &#x22;canceled&#x22; | &#x22;invited&#x22; | &#x22;denied&#x22; | null; last4: string | null; billing: Billing | null; expiration_month: string | null; expiration_year: string | null; }">
   Non-sensitive card metadata a host has already loaded. Supplying it saves the card face a list request; its authorized secrets are still fetched so the reveal stays instant.
 </ResponseField>
 

@@ -16,7 +16,7 @@ Here’s what happens when a customer opens a claim:
 
 1. **Customer opens a claim**
    * They explain the issue and choose a reason
-   * They can upload up to 3 files (screenshots, videos, receipts)
+   * They can upload up to 5 files (screenshots, videos, receipts)
 
 2. **You receive a notification**
    * Whop sends you an email

@@ -14,20 +14,20 @@ Use the Users API to search for users, retrieve or update profiles, and check wh
 | ------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------- |
 | [List Users](/api-reference/beta/users/list-users)                             | <Badge color="blue" size="sm" stroke>GET</Badge> `/users`                                          |
 | [Retrieve User](/api-reference/beta/users/retrieve-user)                       | <Badge color="blue" size="sm" stroke>GET</Badge> `/users/{id}`                                     |
-| [Update User](/api-reference/beta/users/update-user)                           | <Badge color="orange" size="sm" stroke>PATCH</Badge> `/users/{id}`                                 |
 | [Check User Access](/api-reference/beta/users/check-user-access)               | <Badge color="blue" size="sm" stroke>GET</Badge> `/users/{id}/access/{resource_id}`                |
 | [List Recommended Actions](/api-reference/beta/users/list-recommended-actions) | <Badge color="blue" size="sm" stroke>GET</Badge> `/users/{id}/recommend_actions`                   |
 | [List OAuth Grants](/api-reference/beta/users/list-oauth-grants)               | <Badge color="blue" size="sm" stroke>GET</Badge> `/users/me/oauth_grants`                          |
-| [Authorize an App](/api-reference/beta/users/authorize-an-app)                 | <Badge color="green" size="sm" stroke>POST</Badge> `/users/me/oauth_grants`                        |
 | [List](/api-reference/beta/users/list)                                         | <Badge color="blue" size="sm" stroke>GET</Badge> `/users/me/passkeys`                              |
-| [Register](/api-reference/beta/users/register)                                 | <Badge color="green" size="sm" stroke>POST</Badge> `/users/me/passkeys`                            |
-| [Delete](/api-reference/beta/users/delete)                                     | <Badge color="red" size="sm" stroke>DELETE</Badge> `/users/me/passkeys/{id}`                       |
-| [Create Challenge](/api-reference/beta/users/create-challenge)                 | <Badge color="green" size="sm" stroke>POST</Badge> `/users/me/passkeys/challenge`                  |
 | [Retrieve](/api-reference/beta/users/retrieve)                                 | <Badge color="blue" size="sm" stroke>GET</Badge> `/users/me/preferences`                           |
-| [Update](/api-reference/beta/users/update)                                     | <Badge color="orange" size="sm" stroke>PATCH</Badge> `/users/me/preferences`                       |
-| [Set](/api-reference/beta/users/set)                                           | <Badge color="orange" size="sm" stroke>PATCH</Badge> `/users/me/preferences/notifications`         |
 | [List Experiences](/api-reference/beta/users/list-experiences)                 | <Badge color="blue" size="sm" stroke>GET</Badge> `/users/me/preferences/notifications/experiences` |
 | [List Topics](/api-reference/beta/users/list-topics)                           | <Badge color="blue" size="sm" stroke>GET</Badge> `/users/me/preferences/notifications/topics`      |
+| [Authorize an App](/api-reference/beta/users/authorize-an-app)                 | <Badge color="green" size="sm" stroke>POST</Badge> `/users/me/oauth_grants`                        |
+| [Register](/api-reference/beta/users/register)                                 | <Badge color="green" size="sm" stroke>POST</Badge> `/users/me/passkeys`                            |
+| [Create Challenge](/api-reference/beta/users/create-challenge)                 | <Badge color="green" size="sm" stroke>POST</Badge> `/users/me/passkeys/challenge`                  |
+| [Update User](/api-reference/beta/users/update-user)                           | <Badge color="orange" size="sm" stroke>PATCH</Badge> `/users/{id}`                                 |
+| [Update](/api-reference/beta/users/update)                                     | <Badge color="orange" size="sm" stroke>PATCH</Badge> `/users/me/preferences`                       |
+| [Set](/api-reference/beta/users/set)                                           | <Badge color="orange" size="sm" stroke>PATCH</Badge> `/users/me/preferences/notifications`         |
+| [Delete](/api-reference/beta/users/delete)                                     | <Badge color="red" size="sm" stroke>DELETE</Badge> `/users/me/passkeys/{id}`                       |
 
 ## Attributes
 

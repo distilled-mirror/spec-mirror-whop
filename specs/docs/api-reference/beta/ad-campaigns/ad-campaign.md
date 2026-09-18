@@ -13,14 +13,14 @@ Use the Ad Campaigns API to create campaigns, list campaigns for an account, ret
 | Endpoint                                                                                                  | Request                                                                               |
 | --------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
 | [List Ad Campaigns](/api-reference/beta/ad-campaigns/list-ad-campaigns)                                   | <Badge color="blue" size="sm" stroke>GET</Badge> `/ad_campaigns`                      |
-| [Create an Ad Campaign](/api-reference/beta/ad-campaigns/create-an-ad-campaign)                           | <Badge color="green" size="sm" stroke>POST</Badge> `/ad_campaigns`                    |
 | [Retrieve an Ad Campaign](/api-reference/beta/ad-campaigns/retrieve-an-ad-campaign)                       | <Badge color="blue" size="sm" stroke>GET</Badge> `/ad_campaigns/{id}`                 |
-| [Update an Ad Campaign](/api-reference/beta/ad-campaigns/update-an-ad-campaign)                           | <Badge color="orange" size="sm" stroke>PATCH</Badge> `/ad_campaigns/{id}`             |
-| [Delete an Ad Campaign](/api-reference/beta/ad-campaigns/delete-an-ad-campaign)                           | <Badge color="red" size="sm" stroke>DELETE</Badge> `/ad_campaigns/{id}`               |
+| [Create an Ad Campaign](/api-reference/beta/ad-campaigns/create-an-ad-campaign)                           | <Badge color="green" size="sm" stroke>POST</Badge> `/ad_campaigns`                    |
 | [Duplicate an Ad Campaign](/api-reference/beta/ad-campaigns/duplicate-an-ad-campaign)                     | <Badge color="green" size="sm" stroke>POST</Badge> `/ad_campaigns/{id}/duplicate`     |
 | [Pause an Ad Campaign](/api-reference/beta/ad-campaigns/pause-an-ad-campaign)                             | <Badge color="green" size="sm" stroke>POST</Badge> `/ad_campaigns/{id}/pause`         |
 | [Retry a Failed Ad Campaign Payment](/api-reference/beta/ad-campaigns/retry-a-failed-ad-campaign-payment) | <Badge color="green" size="sm" stroke>POST</Badge> `/ad_campaigns/{id}/retry_payment` |
 | [Unpause an Ad Campaign](/api-reference/beta/ad-campaigns/unpause-an-ad-campaign)                         | <Badge color="green" size="sm" stroke>POST</Badge> `/ad_campaigns/{id}/unpause`       |
+| [Update an Ad Campaign](/api-reference/beta/ad-campaigns/update-an-ad-campaign)                           | <Badge color="orange" size="sm" stroke>PATCH</Badge> `/ad_campaigns/{id}`             |
+| [Delete an Ad Campaign](/api-reference/beta/ad-campaigns/delete-an-ad-campaign)                           | <Badge color="red" size="sm" stroke>DELETE</Badge> `/ad_campaigns/{id}`               |
 
 ## Attributes
 

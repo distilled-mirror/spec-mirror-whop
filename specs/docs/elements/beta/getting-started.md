@@ -6,7 +6,7 @@
 
 > Install Whop Elements and mount your first element in React, JavaScript, Swift, or React Native.
 
-<Info>This page documents `@whop/elements@1.0.0-beta.4` and `@whop/elements-react@1.0.0-beta.4`.</Info>
+<Info>This page documents `@whop/elements@1.0.0-beta.5` and `@whop/elements-react@1.0.0-beta.5`.</Info>
 
 <div data-whop-platform="web">
   Whop Elements are hosted, themeable UI components you embed in your own site. Each element renders in an isolated frame served from Whop's CDN. You install a thin, fully typed package and the element code stays up to date on its own.
@@ -112,14 +112,14 @@
 <div data-whop-platform="react-native" style={{ display: "none" }}>
   ## Requirements
 
-  |              |                                            |
-  | ------------ | ------------------------------------------ |
-  | React Native | `0.87+`, New Architecture (Fabric) enabled |
-  | React        | `19.2.3+`                                  |
-  | iOS          | 15.1+, **Swift Package Manager only**      |
-  | Android      | `minSdk 24`, `compileSdk 37`               |
+  |              |                                                                                           |
+  | ------------ | ----------------------------------------------------------------------------------------- |
+  | React Native | `0.87+` on Swift Package Manager, `0.86+` on CocoaPods. New Architecture (Fabric) enabled |
+  | React        | `19.2.3+`                                                                                 |
+  | iOS          | 15.1+                                                                                     |
+  | Android      | `minSdk 24`, `compileSdk 37`                                                              |
 
-  <Warning>**Your iOS app must be on Swift Package Manager.** This package ships a `Package.swift` and no podspec, so an app still integrating through CocoaPods cannot link its native code — you would need to move the app to SPM first. `npx react-native spm add` performs that conversion, and the example app in the repo does exactly this if you want to see it end to end.</Warning>
+  <Note>**Either iOS dependency manager works.** The package ships both an `ios/Package.swift` and a podspec, and the toolchain picks one. React Native's Swift Package Manager autolinker prefers the `Package.swift`, so an app already on SPM is unaffected by the podspec. An app on CocoaPods, which includes every Expo app today, links through the podspec and needs nothing else. The React Native floor is higher on SPM because `Package.swift` links two header-only XCFrameworks that first shipped in 0.87.</Note>
 
   <Note>Native code is Swift and Kotlin generated through React Native Codegen: nothing here asks you to hand-edit Objective-C or Java, and there are no native peer dependencies to install.</Note>
 
@@ -145,14 +145,13 @@
 
 <CodeGroup>
   ```tsx React theme={null}
-  import { WhopElements, Payments, PaymentsElement, PaymentElement, AddressElement, CardElement, EmailElement, TaxIdElement, BrandingElement } from "@whop/elements-react";
+  import { WhopElements, Payments, PaymentElement, AddressElement, CardElement, EmailElement, TaxIdElement, BrandingElement } from "@whop/elements-react";
   import { loadWhop } from "@whop/elements";
 
   function Example() {
     return (
       <WhopElements elements={loadWhop()}>
         <Payments /* options */>
-          <PaymentsElement />
           <PaymentElement />
           <AddressElement />
           <CardElement />
@@ -212,7 +211,6 @@
   <script src="https://js.whop.cloud/elements/amber/elements.js" data-whop-elements></script>
   <script type="module">
     const payments = window.WhopElements().payments.create({ /* options */ });
-    payments.create('payments').mount('#payments-payments');
     payments.create('payment').mount('#payments-payment');
     payments.create('address').mount('#payments-address');
     payments.create('card').mount('#payments-card');
@@ -273,20 +271,20 @@
 
   <CodeGroup>
     ```tsx React theme={null}
-    <Payments accountId="biz_xxxxxxxx" accessToken={token}>
+    <Ads accountId="biz_xxxxxxxx" accessToken={token}>
       {/* elements */}
-    </Payments>
+    </Ads>
     ```
 
     ```ts JavaScript theme={null}
-    const payments = whop.payments.create({ accountId: "biz_xxxxxxxx", accessToken });
+    const ads = whop.ads.create({ accountId: "biz_xxxxxxxx", accessToken });
     ```
   </CodeGroup>
 
   The token is a value you set, not a callback the SDK calls. Set a new one before it expires:
 
   ```ts theme={null}
-  payments.update({ accessToken: await createAccessToken() });
+  ads.update({ accessToken: await createAccessToken() });
   ```
 
   <Note>If you omit `accessToken`, requests use the viewer's session cookie instead. This works **only on whop.com**. The API does not send `Access-Control-Allow-Credentials` on cross-origin preflights, so a page on your own domain has no session to fall back to and must pass a token.</Note>
@@ -329,7 +327,7 @@
   <div data-whop-demo-shell style={{ position: "relative", minHeight: "40px", transition: "min-height 200ms ease" }}>
     <div data-whop-demo-skeleton style={{ position: "absolute", inset: "0", borderRadius: "12px", background: "rgba(140, 140, 140, 0.12)", pointerEvents: "none", transition: "opacity 200ms ease" }} />
 
-    <div data-whop-demo-native="toast:button" data-whop-elements-version="1.0.0-beta.4" style={{ position: "relative" }} />
+    <div data-whop-demo-native="toast:button" data-whop-elements-version="1.0.0-beta.5" style={{ position: "relative" }} />
   </div>
 
   ## What the elements handle, and what you own
@@ -356,7 +354,7 @@
 
   <CardGroup cols={2}>
     <Card title="Payments" href="/elements/beta/payments/overview">
-      Browse account payments with PaymentsElement, collect a payment from a `plan_` ID or inline currency and amount, or save a payment method without charging with `mode: "setup"`.
+      Collect a payment from a `plan_` ID or inline currency and amount, or save a payment method without charging with `mode: "setup"`.
     </Card>
 
     <Card title="Verifications" href="/elements/beta/verifications/overview">
@@ -364,7 +362,7 @@
     </Card>
 
     <Card title="Checkout" href="/elements/beta/checkout/overview">
-      Drives a full hosted checkout for one plan — price summary, promo codes, the currency the buyer pays in, and the whole payment collection surface (the payments elements, composed inside) — against the Whop checkout sessions API.
+      Drives a full hosted checkout for one or more plans — itemized price summary, promo codes, the currency the buyer pays in, and the whole payment collection surface (the payments elements, composed inside) — against the Whop checkout sessions API.
     </Card>
 
     <Card title="Ads" href="/elements/beta/ads/overview">
@@ -381,6 +379,10 @@
 
     <Card title="Websites" href="/elements/beta/websites/overview">
       An account's websites: every site built on whop.site plus every domain the Whop Pixel reports, with traffic and attributed revenue per domain.
+    </Card>
+
+    <Card title="Dashboard" href="/elements/beta/dashboard/overview">
+      An account's own payment records, embedded on your site.
     </Card>
   </CardGroup>
 

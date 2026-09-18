@@ -6,7 +6,7 @@
 
 > The full checkout surface — order summary with the live quote, promo code entry, the currency the buyer pays in, everything this checkout has to collect from the buyer, the composed payment methods surface, and the pay flow. What it collects is whatever the seller set up (email, their own questions, a phone number, a shipping address for physical goods, an explicit agreement to their terms), rendered together on one screen in the order they chose — so a seller who starts asking for something new needs no change here. Renders the whole purchase; the checkout controller owns the session and the credential. After a payment that needs an off-site step, this same surface renders the outcome the server reports when the buyer comes back.
 
-<Info>This page documents `@whop/elements@1.0.0-beta.4` and `@whop/elements-react@1.0.0-beta.4`.</Info>
+<Info>This page documents `@whop/elements@1.0.0-beta.5` and `@whop/elements-react@1.0.0-beta.5`.</Info>
 
 *Pre-release, not yet part of a stable release.*
 
@@ -48,7 +48,7 @@ Mounts inside [`Checkout`](/elements/beta/checkout/overview). Pass props and cal
     <div data-whop-demo-shell style={{ position: "relative", minHeight: "320px", transition: "min-height 200ms ease" }}>
       <div data-whop-demo-skeleton style={{ position: "absolute", inset: "0", borderRadius: "12px", background: "rgba(140, 140, 140, 0.12)", pointerEvents: "none", transition: "opacity 200ms ease" }} />
 
-      <div data-whop-demo-native="element:checkout/checkout" data-whop-elements-version="1.0.0-beta.4" style={{ position: "relative" }} />
+      <div data-whop-demo-native="element:checkout/checkout" data-whop-elements-version="1.0.0-beta.5" style={{ position: "relative" }} />
     </div>
 
     <p style={{ fontSize: "0.8125rem", opacity: 0.7 }}>Example data. [Open the Playground](/elements/beta/checkout/overview#playground).</p>
@@ -57,7 +57,13 @@ Mounts inside [`Checkout`](/elements/beta/checkout/overview). Pass props and cal
 
 ## Props
 
-*This element takes no consumer props.*
+<ResponseField name="buyerEmail" type="string">
+  Prefills the buyer email the host page already knows: the authenticated first-party viewer’s, the one a checkout link carried, or the one a merchant page collected before mounting. A session that already holds its buyer’s email wins over it. Empty (default) leaves the field for the buyer. Defaults to `""`.
+</ResponseField>
+
+<ResponseField name="lockBuyerEmail" type="boolean">
+  Keeps the buyer from editing the prefilled `buyerEmail` — an invoice link names who it was issued to. Only holds while the field still shows that email; a session email that already differs is never locked to it, and without a `buyerEmail` there is nothing to lock. Defaults to `false`.
+</ResponseField>
 
 ## Events
 
@@ -135,13 +141,14 @@ Style these parts through `appearance.classes`. Use camel case or kebab case for
 | `.whop-CardFieldInputInvalid`           | Invalid or incomplete PCI input container                                                                                                                                         |
 | `.whop-CardFieldRow`                    | Compact card number, expiration, and security code row                                                                                                                            |
 | `.whop-CardLabel`                       | Card information label                                                                                                                                                            |
-| `.whop-CardSaveNotice`                  | Payment method saving consent                                                                                                                                                     |
 | `.whop-Checkout`                        | The checkout element root                                                                                                                                                         |
 | `.whop-CheckoutAwaitClaim`              | The resting await\_claim line on the success face                                                                                                                                 |
 | `.whop-CheckoutBlocked`                 | The notice standing in for the pay flow while the session carries a blocking error                                                                                                |
 | `.whop-CheckoutBreakdownPending`        | The placeholder shown for a figure that is still being calculated                                                                                                                 |
 | `.whop-CheckoutBreakdownRows`           | The opened price breakdown — the item’s own subtotal and the service fee                                                                                                          |
 | `.whop-CheckoutBreakdownToggle`         | The "Price breakdown" disclosure that opens the subtotal and service fee rows                                                                                                     |
+| `.whop-CheckoutCartItem`                | One product, quantity, and server-priced amount in a multi-item cart                                                                                                              |
+| `.whop-CheckoutCartItems`               | The itemized cart directly below the total for a checkout containing multiple items                                                                                               |
 | `.whop-CheckoutClaimOffer`              | The embedded claim-offer line on the success face                                                                                                                                 |
 | `.whop-CheckoutCollection`              | The collection column — email, payment methods, and the pay flow                                                                                                                  |
 | `.whop-CheckoutCompanyPurchase`         | The company-purchase block — the checkbox and the tax registration fields it reveals                                                                                              |
@@ -303,9 +310,7 @@ Style these parts through `appearance.classes`. Use camel case or kebab case for
 | `.whop-PaymentSavedMethodSeparated`     | The separated marker on a saved method specifically                                                                                                                               |
 | `.whop-PaymentSavedMore`                | The control that fetches the next page of saved payment methods                                                                                                                   |
 | `.whop-PaymentSavedMoreSpinner`         | The spinner shown while the next page of saved payment methods loads                                                                                                              |
-| `.whop-PaymentSaveNotice`               | The save-for-future-purchases consent line closing the detail region                                                                                                              |
 | `.whop-PaymentSettlementNotice`         | The settlement-window hint on methods whose matrix configuration declares one                                                                                                     |
-| `.whop-PaymentsTable`                   | The complete payments table                                                                                                                                                       |
 | `.whop-PhoneVerificationChangeNumber`   | Return-to-number control                                                                                                                                                          |
 | `.whop-PhoneVerificationCode`           | Six-digit confirmation-code pane                                                                                                                                                  |
 | `.whop-PhoneVerificationDone`           | Success pane shown before closing                                                                                                                                                 |
@@ -347,7 +352,7 @@ const checkout = whop.checkout.create({
   }
 });
 
-// 226 classes use this shape
+// 225 classes use this shape
 checkout.update({
   appearance: { classes: { 'whop-Address': { fontWeight: '700' } } }
 });

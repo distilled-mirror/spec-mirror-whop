@@ -15,15 +15,17 @@ The `business_type`, `industry_group`, and `industry_type` fields classify accou
 | Endpoint                                                                                  | Request                                                                                   |
 | ----------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
 | [List Accounts](/api-reference/beta/accounts/list-accounts)                               | <Badge color="blue" size="sm" stroke>GET</Badge> `/accounts`                              |
-| [Create Account](/api-reference/beta/accounts/create-account)                             | <Badge color="green" size="sm" stroke>POST</Badge> `/accounts`                            |
 | [Retrieve Account](/api-reference/beta/accounts/retrieve-account)                         | <Badge color="blue" size="sm" stroke>GET</Badge> `/accounts/{id}`                         |
-| [Update Account](/api-reference/beta/accounts/update-account)                             | <Badge color="orange" size="sm" stroke>PATCH</Badge> `/accounts/{id}`                     |
-| [Form Company](/api-reference/beta/accounts/form-company)                                 | <Badge color="green" size="sm" stroke>POST</Badge> `/accounts/{id}/form_company`          |
+| [Retrieve Account Fees](/api-reference/beta/accounts/retrieve-account-fees)               | <Badge color="blue" size="sm" stroke>GET</Badge> `/accounts/{account_id}/fees`            |
 | [Retrieve Account Preferences](/api-reference/beta/accounts/retrieve-account-preferences) | <Badge color="blue" size="sm" stroke>GET</Badge> `/accounts/{account_id}/preferences`     |
-| [Update Account Preferences](/api-reference/beta/accounts/update-account-preferences)     | <Badge color="orange" size="sm" stroke>PATCH</Badge> `/accounts/{account_id}/preferences` |
 | [List Account Reserves](/api-reference/beta/accounts/list-account-reserves)               | <Badge color="blue" size="sm" stroke>GET</Badge> `/accounts/{account_id}/reserves`        |
+| [Create Account](/api-reference/beta/accounts/create-account)                             | <Badge color="green" size="sm" stroke>POST</Badge> `/accounts`                            |
+| [Form Company](/api-reference/beta/accounts/form-company)                                 | <Badge color="green" size="sm" stroke>POST</Badge> `/accounts/{id}/form_company`          |
 | [Suspend a Connected Account](/api-reference/beta/accounts/suspend-a-connected-account)   | <Badge color="green" size="sm" stroke>POST</Badge> `/accounts/{id}/suspend`               |
 | [Transfer Account Ownership](/api-reference/beta/accounts/transfer-account-ownership)     | <Badge color="green" size="sm" stroke>POST</Badge> `/accounts/{id}/transfer_ownership`    |
+| [Update Account](/api-reference/beta/accounts/update-account)                             | <Badge color="orange" size="sm" stroke>PATCH</Badge> `/accounts/{id}`                     |
+| [Update Account Fees](/api-reference/beta/accounts/update-account-fees)                   | <Badge color="orange" size="sm" stroke>PATCH</Badge> `/accounts/{account_id}/fees`        |
+| [Update Account Preferences](/api-reference/beta/accounts/update-account-preferences)     | <Badge color="orange" size="sm" stroke>PATCH</Badge> `/accounts/{account_id}/preferences` |
 
 ## Attributes
 
@@ -802,7 +804,7 @@ The `business_type`, `industry_group`, and `industry_type` fields classify accou
         <ResponseField name="action" type="string" required>
           What the holder must do; new values may be added, so handle unknown actions gracefully
 
-          Available options: `deposit_funds`, `accept_airwallex_terms`, `submit_information_request`, `update_automatic_withdrawal_method`, `reauthorize_payout_methods`, `update_payout_profile`, `card_usage_review`, `verify_identity`, `sign_formation_documents`, `connect_fulfillment_tracker`, `setup_apple_pay_domains`, `configure_tax_remitter`, `add_vat_registration`, `enable_two_factor_authentication`
+          Available options: `deposit_funds`, `review_held_payments`, `accept_airwallex_terms`, `submit_information_request`, `update_automatic_withdrawal_method`, `reauthorize_payout_methods`, `update_payout_profile`, `card_usage_review`, `verify_identity`, `sign_formation_documents`, `connect_fulfillment_tracker`, `setup_apple_pay_domains`, `configure_tax_remitter`, `add_vat_registration`, `enable_two_factor_authentication`
         </ResponseField>
 
         <ResponseField name="blocked_capabilities" type="string[]" required>

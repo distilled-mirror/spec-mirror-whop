@@ -13,11 +13,11 @@ Use the Social Accounts API to list connected accounts, create a Whop-managed Fa
 | Endpoint                                                                                             | Request                                                                             |
 | ---------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
 | [List Social Accounts](/api-reference/beta/social-accounts/list-social-accounts)                     | <Badge color="blue" size="sm" stroke>GET</Badge> `/social_accounts`                 |
-| [Create a Social Account](/api-reference/beta/social-accounts/create-a-social-account)               | <Badge color="green" size="sm" stroke>POST</Badge> `/social_accounts`               |
-| [Delete a Social Account](/api-reference/beta/social-accounts/delete-a-social-account)               | <Badge color="red" size="sm" stroke>DELETE</Badge> `/social_accounts/{id}`          |
 | [List Social Account Lead Forms](/api-reference/beta/social-accounts/list-social-account-lead-forms) | <Badge color="blue" size="sm" stroke>GET</Badge> `/social_accounts/{id}/lead_forms` |
 | [List Social Account Posts](/api-reference/beta/social-accounts/list-social-account-posts)           | <Badge color="blue" size="sm" stroke>GET</Badge> `/social_accounts/{id}/posts`      |
+| [Create a Social Account](/api-reference/beta/social-accounts/create-a-social-account)               | <Badge color="green" size="sm" stroke>POST</Badge> `/social_accounts`               |
 | [Connect a Social Account](/api-reference/beta/social-accounts/connect-a-social-account)             | <Badge color="green" size="sm" stroke>POST</Badge> `/social_accounts/connect`       |
+| [Delete a Social Account](/api-reference/beta/social-accounts/delete-a-social-account)               | <Badge color="red" size="sm" stroke>DELETE</Badge> `/social_accounts/{id}`          |
 
 ## Attributes
 

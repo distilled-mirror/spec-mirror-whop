@@ -6,7 +6,7 @@
 
 > The outstanding-action banners from Whop's balance dashboard — identity verification, deposits, tax, and the rest — in the same order the API returns them. An account with nothing outstanding renders nothing at all, so the element can sit permanently in a layout. Copy comes from the API. Pressing Verify starts a hosted identity session and leaves for it; Add money asks the Wallet controller to open deposit; every other button follows the action's own link. Needs an `accessToken`. A failed read renders nothing rather than an error — a banner should never become the loudest thing on someone else's page.
 
-<Info>This page documents `@whop/elements@1.0.0-beta.4` and `@whop/elements-react@1.0.0-beta.4`.</Info>
+<Info>This page documents `@whop/elements@1.0.0-beta.5` and `@whop/elements-react@1.0.0-beta.5`.</Info>
 
 *Pre-release, not yet part of a stable release.*
 
@@ -50,7 +50,7 @@ Mounts inside [`Wallet`](/elements/beta/wallet/overview). `accountId` comes from
     <div data-whop-demo-shell style={{ position: "relative", minHeight: "320px", transition: "min-height 200ms ease" }}>
       <div data-whop-demo-skeleton style={{ position: "absolute", inset: "0", borderRadius: "12px", background: "rgba(140, 140, 140, 0.12)", pointerEvents: "none", transition: "opacity 200ms ease" }} />
 
-      <div data-whop-demo-native="element:wallet/required-actions" data-whop-elements-version="1.0.0-beta.4" style={{ position: "relative" }} />
+      <div data-whop-demo-native="element:wallet/required-actions" data-whop-elements-version="1.0.0-beta.5" style={{ position: "relative" }} />
     </div>
 
     <p style={{ fontSize: "0.8125rem", opacity: 0.7 }}>Example data. [Open the Playground](/elements/beta/wallet/overview#playground).</p>
@@ -75,7 +75,7 @@ Pass callbacks in the create options or React props.
 
 The viewer pressed a banner button. Fires for every action, including ones the element also handles itself.
 
-**Signature:** `((payload: { action: "deposit_funds" | "accept_airwallex_terms" | "submit_information_request" | "update_automatic_withdrawal_method" | "reauthorize_payout_methods" | "update_payout_profile" | "card_usage_review" | "verify_identity" | "sign_formation_documents" | "connect_fulfillment_tracker" | "setup_apple_pay_domains" | "configure_tax_remitter" | "add_vat_registration"; accountId: string; }) => void)`
+**Signature:** `((payload: { action: "deposit_funds" | "review_held_payments" | "accept_airwallex_terms" | "submit_information_request" | "update_automatic_withdrawal_method" | "reauthorize_payout_methods" | "update_payout_profile" | "card_usage_review" | "verify_identity" | "sign_formation_documents" | "connect_fulfillment_tracker" | "setup_apple_pay_domains" | "configure_tax_remitter" | "add_vat_registration" | "enable_two_factor_authentication"; accountId: string; }) => void)`
 
 ### `onIdentityVerificationRequested`
 

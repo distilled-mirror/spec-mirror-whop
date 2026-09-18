@@ -12,7 +12,6 @@ Retrieve your profile with `/partners/{id}`. Use `/partners/links` for your stan
 
 | Endpoint                                                                                              | Request                                                                               |
 | ----------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
-| [Enroll as a Whop partner](/api-reference/beta/partners/enroll-as-a-whop-partner)                     | <Badge color="green" size="sm" stroke>POST</Badge> `/partners`                        |
 | [Retrieve a partner](/api-reference/beta/partners/retrieve-a-partner)                                 | <Badge color="blue" size="sm" stroke>GET</Badge> `/partners/{id}`                     |
 | [List referred businesses](/api-reference/beta/partners/list-referred-businesses)                     | <Badge color="blue" size="sm" stroke>GET</Badge> `/partners/businesses`               |
 | [Retrieve a referred business](/api-reference/beta/partners/retrieve-a-referred-business)             | <Badge color="blue" size="sm" stroke>GET</Badge> `/partners/businesses/{id}`          |
@@ -20,6 +19,7 @@ Retrieve your profile with `/partners/{id}`. Use `/partners/links` for your stan
 | [Retrieve the leaderboard](/api-reference/beta/partners/retrieve-the-leaderboard)                     | <Badge color="blue" size="sm" stroke>GET</Badge> `/partners/leaderboard`              |
 | [List partner links](/api-reference/beta/partners/list-partner-links)                                 | <Badge color="blue" size="sm" stroke>GET</Badge> `/partners/links`                    |
 | [List the users the caller referred](/api-reference/beta/partners/list-the-users-the-caller-referred) | <Badge color="blue" size="sm" stroke>GET</Badge> `/partners/referred_users`           |
+| [Enroll as a Whop partner](/api-reference/beta/partners/enroll-as-a-whop-partner)                     | <Badge color="green" size="sm" stroke>POST</Badge> `/partners`                        |
 
 ## Attributes
 

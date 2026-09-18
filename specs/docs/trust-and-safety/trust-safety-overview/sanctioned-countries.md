@@ -35,7 +35,13 @@ Whop doesn't support payouts, payments, or accounts in certain countries due to 
 * South Sudan
 * Sudan
 * Syria
-* Ukraine
+* Ukraine (the following jurisdictions only)
+  * Crimea
+  * Sevastopol
+  * Donetsk
+  * Luhansk
+  * Zaporizhzhia
+  * Kherson
 * Venezuela
 * Yemen
 

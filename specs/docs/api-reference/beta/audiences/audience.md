@@ -14,9 +14,9 @@ Use the Audiences API to create, list, and delete audiences and monitor asynchro
 | ---------------------------------------------------------------- | ------------------------------------------------------------------------------- |
 | [List Audiences](/api-reference/beta/audiences/list-audiences)   | <Badge color="blue" size="sm" stroke>GET</Badge> `/audiences`                   |
 | [Create Audience](/api-reference/beta/audiences/create-audience) | <Badge color="green" size="sm" stroke>POST</Badge> `/audiences`                 |
+| [Add People](/api-reference/beta/audiences/add-people)           | <Badge color="green" size="sm" stroke>POST</Badge> `/audiences/{id}/add_people` |
 | [Update Audience](/api-reference/beta/audiences/update-audience) | <Badge color="orange" size="sm" stroke>PATCH</Badge> `/audiences/{id}`          |
 | [Delete Audience](/api-reference/beta/audiences/delete-audience) | <Badge color="red" size="sm" stroke>DELETE</Badge> `/audiences/{id}`            |
-| [Add People](/api-reference/beta/audiences/add-people)           | <Badge color="green" size="sm" stroke>POST</Badge> `/audiences/{id}/add_people` |
 
 ## Attributes
 

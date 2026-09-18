@@ -4,24 +4,24 @@
 
 # VerificationElement
 
-> A banner asking the account holder to verify their identity, shown only while verification is outstanding — an account that has already verified renders nothing at all, so the element can sit permanently in a layout. The headline and status messages come from the API, with a shorter description when inviting the account holder to start verification, so they track the account's actual state: an unstarted account is invited to unlock cards and payouts, one under review reads as pending, and a failed or flagged one says so. Pressing the button reports `verificationRequested` and stays put, so the host mounts its own verification — the `verifications` controller's `kyc` element, say. Needs an `accessToken`. A failed read renders nothing rather than an error — a nudge should never become the loudest thing on the page.
+> A banner asking the account holder to verify their identity, shown only while verification is outstanding — an account that has already verified renders nothing at all, so the element can sit permanently in a layout. The headline and status messages come from the API, with a shorter description when inviting the account holder to start verification, so they track the account's actual state: an unstarted account is invited to unlock cards and payouts, one under review reads as pending, and a failed or flagged one says so. Pressing the button reports `verificationRequested` and stays put, so the host mounts its own verification — the `verifications` controller's `kyc` element, say. Reads with the Dashboard handle's `accessToken`, which needs `payout:account:read`. A failed read renders nothing rather than an error — a nudge should never become the loudest thing on the page.
 
-Mounts inside [`Wallet`](/elements/upcoming/wallet/overview). `accountId` comes from there. Pass props and callbacks through the create options or React props. Keep the created handle, or React `ref`, to call `refresh()`.
+Mounts inside [`Dashboard`](/elements/upcoming/dashboard/overview). `accountId` and `accessToken` come from there. Pass props and callbacks through the create options or React props. Keep the created handle, or React `ref`, to call `refresh()`.
 
 <div data-whop-split style={{ display: "flex", gap: "1.5rem", alignItems: "flex-start", flexWrap: "wrap" }}>
   <div style={{ flex: "1 1 26rem", minWidth: 0 }}>
-    <div data-whop-usage="wallet/verification">
+    <div data-whop-usage="dashboard/verification">
       <CodeGroup>
         ```tsx React theme={null}
-        import { WhopElements, Wallet, VerificationElement } from "@whop/elements-react";
+        import { WhopElements, Dashboard, VerificationElement } from "@whop/elements-react";
         import { loadWhop } from "@whop/elements";
 
         function Example() {
           return (
             <WhopElements elements={loadWhop()}>
-              <Wallet /* options */>
+              <Dashboard /* options */>
                 <VerificationElement onVerificationRequested={(e) => console.log(e)} />
-              </Wallet>
+              </Dashboard>
             </WhopElements>
           );
         }
@@ -30,8 +30,8 @@ Mounts inside [`Wallet`](/elements/upcoming/wallet/overview). `accountId` comes 
         ```html JavaScript theme={null}
         <script src="https://js.whop.cloud/elements/amber/elements.js" data-whop-elements></script>
         <script type="module">
-          const wallet = window.WhopElements().wallet.create({ /* options */ });
-          wallet.create('verification', { onVerificationRequested: (e) => console.log(e) }).mount('#wallet-verification');
+          const dashboard = window.WhopElements().dashboard.create({ /* options */ });
+          dashboard.create('verification', { onVerificationRequested: (e) => console.log(e) }).mount('#dashboard-verification');
         </script>
         ```
       </CodeGroup>
@@ -42,18 +42,14 @@ Mounts inside [`Wallet`](/elements/upcoming/wallet/overview). `accountId` comes 
     <div data-whop-demo-shell style={{ position: "relative", minHeight: "320px", transition: "min-height 200ms ease" }}>
       <div data-whop-demo-skeleton style={{ position: "absolute", inset: "0", borderRadius: "12px", background: "rgba(140, 140, 140, 0.12)", pointerEvents: "none", transition: "opacity 200ms ease" }} />
 
-      <div data-whop-demo-native="element:wallet/verification" data-whop-elements-version="" style={{ position: "relative" }} />
+      <div data-whop-demo-native="element:dashboard/verification" data-whop-elements-version="" style={{ position: "relative" }} />
     </div>
 
-    <p style={{ fontSize: "0.8125rem", opacity: 0.7 }}>Example data. [Open the Playground](/elements/upcoming/wallet/overview#playground).</p>
+    <p style={{ fontSize: "0.8125rem", opacity: 0.7 }}>Example data. [Open the Playground](/elements/upcoming/dashboard/overview#playground).</p>
   </div>
 </div>
 
 ## Props
-
-<ResponseField name="accessToken" type="string">
-  A scoped token for the read and for starting verification — needs `payout:account:read` and `identity:write`. Mint it on your server with `POST /api/v1/access_tokens`. Omitted, the calls carry the viewer's own session, which only answers same-origin.
-</ResponseField>
 
 <ResponseField name="kind" type="&#x22;individual&#x22; | &#x22;business&#x22;">
   Which verification the button starts. `individual` (KYC) is what unlocks payouts and a Whop card. `business` (KYB) covers that and additionally unlocks financing and business cards — use it for a company that will need those. Defaults to `"individual"`.
@@ -128,7 +124,7 @@ Style these parts through `appearance.classes`. Use camel case or kebab case for
 | `.whop-VerificationBanner` | The verification nudge banner |
 
 ```ts theme={null}
-const wallet = whop.wallet.create({
+const dashboard = whop.dashboard.create({
   appearance: {
     classes: {
       'whop-VerificationBanner': { borderRadius: '8px', fontWeight: '600' }
@@ -136,11 +132,11 @@ const wallet = whop.wallet.create({
   }
 });
 
-wallet.update({
+dashboard.update({
   appearance: {
     classes: { 'whop-VerificationBanner': { fontWeight: '700' } }
   }
 });
 ```
 
-In React, pass `appearance` to `<Wallet>`. Set it globally with `WhopElements({ appearance })`.
+In React, pass `appearance` to `<Dashboard>`. Set it globally with `WhopElements({ appearance })`.

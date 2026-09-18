@@ -78,7 +78,7 @@ Pass callbacks in the create options or React props.
 
 A balance row or its matching bar segment was clicked. The host can open details for `available`, `pending`, `reserve`, or `debt`.
 
-**Signature:** `((payload: { category: "pending" | "available" | "debt" | "reserve"; }) => void)`
+**Signature:** `((payload: { category: "available" | "debt" | "pending" | "reserve"; }) => void)`
 
 ### `onLoaderStart`
 

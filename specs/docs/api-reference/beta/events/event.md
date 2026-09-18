@@ -15,6 +15,6 @@ Events are only as good as the pixel sending them, so [Validate Pixel](/api-refe
 | Endpoint                                                                      | Request                                                                     |
 | ----------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
 | [List Events](/api-reference/beta/events/list-events)                         | <Badge color="blue" size="sm" stroke>GET</Badge> `/events`                  |
-| [Create Event](/api-reference/beta/events/create-event)                       | <Badge color="green" size="sm" stroke>POST</Badge> `/events`                |
 | [Retrieve the pulse feed](/api-reference/beta/events/retrieve-the-pulse-feed) | <Badge color="blue" size="sm" stroke>GET</Badge> `/events/pulse`            |
+| [Create Event](/api-reference/beta/events/create-event)                       | <Badge color="green" size="sm" stroke>POST</Badge> `/events`                |
 | [Validate Pixel](/api-reference/beta/events/validate-pixel)                   | <Badge color="green" size="sm" stroke>POST</Badge> `/events/validate_pixel` |

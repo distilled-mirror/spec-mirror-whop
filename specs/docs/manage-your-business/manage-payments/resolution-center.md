@@ -18,7 +18,7 @@ Here's what happens when a customer opens a claim:
 
 <Steps>
   <Step title="Customer opens a claim">
-    They explain the issue and choose a reason. They can upload up to 3 files
+    They explain the issue and choose a reason. They can upload up to 5 files
     (screenshots, videos, receipts).
   </Step>
 

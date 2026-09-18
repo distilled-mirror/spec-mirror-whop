@@ -6,22 +6,26 @@
 
 > A payment detail page with the dashboard breakdown, activity, customer, details, and customer journey. Each section can be hidden. Reads payment:basic:read; customer email needs member:email:read and journey needs member:basic:read. Action events let your application confirm and authorize changes; this element never refunds, retries, or voids a payment itself.
 
-Mounts inside [`Payments`](/elements/upcoming/payments/overview). Pass props and callbacks through the create options or React props. Keep the created handle, or React `ref`, to call `refresh()`.
+<Info>This page documents `@whop/elements@1.0.0-beta.5` and `@whop/elements-react@1.0.0-beta.5`.</Info>
+
+*Pre-release, not yet part of a stable release.*
+
+Mounts inside [`Dashboard`](/elements/beta/dashboard/overview). `accountId` and `accessToken` come from there. Pass props and callbacks through the create options or React props. Keep the created handle, or React `ref`, to call `refresh()`.
 
 <div data-whop-split style={{ display: "flex", gap: "1.5rem", alignItems: "flex-start", flexWrap: "wrap" }}>
   <div style={{ flex: "1 1 26rem", minWidth: 0 }}>
-    <div data-whop-usage="payments/paymentDetail">
+    <div data-whop-usage="dashboard/paymentDetail">
       <CodeGroup>
         ```tsx React theme={null}
-        import { WhopElements, Payments, PaymentDetailElement } from "@whop/elements-react";
+        import { WhopElements, Dashboard, PaymentDetailElement } from "@whop/elements-react";
         import { loadWhop } from "@whop/elements";
 
         function Example() {
           return (
             <WhopElements elements={loadWhop()}>
-              <Payments /* options */>
+              <Dashboard /* options */>
                 <PaymentDetailElement onRefundRequested={(e) => console.log(e)} onRetryRequested={(e) => console.log(e)} onVoidRequested={(e) => console.log(e)} onInvoiceRequested={(e) => console.log(e)} onCustomerSelected={(e) => console.log(e)} onMessageRequested={(e) => console.log(e)} />
-              </Payments>
+              </Dashboard>
             </WhopElements>
           );
         }
@@ -30,15 +34,15 @@ Mounts inside [`Payments`](/elements/upcoming/payments/overview). Pass props and
         ```html JavaScript theme={null}
         <script src="https://js.whop.cloud/elements/amber/elements.js" data-whop-elements></script>
         <script type="module">
-          const payments = window.WhopElements().payments.create({ /* options */ });
-          payments.create('paymentDetail', {
+          const dashboard = window.WhopElements().dashboard.create({ /* options */ });
+          dashboard.create('paymentDetail', {
             onRefundRequested: (e) => console.log(e),
             onRetryRequested: (e) => console.log(e),
             onVoidRequested: (e) => console.log(e),
             onInvoiceRequested: (e) => console.log(e),
             onCustomerSelected: (e) => console.log(e),
             onMessageRequested: (e) => console.log(e)
-          }).mount('#payments-paymentDetail');
+          }).mount('#dashboard-paymentDetail');
         </script>
         ```
       </CodeGroup>
@@ -49,14 +53,18 @@ Mounts inside [`Payments`](/elements/upcoming/payments/overview). Pass props and
     <div data-whop-demo-shell style={{ position: "relative", minHeight: "320px", transition: "min-height 200ms ease" }}>
       <div data-whop-demo-skeleton style={{ position: "absolute", inset: "0", borderRadius: "12px", background: "rgba(140, 140, 140, 0.12)", pointerEvents: "none", transition: "opacity 200ms ease" }} />
 
-      <div data-whop-demo-native="element:payments/paymentDetail" data-whop-elements-version="" style={{ position: "relative" }} />
+      <div data-whop-demo-native="element:dashboard/paymentDetail" data-whop-elements-version="1.0.0-beta.5" style={{ position: "relative" }} />
     </div>
 
-    <p style={{ fontSize: "0.8125rem", opacity: 0.7 }}>Example data. [Open the Playground](/elements/upcoming/payments/overview#playground).</p>
+    <p style={{ fontSize: "0.8125rem", opacity: 0.7 }}>Example data. [Open the Playground](/elements/beta/dashboard/overview#playground).</p>
   </div>
 </div>
 
 ## Props
+
+<ResponseField name="showActions" type="boolean">
+  Show the top-right Refund button and action menu. Mutating actions require event handlers. Defaults to `true`.
+</ResponseField>
 
 <ResponseField name="paymentId" type="string">
   The payment to display, prefixed pay\_. Required to load a payment. Defaults to `""`.
@@ -80,10 +88,6 @@ Mounts inside [`Payments`](/elements/upcoming/payments/overview). Pass props and
 
 <ResponseField name="showJourney" type="boolean">
   Show the customer journey. Reads the account-scoped Events API only while visible. Defaults to `true`.
-</ResponseField>
-
-<ResponseField name="showActions" type="boolean">
-  Show the top-right Refund button and action menu. Mutating actions require event handlers. Defaults to `true`.
 </ResponseField>
 
 ## Events
@@ -181,7 +185,7 @@ Style these parts through `appearance.classes`. Use camel case or kebab case for
 | `.whop-PaymentDetail` | The payment detail page |
 
 ```ts theme={null}
-const payments = whop.payments.create({
+const dashboard = whop.dashboard.create({
   appearance: {
     classes: {
       'whop-PaymentDetail': { borderRadius: '8px', fontWeight: '600' }
@@ -189,9 +193,9 @@ const payments = whop.payments.create({
   }
 });
 
-payments.update({
+dashboard.update({
   appearance: { classes: { 'whop-PaymentDetail': { fontWeight: '700' } } }
 });
 ```
 
-In React, pass `appearance` to `<Payments>`. Set it globally with `WhopElements({ appearance })`.
+In React, pass `appearance` to `<Dashboard>`. Set it globally with `WhopElements({ appearance })`.

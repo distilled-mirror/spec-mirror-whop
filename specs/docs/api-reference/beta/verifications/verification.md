@@ -19,8 +19,8 @@ Use the Verifications API to start or resume a hosted verification session, chec
 | Endpoint                                                                         | Request                                                                    |
 | -------------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
 | [List Verifications](/api-reference/beta/verifications/list-verifications)       | <Badge color="blue" size="sm" stroke>GET</Badge> `/verifications`          |
-| [Create Verification](/api-reference/beta/verifications/create-verification)     | <Badge color="green" size="sm" stroke>POST</Badge> `/verifications`        |
 | [Retrieve Verification](/api-reference/beta/verifications/retrieve-verification) | <Badge color="blue" size="sm" stroke>GET</Badge> `/verifications/{id}`     |
+| [Create Verification](/api-reference/beta/verifications/create-verification)     | <Badge color="green" size="sm" stroke>POST</Badge> `/verifications`        |
 | [Update Verification](/api-reference/beta/verifications/update-verification)     | <Badge color="orange" size="sm" stroke>PATCH</Badge> `/verifications/{id}` |
 
 ## Attributes

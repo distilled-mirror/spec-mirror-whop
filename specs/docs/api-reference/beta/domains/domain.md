@@ -13,8 +13,8 @@ An unverified claim does not reserve a hostname globally. Transferring ownership
 | Endpoint                                                       | Request                                                              |
 | -------------------------------------------------------------- | -------------------------------------------------------------------- |
 | [List Domains](/api-reference/beta/domains/list-domains)       | <Badge color="blue" size="sm" stroke>GET</Badge> `/domains`          |
-| [Create Domain](/api-reference/beta/domains/create-domain)     | <Badge color="green" size="sm" stroke>POST</Badge> `/domains`        |
 | [Retrieve Domain](/api-reference/beta/domains/retrieve-domain) | <Badge color="blue" size="sm" stroke>GET</Badge> `/domains/{id}`     |
+| [Create Domain](/api-reference/beta/domains/create-domain)     | <Badge color="green" size="sm" stroke>POST</Badge> `/domains`        |
 | [Update Domain](/api-reference/beta/domains/update-domain)     | <Badge color="orange" size="sm" stroke>PATCH</Badge> `/domains/{id}` |
 | [Delete Domain](/api-reference/beta/domains/delete-domain)     | <Badge color="red" size="sm" stroke>DELETE</Badge> `/domains/{id}`   |
 

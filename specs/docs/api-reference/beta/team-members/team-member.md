@@ -13,8 +13,8 @@ Use the Team Members API to list an account's team, add a user to the team with 
 | Endpoint                                                                      | Request                                                                   |
 | ----------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
 | [List Team Members](/api-reference/beta/team-members/list-team-members)       | <Badge color="blue" size="sm" stroke>GET</Badge> `/team_members`          |
-| [Create Team Member](/api-reference/beta/team-members/create-team-member)     | <Badge color="green" size="sm" stroke>POST</Badge> `/team_members`        |
 | [Retrieve Team Member](/api-reference/beta/team-members/retrieve-team-member) | <Badge color="blue" size="sm" stroke>GET</Badge> `/team_members/{id}`     |
+| [Create Team Member](/api-reference/beta/team-members/create-team-member)     | <Badge color="green" size="sm" stroke>POST</Badge> `/team_members`        |
 | [Update Team Member](/api-reference/beta/team-members/update-team-member)     | <Badge color="orange" size="sm" stroke>PATCH</Badge> `/team_members/{id}` |
 | [Delete Team Member](/api-reference/beta/team-members/delete-team-member)     | <Badge color="red" size="sm" stroke>DELETE</Badge> `/team_members/{id}`   |
 

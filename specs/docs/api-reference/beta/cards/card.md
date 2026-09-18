@@ -15,8 +15,8 @@ Use the Cards API to issue cards, list cards for an account or user, and retriev
 | [List Card Transactions](/api-reference/beta/cards/list-card-transactions)       | <Badge color="blue" size="sm" stroke>GET</Badge> `/card_transactions`      |
 | [Retrieve Card Transaction](/api-reference/beta/cards/retrieve-card-transaction) | <Badge color="blue" size="sm" stroke>GET</Badge> `/card_transactions/{id}` |
 | [List Cards](/api-reference/beta/cards/list-cards)                               | <Badge color="blue" size="sm" stroke>GET</Badge> `/cards`                  |
-| [Create Card](/api-reference/beta/cards/create-card)                             | <Badge color="green" size="sm" stroke>POST</Badge> `/cards`                |
 | [Retrieve Card](/api-reference/beta/cards/retrieve-card)                         | <Badge color="blue" size="sm" stroke>GET</Badge> `/cards/{id}`             |
+| [Create Card](/api-reference/beta/cards/create-card)                             | <Badge color="green" size="sm" stroke>POST</Badge> `/cards`                |
 | [Update Card](/api-reference/beta/cards/update-card)                             | <Badge color="orange" size="sm" stroke>PATCH</Badge> `/cards/{id}`         |
 
 ## Attributes

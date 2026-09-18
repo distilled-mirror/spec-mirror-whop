@@ -6,7 +6,7 @@
 
 > Collects a billing or shipping address. Fields, order, and validation follow the selected country. Includes street autocomplete and methods to read or validate the address.
 
-<Info>This page documents `@whop/elements@1.0.0-beta.4` and `@whop/elements-react@1.0.0-beta.4`.</Info>
+<Info>This page documents `@whop/elements@1.0.0-beta.5` and `@whop/elements-react@1.0.0-beta.5`.</Info>
 
 *Pre-release, not yet part of a stable release.*
 
@@ -101,7 +101,7 @@
       <div data-whop-demo-shell style={{ position: "relative", minHeight: "320px", transition: "min-height 200ms ease" }}>
         <div data-whop-demo-skeleton style={{ position: "absolute", inset: "0", borderRadius: "12px", background: "rgba(140, 140, 140, 0.12)", pointerEvents: "none", transition: "opacity 200ms ease" }} />
 
-        <div data-whop-demo-native="element:payments/address" data-whop-elements-version="1.0.0-beta.4" style={{ position: "relative" }} />
+        <div data-whop-demo-native="element:payments/address" data-whop-elements-version="1.0.0-beta.5" style={{ position: "relative" }} />
       </div>
 
       <p style={{ fontSize: "0.8125rem", opacity: 0.7 }}>Example data. [Open the Playground](/elements/beta/payments/overview#playground).</p>
@@ -124,16 +124,16 @@
     Browser autocomplete purpose: `billing` (default) or `shipping`. Defaults to `"billing"`.
   </ResponseField>
 
+  <ResponseField name="layout" type="&#x22;full&#x22; | &#x22;compact&#x22;">
+    `full` (default) stacks labeled fields. `compact` groups placeholder-labeled fields within one border. Defaults to `"full"`.
+  </ResponseField>
+
   <ResponseField name="line2" type="&#x22;never&#x22; | &#x22;toggle&#x22; | &#x22;always&#x22;">
     Address line 2: always visible (default), revealed by a text button (`toggle`), or never collected. Defaults to `"always"`.
   </ResponseField>
 
   <ResponseField name="name" type="&#x22;split&#x22; | &#x22;combined&#x22; | &#x22;none&#x22;">
     The name row: one full-name field (default), split first/last fields, or none. Defaults to `"combined"`.
-  </ResponseField>
-
-  <ResponseField name="layout" type="&#x22;full&#x22; | &#x22;compact&#x22;">
-    `full` (default) stacks labeled fields. `compact` groups placeholder-labeled fields within one border. Defaults to `"full"`.
   </ResponseField>
 
   <ResponseField name="scope" type="&#x22;full&#x22; | &#x22;minimal&#x22;">
@@ -160,7 +160,7 @@
     Enables Google Places suggestions for the street address. If no match appears or Places is blocked, the list reports no matches and lets buyers enter the address manually. Set `false` for a plain input. Defaults to `true`.
   </ResponseField>
 
-  <ResponseField name="customFields" type="({ key: string; label: string; type: &#x22;text&#x22; | &#x22;select&#x22; | &#x22;phone&#x22; | &#x22;date&#x22;; position: &#x22;after_name&#x22; | &#x22;after_organization&#x22; | &#x22;before_country&#x22; | &#x22;after_address&#x22;; required?: boolean | undefined; options?: string[] | undefined; format?: string | undefined; autocomplete?: string | undefined; })[]">
+  <ResponseField name="customFields" type="({ key: string; label: string; type: &#x22;phone&#x22; | &#x22;text&#x22; | &#x22;select&#x22; | &#x22;date&#x22;; position: &#x22;after_name&#x22; | &#x22;after_organization&#x22; | &#x22;before_country&#x22; | &#x22;after_address&#x22;; required?: boolean | undefined; options?: string[] | undefined; format?: string | undefined; autocomplete?: string | undefined; })[]">
     Additional fields rendered with the address form. Values are validated and emitted in the separate `custom` map.
   </ResponseField>
 

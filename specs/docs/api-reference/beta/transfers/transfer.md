@@ -13,9 +13,9 @@ Use the Transfers API to create a transfer, list previous transfers, and retriev
 | Endpoint                                                                           | Request                                                                  |
 | ---------------------------------------------------------------------------------- | ------------------------------------------------------------------------ |
 | [List Transfers](/api-reference/beta/transfers/list-transfers)                     | <Badge color="blue" size="sm" stroke>GET</Badge> `/transfers`            |
-| [Create Transfer](/api-reference/beta/transfers/create-transfer)                   | <Badge color="green" size="sm" stroke>POST</Badge> `/transfers`          |
 | [Retrieve Transfer](/api-reference/beta/transfers/retrieve-transfer)               | <Badge color="blue" size="sm" stroke>GET</Badge> `/transfers/{id}`       |
 | [List Transfer Recipients](/api-reference/beta/transfers/list-transfer-recipients) | <Badge color="blue" size="sm" stroke>GET</Badge> `/transfers/recipients` |
+| [Create Transfer](/api-reference/beta/transfers/create-transfer)                   | <Badge color="green" size="sm" stroke>POST</Badge> `/transfers`          |
 
 ## Attributes
 

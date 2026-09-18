@@ -2,30 +2,26 @@
 > Fetch the complete documentation index at: https://docs.whop.com/llms.txt
 > Use this file to discover all available pages before exploring further.
 
-# PaymentsElement
+# PaymentsTableElement
 
 > The dashboard payments table with status cards, search, filters, sorting, row selection, CSV export, column settings, and pagination. Reads all payment pages to compute complete counts and filter locally; intended for accounts with modest payment histories. Customer details and refunds are handed to your application through events.
 
-<Info>This page documents `@whop/elements@1.0.0-beta.4` and `@whop/elements-react@1.0.0-beta.4`.</Info>
-
-*Pre-release, not yet part of a stable release.*
-
-Mounts inside [`Payments`](/elements/beta/payments/overview). Pass props and callbacks through the create options or React props. Keep the created handle, or React `ref`, to call `refresh()`.
+Mounts inside [`Dashboard`](/elements/upcoming/dashboard/overview). `accountId` and `accessToken` come from there. Pass props and callbacks through the create options or React props. Keep the created handle, or React `ref`, to call `refresh()`.
 
 <div data-whop-split style={{ display: "flex", gap: "1.5rem", alignItems: "flex-start", flexWrap: "wrap" }}>
   <div style={{ flex: "1 1 26rem", minWidth: 0 }}>
-    <div data-whop-usage="payments/payments">
+    <div data-whop-usage="dashboard/paymentsTable">
       <CodeGroup>
         ```tsx React theme={null}
-        import { WhopElements, Payments, PaymentsElement } from "@whop/elements-react";
+        import { WhopElements, Dashboard, PaymentsTableElement } from "@whop/elements-react";
         import { loadWhop } from "@whop/elements";
 
         function Example() {
           return (
             <WhopElements elements={loadWhop()}>
-              <Payments /* options */>
-                <PaymentsElement onPaymentSelected={(e) => console.log(e)} onInvoiceRequested={(e) => console.log(e)} onUserSelected={(e) => console.log(e)} onRefundRequested={(e) => console.log(e)} onSettingsRequested={(e) => console.log(e)} />
-              </Payments>
+              <Dashboard /* options */>
+                <PaymentsTableElement onPaymentSelected={(e) => console.log(e)} onInvoiceRequested={(e) => console.log(e)} onUserSelected={(e) => console.log(e)} onRefundRequested={(e) => console.log(e)} onSettingsRequested={(e) => console.log(e)} />
+              </Dashboard>
             </WhopElements>
           );
         }
@@ -34,14 +30,14 @@ Mounts inside [`Payments`](/elements/beta/payments/overview). Pass props and cal
         ```html JavaScript theme={null}
         <script src="https://js.whop.cloud/elements/amber/elements.js" data-whop-elements></script>
         <script type="module">
-          const payments = window.WhopElements().payments.create({ /* options */ });
-          payments.create('payments', {
+          const dashboard = window.WhopElements().dashboard.create({ /* options */ });
+          dashboard.create('paymentsTable', {
             onPaymentSelected: (e) => console.log(e),
             onInvoiceRequested: (e) => console.log(e),
             onUserSelected: (e) => console.log(e),
             onRefundRequested: (e) => console.log(e),
             onSettingsRequested: (e) => console.log(e)
-          }).mount('#payments-payments');
+          }).mount('#dashboard-paymentsTable');
         </script>
         ```
       </CodeGroup>
@@ -52,10 +48,10 @@ Mounts inside [`Payments`](/elements/beta/payments/overview). Pass props and cal
     <div data-whop-demo-shell style={{ position: "relative", minHeight: "320px", transition: "min-height 200ms ease" }}>
       <div data-whop-demo-skeleton style={{ position: "absolute", inset: "0", borderRadius: "12px", background: "rgba(140, 140, 140, 0.12)", pointerEvents: "none", transition: "opacity 200ms ease" }} />
 
-      <div data-whop-demo-native="element:payments/payments" data-whop-elements-version="1.0.0-beta.4" style={{ position: "relative" }} />
+      <div data-whop-demo-native="element:dashboard/paymentsTable" data-whop-elements-version="" style={{ position: "relative" }} />
     </div>
 
-    <p style={{ fontSize: "0.8125rem", opacity: 0.7 }}>Example data. [Open the Playground](/elements/beta/payments/overview#playground).</p>
+    <p style={{ fontSize: "0.8125rem", opacity: 0.7 }}>Example data. [Open the Playground](/elements/upcoming/dashboard/overview#playground).</p>
   </div>
 </div>
 
@@ -155,7 +151,7 @@ Removes the element and releases its frame and subscriptions. You can call it mo
 
 Merges new props into the mounted element. In React, change the component props instead.
 
-**Signature:** `(options: Partial<PaymentsElementProps>) => void`
+**Signature:** `(options: Partial<PaymentsTableElementProps>) => void`
 
 ## Styling
 
@@ -166,7 +162,7 @@ Style these parts through `appearance.classes`. Use camel case or kebab case for
 | `.whop-PaymentsTable` | The complete payments table |
 
 ```ts theme={null}
-const payments = whop.payments.create({
+const dashboard = whop.dashboard.create({
   appearance: {
     classes: {
       'whop-PaymentsTable': { borderRadius: '8px', fontWeight: '600' }
@@ -174,9 +170,9 @@ const payments = whop.payments.create({
   }
 });
 
-payments.update({
+dashboard.update({
   appearance: { classes: { 'whop-PaymentsTable': { fontWeight: '700' } } }
 });
 ```
 
-In React, pass `appearance` to `<Payments>`. Set it globally with `WhopElements({ appearance })`.
+In React, pass `appearance` to `<Dashboard>`. Set it globally with `WhopElements({ appearance })`.

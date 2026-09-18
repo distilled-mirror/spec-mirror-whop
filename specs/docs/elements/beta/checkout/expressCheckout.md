@@ -4,9 +4,9 @@
 
 # ExpressCheckoutElement
 
-> One-press Apple Pay and Google Pay buttons for a checkout — the OS payment sheet collects whatever the session still needs (the buyer's email, a phone number where the seller collects one, a shipping address for physical goods, and in Apple Pay a promo code where the seller offers entry) and one press finishes the purchase. It shares the checkout's entry slot with the full checkout element, so a handle mounts exactly one of the two: this button alone where the purchase is simple enough for a sheet to finish, or the full checkout surface for everything else. Renders only the wallets the buyer's device can actually pay with — and the checkout's own payment method configuration allows — using the served button art, and renders nothing where no wallet is available. Apple Pay additionally requires the page's domain to be a verified payment method domain: first-party whop.com pages are pre-approved, and any other site must register its domain through the Payment Method Domains API before the button renders there. A checkout the sheet cannot honestly finish — a waitlist join, a transfer, a form question only a page can ask — refuses loudly instead of rendering a doomed button.
+> One-press Apple Pay and Google Pay buttons for a checkout — the OS payment sheet collects whatever the session still needs (the buyer's email, a phone number where the seller collects one, a shipping address for physical goods, and in Apple Pay a promo code where the seller offers entry) and one press finishes the purchase. It shares the checkout's entry slot with the full checkout element, so a handle mounts exactly one of the two: this button alone where the purchase is simple enough for a sheet to finish, or the full checkout surface for everything else. Renders only the wallets the buyer's device can actually pay with — and the checkout's own payment method configuration allows — using the served button art, and renders nothing where no wallet is available. Both wallets require the page's domain to be a verified payment method domain: first-party whop.com pages are pre-approved, and any other site must register its domain through the Payment Method Domains API before either button renders there. Offering Google Pay on your own site is subject to the Google Pay API Terms of Service. A checkout the sheet cannot honestly finish — a waitlist join, a transfer, a form question only a page can ask — refuses loudly instead of rendering a doomed button.
 
-<Info>This page documents `@whop/elements@1.0.0-beta.4` and `@whop/elements-react@1.0.0-beta.4`.</Info>
+<Info>This page documents `@whop/elements@1.0.0-beta.5` and `@whop/elements-react@1.0.0-beta.5`.</Info>
 
 *Pre-release, not yet part of a stable release.*
 
@@ -48,7 +48,7 @@ Mounts inside [`Checkout`](/elements/beta/checkout/overview). Pass props and cal
     <div data-whop-demo-shell style={{ position: "relative", minHeight: "320px", transition: "min-height 200ms ease" }}>
       <div data-whop-demo-skeleton style={{ position: "absolute", inset: "0", borderRadius: "12px", background: "rgba(140, 140, 140, 0.12)", pointerEvents: "none", transition: "opacity 200ms ease" }} />
 
-      <div data-whop-demo-native="element:checkout/expressCheckout" data-whop-elements-version="1.0.0-beta.4" style={{ position: "relative" }} />
+      <div data-whop-demo-native="element:checkout/expressCheckout" data-whop-elements-version="1.0.0-beta.5" style={{ position: "relative" }} />
     </div>
 
     <p style={{ fontSize: "0.8125rem", opacity: 0.7 }}>Example data. [Open the Playground](/elements/beta/checkout/overview#playground).</p>
@@ -58,7 +58,7 @@ Mounts inside [`Checkout`](/elements/beta/checkout/overview). Pass props and cal
 ## Props
 
 <ResponseField name="wallets" type="(&#x22;apple_pay&#x22; | &#x22;google_pay&#x22;)[]">
-  Which wallets may render — a filter over what the buyer’s device actually offers. The element never shows a wallet the device, the served matrix, or the checkout’s payment method configuration cannot back, and the render order stays best-native-first whatever order this lists. An empty list renders nothing (warned in dev builds). Apple Pay also needs the page’s domain verified as a [payment method domain](/api-reference/beta/payment-method-domains/payment-method-domain) — first-party whop.com pages are pre-approved; on any other site, register and verify the domain or the Apple Pay button stays hidden. Defaults to `["apple_pay","google_pay"]`.
+  Which wallets may render — a filter over what the buyer’s device actually offers. The element never shows a wallet the device, the served matrix, or the checkout’s payment method configuration cannot back, and the render order stays best-native-first whatever order this lists. An empty list renders nothing (warned in dev builds). Both wallets need the page’s domain verified as a [payment method domain](/api-reference/beta/payment-method-domains/payment-method-domain) — first-party whop.com pages are pre-approved; on any other site, register and verify the domain or the buttons stay hidden. Offering Google Pay on your own site is subject to the [Google Pay API Terms of Service](https://payments.developers.google.com/terms/sellertos). Defaults to `["apple_pay","google_pay"]`.
 </ResponseField>
 
 <ResponseField name="layout" type="&#x22;auto&#x22; | &#x22;horizontal&#x22; | &#x22;vertical&#x22;">
@@ -141,7 +141,6 @@ Style these parts through `appearance.classes`. Use camel case or kebab case for
 | `.whop-CardFieldInputInvalid`              | Invalid or incomplete PCI input container                                                                                                                                       |
 | `.whop-CardFieldRow`                       | Compact card number, expiration, and security code row                                                                                                                          |
 | `.whop-CardLabel`                          | Card information label                                                                                                                                                          |
-| `.whop-CardSaveNotice`                     | Payment method saving consent                                                                                                                                                   |
 | `.whop-CheckoutExpress`                    | The express checkout row — one-press wallet payments above the form                                                                                                             |
 | `.whop-CheckoutExpressApplePay`            | The Apple Pay express button                                                                                                                                                    |
 | `.whop-CheckoutExpressButtons`             | The wallet button stack — vertical in a narrow container, side by side in a wide one                                                                                            |
@@ -243,9 +242,7 @@ Style these parts through `appearance.classes`. Use camel case or kebab case for
 | `.whop-PaymentSavedMethodSeparated`        | The separated marker on a saved method specifically                                                                                                                             |
 | `.whop-PaymentSavedMore`                   | The control that fetches the next page of saved payment methods                                                                                                                 |
 | `.whop-PaymentSavedMoreSpinner`            | The spinner shown while the next page of saved payment methods loads                                                                                                            |
-| `.whop-PaymentSaveNotice`                  | The save-for-future-purchases consent line closing the detail region                                                                                                            |
 | `.whop-PaymentSettlementNotice`            | The settlement-window hint on methods whose matrix configuration declares one                                                                                                   |
-| `.whop-PaymentsTable`                      | The complete payments table                                                                                                                                                     |
 | `.whop-PhoneVerificationChangeNumber`      | Return-to-number control                                                                                                                                                        |
 | `.whop-PhoneVerificationCode`              | Six-digit confirmation-code pane                                                                                                                                                |
 | `.whop-PhoneVerificationDone`              | Success pane shown before closing                                                                                                                                               |
@@ -287,7 +284,7 @@ const checkout = whop.checkout.create({
   }
 });
 
-// 160 classes use this shape
+// 157 classes use this shape
 checkout.update({
   appearance: { classes: { 'whop-Address': { fontWeight: '700' } } }
 });

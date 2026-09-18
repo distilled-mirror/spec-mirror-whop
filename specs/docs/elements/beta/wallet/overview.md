@@ -6,7 +6,7 @@
 
 > Drives an account's money surfaces. `required-actions` is the outstanding-action bar from Whop's balance dashboard. `actions` renders the Deposit, Accept, Send, and Convert controls: Deposit, Send, and Convert open their Wallet overlays, while Accept opens Whop's checkout-link creator for a business account or company creation for a personal account. `deposit` returns live funding rails; `convert` swaps USD with Gold or Bitcoin and exposes FX currencies when the host enables `fxEnabled`; `send` moves money to a recipient or creates a public claim link; `withdraw` lists payout methods and creates the payout when the host does not already drive that API; `balances` holds two faces — the holdings list, and the balance block drawing value over a window; `cards` is the compact issued-card list; `cardsTable` renders the full sortable card roster; `cardsChart` plots card spend; `whopCard` renders one revealable card; `activity` lists ledger movements; `activityDetail` renders a prefetched movement, or retrieves one by activity ID or card transaction ID, in a standalone drawer; and `verification` is the identity-only nudge. Every data-backed surface can use the viewer's session when no token is provided.
 
-<Info>This page documents `@whop/elements@1.0.0-beta.4` and `@whop/elements-react@1.0.0-beta.4`.</Info>
+<Info>This page documents `@whop/elements@1.0.0-beta.5` and `@whop/elements-react@1.0.0-beta.5`.</Info>
 
 *Pre-release, not yet part of a stable release.*
 
@@ -17,7 +17,7 @@ Assemble the elements with example data. Drive the controls, add and arrange ele
 <div data-whop-demo-shell style={{ position: "relative", minHeight: "480px", transition: "min-height 200ms ease" }}>
   <div data-whop-demo-skeleton style={{ position: "absolute", inset: "0", borderRadius: "12px", background: "rgba(140, 140, 140, 0.12)", pointerEvents: "none", transition: "opacity 200ms ease" }} />
 
-  <div data-whop-demo-native="playground:wallet" data-whop-elements-version="1.0.0-beta.4" style={{ position: "relative" }} />
+  <div data-whop-demo-native="playground:wallet" data-whop-elements-version="1.0.0-beta.5" style={{ position: "relative" }} />
 </div>
 
 <div data-whop-usage="wallet/playground">

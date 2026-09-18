@@ -15,10 +15,10 @@ Wallet buttons at checkout depend on this: embedded surfaces like the [Express C
 | Endpoint                                                                                                    | Request                                                                                  |
 | ----------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
 | [List Payment Method Domains](/api-reference/beta/payment-method-domains/list-payment-method-domains)       | <Badge color="blue" size="sm" stroke>GET</Badge> `/payment_method_domains`               |
-| [Create Payment Method Domain](/api-reference/beta/payment-method-domains/create-payment-method-domain)     | <Badge color="green" size="sm" stroke>POST</Badge> `/payment_method_domains`             |
 | [Retrieve Payment Method Domain](/api-reference/beta/payment-method-domains/retrieve-payment-method-domain) | <Badge color="blue" size="sm" stroke>GET</Badge> `/payment_method_domains/{id}`          |
-| [Delete Payment Method Domain](/api-reference/beta/payment-method-domains/delete-payment-method-domain)     | <Badge color="red" size="sm" stroke>DELETE</Badge> `/payment_method_domains/{id}`        |
+| [Create Payment Method Domain](/api-reference/beta/payment-method-domains/create-payment-method-domain)     | <Badge color="green" size="sm" stroke>POST</Badge> `/payment_method_domains`             |
 | [Verify Payment Method Domain](/api-reference/beta/payment-method-domains/verify-payment-method-domain)     | <Badge color="green" size="sm" stroke>POST</Badge> `/payment_method_domains/{id}/verify` |
+| [Delete Payment Method Domain](/api-reference/beta/payment-method-domains/delete-payment-method-domain)     | <Badge color="red" size="sm" stroke>DELETE</Badge> `/payment_method_domains/{id}`        |
 
 ## Attributes
 

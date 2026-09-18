@@ -4,9 +4,9 @@
 
 # Payments
 
-> Browse account payments with PaymentsElement, collect a payment from a `plan_` ID or inline currency and amount, or save a payment method without charging with `mode: "setup"`. Mount PaymentElement, CardElement, or CardFields, then call `payments.createConfirmationToken` with billing details. Wallet selections open their sheet automatically. Confirm the token server-side, then pass the payment's or setup intent's `client_secret` to `handleNextAction` for any pending step.
+> Collect a payment from a `plan_` ID or inline currency and amount, or save a payment method without charging with `mode: "setup"`. Mount PaymentElement, CardElement, or CardFields, then call `payments.createConfirmationToken` with billing details. Wallet selections open their sheet automatically. Confirm the token server-side, then pass the payment's or setup intent's `client_secret` to `handleNextAction` for any pending step.
 
-<Info>This page documents `@whop/elements@1.0.0-beta.4` and `@whop/elements-react@1.0.0-beta.4`.</Info>
+<Info>This page documents `@whop/elements@1.0.0-beta.5` and `@whop/elements-react@1.0.0-beta.5`.</Info>
 
 *Pre-release, not yet part of a stable release.*
 
@@ -17,7 +17,7 @@ Assemble the elements with example data. Drive the controls, add and arrange ele
 <div data-whop-demo-shell style={{ position: "relative", minHeight: "480px", transition: "min-height 200ms ease" }}>
   <div data-whop-demo-skeleton style={{ position: "absolute", inset: "0", borderRadius: "12px", background: "rgba(140, 140, 140, 0.12)", pointerEvents: "none", transition: "opacity 200ms ease" }} />
 
-  <div data-whop-demo-native="playground:payments" data-whop-elements-version="1.0.0-beta.4" style={{ position: "relative" }} />
+  <div data-whop-demo-native="playground:payments" data-whop-elements-version="1.0.0-beta.5" style={{ position: "relative" }} />
 </div>
 
 <div data-whop-usage="payments/playground">
@@ -51,15 +51,11 @@ Assemble the elements with example data. Drive the controls, add and arrange ele
 Pass these to `whop.payments.create({ … })`, or as props on `<Payments>` in React.
 
 <ResponseField name="accountId" type="string">
-  Account ID, prefixed `biz_`. Required for PaymentsElement; omit only when calling static methods without an account surface.
+  Account ID, prefixed `biz_`. Omit only when calling static methods without an account surface.
 </ResponseField>
 
 <ResponseField name="mode" type="&#x22;payment&#x22;">
   Mount mode, `payment` by default. `setup` saves a payment method and charges nothing, now or later: only methods that can be saved are offered and amount bounds do not apply. Confirm with `createConfirmationToken()`, then create the setup intent server-side.
-</ResponseField>
-
-<ResponseField name="accessToken" type="string">
-  Scoped bearer token for PaymentsElement. Requires `payment:basic:read`; buyer emails additionally require `member:email:read`. Omit only with a same-origin Whop session.
 </ResponseField>
 
 <ResponseField name="plan" type="string">
@@ -75,7 +71,7 @@ Pass these to `whop.payments.create({ … })`, or as props on `<Payments>` in Re
 </ResponseField>
 
 <ResponseField name="setupFutureUsage" type="&#x22;off_session&#x22; | &#x22;on_session&#x22;">
-  A setup saves the payment method for `off_session` use, the only usage a setup accepts, and displays the save consent.
+  A setup saves the payment method for `off_session` use, the only usage a setup accepts.
 </ResponseField>
 
 <ResponseField name="previewWalletAvailability" type="WalletAvailability">
@@ -108,10 +104,10 @@ Pass these to `whop.payments.create({ … })`, or as props on `<Payments>` in Re
 
 <Note>The options are a union. Provide **exactly one** of these shapes, plus the shared event callbacks below:</Note>
 
-* `{ accountId: string; mode?: "payment"; accessToken?: string; plan: string; offerAmounts?: undefined; returnUrl?: string; setupFutureUsage?: "off_session" | "on_session"; previewWalletAvailability?: WalletAvailability; checkoutSession?: { id: string; clientSecret: string; }; analytics?: false }`
-* `{ accountId: string; mode?: "payment"; accessToken?: string; currency: string; amount: number; offerAmounts?: { feeInclusive: number; feeFree: number; }; paymentMethodConfiguration?: { enabled?: string[] | undefined; disabled?: string[] | undefined; include_platform_defaults?: boolean | undefined; }; returnUrl?: string; setupFutureUsage?: "off_session" | "on_session"; previewWalletAvailability?: WalletAvailability; checkoutSession?: { id: string; clientSecret: string; }; analytics?: false }`
-* `{ accountId: string; mode: "setup"; accessToken?: string; currency: string; plan?: undefined; amount?: undefined; offerAmounts?: undefined; paymentMethodConfiguration?: { enabled?: string[] | undefined; disabled?: string[] | undefined; include_platform_defaults?: boolean | undefined; }; returnUrl?: string; setupFutureUsage?: "off_session"; previewWalletAvailability?: WalletAvailability; checkoutSession?: { id: string; clientSecret: string; }; analytics?: false }`
-* `{ accountId?: string; accessToken?: string; mode?: undefined; plan?: undefined; currency?: undefined; amount?: undefined; offerAmounts?: undefined; paymentMethodConfiguration?: undefined; returnUrl?: string; setupFutureUsage?: "off_session" | "on_session"; previewWalletAvailability?: WalletAvailability; checkoutSession?: { id: string; clientSecret: string; }; analytics?: false }`
+* `{ accountId: string; mode?: "payment"; plan: string; offerAmounts?: undefined; returnUrl?: string; setupFutureUsage?: "off_session" | "on_session"; previewWalletAvailability?: WalletAvailability; checkoutSession?: { id: string; clientSecret: string; }; analytics?: false }`
+* `{ accountId: string; mode?: "payment"; currency: string; amount: number; offerAmounts?: { feeInclusive: number; feeFree: number; }; paymentMethodConfiguration?: { enabled?: string[] | undefined; disabled?: string[] | undefined; include_platform_defaults?: boolean | undefined; }; returnUrl?: string; setupFutureUsage?: "off_session" | "on_session"; previewWalletAvailability?: WalletAvailability; checkoutSession?: { id: string; clientSecret: string; }; analytics?: false }`
+* `{ accountId: string; mode: "setup"; currency: string; plan?: undefined; amount?: undefined; offerAmounts?: undefined; paymentMethodConfiguration?: { enabled?: string[] | undefined; disabled?: string[] | undefined; include_platform_defaults?: boolean | undefined; }; returnUrl?: string; setupFutureUsage?: "off_session"; previewWalletAvailability?: WalletAvailability; checkoutSession?: { id: string; clientSecret: string; }; analytics?: false }`
+* `{ accountId?: string; mode?: undefined; plan?: undefined; currency?: undefined; amount?: undefined; offerAmounts?: undefined; paymentMethodConfiguration?: undefined; returnUrl?: string; setupFutureUsage?: "off_session" | "on_session"; previewWalletAvailability?: WalletAvailability; checkoutSession?: { id: string; clientSecret: string; }; analytics?: false }`
 
 ## Events
 
@@ -129,9 +125,9 @@ Call these on the Payments handle from `whop.payments.create({ … })` or `usePa
 
 ### `createConfirmationToken`
 
-Creates a confirmation token for the selected method from your pay button. Pass the checkout's billing details. They must include `email`. Cards also need `name` and an address containing `line1` and `country`. Wallet selections open their sheet during the pay-button interaction. Confirm the returned `confirmationToken` server-side, then call `WhopElements.payments.handleNextAction(…)`. Runs on your page (host-side), not in the controller iframe.
+Creates a confirmation token for the selected method from your pay button. Pass the checkout's billing details. They must include `email`. Supply `phone` for methods that require it when billing collection is disabled. Cards also need `name` and an address containing `line1` and `country`. Wallet selections open their sheet during the pay-button interaction. Confirm the returned `confirmationToken` server-side, then call `WhopElements.payments.handleNextAction(…)`. Runs on your page (host-side), not in the controller iframe.
 
-**Signature:** `(input: { billingDetails?: { email?: string | undefined; name?: string | undefined; address?: { country?: string | undefined; line1?: string | undefined; line2?: string | undefined; city?: string | undefined; state?: string | undefined; postal_code?: string | undefined; } | undefined; } | undefined; }) => Promise<{ confirmationToken: string; type: string; }>`
+**Signature:** `(input: { billingDetails?: { email?: string | undefined; name?: string | undefined; phone?: string | undefined; address?: { country?: string | undefined; line1?: string | undefined; line2?: string | undefined; city?: string | undefined; state?: string | undefined; postal_code?: string | undefined; } | undefined; } | undefined; }) => Promise<{ confirmationToken: string; type: string; }>`
 
 ### `update`
 
@@ -376,10 +372,6 @@ Call this exactly once. An event left unanswered keeps the current total when th
 The elements this group mounts. Each has its own page:
 
 <CardGroup cols={2}>
-  <Card title="PaymentsElement" href="/elements/beta/payments/payments">
-    The dashboard payments table with status cards, search, filters, sorting, row selection, CSV export, column settings, and pagination. Reads all payment pages to compute complete counts and filter locally; intended for accounts with modest payment histories. Customer details and refunds are handed to your application through events.
-  </Card>
-
   <Card title="AddressElement" href="/elements/beta/payments/address">
     Collects a billing or shipping address. Fields, order, and validation follow the selected country. Includes street autocomplete and methods to read or validate the address.
   </Card>

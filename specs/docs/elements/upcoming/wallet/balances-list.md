@@ -128,7 +128,7 @@
 
   An account row was clicked, with `includeOwnedAccounts` on. `accountId` is the personal `user_…` tag or an owned `biz_…` tag, and `kind` lets you route without inspecting it. The element never navigates.
 
-  **Signature:** `((payload: { accountId: string; kind: "business" | "personal"; }) => void)`
+  **Signature:** `((payload: { accountId: string; kind: "personal" | "business"; }) => void)`
 
   ### `onLoaderStart`
 

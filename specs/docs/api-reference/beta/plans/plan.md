@@ -13,11 +13,11 @@ Use the Plans API to create plans for products, list existing plans, retrieve or
 | Endpoint                                                 | Request                                                                        |
 | -------------------------------------------------------- | ------------------------------------------------------------------------------ |
 | [List Plans](/api-reference/beta/plans/list-plans)       | <Badge color="blue" size="sm" stroke>GET</Badge> `/plans`                      |
-| [Create Plan](/api-reference/beta/plans/create-plan)     | <Badge color="green" size="sm" stroke>POST</Badge> `/plans`                    |
 | [Retrieve Plan](/api-reference/beta/plans/retrieve-plan) | <Badge color="blue" size="sm" stroke>GET</Badge> `/plans/{id}`                 |
+| [Create Plan](/api-reference/beta/plans/create-plan)     | <Badge color="green" size="sm" stroke>POST</Badge> `/plans`                    |
+| [Calculate Tax](/api-reference/beta/plans/calculate-tax) | <Badge color="green" size="sm" stroke>POST</Badge> `/plans/{id}/calculate_tax` |
 | [Update Plan](/api-reference/beta/plans/update-plan)     | <Badge color="orange" size="sm" stroke>PATCH</Badge> `/plans/{id}`             |
 | [Delete Plan](/api-reference/beta/plans/delete-plan)     | <Badge color="red" size="sm" stroke>DELETE</Badge> `/plans/{id}`               |
-| [Calculate Tax](/api-reference/beta/plans/calculate-tax) | <Badge color="green" size="sm" stroke>POST</Badge> `/plans/{id}/calculate_tax` |
 
 ## Attributes
 

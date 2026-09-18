@@ -13,15 +13,15 @@ Use the Payouts API to create and track payouts, manage saved payout methods, an
 | Endpoint                                                                                   | Request                                                                       |
 | ------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------- |
 | [List Payouts](/api-reference/beta/payouts/list-payouts)                                   | <Badge color="blue" size="sm" stroke>GET</Badge> `/payouts`                   |
-| [Create Payout](/api-reference/beta/payouts/create-payout)                                 | <Badge color="green" size="sm" stroke>POST</Badge> `/payouts`                 |
 | [Retrieve Payout](/api-reference/beta/payouts/retrieve-payout)                             | <Badge color="blue" size="sm" stroke>GET</Badge> `/payouts/{id}`              |
-| [Cancel Payout](/api-reference/beta/payouts/cancel-payout)                                 | <Badge color="green" size="sm" stroke>POST</Badge> `/payouts/{id}/cancel`     |
 | [List Saved Payout Methods](/api-reference/beta/payouts/list-saved-payout-methods)         | <Badge color="blue" size="sm" stroke>GET</Badge> `/payouts/methods`           |
+| [List Supported Payout Methods](/api-reference/beta/payouts/list-supported-payout-methods) | <Badge color="blue" size="sm" stroke>GET</Badge> `/payouts/supported_methods` |
+| [Create Payout](/api-reference/beta/payouts/create-payout)                                 | <Badge color="green" size="sm" stroke>POST</Badge> `/payouts`                 |
+| [Cancel Payout](/api-reference/beta/payouts/cancel-payout)                                 | <Badge color="green" size="sm" stroke>POST</Badge> `/payouts/{id}/cancel`     |
 | [Create Saved Payout Method](/api-reference/beta/payouts/create-saved-payout-method)       | <Badge color="green" size="sm" stroke>POST</Badge> `/payouts/methods`         |
+| [Create Payout Quote](/api-reference/beta/payouts/create-payout-quote)                     | <Badge color="green" size="sm" stroke>POST</Badge> `/payouts/quotes`          |
 | [Update Saved Payout Method](/api-reference/beta/payouts/update-saved-payout-method)       | <Badge color="orange" size="sm" stroke>PATCH</Badge> `/payouts/methods/{id}`  |
 | [Delete Saved Payout Method](/api-reference/beta/payouts/delete-saved-payout-method)       | <Badge color="red" size="sm" stroke>DELETE</Badge> `/payouts/methods/{id}`    |
-| [Create Payout Quote](/api-reference/beta/payouts/create-payout-quote)                     | <Badge color="green" size="sm" stroke>POST</Badge> `/payouts/quotes`          |
-| [List Supported Payout Methods](/api-reference/beta/payouts/list-supported-payout-methods) | <Badge color="blue" size="sm" stroke>GET</Badge> `/payouts/supported_methods` |
 
 ## Attributes
 

@@ -4,9 +4,9 @@
 
 # Checkout
 
-> Drives a full hosted checkout for one plan — price summary, promo codes, the currency the buyer pays in, and the whole payment collection surface (the payments elements, composed inside) — against the Whop checkout sessions API. Mount it with a `plan` (or a `checkoutConfiguration` you authored) and the element opens the checkout session itself; the session credential never leaves the element. A setup-mode checkout configuration mounts the same element as a payment-method save: nothing is charged, the buyer’s method is stored for you to charge later, and the finished checkout redirects with `setup_intent_id`. The buyer pays inside the element, and a finished checkout redirects the current tab to `returnUrl`, including the page that contains the element. Fulfill from webhooks rather than a browser callback. Without a `returnUrl`, the buyer rests on the element’s own success face. The element automatically drives an off-site payment step, such as 3DS or a bank page. On whop.com, it brings the buyer back into the restored checkout; in an embed, the buyer returns to the same `returnUrl`. A failed payment reopens the same checkout with the reason shown, so the buyer can pay again. Every option is set at creation: the element mints a checkout session from these values when it mounts. Changing one later with `update()` or new React props fails instead of changing the existing order. Mount a new checkout to change the purchase.
+> Drives a full hosted checkout for one or more plans — itemized price summary, promo codes, the currency the buyer pays in, and the whole payment collection surface (the payments elements, composed inside) — against the Whop checkout sessions API. Mount it with `items`, a single `plan`, or a `checkoutConfiguration` you authored and the element opens the checkout session itself; the session credential never leaves the element. A setup-mode checkout configuration mounts the same element as a payment-method save: nothing is charged, the buyer’s method is stored for you to charge later, and the finished checkout redirects with `setup_intent_id`. The buyer pays inside the element, and a finished checkout redirects the current tab to `returnUrl`, including the page that contains the element. Fulfill from webhooks rather than a browser callback. Without a `returnUrl`, the buyer rests on the element’s own success face. The element automatically drives an off-site payment step, such as 3DS or a bank page. On whop.com, it brings the buyer back into the restored checkout; in an embed, the buyer returns to the same `returnUrl`. A failed payment reopens the same checkout with the reason shown, so the buyer can pay again. Every option is set at creation: the element mints a checkout session from these values when it mounts. Changing one later with `update()` or new React props fails instead of changing the existing order. Mount a new checkout to change what is being purchased.
 
-<Info>This page documents `@whop/elements@1.0.0-beta.4` and `@whop/elements-react@1.0.0-beta.4`.</Info>
+<Info>This page documents `@whop/elements@1.0.0-beta.5` and `@whop/elements-react@1.0.0-beta.5`.</Info>
 
 *Pre-release, not yet part of a stable release.*
 
@@ -17,7 +17,7 @@ Assemble the elements with example data. Drive the controls, add and arrange ele
 <div data-whop-demo-shell style={{ position: "relative", minHeight: "480px", transition: "min-height 200ms ease" }}>
   <div data-whop-demo-skeleton style={{ position: "absolute", inset: "0", borderRadius: "12px", background: "rgba(140, 140, 140, 0.12)", pointerEvents: "none", transition: "opacity 200ms ease" }} />
 
-  <div data-whop-demo-native="playground:checkout" data-whop-elements-version="1.0.0-beta.4" style={{ position: "relative" }} />
+  <div data-whop-demo-native="playground:checkout" data-whop-elements-version="1.0.0-beta.5" style={{ position: "relative" }} />
 </div>
 
 <div data-whop-usage="checkout/playground">
@@ -51,15 +51,19 @@ Assemble the elements with example data. Drive the controls, add and arrange ele
 Pass these to `whop.checkout.create({ … })`, or as props on `<Checkout>` in React.
 
 <ResponseField name="plan" type="string">
-  Existing plan ID, prefixed `plan_`. The element creates a checkout session for it, and the plan defines the price; nothing about amounts can be asserted client-side. Every checkout is created from this or a `checkoutConfiguration` — omitting both refuses loudly at mount. Set at create only: the session is minted from it, and changing it later refuses.
-</ResponseField>
-
-<ResponseField name="checkoutConfiguration" type="string">
-  Existing checkout configuration ID, prefixed `ch_`. The element creates the checkout session from it: the configuration names the plan being sold (or, in `setup` mode, no plan — the checkout saves a payment method and charges nothing) and seeds its own affiliate code, metadata, redirect and payment-method presets — an option passed here beside it wins over the configuration’s copy, field by field. Pass `plan` alongside only to set `quantity`; it must be the configuration’s own plan, which can never be swapped out from under its presets. Set at create only.
+  Existing plan ID, prefixed `plan_`. Shorthand for an `items` array containing this plan and `quantity`. The plan defines the price; nothing about amounts can be asserted client-side. Pass either `plan`, `items`, or a `checkoutConfiguration`. Set at create only: the session is minted from it, and changing it later refuses.
 </ResponseField>
 
 <ResponseField name="quantity" type="number">
   How many units to purchase. Plans that disallow multiples refuse values above 1. Set at create only: the session is minted with it, and changing it later refuses. @default 1
+</ResponseField>
+
+<ResponseField name="items" type="CheckoutItemInput[]">
+  The plans in this checkout and how many units of each to purchase. Every item must belong to the same seller and use compatible billing terms; the API validates the complete cart and prices it as one charge. Pass this instead of `plan`, `quantity`, or `checkoutConfiguration`. Set at create only: the session is minted from this exact cart, and changing it later refuses.
+</ResponseField>
+
+<ResponseField name="checkoutConfiguration" type="string">
+  Existing checkout configuration ID, prefixed `ch_`. The element creates the checkout session from it: the configuration names the plan being sold (or, in `setup` mode, no plan — the checkout saves a payment method and charges nothing) and seeds its own affiliate code, metadata, redirect and payment-method presets — an option passed here beside it wins over the configuration’s copy, field by field. Pass `plan` alongside only to set `quantity`; it must be the configuration’s own plan, which can never be swapped out from under its presets. Set at create only.
 </ResponseField>
 
 <ResponseField name="promoCode" type="string">
@@ -120,6 +124,22 @@ Destroys every element and sub-controller this handle created, removes the contr
 
 Named types used throughout this page.
 
+## `CheckoutItemInput`
+
+Fields on `CheckoutItemInput`.
+
+### `plan`
+
+Existing plan ID, prefixed `plan_`.
+
+**Signature:** `string`
+
+### `quantity`
+
+Number of units to purchase. Defaults to 1; plans can disallow quantities above 1.
+
+**Signature:** `number | undefined`
+
 ## `CheckoutAttributionInput`
 
 Checkout attribution recorded with the session. The element maps these fields to `POST /api/v1/checkout_sessions`; empty values are omitted, and `country` is resolved by the API.
@@ -168,7 +188,7 @@ The elements this group mounts. Each has its own page:
   </Card>
 
   <Card title="ExpressCheckoutElement" href="/elements/beta/checkout/expressCheckout">
-    One-press Apple Pay and Google Pay buttons for a checkout — the OS payment sheet collects whatever the session still needs (the buyer's email, a phone number where the seller collects one, a shipping address for physical goods, and in Apple Pay a promo code where the seller offers entry) and one press finishes the purchase. It shares the checkout's entry slot with the full checkout element, so a handle mounts exactly one of the two: this button alone where the purchase is simple enough for a sheet to finish, or the full checkout surface for everything else. Renders only the wallets the buyer's device can actually pay with — and the checkout's own payment method configuration allows — using the served button art, and renders nothing where no wallet is available. Apple Pay additionally requires the page's domain to be a verified payment method domain: first-party whop.com pages are pre-approved, and any other site must register its domain through the Payment Method Domains API before the button renders there. A checkout the sheet cannot honestly finish — a waitlist join, a transfer, a form question only a page can ask — refuses loudly instead of rendering a doomed button.
+    One-press Apple Pay and Google Pay buttons for a checkout — the OS payment sheet collects whatever the session still needs (the buyer's email, a phone number where the seller collects one, a shipping address for physical goods, and in Apple Pay a promo code where the seller offers entry) and one press finishes the purchase. It shares the checkout's entry slot with the full checkout element, so a handle mounts exactly one of the two: this button alone where the purchase is simple enough for a sheet to finish, or the full checkout surface for everything else. Renders only the wallets the buyer's device can actually pay with — and the checkout's own payment method configuration allows — using the served button art, and renders nothing where no wallet is available. Both wallets require the page's domain to be a verified payment method domain: first-party whop.com pages are pre-approved, and any other site must register its domain through the Payment Method Domains API before either button renders there. Offering Google Pay on your own site is subject to the Google Pay API Terms of Service. A checkout the sheet cannot honestly finish — a waitlist join, a transfer, a form question only a page can ask — refuses loudly instead of rendering a doomed button.
   </Card>
 </CardGroup>
 

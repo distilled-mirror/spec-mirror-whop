@@ -4,7 +4,7 @@
 
 # Payments
 
-> Browse account payments with PaymentsElement, collect a payment from a `plan_` ID or inline currency and amount, or save a payment method without charging with `mode: "setup"`. Mount PaymentElement, CardElement, or CardFields, then call `payments.createConfirmationToken` with billing details. Wallet selections open their sheet automatically. Confirm the token server-side, then pass the payment's or setup intent's `client_secret` to `handleNextAction` for any pending step.
+> Collect a payment from a `plan_` ID or inline currency and amount, or save a payment method without charging with `mode: "setup"`. Mount PaymentElement, CardElement, or CardFields, then call `payments.createConfirmationToken` with billing details. Wallet selections open their sheet automatically. Confirm the token server-side, then pass the payment's or setup intent's `client_secret` to `handleNextAction` for any pending step.
 
 ## Playground
 
@@ -47,15 +47,11 @@ Assemble the elements with example data. Drive the controls, add and arrange ele
 Pass these to `whop.payments.create({ … })`, or as props on `<Payments>` in React.
 
 <ResponseField name="accountId" type="string">
-  Account ID, prefixed `biz_`. Required for PaymentsElement; omit only when calling static methods without an account surface.
+  Account ID, prefixed `biz_`. Omit only when calling static methods without an account surface.
 </ResponseField>
 
 <ResponseField name="mode" type="&#x22;payment&#x22;">
   Mount mode, `payment` by default. `setup` saves a payment method and charges nothing, now or later: only methods that can be saved are offered and amount bounds do not apply. Confirm with `createConfirmationToken()`, then create the setup intent server-side.
-</ResponseField>
-
-<ResponseField name="accessToken" type="string">
-  Scoped bearer token for PaymentsElement. Requires `payment:basic:read`; buyer emails additionally require `member:email:read`. Omit only with a same-origin Whop session.
 </ResponseField>
 
 <ResponseField name="plan" type="string">
@@ -104,10 +100,10 @@ Pass these to `whop.payments.create({ … })`, or as props on `<Payments>` in Re
 
 <Note>The options are a union. Provide **exactly one** of these shapes, plus the shared event callbacks below:</Note>
 
-* `{ accountId: string; mode?: "payment"; accessToken?: string; plan: string; offerAmounts?: undefined; returnUrl?: string; setupFutureUsage?: "off_session" | "on_session"; previewWalletAvailability?: WalletAvailability; checkoutSession?: { id: string; clientSecret: string; }; analytics?: false }`
-* `{ accountId: string; mode?: "payment"; accessToken?: string; currency: string; amount: number; offerAmounts?: { feeInclusive: number; feeFree: number; }; paymentMethodConfiguration?: { enabled?: string[] | undefined; disabled?: string[] | undefined; include_platform_defaults?: boolean | undefined; }; returnUrl?: string; setupFutureUsage?: "off_session" | "on_session"; previewWalletAvailability?: WalletAvailability; checkoutSession?: { id: string; clientSecret: string; }; analytics?: false }`
-* `{ accountId: string; mode: "setup"; accessToken?: string; currency: string; plan?: undefined; amount?: undefined; offerAmounts?: undefined; paymentMethodConfiguration?: { enabled?: string[] | undefined; disabled?: string[] | undefined; include_platform_defaults?: boolean | undefined; }; returnUrl?: string; setupFutureUsage?: "off_session"; previewWalletAvailability?: WalletAvailability; checkoutSession?: { id: string; clientSecret: string; }; analytics?: false }`
-* `{ accountId?: string; accessToken?: string; mode?: undefined; plan?: undefined; currency?: undefined; amount?: undefined; offerAmounts?: undefined; paymentMethodConfiguration?: undefined; returnUrl?: string; setupFutureUsage?: "off_session" | "on_session"; previewWalletAvailability?: WalletAvailability; checkoutSession?: { id: string; clientSecret: string; }; analytics?: false }`
+* `{ accountId: string; mode?: "payment"; plan: string; offerAmounts?: undefined; returnUrl?: string; setupFutureUsage?: "off_session" | "on_session"; previewWalletAvailability?: WalletAvailability; checkoutSession?: { id: string; clientSecret: string; }; analytics?: false }`
+* `{ accountId: string; mode?: "payment"; currency: string; amount: number; offerAmounts?: { feeInclusive: number; feeFree: number; }; paymentMethodConfiguration?: { enabled?: string[] | undefined; disabled?: string[] | undefined; include_platform_defaults?: boolean | undefined; }; returnUrl?: string; setupFutureUsage?: "off_session" | "on_session"; previewWalletAvailability?: WalletAvailability; checkoutSession?: { id: string; clientSecret: string; }; analytics?: false }`
+* `{ accountId: string; mode: "setup"; currency: string; plan?: undefined; amount?: undefined; offerAmounts?: undefined; paymentMethodConfiguration?: { enabled?: string[] | undefined; disabled?: string[] | undefined; include_platform_defaults?: boolean | undefined; }; returnUrl?: string; setupFutureUsage?: "off_session"; previewWalletAvailability?: WalletAvailability; checkoutSession?: { id: string; clientSecret: string; }; analytics?: false }`
+* `{ accountId?: string; mode?: undefined; plan?: undefined; currency?: undefined; amount?: undefined; offerAmounts?: undefined; paymentMethodConfiguration?: undefined; returnUrl?: string; setupFutureUsage?: "off_session" | "on_session"; previewWalletAvailability?: WalletAvailability; checkoutSession?: { id: string; clientSecret: string; }; analytics?: false }`
 
 ## Events
 
@@ -372,14 +368,6 @@ Call this exactly once. An event left unanswered keeps the current total when th
 The elements this group mounts. Each has its own page:
 
 <CardGroup cols={2}>
-  <Card title="PaymentDetailElement" href="/elements/upcoming/payments/paymentDetail">
-    A payment detail page with the dashboard breakdown, activity, customer, details, and customer journey. Each section can be hidden. Reads payment:basic:read; customer email needs member:email:read and journey needs member:basic:read. Action events let your application confirm and authorize changes; this element never refunds, retries, or voids a payment itself.
-  </Card>
-
-  <Card title="PaymentsElement" href="/elements/upcoming/payments/payments">
-    The dashboard payments table with status cards, search, filters, sorting, row selection, CSV export, column settings, and pagination. Reads all payment pages to compute complete counts and filter locally; intended for accounts with modest payment histories. Customer details and refunds are handed to your application through events.
-  </Card>
-
   <Card title="AddressElement" href="/elements/upcoming/payments/address">
     Collects a billing or shipping address. Fields, order, and validation follow the selected country. Includes street autocomplete and methods to read or validate the address.
   </Card>

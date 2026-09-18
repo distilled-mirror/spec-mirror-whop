@@ -4,7 +4,7 @@
 
 # Wallet
 
-> Drives an account's money surfaces. `required-actions` is the outstanding-action bar from Whop's balance dashboard. `actions` renders the Deposit, Accept, Send, and Convert controls: Deposit, Send, and Convert open their Wallet overlays, while Accept opens Whop's checkout-link creator for a business account or company creation for a personal account. `deposit` returns live funding rails; `convert` swaps USD with Gold or Bitcoin and exposes FX currencies when the host enables `fxEnabled`; `send` moves money to a recipient or creates a public claim link; `withdraw` lists payout methods and creates the payout when the host does not already drive that API; `balances` holds two faces — the holdings list, and the balance block drawing value over a window; `cards` is the compact issued-card list; `cardsTable` renders the full sortable card roster; `cardsChart` plots card spend; `whopCard` renders one revealable card; `activity` lists ledger movements; `activityDetail` renders a prefetched movement, or retrieves one by activity ID or card transaction ID, in a standalone drawer; and `verification` is the identity-only nudge. Every data-backed surface can use the viewer's session when no token is provided.
+> Drives an account's money surfaces. `actions` renders the Deposit, Accept, Send, and Convert controls: Deposit, Send, and Convert open their Wallet overlays, while Accept opens Whop's checkout-link creator for a business account or company creation for a personal account. `deposit` returns live funding rails; `convert` swaps USD with Gold or Bitcoin and exposes FX currencies when the host enables `fxEnabled`; `send` moves money to a recipient or creates a public claim link; `withdraw` lists payout methods and creates the payout when the host does not already drive that API; `balances` holds two faces — the holdings list, and the balance block drawing value over a window; `cards` is the compact issued-card list; `cardsTable` renders the full sortable card roster; `cardsChart` plots card spend; `whopCard` renders one revealable card; `activity` lists ledger movements; `activityDetail` renders a prefetched movement, or retrieves one by activity ID or card transaction ID, in a standalone drawer. The outstanding-action bar and the identity nudge live on the `dashboard` controller. Every data-backed surface can use the viewer's session when no token is provided.
 
 ## Playground
 
@@ -869,10 +869,6 @@ Fields on `ReportExportReady`.
 The elements this group mounts. Each has its own page:
 
 <CardGroup cols={2}>
-  <Card title="RequiredActionsElement" href="/elements/upcoming/wallet/required-actions">
-    The outstanding-action banners from Whop's balance dashboard — identity verification, deposits, tax, and the rest — in the same order the API returns them. An account with nothing outstanding renders nothing at all, so the element can sit permanently in a layout. Copy comes from the API. Pressing Verify starts a hosted identity session and leaves for it; Add money asks the Wallet controller to open deposit; every other button follows the action's own link. Needs an `accessToken`. A failed read renders nothing rather than an error — a banner should never become the loudest thing on someone else's page.
-  </Card>
-
   <Card title="ActionsElement" href="/elements/upcoming/wallet/actions">
     The account action row from Whop's balance dashboard. Deposit, Send, Withdraw, and Convert open the Wallet controller's built-in overlays. Accept opens Whop's checkout-link creator for a business account or company creation for a personal account. Each button also emits its requested event so the embedding page can observe the action.
   </Card>
@@ -915,9 +911,5 @@ The elements this group mounts. Each has its own page:
 
   <Card title="Cards" href="/elements/upcoming/wallet/cards">
     An account's card surfaces, mounted from one place: the compact issued-card list, the full sortable roster, the spend chart, and a single revealable card. Mount the faces the page needs — they share the account and the credential this unit is minted with, so a page showing a chart above a roster wires them once. *(sub-controller, 5 elements)*
-  </Card>
-
-  <Card title="VerificationElement" href="/elements/upcoming/wallet/verification">
-    A banner asking the account holder to verify their identity, shown only while verification is outstanding — an account that has already verified renders nothing at all, so the element can sit permanently in a layout. The headline and status messages come from the API, with a shorter description when inviting the account holder to start verification, so they track the account's actual state: an unstarted account is invited to unlock cards and payouts, one under review reads as pending, and a failed or flagged one says so. Pressing the button reports `verificationRequested` and stays put, so the host mounts its own verification — the `verifications` controller's `kyc` element, say. Needs an `accessToken`. A failed read renders nothing rather than an error — a nudge should never become the loudest thing on the page.
   </Card>
 </CardGroup>

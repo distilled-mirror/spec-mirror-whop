@@ -61,7 +61,7 @@ Any direct or implied earnings claims must be accurate, substantiated, and not m
 
 ## Broader compliance obligations
 
-All merchants on Whop must comply with broader legal and regulatory requirements. These include the General Data Protection Regulation (GDPR) and California Consumer Privacy Act (CCPA). Merchants must also follow Payment Card Industry (PCI) compliance standards and suspicious activity reporting obligations under the Federal Trade Commission and applicable money services regulations.
+All merchants on Whop must comply with broader legal and regulatory requirements. These include the General Data Protection Regulation (GDPR) and California Consumer Privacy Act (CCPA). Merchants must also follow Payment Card Industry (PCI) compliance standards.
 
 ## How Whop monitors the platform
 
@@ -81,14 +81,14 @@ If you make a correctable mistake, Whop will contact you. Whop will email the ac
 
 ### Non-correctable violations
 
-If Whop finds that you lied about what you sell, sold prohibited products or services, or committed serious violations, the consequences are immediate and final:
+If Whop finds that you lied about what you sell, sold prohibited products or services, or committed serious violations, the consequences are immediate:
 
-* Whop will terminate your business with no option to restore it
+* Whop will terminate your business
 * Whop will suspend all associated accounts
 * Whop will add you to a platform blocklist
 * Whop may withhold, reverse, and/or refund all funds
 
-You can appeal an enforcement decision by contacting [support@whop.com](mailto:support@whop.com) within 7 days of notification.
+You can appeal any enforcement decision within 30 days of notification through Whop's suspension appeal flow. The flow delivers your case to the Trust & Safety team. Whop rarely overturns non-correctable violations. An appeal succeeds only when evidence shows that the original finding was wrong. See [Account Suspensions](/trust-and-safety/suspensions/account-suspensions) for how appeals work.
 
 ## Reporting a violation
 

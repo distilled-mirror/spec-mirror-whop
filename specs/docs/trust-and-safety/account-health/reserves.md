@@ -10,7 +10,7 @@ A reserve is a portion of your balance that Whop holds back from payout for a pe
 
 ## Why reserves are necessary
 
-When a customer disputes a payment, Whop deducts the payment amount and any card-network dispute fee from your balance. As the payment platform, Whop is responsible for those amounts even when a business has already withdrawn its funds or is unable to fulfill its orders.
+When a customer disputes a payment, Whop deducts the payment amount and any card-network dispute fee from your balance. As the merchant of record, Whop is responsible for those amounts even when a business has already withdrawn its funds or is unable to fulfill its orders.
 
 It's possible that an account's balance isn't enough to cover future disputes and refunds. To avoid that situation, Whop places reserves where it anticipates losses. The reserve exists to cover those losses. If the losses never materialize, Whop releases the funds in full and lifts the reserve. This process can be difficult, but it protects both your business and your customers.
 

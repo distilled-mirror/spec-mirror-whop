@@ -14,10 +14,10 @@ Use the Disputes API to list disputes, edit the evidence packet while a dispute 
 | --------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
 | [List Disputes](/api-reference/beta/disputes/list-disputes)                       | <Badge color="blue" size="sm" stroke>GET</Badge> `/disputes`                        |
 | [Retrieve Dispute](/api-reference/beta/disputes/retrieve-dispute)                 | <Badge color="blue" size="sm" stroke>GET</Badge> `/disputes/{id}`                   |
-| [Update Dispute](/api-reference/beta/disputes/update-dispute)                     | <Badge color="orange" size="sm" stroke>PATCH</Badge> `/disputes/{id}`               |
+| [Retrieve Dispute Summary](/api-reference/beta/disputes/retrieve-dispute-summary) | <Badge color="blue" size="sm" stroke>GET</Badge> `/disputes/summary`                |
 | [Submit Dispute](/api-reference/beta/disputes/submit-dispute)                     | <Badge color="green" size="sm" stroke>POST</Badge> `/disputes/{id}/submit`          |
 | [Upload Dispute Evidence](/api-reference/beta/disputes/upload-dispute-evidence)   | <Badge color="green" size="sm" stroke>POST</Badge> `/disputes/{id}/upload_evidence` |
-| [Retrieve Dispute Summary](/api-reference/beta/disputes/retrieve-dispute-summary) | <Badge color="blue" size="sm" stroke>GET</Badge> `/disputes/summary`                |
+| [Update Dispute](/api-reference/beta/disputes/update-dispute)                     | <Badge color="orange" size="sm" stroke>PATCH</Badge> `/disputes/{id}`               |
 
 ## Attributes
 
@@ -420,7 +420,7 @@ Use the Disputes API to list disputes, edit the evidence packet while a dispute 
         </ResponseField>
 
         <ResponseField name="subtotal" type="object | null" required>
-          The recorded amount for this item's full quantity, before discounts, tax, and fees, in its purchase currency. This is not the amount being contested. Returns `null` when no item amount was recorded.
+          The recorded amount for this item's full quantity, before discounts, tax, and fees, in its purchase currency. Returns `null` when no item amount was recorded.
 
           <Accordion title="Properties" defaultOpen={true}>
             <ResponseField name="amount" type="string" required>

@@ -933,6 +933,10 @@ Whop supports payouts to over 200 different countries:
   </span>
 
   <span className="rounded-md bg-gray-100 dark:bg-gray-800 px-3 py-2 text-sm font-medium text-center">
+    Ukraine
+  </span>
+
+  <span className="rounded-md bg-gray-100 dark:bg-gray-800 px-3 py-2 text-sm font-medium text-center">
     United Arab Emirates
   </span>
 

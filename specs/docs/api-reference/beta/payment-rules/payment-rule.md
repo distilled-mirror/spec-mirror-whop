@@ -25,14 +25,14 @@ For a walkthrough of blocking, reviewing, challenging, and allowing checkouts to
 | Endpoint                                                                                 | Request                                                                             |
 | ---------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
 | [List payment rules](/api-reference/beta/payment-rules/list-payment-rules)               | <Badge color="blue" size="sm" stroke>GET</Badge> `/payment_rules`                   |
-| [Create a payment rule](/api-reference/beta/payment-rules/create-a-payment-rule)         | <Badge color="green" size="sm" stroke>POST</Badge> `/payment_rules`                 |
 | [Retrieve a payment rule](/api-reference/beta/payment-rules/retrieve-a-payment-rule)     | <Badge color="blue" size="sm" stroke>GET</Badge> `/payment_rules/{id}`              |
-| [Update a payment rule](/api-reference/beta/payment-rules/update-a-payment-rule)         | <Badge color="orange" size="sm" stroke>PATCH</Badge> `/payment_rules/{id}`          |
-| [Delete a payment rule](/api-reference/beta/payment-rules/delete-a-payment-rule)         | <Badge color="red" size="sm" stroke>DELETE</Badge> `/payment_rules/{id}`            |
+| [List fields](/api-reference/beta/payment-rules/list-fields)                             | <Badge color="blue" size="sm" stroke>GET</Badge> `/payment_rules/fields`            |
+| [Create a payment rule](/api-reference/beta/payment-rules/create-a-payment-rule)         | <Badge color="green" size="sm" stroke>POST</Badge> `/payment_rules`                 |
 | [Activate a payment rule](/api-reference/beta/payment-rules/activate-a-payment-rule)     | <Badge color="green" size="sm" stroke>POST</Badge> `/payment_rules/{id}/activate`   |
 | [Deactivate a payment rule](/api-reference/beta/payment-rules/deactivate-a-payment-rule) | <Badge color="green" size="sm" stroke>POST</Badge> `/payment_rules/{id}/deactivate` |
 | [Replace a payment rule](/api-reference/beta/payment-rules/replace-a-payment-rule)       | <Badge color="green" size="sm" stroke>POST</Badge> `/payment_rules/{id}/replace`    |
-| [List fields](/api-reference/beta/payment-rules/list-fields)                             | <Badge color="blue" size="sm" stroke>GET</Badge> `/payment_rules/fields`            |
+| [Update a payment rule](/api-reference/beta/payment-rules/update-a-payment-rule)         | <Badge color="orange" size="sm" stroke>PATCH</Badge> `/payment_rules/{id}`          |
+| [Delete a payment rule](/api-reference/beta/payment-rules/delete-a-payment-rule)         | <Badge color="red" size="sm" stroke>DELETE</Badge> `/payment_rules/{id}`            |
 
 ## Attributes
 

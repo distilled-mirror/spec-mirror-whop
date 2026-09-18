@@ -20,8 +20,8 @@ Use the Checkout Configurations API to create checkout links for an existing or 
 | Endpoint                                                                                                           | Request                                                                            |
 | ------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------- |
 | [List checkout configurations](/api-reference/beta/checkout-configurations/list-checkout-configurations)           | <Badge color="blue" size="sm" stroke>GET</Badge> `/checkout_configurations`        |
-| [Create a checkout configuration](/api-reference/beta/checkout-configurations/create-a-checkout-configuration)     | <Badge color="green" size="sm" stroke>POST</Badge> `/checkout_configurations`      |
 | [Retrieve a checkout configuration](/api-reference/beta/checkout-configurations/retrieve-a-checkout-configuration) | <Badge color="blue" size="sm" stroke>GET</Badge> `/checkout_configurations/{id}`   |
+| [Create a checkout configuration](/api-reference/beta/checkout-configurations/create-a-checkout-configuration)     | <Badge color="green" size="sm" stroke>POST</Badge> `/checkout_configurations`      |
 | [Delete a checkout configuration](/api-reference/beta/checkout-configurations/delete-a-checkout-configuration)     | <Badge color="red" size="sm" stroke>DELETE</Badge> `/checkout_configurations/{id}` |
 
 ## Attributes

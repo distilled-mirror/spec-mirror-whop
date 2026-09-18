@@ -13,8 +13,8 @@ Use the Swaps API to quote a conversion, create the swap, list recent swaps, and
 | Endpoint                                                         | Request                                                           |
 | ---------------------------------------------------------------- | ----------------------------------------------------------------- |
 | [List Swaps](/api-reference/beta/swaps/list-swaps)               | <Badge color="blue" size="sm" stroke>GET</Badge> `/swaps`         |
-| [Create Swap](/api-reference/beta/swaps/create-swap)             | <Badge color="green" size="sm" stroke>POST</Badge> `/swaps`       |
 | [Retrieve Swap](/api-reference/beta/swaps/retrieve-swap)         | <Badge color="blue" size="sm" stroke>GET</Badge> `/swaps/{id}`    |
+| [Create Swap](/api-reference/beta/swaps/create-swap)             | <Badge color="green" size="sm" stroke>POST</Badge> `/swaps`       |
 | [Create Swap Quote](/api-reference/beta/swaps/create-swap-quote) | <Badge color="green" size="sm" stroke>POST</Badge> `/swaps/quote` |
 
 ## Attributes

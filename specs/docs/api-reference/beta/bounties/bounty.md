@@ -13,12 +13,12 @@ Use the Bounties API to create and publish a bounty, list an account's bounties 
 | Endpoint                                                                              | Request                                                                                   |
 | ------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
 | [List Bounties](/api-reference/beta/bounties/list-bounties)                           | <Badge color="blue" size="sm" stroke>GET</Badge> `/bounties`                              |
-| [Create Bounty](/api-reference/beta/bounties/create-bounty)                           | <Badge color="green" size="sm" stroke>POST</Badge> `/bounties`                            |
 | [Retrieve Bounty](/api-reference/beta/bounties/retrieve-bounty)                       | <Badge color="blue" size="sm" stroke>GET</Badge> `/bounties/{id}`                         |
-| [Update Bounty](/api-reference/beta/bounties/update-bounty)                           | <Badge color="orange" size="sm" stroke>PATCH</Badge> `/bounties/{id}`                     |
-| [Cancel](/api-reference/beta/bounties/cancel)                                         | <Badge color="green" size="sm" stroke>POST</Badge> `/bounties/{id}/cancel`                |
 | [List Public Submissions](/api-reference/beta/bounties/list-public-submissions)       | <Badge color="blue" size="sm" stroke>GET</Badge> `/bounties/{bounty_id}/submissions`      |
 | [Retrieve Public Submission](/api-reference/beta/bounties/retrieve-public-submission) | <Badge color="blue" size="sm" stroke>GET</Badge> `/bounties/{bounty_id}/submissions/{id}` |
+| [Create Bounty](/api-reference/beta/bounties/create-bounty)                           | <Badge color="green" size="sm" stroke>POST</Badge> `/bounties`                            |
+| [Cancel](/api-reference/beta/bounties/cancel)                                         | <Badge color="green" size="sm" stroke>POST</Badge> `/bounties/{id}/cancel`                |
+| [Update Bounty](/api-reference/beta/bounties/update-bounty)                           | <Badge color="orange" size="sm" stroke>PATCH</Badge> `/bounties/{id}`                     |
 
 ## Attributes
 

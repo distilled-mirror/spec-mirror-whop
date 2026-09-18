@@ -21,10 +21,10 @@ Apps are also reusable blueprints. List official blueprints with `app_type=websi
 | Endpoint                                                                  | Request                                                                       |
 | ------------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
 | [List Apps](/api-reference/beta/apps/list-apps)                           | <Badge color="blue" size="sm" stroke>GET</Badge> `/apps`                      |
-| [Create App](/api-reference/beta/apps/create-app)                         | <Badge color="green" size="sm" stroke>POST</Badge> `/apps`                    |
 | [Retrieve App](/api-reference/beta/apps/retrieve-app)                     | <Badge color="blue" size="sm" stroke>GET</Badge> `/apps/{id}`                 |
-| [Update App](/api-reference/beta/apps/update-app)                         | <Badge color="orange" size="sm" stroke>PATCH</Badge> `/apps/{id}`             |
-| [Delete App](/api-reference/beta/apps/delete-app)                         | <Badge color="red" size="sm" stroke>DELETE</Badge> `/apps/{id}`               |
-| [Deploy App](/api-reference/beta/apps/deploy-app)                         | <Badge color="green" size="sm" stroke>POST</Badge> `/apps/{id}/deploy`        |
 | [List App Logs](/api-reference/beta/apps/list-app-logs)                   | <Badge color="blue" size="sm" stroke>GET</Badge> `/apps/{id}/logs`            |
+| [Create App](/api-reference/beta/apps/create-app)                         | <Badge color="green" size="sm" stroke>POST</Badge> `/apps`                    |
+| [Deploy App](/api-reference/beta/apps/deploy-app)                         | <Badge color="green" size="sm" stroke>POST</Badge> `/apps/{id}/deploy`        |
+| [Update App](/api-reference/beta/apps/update-app)                         | <Badge color="orange" size="sm" stroke>PATCH</Badge> `/apps/{id}`             |
 | [Update App Permissions](/api-reference/beta/apps/update-app-permissions) | <Badge color="orange" size="sm" stroke>PATCH</Badge> `/apps/{id}/permissions` |
+| [Delete App](/api-reference/beta/apps/delete-app)                         | <Badge color="red" size="sm" stroke>DELETE</Badge> `/apps/{id}`               |

@@ -406,21 +406,14 @@ A large order from a stolen card is the chargeback you least want. A large order
 
 ## Review a payment before charging it
 
-A `review` rule requests authorization for the full amount of an eligible card payment, without capturing it. Whop grants membership access after successful authorization. Checkout Elements supports completion while the payment is held. Legacy embeds have a completion limitation described below.
+A `review` rule authorizes an eligible card payment without capturing it. The buyer completes checkout and gets membership access at authorization. Use it for orders you fulfil by hand, or for a pattern that's risky but not certainly fraud. Whop captures automatically 48 hours later unless you act first:
 
-Eligible means an on-session card payment through Whop Payments, including saved cards. Apple Pay, Google Pay, bank payments, balance payments, and other unsupported methods skip review. They continue through normal payment processing. Other applicable rules and fraud controls still apply. Matching skipped rules are recorded on the payment.
+* [Capture](/api-reference/beta/payments/capture-payment) to collect the money. The payment becomes `paid` and Whop sends `payment.succeeded`, your signal to fulfil the order.
+* [Void](/api-reference/beta/payments/void-payment) to release the hold. Whop revokes access, returns reserved stock, and sends `payment.canceled`.
 
-Automatic capture is scheduled for 48 hours after authorization. Before then, you can:
+Whop sends `payment.authorized` when the hold starts, and for API-requested authorizations too. A held payment reads `status: "authorized"` with `substatus: "requires_capture"`. [Retrieve the payment status](/api-reference/beta/payments/retrieve-payment-status) for `auto_capture_at`.
 
-* [Capture](/api-reference/beta/payments/capture-payment) the payment to collect the authorized amount. Once capture succeeds, the payment becomes `paid` and Whop sends `payment.succeeded`.
-* [Void](/api-reference/beta/payments/void-payment) the payment to release the authorization before capture. A successful void revokes membership access, schedules reserved stock to be returned, and sends `payment.canceled`.
-* Leave it held. Whop attempts automatic capture once `auto_capture_at` is due.
-
-Capture can remain in progress or fail. Confirm collection through the payment status or `payment.succeeded` before fulfilling an order by hand.
-
-Whop sends `payment.authorized` after successful authorization, which you can use to start a review workflow. This event also covers API-requested authorizations, so it doesn't identify review-rule holds on its own. While held, the payment has `status: "authorized"` and `substatus: "requires_capture"`. [Retrieve its status](/api-reference/beta/payments/retrieve-payment-status) to read `auto_capture_at`.
-
-This rule matches eligible card payments of at least \$250 whose card was issued outside the US. Higher-priority account rules and Whop's fraud controls still apply.
+This rule holds card payments of at least \$250 whose card was issued outside the US.
 
 <CodeGroup>
   ```typescript TypeScript theme={null}
@@ -586,7 +579,7 @@ This rule matches eligible card payments of at least \$250 whose card was issued
   ```
 </CodeGroup>
 
-Once you have looked at the order, choose either capture or void by payment ID. To collect the authorized funds:
+Once you have reviewed the order, capture it by payment ID:
 
 <CodeGroup>
   ```typescript TypeScript theme={null}
@@ -628,7 +621,7 @@ Once you have looked at the order, choose either capture or void by payment ID. 
   ```
 </CodeGroup>
 
-To release the authorization instead of collecting it:
+Or void it:
 
 <CodeGroup>
   ```typescript TypeScript theme={null}
@@ -670,23 +663,12 @@ To release the authorization instead of collecting it:
   ```
 </CodeGroup>
 
-### Where a review rule helps
-
-* **Orders you fulfil by hand.** Review physical goods or bookings before delivery. Confirm capture succeeded before you fulfil the order.
-* **A pattern that's risky but not certainly fraud.** Review delays capture while you assess the order, with membership access granted during the hold.
-* **A new market or campaign.** Apply a review rule while you assess payment patterns, then adjust or deactivate it as you learn.
-
 ### Review limitations
 
-* **Only eligible cards can be held.** Apple Pay and Google Pay, including saved wallet cards, and every other unsupported method skip review. A matching rule still appears in `payment_rule_matches`, and another matching rule can apply.
-* **Off-session payments skip review.** This includes automatic subscription renewals. An on-session renewal recovery can still match a review rule.
-* **Payments already created with `capture: false` keep their capture settings.** A review rule doesn't replace the API caller's capture schedule.
-* **One account-rule action wins.** `review` takes precedence over an account's `enforce_3ds` rule, while `allow` and `block` take precedence over `review`. Other 3DS requirements still apply.
-* **The automatic capture delay is fixed at 48 hours.** This schedules a capture attempt. It doesn't guarantee completion within 48 hours. For another schedule, create each eligible card payment through [`POST /payments`](/api-reference/beta/payments/create-payment) with `capture: false` and `auto_capture_after_minutes`. The delay must be between 5 and 5,760 minutes. Other fraud controls still apply.
-* **Capture is all or nothing.** Capture collects the full authorized amount. Use the refund API after capture to return part of it.
-* **Tell the buyer if you void their order.** A successful void releases the authorization before capture and revokes membership access.
-* **Legacy embedded checkout has a completion limitation.** Its completion flow can remain on **Processing** until capture, even though authorization can already grant membership access. Capture may complete after the scheduled time or fail. Rules are account-wide and still apply to legacy embeds. Migrate those embeds if buyers must see checkout complete while the payment is held.
-* **Membership access starts at authorization.** A review hold grants access before you decide whether to capture. Voiding revokes that access, so consider whether buyers could consume the product before your decision.
+* **Only on-session cards can be held.** Apple Pay, Google Pay, bank, balance, and off-session payments such as renewals skip review. The match is still recorded in `payment_rule_matches`.
+* **Payments created with `capture: false` keep their own schedule.** A review rule never overrides it.
+* **Capture is all or nothing.** Refund afterwards to return part of it.
+* **Buyers have the product before you decide.** Tell them if you void.
 
 ## Keep trusted buyers moving
 

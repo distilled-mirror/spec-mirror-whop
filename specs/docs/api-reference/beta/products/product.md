@@ -19,12 +19,12 @@ Use the Products API to search the public marketplace, list an account's product
 | Endpoint                                                            | Request                                                                       |
 | ------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
 | [List Products](/api-reference/beta/products/list-products)         | <Badge color="blue" size="sm" stroke>GET</Badge> `/products`                  |
-| [Create Product](/api-reference/beta/products/create-product)       | <Badge color="green" size="sm" stroke>POST</Badge> `/products`                |
 | [Retrieve Product](/api-reference/beta/products/retrieve-product)   | <Badge color="blue" size="sm" stroke>GET</Badge> `/products/{id}`             |
-| [Update Product](/api-reference/beta/products/update-product)       | <Badge color="orange" size="sm" stroke>PATCH</Badge> `/products/{id}`         |
-| [Delete Product](/api-reference/beta/products/delete-product)       | <Badge color="red" size="sm" stroke>DELETE</Badge> `/products/{id}`           |
+| [Create Product](/api-reference/beta/products/create-product)       | <Badge color="green" size="sm" stroke>POST</Badge> `/products`                |
 | [Publish Product](/api-reference/beta/products/publish-product)     | <Badge color="green" size="sm" stroke>POST</Badge> `/products/{id}/publish`   |
 | [Unpublish Product](/api-reference/beta/products/unpublish-product) | <Badge color="green" size="sm" stroke>POST</Badge> `/products/{id}/unpublish` |
+| [Update Product](/api-reference/beta/products/update-product)       | <Badge color="orange" size="sm" stroke>PATCH</Badge> `/products/{id}`         |
+| [Delete Product](/api-reference/beta/products/delete-product)       | <Badge color="red" size="sm" stroke>DELETE</Badge> `/products/{id}`           |
 
 ## Attributes
 

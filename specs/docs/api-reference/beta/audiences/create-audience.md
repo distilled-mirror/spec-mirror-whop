@@ -223,10 +223,10 @@ tags:
       credential.
 
 
-      Create a confirmation token in a buyer-facing collection flow, then send
-      its `ctok_` ID to the Payments API from your server. Retrieve a token to
-      display its payment method and billing preview or check whether it is
-      still usable.
+      Whop Elements mint the token in your buyer-facing collection flow and hand
+      you its `ctok_` ID to send to the Payments API from your server. Retrieve
+      a token to display its payment method and billing preview or check whether
+      it is still usable.
     name: Confirmation Tokens
     x-whop-summary: A short-lived reference to payment details collected from a buyer.
   - description: >
@@ -465,6 +465,28 @@ tags:
       update the tracking number on an existing shipment.
     name: Shipments
     x-whop-summary: Track the delivery of an order by its carrier tracking number.
+  - description: >
+      A Partner Referral Request records a partner's request for a business to
+      attribute them as its referring partner. Manual requests start pending and
+      require a business owner's acceptance before attribution takes effect.
+
+
+      Enrolled, verified Whop partners can create, view, and cancel their
+      requests. Business owners can accept or decline incoming requests. List
+      requests by business, partner, request type, or status.
+
+
+      Authenticate with your Whop login or an account API key created by that
+      account's current owner. Account API keys act as their account owner when
+      creating or cancelling requests; that owner must be enrolled, verified,
+      and not suspended. Keys can view their owner's sent requests and incoming
+      requests for the key's account, and can accept or decline requests only
+      for that account. API keys require the corresponding
+      `partner:referral_request:read`, `partner:referral_request:create`,
+      `partner:referral_request:accept`, `partner:referral_request:decline`, or
+      `partner:referral_request:cancel` permission.
+    name: Partner Referral Requests
+    x-whop-summary: Request business attribution and manage owner approval.
   - description: >
       Get started at [whop.com/network](https://whop.com/network). A Partner is
       a user who refers people and businesses to Whop. The partner profile
