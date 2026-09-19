@@ -30,7 +30,7 @@ Mounts inside [`Checkout`](/elements/upcoming/checkout/overview). Pass props and
         ```
 
         ```html JavaScript theme={null}
-        <script src="https://js.whop.cloud/elements/amber/elements.js" data-whop-elements></script>
+        <script src="https://cdn.whop.com/elements/amber/elements.js" data-whop-elements></script>
         <script type="module">
           const checkout = window.WhopElements().checkout.create({ /* options */ });
           checkout.create('expressCheckout').mount('#checkout-expressCheckout');

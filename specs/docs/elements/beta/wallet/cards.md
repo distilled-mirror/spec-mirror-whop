@@ -6,7 +6,7 @@
 
 > An account's card surfaces, mounted from one place: the compact issued-card list, the full sortable roster, the spend chart, and a single revealable card. Mount the faces the page needs — they share the account and the credential this unit is minted with, so a page showing a chart above a roster wires them once.
 
-<Info>This page documents `@whop/elements@1.0.0-beta.5` and `@whop/elements-react@1.0.0-beta.5`.</Info>
+<Info>This page documents `@whop/elements@1.0.0-beta.6` and `@whop/elements-react@1.0.0-beta.6`.</Info>
 
 *Pre-release, not yet part of a stable release.*
 
@@ -19,7 +19,7 @@ A live, interactive demo of this sub-controller's default arrangement with examp
 <div data-whop-demo-shell style={{ position: "relative", minHeight: "480px", transition: "min-height 200ms ease" }}>
   <div data-whop-demo-skeleton style={{ position: "absolute", inset: "0", borderRadius: "12px", background: "rgba(140, 140, 140, 0.12)", pointerEvents: "none", transition: "opacity 200ms ease" }} />
 
-  <div data-whop-demo-native="unit:cards" data-whop-elements-version="1.0.0-beta.5" style={{ position: "relative" }} />
+  <div data-whop-demo-native="unit:cards" data-whop-elements-version="1.0.0-beta.6" style={{ position: "relative" }} />
 </div>
 
 <div data-whop-usage="wallet/cards">
@@ -46,7 +46,7 @@ A live, interactive demo of this sub-controller's default arrangement with examp
     ```
 
     ```html JavaScript theme={null}
-    <script src="https://js.whop.cloud/elements/amber/elements.js" data-whop-elements></script>
+    <script src="https://cdn.whop.com/elements/amber/elements.js" data-whop-elements></script>
     <script type="module">
       const wallet = window.WhopElements().wallet.create({ /* options */ });
       const cards = wallet.create('cards', { /* options */ });

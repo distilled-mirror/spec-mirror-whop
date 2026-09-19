@@ -30,7 +30,7 @@ Mounts inside [`Cards`](/elements/upcoming/wallet/cards), in [`Wallet`](/element
         ```
 
         ```html JavaScript theme={null}
-        <script src="https://js.whop.cloud/elements/amber/elements.js" data-whop-elements></script>
+        <script src="https://cdn.whop.com/elements/amber/elements.js" data-whop-elements></script>
         <script type="module">
           const wallet = window.WhopElements().wallet.create({ /* options */ });
           const cards = wallet.create('cards', { /* options */ });

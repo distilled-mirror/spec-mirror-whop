@@ -27,6 +27,65 @@ The `business_type`, `industry_group`, and `industry_type` fields classify accou
 | [Update Account Fees](/api-reference/beta/accounts/update-account-fees)                   | <Badge color="orange" size="sm" stroke>PATCH</Badge> `/accounts/{account_id}/fees`        |
 | [Update Account Preferences](/api-reference/beta/accounts/update-account-preferences)     | <Badge color="orange" size="sm" stroke>PATCH</Badge> `/accounts/{account_id}/preferences` |
 
+## Fee Markups
+
+Fee markups let a platform add charges to its connected accounts. Manage them through the account fees document: set defaults on the platform account or override individual fees on a connected account.
+
+### Fee Endpoints
+
+| Action                                                                      | Endpoint                                   | SDK Method                                        |
+| --------------------------------------------------------------------------- | ------------------------------------------ | ------------------------------------------------- |
+| [Retrieve account fees](/api-reference/beta/accounts/retrieve-account-fees) | `GET /api/v1/accounts/{account_id}/fees`   | `client.accounts.fees.retrieve(accountId)`        |
+| [Update account fees](/api-reference/beta/accounts/update-account-fees)     | `PATCH /api/v1/accounts/{account_id}/fees` | `client.accounts.fees.update(accountId, changes)` |
+
+Use the platform account's API key with `company:update_child_fees` permission to configure markups. Each returned markup includes `adjustable` and `unadjustable_reason` so your integration can determine whether editing is available.
+
+### Read Fees
+
+```typescript theme={null}
+const fees = await client.accounts.fees.retrieve("biz_connected_account");
+```
+
+The `markups` section contains the connected account's effective rates. The `child_markups` section on a platform account contains its defaults for connected accounts.
+
+A markup's `source` is `custom` when configured at that level, or `default` when it falls through to an inherited rate or zero. Its `default` field shows the rate that would apply if the custom markup were cleared. Returned fixed amounts use the Money object; updates accept `fixed` as a number in US dollars.
+
+### Set Platform Defaults
+
+Update `child_markups` on the platform account. This example sets a 2% payment markup with no fixed charge:
+
+```typescript theme={null}
+await client.accounts.fees.update("biz_platform_id", {
+	child_markups: { payments: { percentage: 2, fixed: 0 } },
+});
+```
+
+`percentage: 2` means 2%. Defaults apply to connected accounts without an override for that fee. Payment markups apply when no checkout application fee is set.
+
+### Set a Connected Account Override
+
+Update `markups` on the connected account. This example replaces its inherited payment markup with 1% plus \$0.25:
+
+```typescript theme={null}
+await client.accounts.fees.update("biz_connected_account", {
+	markups: { payments: { percentage: 1, fixed: 0.25 } },
+});
+```
+
+Only the keys you send change. For other transaction types, use `transfers`, `crypto_swaps`, `deposits` keyed by rail, or `payouts` keyed by payout method. See the [update endpoint](/api-reference/beta/accounts/update-account-fees) for the supported keys and request schema.
+
+### Clear a Markup
+
+Send `null` for the markup to clear it. Clearing a connected account's override restores its platform default, or zero if no default is configured:
+
+```typescript theme={null}
+await client.accounts.fees.update("biz_connected_account", {
+	markups: { payments: null },
+});
+```
+
+To clear a platform default, send `child_markups: { payments: null }` to the platform account. An explicit `{ percentage: 0, fixed: 0 }` remains a configured rate; use `null` to restore inheritance.
+
 ## Attributes
 
 <Columns cols={2}>
@@ -539,6 +598,39 @@ The `business_type`, `industry_group`, and `industry_type` fields classify accou
       </Accordion>
     </ResponseField>
 
+    <ResponseField name="partner" type="object | null">
+      The account's active first-tier partner. Present on retrieve responses; null when no active first-tier partner is attributed to the account. Omitted from other responses.
+
+      <Accordion title="Properties" defaultOpen={true}>
+        <ResponseField name="id" type="string" required>
+          User ID, prefixed `user_`.
+        </ResponseField>
+
+        <ResponseField name="email" type="string | null" required>
+          Email address for contacting the partner. Null when the partner has not added
+          their own email address.
+        </ResponseField>
+
+        <ResponseField name="name" type="string | null" required>
+          Display name.
+        </ResponseField>
+
+        <ResponseField name="profile_picture" type="object" required>
+          Avatar wrapper; its `url` is always present, using a generated placeholder when the user set no picture.
+
+          <Accordion title="Properties" defaultOpen={true}>
+            <ResponseField name="url" type="string" required>
+              Avatar image URL. Always present — a generated placeholder when the user set no picture.
+            </ResponseField>
+          </Accordion>
+        </ResponseField>
+
+        <ResponseField name="username" type="string" required>
+          Public username.
+        </ResponseField>
+      </Accordion>
+    </ResponseField>
+
     <ResponseField name="payment_controls" type="object | null" required>
       Payment health controls currently applied to the account. Computed only on `retrieve` and `me` for callers with `company:balance:read` scope; `null` otherwise.
 
@@ -804,7 +896,7 @@ The `business_type`, `industry_group`, and `industry_type` fields classify accou
         <ResponseField name="action" type="string" required>
           What the holder must do; new values may be added, so handle unknown actions gracefully
 
-          Available options: `deposit_funds`, `review_held_payments`, `accept_airwallex_terms`, `submit_information_request`, `update_automatic_withdrawal_method`, `reauthorize_payout_methods`, `update_payout_profile`, `card_usage_review`, `verify_identity`, `sign_formation_documents`, `connect_fulfillment_tracker`, `setup_apple_pay_domains`, `configure_tax_remitter`, `add_vat_registration`, `enable_two_factor_authentication`
+          Available options: `deposit_funds`, `review_held_payments`, `accept_airwallex_terms`, `submit_information_request`, `update_automatic_withdrawal_method`, `reauthorize_payout_methods`, `update_payout_profile`, `card_usage_review`, `verify_identity`, `verify_airwallex_account`, `sign_formation_documents`, `connect_fulfillment_tracker`, `setup_apple_pay_domains`, `configure_tax_remitter`, `add_vat_registration`, `enable_two_factor_authentication`
         </ResponseField>
 
         <ResponseField name="blocked_capabilities" type="string[]" required>

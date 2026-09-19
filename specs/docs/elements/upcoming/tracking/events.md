@@ -28,7 +28,7 @@ Mounts inside [`Tracking`](/elements/upcoming/tracking/overview). `accountId` an
         ```
 
         ```html JavaScript theme={null}
-        <script src="https://js.whop.cloud/elements/amber/elements.js" data-whop-elements></script>
+        <script src="https://cdn.whop.com/elements/amber/elements.js" data-whop-elements></script>
         <script type="module">
           const tracking = window.WhopElements().tracking.create({ /* options */ });
           tracking.create('events', {

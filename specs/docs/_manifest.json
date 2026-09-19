@@ -7364,6 +7364,24 @@
       ]
     },
     {
+      "page": "https://docs.whop.com/elements/beta/dashboard/required-actions",
+      "markdown": "https://docs.whop.com/elements/beta/dashboard/required-actions.md",
+      "file": "elements/beta/dashboard/required-actions.md",
+      "indexes": [
+        "llms.txt",
+        "sitemap"
+      ]
+    },
+    {
+      "page": "https://docs.whop.com/elements/beta/dashboard/verification",
+      "markdown": "https://docs.whop.com/elements/beta/dashboard/verification.md",
+      "file": "elements/beta/dashboard/verification.md",
+      "indexes": [
+        "llms.txt",
+        "sitemap"
+      ]
+    },
+    {
       "page": "https://docs.whop.com/elements/beta/getting-started",
       "markdown": "https://docs.whop.com/elements/beta/getting-started.md",
       "file": "elements/beta/getting-started.md",
@@ -7742,27 +7760,9 @@
       ]
     },
     {
-      "page": "https://docs.whop.com/elements/beta/wallet/required-actions",
-      "markdown": "https://docs.whop.com/elements/beta/wallet/required-actions.md",
-      "file": "elements/beta/wallet/required-actions.md",
-      "indexes": [
-        "llms.txt",
-        "sitemap"
-      ]
-    },
-    {
       "page": "https://docs.whop.com/elements/beta/wallet/send",
       "markdown": "https://docs.whop.com/elements/beta/wallet/send.md",
       "file": "elements/beta/wallet/send.md",
-      "indexes": [
-        "llms.txt",
-        "sitemap"
-      ]
-    },
-    {
-      "page": "https://docs.whop.com/elements/beta/wallet/verification",
-      "markdown": "https://docs.whop.com/elements/beta/wallet/verification.md",
-      "file": "elements/beta/wallet/verification.md",
       "indexes": [
         "llms.txt",
         "sitemap"

@@ -663,7 +663,7 @@
                 "properties": {
                   "affiliate_code": {
                     "description": "The username, if any, of the partner who referred this account",
-                    "example": "random-username-40-xxxxxxxx",
+                    "example": "random-username-42-xxxxxxxx",
                     "type": [
                       "string",
                       "null"
@@ -683,7 +683,7 @@
                     "type": "string"
                   },
                   "email": {
-                    "description": "The email address of the account owner. Required for Account API key requests.",
+                    "description": "The email address of the account owner. Required when creating a connected account.",
                     "example": "marcus@shinetime.example",
                     "type": "string"
                   },
@@ -17116,18 +17116,22 @@
                     "description": "Payment method overrides for this checkout. `null` uses the plan or platform defaults.",
                     "properties": {
                       "disabled": {
-                        "description": "Payment methods explicitly disabled for checkout.",
+                        "description": "Payment method types explicitly disabled for checkout — the `type` values from the payment method types catalogue. Types Whop no longer offers, and the read-only `unknown` placeholder, are dropped.",
+                        "example": [
+                          "paypal"
+                        ],
                         "items": {
-                          "example": "paypal",
-                          "type": "string"
+                          "$ref": "#/components/schemas/PaymentMethodTypes"
                         },
                         "type": "array"
                       },
                       "enabled": {
-                        "description": "Payment methods explicitly enabled for checkout.",
+                        "description": "Payment method types explicitly enabled for checkout — the `type` values from the payment method types catalogue. Types Whop no longer offers, and the read-only `unknown` placeholder, are dropped.",
+                        "example": [
+                          "card"
+                        ],
                         "items": {
-                          "example": "card",
-                          "type": "string"
+                          "$ref": "#/components/schemas/PaymentMethodTypes"
                         },
                         "type": "array"
                       },
@@ -17223,18 +17227,22 @@
                         "description": "Payment method overrides for the inline plan. `null` uses platform defaults.",
                         "properties": {
                           "disabled": {
-                            "description": "Payment methods explicitly disabled for this plan.",
+                            "description": "Payment method types explicitly disabled for this plan — the `type` values from the payment method types catalogue. Types Whop no longer offers, and the read-only `unknown` placeholder, are dropped.",
+                            "example": [
+                              "paypal"
+                            ],
                             "items": {
-                              "example": "paypal",
-                              "type": "string"
+                              "$ref": "#/components/schemas/PaymentMethodTypes"
                             },
                             "type": "array"
                           },
                           "enabled": {
-                            "description": "Payment methods explicitly enabled for this plan.",
+                            "description": "Payment method types explicitly enabled for this plan — the `type` values from the payment method types catalogue. Types Whop no longer offers, and the read-only `unknown` placeholder, are dropped.",
+                            "example": [
+                              "card"
+                            ],
                             "items": {
-                              "example": "card",
-                              "type": "string"
+                              "$ref": "#/components/schemas/PaymentMethodTypes"
                             },
                             "type": "array"
                           },
@@ -17463,9 +17471,7 @@
                     },
                     "metadata": {
                       "description": "Custom key-value metadata copied to payments and memberships. `null` without the `checkout_configuration:basic:read` scope.",
-                      "example": {
-                        "booking_source": "front_desk"
-                      },
+                      "example": {},
                       "type": [
                         "object",
                         "null"
@@ -17546,7 +17552,7 @@
                         },
                         "initial_price": {
                           "description": "Initial purchase price in the plan currency.",
-                          "example": 0,
+                          "example": 249,
                           "type": "number"
                         },
                         "plan_type": {
@@ -17555,7 +17561,7 @@
                             "renewal",
                             "one_time"
                           ],
-                          "example": "renewal",
+                          "example": "one_time",
                           "type": "string"
                         },
                         "release_method": {
@@ -17569,7 +17575,7 @@
                         },
                         "renewal_price": {
                           "description": "Recurring price charged each billing period.",
-                          "example": 59,
+                          "example": 0,
                           "type": "number"
                         },
                         "three_ds_level": {
@@ -23815,7 +23821,7 @@
                     "type": "array"
                   },
                   "filters": {
-                    "description": "Resource-specific filters. For native REST resources (`payouts`, `transfers`, `products`) these are the resource's own list query params; for dashboard tables they mirror the dashboard table filters.\n\n<details>\n<summary>Filters by resource (25)</summary>\n\n<details>\n<summary>ad_campaigns (4)</summary>\n\nMirrors the filtering query params of `GET /api/v1/ad_campaigns`.\n\n- `created_after` `string` — Only return campaigns created after this timestamp.\n- `created_before` `string` — Only return campaigns created before this timestamp.\n- `query` `string` — Filter campaigns by a title or ID substring.\n- `status` `string` — Only return campaigns with this status. One of `draft`, `active`, `paused`, `payment_failed`.\n\n</details>\n<details>\n<summary>ad_groups (6)</summary>\n\nMirrors the filtering query params of `GET /api/v1/ad_groups`.\n\n- `ad_campaign_id` `string` — Filter to ad groups in this campaign.\n- `ad_campaign_ids` `string[]` — Filter to ad groups in these campaigns (max 100). Repeat the parameter for each id (ad_campaign_ids=a&ad_campaign_ids=b).\n- `created_after` `string` — Only return ad groups created after this timestamp.\n- `created_before` `string` — Only return ad groups created before this timestamp.\n- `query` `string` — Filter ad groups by a title or ID substring.\n- `status` `string` — Filter to ad groups with this status. One of `active`, `paused`, `rejected`, `duplicating`.\n\n</details>\n<details>\n<summary>ads (8)</summary>\n\nMirrors the filtering query params of `GET /api/v1/ads`.\n\n- `ad_campaign_id` `string` — Only return ads in this ad campaign.\n- `ad_campaign_ids` `string[]` — Only return ads in these ad campaigns (max 100). Repeat the parameter for each id (ad_campaign_ids=a&ad_campaign_ids=b).\n- `ad_group_id` `string` — Only return ads in this ad group.\n- `ad_group_ids` `string[]` — Only return ads in these ad groups (max 100). Repeat the parameter for each id (ad_group_ids=a&ad_group_ids=b).\n- `created_after` `string` — Only return ads created after this timestamp.\n- `created_before` `string` — Only return ads created before this timestamp.\n- `query` `string` — Filter ads by a title or ID substring.\n- `status` `string` — Only return ads with this status. One of `active`, `paused`, `in_review`, `rejected`.\n\n</details>\n<details>\n<summary>apps (6)</summary>\n\nMirrors the filtering query params of `GET /api/v1/apps`.\n\n- `app_type` `string` — Filter apps by the type of end-user they are built for. Apps of type `website` are left out unless you ask for them by name. One of `b2b_app`, `b2c_app`, `company_app`, `component`, `website`.\n- `query` `string` — A search string matched against app names.\n- `recommended` `boolean` — Only return apps Whop recommends (or, with `false`, only those it does not), independently of verification status.\n- `verified` `boolean` — Only return apps whose Whop verification status matches this value. Omit this filter to include every verification status the caller can see.\n- `verified_apps_only` `boolean` — Legacy compatibility filter. Use `verified` for field equality. `true` returns verified apps; clients pinned before `2026-08-25-2` retain the earlier public website discovery behavior.\n- `view_type` `string` — Only return apps supporting this view type, such as `dashboard` or `hub`. One of `hub`, `discover`, `dash`, `dashboard`, `analytics`, `skills`, `openapi`.\n\n</details>\n<details>\n<summary>audiences (3)</summary>\n\nMirrors the filtering query params of `GET /api/v1/audiences`.\n\n- `audience_id` `string` — Audience ID, prefixed `adaud_`, used to filter the response to one audience.\n- `audience_type` `string` — Filter by custom or lookalike audiences. One of `custom`, `lookalike`.\n- `source_type` `string` — Filter by uploaded customer lists, Whop People filters, or social engagement. One of `csv_upload`, `people_filter`, `engagement`.\n\n</details>\n<details>\n<summary>bounties (8)</summary>\n\nMirrors the filtering query params of `GET /api/v1/bounties`.\n\n- `business_goal_type` `string` — Filter by the poster's declared goal. Bounties created before the goal taxonomy carry no goal and never match this filter. One of `clipping`, `post_engagement`, `owned_account_growth`, `ugc_content`, `local_activation`, `data_capture`, `other`.\n- `country` `string` — Only bounties workable from this country, as an ISO 3166-1 alpha-2 code. Bounties with no country targeting are workable worldwide and always match.\n- `created_after` `string` — Only bounties created after this ISO 8601 timestamp.\n- `created_before` `string` — Only bounties created before this ISO 8601 timestamp.\n- `experience_id` `string` — Only bounties posted to this forum experience, prefixed `exp_`. An unknown experience, or one outside the caller's scope, matches nothing.\n- `query` `string` — Substring match on the bounty title or ID.\n- `status` `string` — Filter by lifecycle state. One of `scheduled`, `open`, `closed`, `completed`, `canceled`.\n- `user_id` `string` — List the bounties this user participated in (`user_` tag). Must be the authenticated user.\n\n</details>\n<details>\n<summary>bounty_submissions (4)</summary>\n\nMirrors the filtering query params of `GET /api/v1/bounty_submissions`.\n\n- `bounty_id` `string` — Only submissions on this bounty (`bnty_` tag).\n- `created_after` `string` — Only submissions created after this ISO 8601 timestamp.\n- `created_before` `string` — Only submissions created before this ISO 8601 timestamp.\n- `status` `string` — Filter by lifecycle state. One of `in_progress`, `submitted`, `approved`, `denied`.\n\n</details>\n<details>\n<summary>card_transactions (6)</summary>\n\nMirrors the filtering query params of `GET /api/v1/card_transactions`.\n\n- `card_id` `string[]` — Return only transactions charged to these cards, each prefixed `icrd_`.\n- `cardholder_id` `string[]` — Return only transactions on cards assigned to these users, each prefixed `user_`.\n- `created_after` `string` — Return only transactions authorized at or after this ISO 8601 timestamp.\n- `created_before` `string` — Return only transactions authorized at or before this ISO 8601 timestamp.\n- `status` `string` — Return only transactions with this status. One of `pending`, `completed`, `reversed`, `declined`.\n- `transaction_ids` `string[]` — Return only these card transactions, each prefixed `citx_`. Repeat the parameter, or pass one comma-separated value.\n\n</details>\n<details>\n<summary>checkout_configurations (3)</summary>\n\nMirrors the filtering query params of `GET /api/v1/checkout_configurations`.\n\n- `created_after` `string` — Only return checkout configurations created after this ISO 8601 timestamp.\n- `created_before` `string` — Only return checkout configurations created before this ISO 8601 timestamp.\n- `plan_id` `string` — Only return checkout configurations for this plan ID, prefixed `plan_`.\n\n</details>\n<details>\n<summary>disputes (4)</summary>\n\nMirrors the filtering query params of `GET /api/v1/disputes`.\n\n- `created_after` `string` — Only disputes opened after this ISO 8601 timestamp.\n- `created_before` `string` — Only disputes opened before this ISO 8601 timestamp.\n- `currency` `string` — Only disputes in this three-letter ISO currency.\n- `status` `string[]` — Only disputes in these statuses. Repeat the parameter to pass several — one paginated list covers all of them. Covers both chargebacks and inquiries at each stage. A `needs_response` dispute whose evidence deadline has passed reports and filters as `under_review` instead.\n\n</details>\n<details>\n<summary>events (14)</summary>\n\nMirrors the filtering query params of `GET /api/v1/events`.\n\n- `attribution_model` `string` — Attribution model for the source filter (defaults to last_touch). One of `last_touch`, `first_touch`.\n- `browser` `string` — Browser families to filter by, comma-separated (e.g. Chrome, Mobile Safari).\n- `city` `string` — Cities to filter by, comma-separated.\n- `country` `string` — Country codes to filter by, comma-separated.\n- `device` `string` — Device families to filter by, comma-separated (e.g. iPhone, Mac).\n- `event` `string` — Full event names to filter by, comma-separated (payment.completed, pixel.lead, pixel.page, pixel.custom:<name>) — the same vocabulary the events / people metrics use.\n- `from` `string` — Start of the time range as an ISO 8601 timestamp. Required when identifier is omitted.\n- `hostname` `string` — Page hostnames to filter by, comma-separated.\n- `identifier` `string` — Any hard identifier of the person: a person ID (prsn_*), user ID, email, phone number, or a tracking cookie value (wuid, anonymous ID, fbp/fbc/ttp/ga). Omit to list recent events for the account.\n- `os` `string` — Operating system families to filter by, comma-separated (e.g. iOS, Windows).\n- `page` `string` — Page paths to filter by, comma-separated.\n- `source` `string` — Canonical source path, exact or with a trailing :* prefix (whop:<campaign>:*, ext:meta:*, referrer:<domain>, direct). Restricts the list to conversion targets attributed to that source — the debuggability twin of a metric cell's source parameter. A whop:... source combined with non-conversion event names (event=pixel.page) instead lists the events whose ad click resolved to that entity — the page views an ad drove.\n- `to` `string` — End of the time range as an ISO 8601 timestamp. Required when identifier is omitted; otherwise defaults to now.\n- `utm_source` `string` — utm_source values to filter by, comma-separated.\n\n</details>\n<details>\n<summary>financial-activity (12)</summary>\n\nMirrors the filtering query params of `GET /api/v1/financial-activity`.\n\n- `activity_id` `string` — Optional ledger activity ID (for example `line_3`). Returns at most that one activity.\n- `available_after` `string` — Only include rows whose funds became withdrawable on or after this `YYYY-MM-DD` settlement date (UTC), distinct from posted_at. Requires currency.\n- `available_before` `string` — Only include rows whose funds became withdrawable on or before this `YYYY-MM-DD` settlement date (UTC). Set equal to available_after for a single day. Requires currency.\n- `currency` `string` — Optional currency code filter, for example `usd`.\n- `exclude_internal_movements` `boolean` — Whether to exclude balance reservations and balanced movements between the account's own balances.\n- `include_owned_accounts` `boolean` — When true, aggregates the authenticated user's personal ledger with the businesses they own (owner role with balance read) into one feed. Requires user_id to be the authenticated user; cannot be combined with account_id or the settlement-date filters. Each returned row includes the owning `account`.\n- `include_resource` `boolean` — Whether to include the `resource` field in the response or not. Consider passing `false` if you need a fast response without as many rich details.\n- `line_types` `string[]` — Optional ledger line categories to include. Some categories (for example `onchain_deposit`, which covers inbound crypto deposits such as MoonPay onramps) are only returned when explicitly requested here.\n- `posted_after` `string` — Only include rows posted after this ISO 8601 timestamp.\n- `posted_before` `string` — Only include rows posted before this ISO 8601 timestamp.\n- `resource_id` `string` — Optional prefixed resource ID. Returns activity associated with that resource.\n- `user_id` `string` — The owning user ID (a user_ identifier). Provide this or account_id.\n\n</details>\n<details>\n<summary>members (6)</summary>\n\nMirrors the filtering query params of `GET /api/v1/members`.\n\n- `access_level` `string` — Filter by what the member can reach on the account. One of `no_access`, `admin`, `customer`.\n- `created_after` `string` — Only members who joined after this ISO 8601 timestamp.\n- `created_before` `string` — Only members who joined before this ISO 8601 timestamp.\n- `query` `string` — Search members by name or username. An exact email address also matches when the credential holds the member:email:read scope.\n- `status` `string` — Filter by whether the member is still part of the account. One of `joined`, `left`.\n- `user_ids` `string[]` — Only return members whose users match these `user_` identifiers.\n\n</details>\n<details>\n<summary>memberships (6)</summary>\n\nMirrors the filtering query params of `GET /api/v1/memberships`.\n\n- `created_after` `string` — Only memberships created after this ISO 8601 timestamp.\n- `created_before` `string` — Only memberships created before this ISO 8601 timestamp.\n- `plan_id` `string` — Filter to memberships of this plan (`plan_` tag). Repeat as plan_ids[] for several.\n- `product_id` `string` — Filter to memberships of this product (`prod_` tag). Repeat as product_ids[] for several.\n- `status` `string` — Filter by billing state. `canceling` matches active memberships set to cancel at period end; `paused` matches memberships with payment collection paused. One of `active`, `trialing`, `past_due`, `completed`, `canceled`, `expired`, `canceling`, `paused`.\n- `user_id` `string` — Narrow to one user's memberships (`user_` tag, or `me` for the caller). A user outside the caller's visible set returns an empty list.\n\n</details>\n<details>\n<summary>payouts (7)</summary>\n\nMirrors the filtering query params of `GET /api/v1/payouts`.\n\n- `created_after` `string` — Only payouts created at or after this ISO 8601 time (inclusive).\n- `created_before` `string` — Only payouts created before this ISO 8601 time (exclusive).\n- `currency` `string` — Optional currency code filter, for example `usd`.\n- `payout_method_id` `string` — Filter to payouts sent to one saved payout method (a pytk_ identifier). An unknown id matches nothing.\n- `source` `string` — Filter by how the payout was created. Payouts created before source tracking or through internal tooling carry no source and never match. One of `api`, `dashboard`, `automatic`.\n- `status` `string` — Filter to payouts whose `status` reads this word, matching exactly what this version displays — `reversed` finds settled payouts the bank later returned. Requires Api-Version-Date 2026-08-21 or later. One of `requested`, `in_review`, `processing`, `completed`, `reversed`, `canceled`, `failed`, `denied`.\n- `user_id` `string` — The owning user ID (a user_ identifier). Provide this or account_id.\n\n</details>\n<details>\n<summary>people (20)</summary>\n\nMirrors the filtering query params of `GET /api/v1/people`.\n\n- `attribution_model` `string` — Attribution model the source filter matches against (defaults to last_touch). One of `last_touch`, `first_touch`.\n- `audience_id` `string` — Only include people in this audience. An audience that keeps itself up to date resolves to the People filters that define it, so this always reflects who matches now; uploaded lists and point-in-time snapshots match their recorded members.\n- `contactable` `boolean` — true for people who have an email address or phone number — the ones an ad platform can match.\n- `country` `string` — Only include people whose most recent visit came from this ISO 3166-1 alpha-2 country code.\n- `custom_event` `string` — Only include people who fired this custom pixel event.\n- `email` `string` — Only include the person linked to this email address.\n- `event_from` `string` — With event_to plus an event or source filter, switches to exact-population mode: person ids are resolved and paginated on the events side within this window (the same query the people metric counts), then hydrated per page.\n- `event_name` `string[]` — Only include people who fired any of these events, e.g. payment.completed or page.checkout.view.\n- `event_to` `string` — The inclusive end of the event window for exact-population mode.\n- `first_seen_after` `string` — Only include people first seen at or after this ISO 8601 timestamp.\n- `first_seen_before` `string` — Only include people first seen before this ISO 8601 timestamp.\n- `first_seen_within_days` `integer` — Only include people first seen within this many days, as a rolling window.\n- `has_purchased` `boolean` — true for customers only, false for people who have never purchased.\n- `last_seen_after` `string` — Only include people last seen at or after this ISO 8601 timestamp.\n- `last_seen_before` `string` — Only include people last seen before this ISO 8601 timestamp.\n- `last_seen_within_days` `integer` — Only include people last seen within this many days, as a rolling window.\n- `phone` `string` — Only include the person linked to this phone number.\n- `query` `string` — Search people by name, email, phone, or whop user ID (case-insensitive substring match).\n- `source` `string[]` — Only include people acquired from any of these sources — canonical paths (whop:<campaign>:<group>:<ad>, ext:<platform>:..., referrer:<domain>, direct, other), exact or with a trailing :* prefix. The same vocabulary the events / people metrics use.\n- `user_id` `string` — Only include the person linked to this whop user ID.\n\n</details>\n<details>\n<summary>plans (6)</summary>\n\nMirrors the filtering query params of `GET /api/v1/plans`.\n\n- `created_after` `string` — Only return plans created after this timestamp.\n- `created_before` `string` — Only return plans created before this timestamp.\n- `plan_types` `string[]` — Filter to only plans matching these billing types.\n- `product_ids` `string[]` — Filter to only plans belonging to these product identifiers. When `account_id` is omitted, this is required and the response is publicly readable: only visible, non-invoice plans are returned.\n- `release_methods` `string[]` — Filter to only plans matching these release methods.\n- `visibilities` `string[]` — Filter to only plans matching these visibility states.\n\n</details>\n<details>\n<summary>products (10)</summary>\n\nMirrors the filtering query params of `GET /api/v1/products`.\n\n- `access_pass_types` `string[]` — Filter to only products matching these types.\n- `created_after` `string` — Only return products created after this ISO 8601 timestamp.\n- `created_before` `string` — Only return products created before this ISO 8601 timestamp.\n- `labels` `string[]` — Filter to only products carrying all of these labels. Labels are matched lowercased.\n- `marketplace_category_route` `string` — Only return marketplace products assigned to this category route, such as `trading`.\n- `plan_types` `string[]` — Filter to products with a buyable plan of these billing models, such as `one_time` or `renewal`.\n- `price_maximum` `number` — Only return products whose advertised buyable plan has a displayed price of at most this amount. Recurring plans use renewal price.\n- `price_minimum` `number` — Only return products whose advertised buyable plan has a displayed price of at least this amount. Recurring plans use renewal price.\n- `query` `string` — Ranked search against product title and headline. Omit to browse by recency.\n- `visibilities` `string[]` — Filter to only products matching these visibility states. Ignored on the public marketplace list, which only returns visible products.\n\n</details>\n<details>\n<summary>promo_codes (5)</summary>\n\nMirrors the filtering query params of `GET /api/v1/promo_codes`.\n\n- `created_after` `string` — Only promo codes created after this ISO 8601 timestamp.\n- `created_before` `string` — Only promo codes created before this ISO 8601 timestamp.\n- `plan_ids` `string[]` — Only promo codes scoped to these plan IDs.\n- `product_ids` `string[]` — Only promo codes scoped to these product IDs.\n- `status` `string` — Promo-code status. `expired` groups inactive and archived codes. One of `active`, `inactive`, `archived`, `expired`.\n\n</details>\n<details>\n<summary>resolution_center_cases (6)</summary>\n\nMirrors the filtering query params of `GET /api/v1/resolution_center_cases`.\n\n- `created_after` `string` — Only cases created after this ISO 8601 timestamp.\n- `created_before` `string` — Only cases created before this ISO 8601 timestamp.\n- `outcome` `string[]` — Only closed cases that ended these ways. Repeat the parameter to pass several.\n- `reason` `string[]` — Only cases opened for these reasons. Repeat the parameter to pass several.\n- `status` `string[]` — Only cases in these statuses. Repeat the parameter to pass several — one paginated list covers all of them.\n- `user_id` `string` — Only cases opened by this customer — a `user_` tag, or `me` for the calling user. It narrows what you can already read, so `me` lists the cases you opened without the ones on accounts you are a team member of.\n\n</details>\n<details>\n<summary>shipments (4)</summary>\n\nMirrors the filtering query params of `GET /api/v1/shipments`.\n\n- `created_after` `string` — Return shipments created after this ISO 8601 timestamp.\n- `created_before` `string` — Return shipments created before this ISO 8601 timestamp.\n- `payment_id` `string[]` — Only shipments fulfilling these payments, each prefixed `pay_`. Repeat the parameter to pass several, up to 100 per request — one paginated list covers all of them.\n- `status` `string` — Filter to shipments with this delivery status. One of `unknown`, `pre_transit`, `in_transit`, `out_for_delivery`, `delivered`, `available_for_pickup`, `return_to_sender`, `failure`, `cancelled`, `error`.\n\n</details>\n<details>\n<summary>social_accounts (4)</summary>\n\nMirrors the filtering query params of `GET /api/v1/social_accounts`.\n\n- `platform` `string` — Only return social accounts for the platform that is specified. One of `x`, `instagram`, `youtube`, `tiktok`, `facebook`, `discord`, `telegram`.\n- `scopes` `string[]` — Only return social accounts that have these scopes.\n- `user_id` `string` — The User that the social accounts are connected to. Provide either this or account_id.\n- `verified` `boolean` — Only return social accounts that are verified on the platform.\n\n</details>\n<details>\n<summary>team_members (5)</summary>\n\nMirrors the filtering query params of `GET /api/v1/team_members`.\n\n- `created_after` `string` — Only return members added after this ISO 8601 timestamp.\n- `created_before` `string` — Only return members added before this ISO 8601 timestamp.\n- `role` `string` — Only return members with this role. `custom` matches members on a dashboard-managed custom role. One of `owner`, `admin`, `partner`, `sales_manager`, `moderator`, `advertiser`, `app_manager`, `support`, `manager`, `workforce`, `custom`.\n- `status` `string` — Only return members with this status: `joined` (accepted members) or `pending` (pending invites). Both are returned by default. One of `joined`, `pending`.\n- `user_id` `string` — Only return the membership for this user ID, prefixed `user_`.\n\n</details>\n<details>\n<summary>transfers (4)</summary>\n\nMirrors the filtering query params of `GET /api/v1/transfers`.\n\n- `created_after` `string` — Only transfers created strictly after this ISO 8601 timestamp.\n- `created_before` `string` — Only transfers created strictly before this ISO 8601 timestamp.\n- `destination_id` `string` — Filter to transfers received by this account. Provide this or origin_id.\n- `origin_id` `string` — Filter to transfers sent from this account. Provide this or destination_id.\n\n</details>\n<details>\n<summary>webhooks (3)</summary>\n\nMirrors the filtering query params of `GET /api/v1/webhooks`.\n\n- `app_id` `string` — Only return webhooks attached to this app. Omit to list the account's own webhooks.\n- `has_failures` `boolean` — Only return webhooks whose endpoint is currently failing — every delivery since the current failure streak began has been rejected. Clears as soon as a delivery succeeds.\n- `include_app_webhooks` `boolean` — Also return webhooks attached to the account's apps, not just the account's own. Cannot be combined with `app_id`.\n\n</details>\n</details>",
+                    "description": "Resource-specific filters. For native REST resources (`payouts`, `transfers`, `products`) these are the resource's own list query params; for dashboard tables they mirror the dashboard table filters.\n\n<details>\n<summary>Filters by resource (25)</summary>\n\n<details>\n<summary>ad_campaigns (4)</summary>\n\nMirrors the filtering query params of `GET /api/v1/ad_campaigns`.\n\n- `created_after` `string` — Only return campaigns created after this timestamp.\n- `created_before` `string` — Only return campaigns created before this timestamp.\n- `query` `string` — Filter campaigns by a title or ID substring.\n- `status` `string` — Only return campaigns with this status. One of `draft`, `active`, `paused`, `payment_failed`.\n\n</details>\n<details>\n<summary>ad_groups (6)</summary>\n\nMirrors the filtering query params of `GET /api/v1/ad_groups`.\n\n- `ad_campaign_id` `string` — Filter to ad groups in this campaign.\n- `ad_campaign_ids` `string[]` — Filter to ad groups in these campaigns (max 100). Repeat the parameter for each id (ad_campaign_ids=a&ad_campaign_ids=b).\n- `created_after` `string` — Only return ad groups created after this timestamp.\n- `created_before` `string` — Only return ad groups created before this timestamp.\n- `query` `string` — Filter ad groups by a title or ID substring.\n- `status` `string` — Filter to ad groups with this status. One of `active`, `paused`, `rejected`, `duplicating`.\n\n</details>\n<details>\n<summary>ads (8)</summary>\n\nMirrors the filtering query params of `GET /api/v1/ads`.\n\n- `ad_campaign_id` `string` — Only return ads in this ad campaign.\n- `ad_campaign_ids` `string[]` — Only return ads in these ad campaigns (max 100). Repeat the parameter for each id (ad_campaign_ids=a&ad_campaign_ids=b).\n- `ad_group_id` `string` — Only return ads in this ad group.\n- `ad_group_ids` `string[]` — Only return ads in these ad groups (max 100). Repeat the parameter for each id (ad_group_ids=a&ad_group_ids=b).\n- `created_after` `string` — Only return ads created after this timestamp.\n- `created_before` `string` — Only return ads created before this timestamp.\n- `query` `string` — Filter ads by a title or ID substring.\n- `status` `string` — Only return ads with this status. One of `active`, `paused`, `in_review`, `rejected`.\n\n</details>\n<details>\n<summary>apps (6)</summary>\n\nMirrors the filtering query params of `GET /api/v1/apps`.\n\n- `app_type` `string` — Filter apps by the type of end-user they are built for. Apps of type `website` are left out unless you ask for them by name. One of `b2b_app`, `b2c_app`, `company_app`, `component`, `website`.\n- `query` `string` — A search string matched against app names.\n- `recommended` `boolean` — Only return apps Whop recommends (or, with `false`, only those it does not), independently of verification status.\n- `verified` `boolean` — Only return apps whose Whop verification status matches this value. Omit this filter to include every verification status the caller can see.\n- `verified_apps_only` `boolean` — Legacy compatibility filter. Use `verified` for field equality. `true` returns verified apps; clients pinned before `2026-08-25-2` retain the earlier public website discovery behavior.\n- `view_type` `string` — Only return apps supporting this view type, such as `dashboard` or `hub`. One of `hub`, `discover`, `dash`, `dashboard`, `analytics`, `skills`, `openapi`.\n\n</details>\n<details>\n<summary>audiences (3)</summary>\n\nMirrors the filtering query params of `GET /api/v1/audiences`.\n\n- `audience_id` `string` — Audience ID, prefixed `adaud_`, used to filter the response to one audience.\n- `audience_type` `string` — Filter by custom or lookalike audiences. One of `custom`, `lookalike`.\n- `source_type` `string` — Filter by uploaded customer lists, Whop People filters, or social engagement. One of `csv_upload`, `people_filter`, `engagement`.\n\n</details>\n<details>\n<summary>bounties (8)</summary>\n\nMirrors the filtering query params of `GET /api/v1/bounties`.\n\n- `business_goal_type` `string` — Filter by the poster's declared goal. Bounties created before the goal taxonomy carry no goal and never match this filter. One of `clipping`, `post_engagement`, `owned_account_growth`, `ugc_content`, `local_activation`, `data_capture`, `other`.\n- `country` `string` — Only bounties workable from this country, as an ISO 3166-1 alpha-2 code. Bounties with no country targeting are workable worldwide and always match.\n- `created_after` `string` — Only bounties created after this ISO 8601 timestamp.\n- `created_before` `string` — Only bounties created before this ISO 8601 timestamp.\n- `experience_id` `string` — Only bounties posted to this forum experience, prefixed `exp_`. An unknown experience, or one outside the caller's scope, matches nothing.\n- `query` `string` — Substring match on the bounty title or ID.\n- `status` `string` — Filter by lifecycle state. One of `scheduled`, `open`, `closed`, `completed`, `canceled`.\n- `user_id` `string` — List the bounties this user participated in (`user_` tag). Must be the authenticated user.\n\n</details>\n<details>\n<summary>bounty_submissions (4)</summary>\n\nMirrors the filtering query params of `GET /api/v1/bounty_submissions`.\n\n- `bounty_id` `string` — Only submissions on this bounty (`bnty_` tag).\n- `created_after` `string` — Only submissions created after this ISO 8601 timestamp.\n- `created_before` `string` — Only submissions created before this ISO 8601 timestamp.\n- `status` `string` — Filter by lifecycle state. One of `in_progress`, `submitted`, `approved`, `denied`.\n\n</details>\n<details>\n<summary>card_transactions (6)</summary>\n\nMirrors the filtering query params of `GET /api/v1/card_transactions`.\n\n- `card_id` `string[]` — Return only transactions charged to these cards, each prefixed `icrd_`.\n- `cardholder_id` `string[]` — Return only transactions on cards assigned to these users, each prefixed `user_`.\n- `created_after` `string` — Return only transactions authorized at or after this ISO 8601 timestamp.\n- `created_before` `string` — Return only transactions authorized at or before this ISO 8601 timestamp.\n- `status` `string` — Return only transactions with this status. One of `pending`, `completed`, `reversed`, `declined`.\n- `transaction_ids` `string[]` — Return only these card transactions, each prefixed `citx_`. Repeat the parameter, or pass one comma-separated value.\n\n</details>\n<details>\n<summary>checkout_configurations (3)</summary>\n\nMirrors the filtering query params of `GET /api/v1/checkout_configurations`.\n\n- `created_after` `string` — Only return checkout configurations created after this ISO 8601 timestamp.\n- `created_before` `string` — Only return checkout configurations created before this ISO 8601 timestamp.\n- `plan_id` `string` — Only return checkout configurations for this plan ID, prefixed `plan_`.\n\n</details>\n<details>\n<summary>disputes (4)</summary>\n\nMirrors the filtering query params of `GET /api/v1/disputes`.\n\n- `created_after` `string` — Only disputes opened after this ISO 8601 timestamp.\n- `created_before` `string` — Only disputes opened before this ISO 8601 timestamp.\n- `currency` `string` — Only disputes in this three-letter ISO currency.\n- `status` `string[]` — Only disputes in these statuses. Repeat the parameter to pass several — one paginated list covers all of them. Covers both chargebacks and inquiries at each stage. A `needs_response` dispute whose evidence deadline has passed reports and filters as `under_review` instead.\n\n</details>\n<details>\n<summary>events (14)</summary>\n\nMirrors the filtering query params of `GET /api/v1/events`.\n\n- `attribution_model` `string` — Attribution model for the source filter (defaults to last_touch). One of `last_touch`, `first_touch`.\n- `browser` `string` — Browser families to filter by, comma-separated (e.g. Chrome, Mobile Safari).\n- `city` `string` — Cities to filter by, comma-separated.\n- `country` `string` — Country codes to filter by, comma-separated.\n- `device` `string` — Device families to filter by, comma-separated (e.g. iPhone, Mac).\n- `event` `string` — Full event names to filter by, comma-separated (payment.completed, pixel.lead, pixel.page, pixel.custom:<name>) — the same vocabulary the events / people metrics use.\n- `from` `string` — Start of the time range as an ISO 8601 timestamp. Required when identifier is omitted.\n- `hostname` `string` — Page hostnames to filter by, comma-separated.\n- `identifier` `string` — Any hard identifier of the person: a person ID (prsn_*), user ID, email, phone number, or a tracking cookie value (wuid, anonymous ID, fbp/fbc/ttp/ga). Omit to list recent events for the account.\n- `os` `string` — Operating system families to filter by, comma-separated (e.g. iOS, Windows).\n- `page` `string` — Page paths to filter by, comma-separated.\n- `source` `string` — Canonical source path, exact or with a trailing :* prefix (whop:<campaign>:*, ext:meta:*, referrer:<domain>, direct). Restricts the list to conversion targets attributed to that source — the debuggability twin of a metric cell's source parameter. A whop:... source combined with non-conversion event names (event=pixel.page) instead lists the events whose ad click resolved to that entity — the page views an ad drove.\n- `to` `string` — End of the time range as an ISO 8601 timestamp. Required when identifier is omitted; otherwise defaults to now.\n- `utm_source` `string` — utm_source values to filter by, comma-separated.\n\n</details>\n<details>\n<summary>financial-activity (12)</summary>\n\nMirrors the filtering query params of `GET /api/v1/financial_activity`.\n\n- `activity_id` `string` — Optional ledger activity ID (for example `line_3`). Returns at most that one activity.\n- `available_after` `string` — Only include rows whose funds became withdrawable on or after this `YYYY-MM-DD` settlement date (UTC), distinct from posted_at. Requires currency.\n- `available_before` `string` — Only include rows whose funds became withdrawable on or before this `YYYY-MM-DD` settlement date (UTC). Set equal to available_after for a single day. Requires currency.\n- `currency` `string` — Optional currency code filter, for example `usd`.\n- `exclude_internal_movements` `boolean` — Whether to exclude balance reservations and balanced movements between the account's own balances.\n- `include_owned_accounts` `boolean` — When true, aggregates the authenticated user's personal ledger with the businesses they own (owner role with balance read) into one feed. Requires user_id to be the authenticated user; cannot be combined with account_id or the settlement-date filters. Each returned row includes the owning `account`.\n- `include_resource` `boolean` — Whether to include the `resource` field in the response or not. Consider passing `false` if you need a fast response without as many rich details.\n- `line_types` `string[]` — Optional ledger line categories to include. Some categories (for example `onchain_deposit`, which covers inbound crypto deposits such as MoonPay onramps) are only returned when explicitly requested here.\n- `posted_after` `string` — Only include rows posted after this ISO 8601 timestamp.\n- `posted_before` `string` — Only include rows posted before this ISO 8601 timestamp.\n- `resource_id` `string` — Optional prefixed resource ID. Returns activity associated with that resource.\n- `user_id` `string` — The owning user ID (a user_ identifier). Provide this or account_id.\n\n</details>\n<details>\n<summary>members (6)</summary>\n\nMirrors the filtering query params of `GET /api/v1/members`.\n\n- `access_level` `string` — Filter by what the member can reach on the account. One of `no_access`, `admin`, `customer`.\n- `created_after` `string` — Only members who joined after this ISO 8601 timestamp.\n- `created_before` `string` — Only members who joined before this ISO 8601 timestamp.\n- `query` `string` — Search members by name or username. An exact email address also matches when the credential holds the member:email:read scope.\n- `status` `string` — Filter by whether the member is still part of the account. One of `joined`, `left`.\n- `user_ids` `string[]` — Only return members whose users match these `user_` identifiers.\n\n</details>\n<details>\n<summary>memberships (6)</summary>\n\nMirrors the filtering query params of `GET /api/v1/memberships`.\n\n- `created_after` `string` — Only memberships created after this ISO 8601 timestamp.\n- `created_before` `string` — Only memberships created before this ISO 8601 timestamp.\n- `plan_id` `string` — Filter to memberships of this plan (`plan_` tag). Repeat as plan_ids[] for several.\n- `product_id` `string` — Filter to memberships of this product (`prod_` tag). Repeat as product_ids[] for several.\n- `status` `string` — Filter by billing state. `canceling` matches active memberships set to cancel at period end; `paused` matches memberships with payment collection paused. One of `active`, `trialing`, `past_due`, `completed`, `canceled`, `expired`, `canceling`, `paused`.\n- `user_id` `string` — Narrow to one user's memberships (`user_` tag, or `me` for the caller). A user outside the caller's visible set returns an empty list.\n\n</details>\n<details>\n<summary>payouts (7)</summary>\n\nMirrors the filtering query params of `GET /api/v1/payouts`.\n\n- `created_after` `string` — Only payouts created at or after this ISO 8601 time (inclusive).\n- `created_before` `string` — Only payouts created before this ISO 8601 time (exclusive).\n- `currency` `string` — Optional currency code filter, for example `usd`.\n- `payout_method_id` `string` — Filter to payouts sent to one saved payout method (a pytk_ identifier). An unknown id matches nothing.\n- `source` `string` — Filter by how the payout was created. Payouts created before source tracking or through internal tooling carry no source and never match. One of `api`, `dashboard`, `automatic`.\n- `status` `string` — Filter to payouts whose `status` reads this word, matching exactly what this version displays — `reversed` finds settled payouts the bank later returned. Requires Api-Version-Date 2026-08-21 or later. One of `requested`, `in_review`, `processing`, `completed`, `reversed`, `canceled`, `failed`, `denied`.\n- `user_id` `string` — The owning user ID (a user_ identifier). Provide this or account_id.\n\n</details>\n<details>\n<summary>people (20)</summary>\n\nMirrors the filtering query params of `GET /api/v1/people`.\n\n- `attribution_model` `string` — Attribution model the source filter matches against (defaults to last_touch). One of `last_touch`, `first_touch`.\n- `audience_id` `string` — Only include people in this audience. An audience that keeps itself up to date resolves to the People filters that define it, so this always reflects who matches now; uploaded lists and point-in-time snapshots match their recorded members.\n- `contactable` `boolean` — true for people who have an email address or phone number — the ones an ad platform can match.\n- `country` `string` — Only include people whose most recent visit came from this ISO 3166-1 alpha-2 country code.\n- `custom_event` `string` — Only include people who fired this custom pixel event.\n- `email` `string` — Only include the person linked to this email address.\n- `event_from` `string` — With event_to plus an event or source filter, switches to exact-population mode: person ids are resolved and paginated on the events side within this window (the same query the people metric counts), then hydrated per page.\n- `event_name` `string[]` — Only include people who fired any of these events, e.g. payment.completed or page.checkout.view.\n- `event_to` `string` — The inclusive end of the event window for exact-population mode.\n- `first_seen_after` `string` — Only include people first seen at or after this ISO 8601 timestamp.\n- `first_seen_before` `string` — Only include people first seen before this ISO 8601 timestamp.\n- `first_seen_within_days` `integer` — Only include people first seen within this many days, as a rolling window.\n- `has_purchased` `boolean` — true for customers only, false for people who have never purchased.\n- `last_seen_after` `string` — Only include people last seen at or after this ISO 8601 timestamp.\n- `last_seen_before` `string` — Only include people last seen before this ISO 8601 timestamp.\n- `last_seen_within_days` `integer` — Only include people last seen within this many days, as a rolling window.\n- `phone` `string` — Only include the person linked to this phone number.\n- `query` `string` — Search people by name, email, phone, or whop user ID (case-insensitive substring match).\n- `source` `string[]` — Only include people acquired from any of these sources — canonical paths (whop:<campaign>:<group>:<ad>, ext:<platform>:..., referrer:<domain>, direct, other), exact or with a trailing :* prefix. The same vocabulary the events / people metrics use.\n- `user_id` `string` — Only include the person linked to this whop user ID.\n\n</details>\n<details>\n<summary>plans (6)</summary>\n\nMirrors the filtering query params of `GET /api/v1/plans`.\n\n- `created_after` `string` — Only return plans created after this timestamp.\n- `created_before` `string` — Only return plans created before this timestamp.\n- `plan_types` `string[]` — Filter to only plans matching these billing types.\n- `product_ids` `string[]` — Filter to only plans belonging to these product identifiers. When `account_id` is omitted, this is required and the response is publicly readable: only visible, non-invoice plans are returned.\n- `release_methods` `string[]` — Filter to only plans matching these release methods.\n- `visibilities` `string[]` — Filter to only plans matching these visibility states.\n\n</details>\n<details>\n<summary>products (10)</summary>\n\nMirrors the filtering query params of `GET /api/v1/products`.\n\n- `access_pass_types` `string[]` — Filter to only products matching these types.\n- `created_after` `string` — Only return products created after this ISO 8601 timestamp.\n- `created_before` `string` — Only return products created before this ISO 8601 timestamp.\n- `labels` `string[]` — Filter to only products carrying all of these labels. Labels are matched lowercased.\n- `marketplace_category_route` `string` — Only return marketplace products assigned to this category route, such as `trading`.\n- `plan_types` `string[]` — Filter to products with a buyable plan of these billing models, such as `one_time` or `renewal`.\n- `price_maximum` `number` — Only return products whose advertised buyable plan has a displayed price of at most this amount. Recurring plans use renewal price.\n- `price_minimum` `number` — Only return products whose advertised buyable plan has a displayed price of at least this amount. Recurring plans use renewal price.\n- `query` `string` — Ranked search against product title and headline. Omit to browse by recency.\n- `visibilities` `string[]` — Filter to only products matching these visibility states. Ignored on the public marketplace list, which only returns visible products.\n\n</details>\n<details>\n<summary>promo_codes (5)</summary>\n\nMirrors the filtering query params of `GET /api/v1/promo_codes`.\n\n- `created_after` `string` — Only promo codes created after this ISO 8601 timestamp.\n- `created_before` `string` — Only promo codes created before this ISO 8601 timestamp.\n- `plan_ids` `string[]` — Only promo codes scoped to these plan IDs.\n- `product_ids` `string[]` — Only promo codes scoped to these product IDs.\n- `status` `string` — Promo-code status. `expired` groups inactive and archived codes. One of `active`, `inactive`, `archived`, `expired`.\n\n</details>\n<details>\n<summary>resolution_center_cases (6)</summary>\n\nMirrors the filtering query params of `GET /api/v1/resolution_center_cases`.\n\n- `created_after` `string` — Only cases created after this ISO 8601 timestamp.\n- `created_before` `string` — Only cases created before this ISO 8601 timestamp.\n- `outcome` `string[]` — Only closed cases that ended these ways. Repeat the parameter to pass several.\n- `reason` `string[]` — Only cases opened for these reasons. Repeat the parameter to pass several.\n- `status` `string[]` — Only cases in these statuses. Repeat the parameter to pass several — one paginated list covers all of them.\n- `user_id` `string` — Only cases opened by this customer — a `user_` tag, or `me` for the calling user. It narrows what you can already read, so `me` lists the cases you opened without the ones on accounts you are a team member of.\n\n</details>\n<details>\n<summary>shipments (4)</summary>\n\nMirrors the filtering query params of `GET /api/v1/shipments`.\n\n- `created_after` `string` — Return shipments created after this ISO 8601 timestamp.\n- `created_before` `string` — Return shipments created before this ISO 8601 timestamp.\n- `payment_id` `string[]` — Only shipments fulfilling these payments, each prefixed `pay_`. Repeat the parameter to pass several, up to 100 per request — one paginated list covers all of them.\n- `status` `string` — Filter to shipments with this delivery status. One of `unknown`, `pre_transit`, `in_transit`, `out_for_delivery`, `delivered`, `available_for_pickup`, `return_to_sender`, `failure`, `cancelled`, `error`.\n\n</details>\n<details>\n<summary>social_accounts (4)</summary>\n\nMirrors the filtering query params of `GET /api/v1/social_accounts`.\n\n- `platform` `string` — Only return social accounts for the platform that is specified. One of `x`, `instagram`, `youtube`, `tiktok`, `facebook`, `discord`, `telegram`.\n- `scopes` `string[]` — Only return social accounts that have these scopes.\n- `user_id` `string` — The User that the social accounts are connected to. Provide either this or account_id.\n- `verified` `boolean` — Only return social accounts that are verified on the platform.\n\n</details>\n<details>\n<summary>team_members (5)</summary>\n\nMirrors the filtering query params of `GET /api/v1/team_members`.\n\n- `created_after` `string` — Only return members added after this ISO 8601 timestamp.\n- `created_before` `string` — Only return members added before this ISO 8601 timestamp.\n- `role` `string` — Only return members with this role. `custom` matches members on a dashboard-managed custom role. One of `owner`, `admin`, `partner`, `sales_manager`, `moderator`, `advertiser`, `app_manager`, `support`, `manager`, `workforce`, `custom`.\n- `status` `string` — Only return members with this status: `joined` (accepted members) or `pending` (pending invites). Both are returned by default. One of `joined`, `pending`.\n- `user_id` `string` — Only return the membership for this user ID, prefixed `user_`.\n\n</details>\n<details>\n<summary>transfers (4)</summary>\n\nMirrors the filtering query params of `GET /api/v1/transfers`.\n\n- `created_after` `string` — Only transfers created strictly after this ISO 8601 timestamp.\n- `created_before` `string` — Only transfers created strictly before this ISO 8601 timestamp.\n- `destination_id` `string` — Filter to transfers received by this account. Provide this or origin_id.\n- `origin_id` `string` — Filter to transfers sent from this account. Provide this or destination_id.\n\n</details>\n<details>\n<summary>webhooks (3)</summary>\n\nMirrors the filtering query params of `GET /api/v1/webhooks`.\n\n- `app_id` `string` — Only return webhooks attached to this app. Omit to list the account's own webhooks.\n- `has_failures` `boolean` — Only return webhooks whose endpoint is currently failing — every delivery since the current failure streak began has been rejected. Clears as soon as a delivery succeeds.\n- `include_app_webhooks` `boolean` — Also return webhooks attached to the account's apps, not just the account's own. Cannot be combined with `app_id`.\n\n</details>\n</details>",
                     "example": {
                       "include_resource": false,
                       "posted_after": "2026-01-01T12:00:00.000Z",
@@ -24736,7 +24742,7 @@
         ]
       }
     },
-    "/financial-activity": {
+    "/financial_activity": {
       "get": {
         "description": "Returns an account's or user's activity feed: every movement of money in or out.",
         "operationId": "listFinancialActivity",
@@ -24824,6 +24830,7 @@
                   "dispute_alert_fee",
                   "dispute_hold_adjustment",
                   "dispute_representment_fee",
+                  "economic_intelligence_percentage_fee",
                   "external_card_load_deposit",
                   "fees",
                   "fraud_prevention_fee",
@@ -25128,12 +25135,6 @@
         "summary": "List Financial Activity",
         "tags": [
           "Ledgers"
-        ],
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.financialActivity.list();\n"
-          }
         ]
       }
     },
@@ -25277,6 +25278,7 @@
                   "dispute_alert_fee",
                   "dispute_hold_adjustment",
                   "dispute_representment_fee",
+                  "economic_intelligence_percentage_fee",
                   "external_card_load_deposit",
                   "fees",
                   "fraud_prevention_fee",
@@ -25655,6 +25657,7 @@
                               "dispute_settlement_reversal",
                               "dispute_unreconciled_clearing",
                               "dispute_unreconciled_reversal",
+                              "economic_intelligence_percentage_fee",
                               "external_account_connection_fee",
                               "external_card_load_deposit",
                               "external_card_load_offset",
@@ -28956,20 +28959,7 @@
                     ],
                     "type": "object"
                   }
-                ],
-                "properties": {
-                  "account_id": {
-                    "description": "Business to request attribution for, prefixed `biz_`. Provide this or account_url.",
-                    "example": "biz_xxxxxxxxxxxxxx",
-                    "type": "string"
-                  },
-                  "account_url": {
-                    "description": "HTTP or HTTPS Whop business or product link. Provide this or account_id.",
-                    "example": "https://whop.com/manual-request-business/",
-                    "type": "string"
-                  }
-                },
-                "type": "object"
+                ]
               }
             }
           },
@@ -41173,16 +41163,22 @@
                     "description": "Explicit payment method configuration for the plan. When not provided, the account's defaults apply.",
                     "properties": {
                       "disabled": {
+                        "description": "Payment method types explicitly disabled for this plan — the `type` values from the payment method types catalogue. Types Whop no longer offers, and the read-only `unknown` placeholder, are dropped.",
+                        "example": [
+                          "paypal"
+                        ],
                         "items": {
-                          "example": "paypal",
-                          "type": "string"
+                          "$ref": "#/components/schemas/PaymentMethodTypes"
                         },
                         "type": "array"
                       },
                       "enabled": {
+                        "description": "Payment method types explicitly enabled for this plan — the `type` values from the payment method types catalogue. Types Whop no longer offers, and the read-only `unknown` placeholder, are dropped.",
+                        "example": [
+                          "card"
+                        ],
                         "items": {
-                          "example": "card",
-                          "type": "string"
+                          "$ref": "#/components/schemas/PaymentMethodTypes"
                         },
                         "type": "array"
                       },
@@ -41634,16 +41630,22 @@
                     "description": "Explicit payment method configuration for the plan. When not provided, the account's defaults apply.",
                     "properties": {
                       "disabled": {
+                        "description": "Payment method types explicitly disabled for this plan — the `type` values from the payment method types catalogue. Types Whop no longer offers, and the read-only `unknown` placeholder, are dropped.",
+                        "example": [
+                          "paypal"
+                        ],
                         "items": {
-                          "example": "paypal",
-                          "type": "string"
+                          "$ref": "#/components/schemas/PaymentMethodTypes"
                         },
                         "type": "array"
                       },
                       "enabled": {
+                        "description": "Payment method types explicitly enabled for this plan — the `type` values from the payment method types catalogue. Types Whop no longer offers, and the read-only `unknown` placeholder, are dropped.",
+                        "example": [
+                          "card"
+                        ],
                         "items": {
-                          "example": "card",
-                          "type": "string"
+                          "$ref": "#/components/schemas/PaymentMethodTypes"
                         },
                         "type": "array"
                       },
@@ -71502,6 +71504,17 @@
               }
             ]
           },
+          "partner": {
+            "description": "The account's active first-tier partner. Present on retrieve responses; null when no active first-tier partner is attributed to the account. Omitted from other responses.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/AccountPartner"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "payment_controls": {
             "description": "Payment health controls currently applied to the account. Computed only on `retrieve` and `me` for callers with `company:balance:read` scope; `null` otherwise.",
             "oneOf": [
@@ -72269,7 +72282,7 @@
         "properties": {
           "adjustable": {
             "description": "Whether the caller may change this fee through `PATCH`. Depends on who is asking.",
-            "example": false,
+            "example": true,
             "type": "boolean"
           },
           "category": {
@@ -72286,7 +72299,7 @@
           },
           "default": {
             "$ref": "#/components/schemas/AccountFeeRate",
-            "description": "The platform rate with no custom deal: what applies if the custom rate is cleared."
+            "description": "The platform rate before custom or inherited pricing is applied."
           },
           "ends_at": {
             "description": "When a custom or inherited rate expires and the fee returns to `default`, as an ISO 8601 timestamp. `null` when the default applies or the rate does not expire.",
@@ -72301,6 +72314,17 @@
             "oneOf": [
               {
                 "$ref": "#/components/schemas/Money"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "maximum": {
+            "description": "The highest rate the caller may set. `null` when the fee is not adjustable or the caller is not capped.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/AccountFeeRate"
               },
               {
                 "type": "null"
@@ -72343,6 +72367,7 @@
               "cr",
               "gt",
               "uy",
+              "br",
               "ph",
               null
             ],
@@ -72354,93 +72379,476 @@
           },
           "regions": {
             "additionalProperties": {
-              "$ref": "#/components/schemas/AccountFeeRate"
+              "$ref": "#/components/schemas/AccountFeeRegionalRate"
             },
-            "description": "The rate in every other region this fee varies by, keyed by region. Empty for a fee that does not vary by region.",
+            "description": "The rate, source, default, reset rate, and editable limits in every other region this fee varies by, keyed by region. Empty for a fee that does not vary by region.",
             "example": {
               "ar": {
+                "default": {
+                  "fixed": {
+                    "amount": "0.30",
+                    "currency": "usd",
+                    "decimals": 2,
+                    "display_decimals": 2
+                  },
+                  "percentage": 2.9
+                },
                 "fixed": {
                   "amount": "0.30",
                   "currency": "usd",
                   "decimals": 2,
                   "display_decimals": 2
                 },
-                "percentage": 2.9
+                "maximum": {
+                  "fixed": {
+                    "amount": "1.00",
+                    "currency": "usd",
+                    "decimals": 2,
+                    "display_decimals": 2
+                  },
+                  "percentage": 10
+                },
+                "minimum": {
+                  "fixed": {
+                    "amount": "0.30",
+                    "currency": "usd",
+                    "decimals": 2,
+                    "display_decimals": 2
+                  },
+                  "percentage": 2.9
+                },
+                "percentage": 2.9,
+                "reset": {
+                  "fixed": {
+                    "amount": "0.30",
+                    "currency": "usd",
+                    "decimals": 2,
+                    "display_decimals": 2
+                  },
+                  "percentage": 2.9
+                },
+                "source": "default"
               },
               "au": {
+                "default": {
+                  "fixed": {
+                    "amount": "0.30",
+                    "currency": "usd",
+                    "decimals": 2,
+                    "display_decimals": 2
+                  },
+                  "percentage": 2.7
+                },
                 "fixed": {
                   "amount": "0.30",
                   "currency": "usd",
                   "decimals": 2,
                   "display_decimals": 2
                 },
-                "percentage": 2.7
+                "maximum": {
+                  "fixed": {
+                    "amount": "1.00",
+                    "currency": "usd",
+                    "decimals": 2,
+                    "display_decimals": 2
+                  },
+                  "percentage": 10
+                },
+                "minimum": {
+                  "fixed": {
+                    "amount": "0.30",
+                    "currency": "usd",
+                    "decimals": 2,
+                    "display_decimals": 2
+                  },
+                  "percentage": 1.5
+                },
+                "percentage": 2.7,
+                "reset": {
+                  "fixed": {
+                    "amount": "0.30",
+                    "currency": "usd",
+                    "decimals": 2,
+                    "display_decimals": 2
+                  },
+                  "percentage": 2.7
+                },
+                "source": "default"
+              },
+              "br": {
+                "default": {
+                  "fixed": {
+                    "amount": "0.30",
+                    "currency": "usd",
+                    "decimals": 2,
+                    "display_decimals": 2
+                  },
+                  "percentage": 8
+                },
+                "fixed": {
+                  "amount": "0.30",
+                  "currency": "usd",
+                  "decimals": 2,
+                  "display_decimals": 2
+                },
+                "maximum": {
+                  "fixed": {
+                    "amount": "1.00",
+                    "currency": "usd",
+                    "decimals": 2,
+                    "display_decimals": 2
+                  },
+                  "percentage": 30
+                },
+                "minimum": {
+                  "fixed": {
+                    "amount": "0.00",
+                    "currency": "usd",
+                    "decimals": 2,
+                    "display_decimals": 2
+                  },
+                  "percentage": 0
+                },
+                "percentage": 8,
+                "reset": {
+                  "fixed": {
+                    "amount": "0.30",
+                    "currency": "usd",
+                    "decimals": 2,
+                    "display_decimals": 2
+                  },
+                  "percentage": 8
+                },
+                "source": "default"
               },
               "ca": {
+                "default": {
+                  "fixed": {
+                    "amount": "0.30",
+                    "currency": "usd",
+                    "decimals": 2,
+                    "display_decimals": 2
+                  },
+                  "percentage": 2.7
+                },
                 "fixed": {
                   "amount": "0.30",
                   "currency": "usd",
                   "decimals": 2,
                   "display_decimals": 2
                 },
-                "percentage": 2.7
+                "maximum": {
+                  "fixed": {
+                    "amount": "1.00",
+                    "currency": "usd",
+                    "decimals": 2,
+                    "display_decimals": 2
+                  },
+                  "percentage": 10
+                },
+                "minimum": {
+                  "fixed": {
+                    "amount": "0.30",
+                    "currency": "usd",
+                    "decimals": 2,
+                    "display_decimals": 2
+                  },
+                  "percentage": 2.4
+                },
+                "percentage": 2.7,
+                "reset": {
+                  "fixed": {
+                    "amount": "0.30",
+                    "currency": "usd",
+                    "decimals": 2,
+                    "display_decimals": 2
+                  },
+                  "percentage": 2.7
+                },
+                "source": "default"
               },
               "cl": {
+                "default": {
+                  "fixed": {
+                    "amount": "0.30",
+                    "currency": "usd",
+                    "decimals": 2,
+                    "display_decimals": 2
+                  },
+                  "percentage": 2.9
+                },
                 "fixed": {
                   "amount": "0.30",
                   "currency": "usd",
                   "decimals": 2,
                   "display_decimals": 2
                 },
-                "percentage": 2.9
+                "maximum": {
+                  "fixed": {
+                    "amount": "1.00",
+                    "currency": "usd",
+                    "decimals": 2,
+                    "display_decimals": 2
+                  },
+                  "percentage": 10
+                },
+                "minimum": {
+                  "fixed": {
+                    "amount": "0.00",
+                    "currency": "usd",
+                    "decimals": 2,
+                    "display_decimals": 2
+                  },
+                  "percentage": 2.7
+                },
+                "percentage": 2.9,
+                "reset": {
+                  "fixed": {
+                    "amount": "0.30",
+                    "currency": "usd",
+                    "decimals": 2,
+                    "display_decimals": 2
+                  },
+                  "percentage": 2.9
+                },
+                "source": "default"
               },
               "co": {
+                "default": {
+                  "fixed": {
+                    "amount": "0.30",
+                    "currency": "usd",
+                    "decimals": 2,
+                    "display_decimals": 2
+                  },
+                  "percentage": 2.9
+                },
                 "fixed": {
                   "amount": "0.30",
                   "currency": "usd",
                   "decimals": 2,
                   "display_decimals": 2
                 },
-                "percentage": 2.9
+                "maximum": {
+                  "fixed": {
+                    "amount": "1.00",
+                    "currency": "usd",
+                    "decimals": 2,
+                    "display_decimals": 2
+                  },
+                  "percentage": 10
+                },
+                "minimum": {
+                  "fixed": {
+                    "amount": "0.00",
+                    "currency": "usd",
+                    "decimals": 2,
+                    "display_decimals": 2
+                  },
+                  "percentage": 2.7
+                },
+                "percentage": 2.9,
+                "reset": {
+                  "fixed": {
+                    "amount": "0.30",
+                    "currency": "usd",
+                    "decimals": 2,
+                    "display_decimals": 2
+                  },
+                  "percentage": 2.9
+                },
+                "source": "default"
               },
               "eu": {
+                "default": {
+                  "fixed": {
+                    "amount": "0.30",
+                    "currency": "usd",
+                    "decimals": 2,
+                    "display_decimals": 2
+                  },
+                  "percentage": 2.7
+                },
                 "fixed": {
                   "amount": "0.30",
                   "currency": "usd",
                   "decimals": 2,
                   "display_decimals": 2
                 },
-                "percentage": 2.7
+                "maximum": {
+                  "fixed": {
+                    "amount": "1.00",
+                    "currency": "usd",
+                    "decimals": 2,
+                    "display_decimals": 2
+                  },
+                  "percentage": 10
+                },
+                "minimum": {
+                  "fixed": {
+                    "amount": "0.30",
+                    "currency": "usd",
+                    "decimals": 2,
+                    "display_decimals": 2
+                  },
+                  "percentage": 1.5
+                },
+                "percentage": 2.5,
+                "reset": {
+                  "fixed": {
+                    "amount": "0.30",
+                    "currency": "usd",
+                    "decimals": 2,
+                    "display_decimals": 2
+                  },
+                  "percentage": 2.6
+                },
+                "source": "custom"
               },
               "mx": {
+                "default": {
+                  "fixed": {
+                    "amount": "0.30",
+                    "currency": "usd",
+                    "decimals": 2,
+                    "display_decimals": 2
+                  },
+                  "percentage": 2.9
+                },
                 "fixed": {
                   "amount": "0.30",
                   "currency": "usd",
                   "decimals": 2,
                   "display_decimals": 2
                 },
-                "percentage": 2.9
+                "maximum": {
+                  "fixed": {
+                    "amount": "1.00",
+                    "currency": "usd",
+                    "decimals": 2,
+                    "display_decimals": 2
+                  },
+                  "percentage": 10
+                },
+                "minimum": {
+                  "fixed": {
+                    "amount": "0.00",
+                    "currency": "usd",
+                    "decimals": 2,
+                    "display_decimals": 2
+                  },
+                  "percentage": 2.7
+                },
+                "percentage": 2.9,
+                "reset": {
+                  "fixed": {
+                    "amount": "0.30",
+                    "currency": "usd",
+                    "decimals": 2,
+                    "display_decimals": 2
+                  },
+                  "percentage": 2.9
+                },
+                "source": "default"
               },
               "pe": {
+                "default": {
+                  "fixed": {
+                    "amount": "0.30",
+                    "currency": "usd",
+                    "decimals": 2,
+                    "display_decimals": 2
+                  },
+                  "percentage": 4.9
+                },
                 "fixed": {
                   "amount": "0.30",
                   "currency": "usd",
                   "decimals": 2,
                   "display_decimals": 2
                 },
-                "percentage": 4.9
+                "maximum": {
+                  "fixed": {
+                    "amount": "1.00",
+                    "currency": "usd",
+                    "decimals": 2,
+                    "display_decimals": 2
+                  },
+                  "percentage": 10
+                },
+                "minimum": {
+                  "fixed": {
+                    "amount": "0.00",
+                    "currency": "usd",
+                    "decimals": 2,
+                    "display_decimals": 2
+                  },
+                  "percentage": 4.7
+                },
+                "percentage": 4.9,
+                "reset": {
+                  "fixed": {
+                    "amount": "0.30",
+                    "currency": "usd",
+                    "decimals": 2,
+                    "display_decimals": 2
+                  },
+                  "percentage": 4.9
+                },
+                "source": "default"
               },
               "uk": {
+                "default": {
+                  "fixed": {
+                    "amount": "0.30",
+                    "currency": "usd",
+                    "decimals": 2,
+                    "display_decimals": 2
+                  },
+                  "percentage": 2.7
+                },
                 "fixed": {
                   "amount": "0.30",
                   "currency": "usd",
                   "decimals": 2,
                   "display_decimals": 2
                 },
-                "percentage": 2.7
+                "maximum": {
+                  "fixed": {
+                    "amount": "1.00",
+                    "currency": "usd",
+                    "decimals": 2,
+                    "display_decimals": 2
+                  },
+                  "percentage": 10
+                },
+                "minimum": {
+                  "fixed": {
+                    "amount": "0.30",
+                    "currency": "usd",
+                    "decimals": 2,
+                    "display_decimals": 2
+                  },
+                  "percentage": 1.5
+                },
+                "percentage": 2.7,
+                "reset": {
+                  "fixed": {
+                    "amount": "0.30",
+                    "currency": "usd",
+                    "decimals": 2,
+                    "display_decimals": 2
+                  },
+                  "percentage": 2.7
+                },
+                "source": "default"
               }
             },
             "type": "object"
+          },
+          "reset": {
+            "$ref": "#/components/schemas/AccountFeeRate",
+            "description": "The rate that takes effect when this account's custom rate is cleared, including inherited pricing."
           },
           "source": {
             "description": "Where the rate in effect comes from: `default` is the platform rate, `custom` a rate negotiated for this account, and `inherited` a rate negotiated by the platform this account is connected to.",
@@ -72449,7 +72857,7 @@
               "custom",
               "inherited"
             ],
-            "example": "custom",
+            "example": "inherited",
             "type": "string"
           },
           "unadjustable_reason": {
@@ -72472,11 +72880,13 @@
           "region",
           "regions",
           "default",
+          "reset",
           "source",
           "ends_at",
           "adjustable",
           "unadjustable_reason",
-          "minimum"
+          "minimum",
+          "maximum"
         ],
         "type": "object"
       },
@@ -72817,6 +73227,78 @@
         ],
         "type": "object"
       },
+      "AccountFeeRegionalRate": {
+        "properties": {
+          "default": {
+            "$ref": "#/components/schemas/AccountFeeRate",
+            "description": "The platform rate for this region before custom or inherited pricing is applied."
+          },
+          "fixed": {
+            "description": "The amount charged per event in effect. `null` when the fee has no fixed component.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/Money"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "maximum": {
+            "description": "The highest regional rate the caller may set. `null` when the fee is not adjustable or the caller is not capped.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/AccountFeeRate"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "minimum": {
+            "description": "The lowest regional rate the caller may set, present only when the fee is adjustable.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/AccountFeeRate"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "percentage": {
+            "description": "The percentage of the transaction in effect, where `2` means 2%. `null` when the fee has no percentage component.",
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "reset": {
+            "$ref": "#/components/schemas/AccountFeeRate",
+            "description": "The regional rate that takes effect when this account's custom rate is cleared, including inherited pricing."
+          },
+          "source": {
+            "description": "Where the regional rate in effect comes from: `default` is the platform rate, `custom` a rate negotiated for this account, and `inherited` a rate negotiated by the platform this account is connected to.",
+            "enum": [
+              "default",
+              "custom",
+              "inherited"
+            ],
+            "example": "default",
+            "type": "string"
+          }
+        },
+        "required": [
+          "percentage",
+          "fixed",
+          "source",
+          "minimum",
+          "maximum",
+          "default",
+          "reset"
+        ],
+        "type": "object"
+      },
       "AccountFees": {
         "properties": {
           "account_id": {
@@ -72943,10 +73425,20 @@
                   "decimals": 2,
                   "display_decimals": 2
                 },
+                "maximum": null,
                 "minimum": null,
                 "percentage": 15,
                 "region": "co",
                 "regions": {},
+                "reset": {
+                  "fixed": {
+                    "amount": "0.00",
+                    "currency": "usd",
+                    "decimals": 2,
+                    "display_decimals": 2
+                  },
+                  "percentage": 15
+                },
                 "source": "default",
                 "unadjustable_reason": "not_permitted"
               },
@@ -72959,10 +73451,15 @@
                 },
                 "ends_at": null,
                 "fixed": null,
+                "maximum": null,
                 "minimum": null,
                 "percentage": 15,
                 "region": null,
                 "regions": {},
+                "reset": {
+                  "fixed": null,
+                  "percentage": 15
+                },
                 "source": "default",
                 "unadjustable_reason": "not_permitted"
               },
@@ -72975,10 +73472,15 @@
                 },
                 "ends_at": null,
                 "fixed": null,
+                "maximum": null,
                 "minimum": null,
                 "percentage": 15,
                 "region": null,
                 "regions": {},
+                "reset": {
+                  "fixed": null,
+                  "percentage": 15
+                },
                 "source": "default",
                 "unadjustable_reason": "not_permitted"
               },
@@ -73001,10 +73503,20 @@
                   "decimals": 2,
                   "display_decimals": 2
                 },
+                "maximum": null,
                 "minimum": null,
                 "percentage": 3.9,
                 "region": "eu",
                 "regions": {},
+                "reset": {
+                  "fixed": {
+                    "amount": "0.30",
+                    "currency": "usd",
+                    "decimals": 2,
+                    "display_decimals": 2
+                  },
+                  "percentage": 3.9
+                },
                 "source": "default",
                 "unadjustable_reason": "not_permitted"
               },
@@ -73017,10 +73529,15 @@
                 },
                 "ends_at": null,
                 "fixed": null,
+                "maximum": null,
                 "minimum": null,
                 "percentage": 15,
                 "region": null,
                 "regions": {},
+                "reset": {
+                  "fixed": null,
+                  "percentage": 15
+                },
                 "source": "default",
                 "unadjustable_reason": "not_permitted"
               },
@@ -73043,10 +73560,20 @@
                   "decimals": 2,
                   "display_decimals": 2
                 },
+                "maximum": null,
                 "minimum": null,
                 "percentage": 2.9,
                 "region": "co",
                 "regions": {},
+                "reset": {
+                  "fixed": {
+                    "amount": "0.30",
+                    "currency": "usd",
+                    "decimals": 2,
+                    "display_decimals": 2
+                  },
+                  "percentage": 2.9
+                },
                 "source": "default",
                 "unadjustable_reason": "not_permitted"
               },
@@ -73069,10 +73596,20 @@
                   "decimals": 2,
                   "display_decimals": 2
                 },
+                "maximum": null,
                 "minimum": null,
                 "percentage": 1.5,
                 "region": "usa",
                 "regions": {},
+                "reset": {
+                  "fixed": {
+                    "amount": "0.00",
+                    "currency": "usd",
+                    "decimals": 2,
+                    "display_decimals": 2
+                  },
+                  "percentage": 1.5
+                },
                 "source": "default",
                 "unadjustable_reason": "not_permitted"
               },
@@ -73085,10 +73622,15 @@
                 },
                 "ends_at": null,
                 "fixed": null,
+                "maximum": null,
                 "minimum": null,
                 "percentage": 15,
                 "region": null,
                 "regions": {},
+                "reset": {
+                  "fixed": null,
+                  "percentage": 15
+                },
                 "source": "default",
                 "unadjustable_reason": "not_permitted"
               },
@@ -73111,10 +73653,20 @@
                   "decimals": 2,
                   "display_decimals": 2
                 },
+                "maximum": null,
                 "minimum": null,
                 "percentage": 2.9,
                 "region": "co",
                 "regions": {},
+                "reset": {
+                  "fixed": {
+                    "amount": "0.30",
+                    "currency": "usd",
+                    "decimals": 2,
+                    "display_decimals": 2
+                  },
+                  "percentage": 2.9
+                },
                 "source": "default",
                 "unadjustable_reason": "not_permitted"
               },
@@ -73127,10 +73679,15 @@
                 },
                 "ends_at": null,
                 "fixed": null,
+                "maximum": null,
                 "minimum": null,
                 "percentage": 15,
                 "region": null,
                 "regions": {},
+                "reset": {
+                  "fixed": null,
+                  "percentage": 15
+                },
                 "source": "default",
                 "unadjustable_reason": "not_permitted"
               },
@@ -73143,10 +73700,15 @@
                 },
                 "ends_at": null,
                 "fixed": null,
+                "maximum": null,
                 "minimum": null,
                 "percentage": 15,
                 "region": null,
                 "regions": {},
+                "reset": {
+                  "fixed": null,
+                  "percentage": 15
+                },
                 "source": "default",
                 "unadjustable_reason": "not_permitted"
               },
@@ -73169,10 +73731,20 @@
                   "decimals": 2,
                   "display_decimals": 2
                 },
+                "maximum": null,
                 "minimum": null,
                 "percentage": 2.9,
                 "region": "co",
                 "regions": {},
+                "reset": {
+                  "fixed": {
+                    "amount": "0.30",
+                    "currency": "usd",
+                    "decimals": 2,
+                    "display_decimals": 2
+                  },
+                  "percentage": 2.9
+                },
                 "source": "default",
                 "unadjustable_reason": "not_permitted"
               },
@@ -73185,10 +73757,15 @@
                 },
                 "ends_at": null,
                 "fixed": null,
+                "maximum": null,
                 "minimum": null,
                 "percentage": 15,
                 "region": null,
                 "regions": {},
+                "reset": {
+                  "fixed": null,
+                  "percentage": 15
+                },
                 "source": "default",
                 "unadjustable_reason": "not_permitted"
               },
@@ -73211,10 +73788,20 @@
                   "decimals": 2,
                   "display_decimals": 2
                 },
+                "maximum": null,
                 "minimum": null,
                 "percentage": 3.9,
                 "region": "ph",
                 "regions": {},
+                "reset": {
+                  "fixed": {
+                    "amount": "0.30",
+                    "currency": "usd",
+                    "decimals": 2,
+                    "display_decimals": 2
+                  },
+                  "percentage": 3.9
+                },
                 "source": "default",
                 "unadjustable_reason": "not_permitted"
               },
@@ -73237,10 +73824,20 @@
                   "decimals": 2,
                   "display_decimals": 2
                 },
+                "maximum": null,
                 "minimum": null,
                 "percentage": 3.9,
                 "region": "uk",
                 "regions": {},
+                "reset": {
+                  "fixed": {
+                    "amount": "0.30",
+                    "currency": "usd",
+                    "decimals": 2,
+                    "display_decimals": 2
+                  },
+                  "percentage": 3.9
+                },
                 "source": "default",
                 "unadjustable_reason": "not_permitted"
               },
@@ -73253,10 +73850,15 @@
                 },
                 "ends_at": null,
                 "fixed": null,
+                "maximum": null,
                 "minimum": null,
                 "percentage": 15,
                 "region": null,
                 "regions": {},
+                "reset": {
+                  "fixed": null,
+                  "percentage": 15
+                },
                 "source": "default",
                 "unadjustable_reason": "not_permitted"
               },
@@ -73269,10 +73871,15 @@
                 },
                 "ends_at": null,
                 "fixed": null,
+                "maximum": null,
                 "minimum": null,
                 "percentage": 15,
                 "region": null,
                 "regions": {},
+                "reset": {
+                  "fixed": null,
+                  "percentage": 15
+                },
                 "source": "default",
                 "unadjustable_reason": "not_permitted"
               },
@@ -73295,10 +73902,20 @@
                   "decimals": 2,
                   "display_decimals": 2
                 },
+                "maximum": null,
                 "minimum": null,
                 "percentage": 4.9,
                 "region": "mx",
                 "regions": {},
+                "reset": {
+                  "fixed": {
+                    "amount": "0.30",
+                    "currency": "usd",
+                    "decimals": 2,
+                    "display_decimals": 2
+                  },
+                  "percentage": 4.9
+                },
                 "source": "default",
                 "unadjustable_reason": "not_permitted"
               },
@@ -73321,10 +73938,20 @@
                   "decimals": 2,
                   "display_decimals": 2
                 },
+                "maximum": null,
                 "minimum": null,
                 "percentage": 3.9,
                 "region": "ke",
                 "regions": {},
+                "reset": {
+                  "fixed": {
+                    "amount": "2.00",
+                    "currency": "usd",
+                    "decimals": 2,
+                    "display_decimals": 2
+                  },
+                  "percentage": 3.9
+                },
                 "source": "default",
                 "unadjustable_reason": "not_permitted"
               },
@@ -73347,19 +73974,50 @@
                   "decimals": 2,
                   "display_decimals": 2
                 },
+                "maximum": null,
                 "minimum": null,
                 "percentage": 4.9,
                 "region": "cl",
                 "regions": {
                   "mx": {
+                    "default": {
+                      "fixed": {
+                        "amount": "0.30",
+                        "currency": "usd",
+                        "decimals": 2,
+                        "display_decimals": 2
+                      },
+                      "percentage": 4.9
+                    },
                     "fixed": {
                       "amount": "0.30",
                       "currency": "usd",
                       "decimals": 2,
                       "display_decimals": 2
                     },
-                    "percentage": 4.9
+                    "maximum": null,
+                    "minimum": null,
+                    "percentage": 4.9,
+                    "reset": {
+                      "fixed": {
+                        "amount": "0.30",
+                        "currency": "usd",
+                        "decimals": 2,
+                        "display_decimals": 2
+                      },
+                      "percentage": 4.9
+                    },
+                    "source": "default"
                   }
+                },
+                "reset": {
+                  "fixed": {
+                    "amount": "0.30",
+                    "currency": "usd",
+                    "decimals": 2,
+                    "display_decimals": 2
+                  },
+                  "percentage": 4.9
                 },
                 "source": "default",
                 "unadjustable_reason": "not_permitted"
@@ -73383,10 +74041,20 @@
                   "decimals": 2,
                   "display_decimals": 2
                 },
+                "maximum": null,
                 "minimum": null,
                 "percentage": 2.9,
                 "region": "ar",
                 "regions": {},
+                "reset": {
+                  "fixed": {
+                    "amount": "0.30",
+                    "currency": "usd",
+                    "decimals": 2,
+                    "display_decimals": 2
+                  },
+                  "percentage": 2.9
+                },
                 "source": "default",
                 "unadjustable_reason": "not_permitted"
               },
@@ -73399,10 +74067,15 @@
                 },
                 "ends_at": null,
                 "fixed": null,
+                "maximum": null,
                 "minimum": null,
                 "percentage": 15,
                 "region": null,
                 "regions": {},
+                "reset": {
+                  "fixed": null,
+                  "percentage": 15
+                },
                 "source": "default",
                 "unadjustable_reason": "not_permitted"
               },
@@ -73425,10 +74098,20 @@
                   "decimals": 2,
                   "display_decimals": 2
                 },
+                "maximum": null,
                 "minimum": null,
                 "percentage": 2.9,
                 "region": "co",
                 "regions": {},
+                "reset": {
+                  "fixed": {
+                    "amount": "0.30",
+                    "currency": "usd",
+                    "decimals": 2,
+                    "display_decimals": 2
+                  },
+                  "percentage": 2.9
+                },
                 "source": "default",
                 "unadjustable_reason": "not_permitted"
               },
@@ -73451,10 +74134,20 @@
                   "decimals": 2,
                   "display_decimals": 2
                 },
+                "maximum": null,
                 "minimum": null,
                 "percentage": 4.9,
                 "region": "mx",
                 "regions": {},
+                "reset": {
+                  "fixed": {
+                    "amount": "0.30",
+                    "currency": "usd",
+                    "decimals": 2,
+                    "display_decimals": 2
+                  },
+                  "percentage": 4.9
+                },
                 "source": "default",
                 "unadjustable_reason": "not_permitted"
               },
@@ -73477,10 +74170,20 @@
                   "decimals": 2,
                   "display_decimals": 2
                 },
+                "maximum": null,
                 "minimum": null,
                 "percentage": 3.9,
                 "region": "pe",
                 "regions": {},
+                "reset": {
+                  "fixed": {
+                    "amount": "0.30",
+                    "currency": "usd",
+                    "decimals": 2,
+                    "display_decimals": 2
+                  },
+                  "percentage": 3.9
+                },
                 "source": "default",
                 "unadjustable_reason": "not_permitted"
               },
@@ -73503,10 +74206,20 @@
                   "decimals": 2,
                   "display_decimals": 2
                 },
+                "maximum": null,
                 "minimum": null,
                 "percentage": 2.9,
                 "region": "co",
                 "regions": {},
+                "reset": {
+                  "fixed": {
+                    "amount": "0.30",
+                    "currency": "usd",
+                    "decimals": 2,
+                    "display_decimals": 2
+                  },
+                  "percentage": 2.9
+                },
                 "source": "default",
                 "unadjustable_reason": "not_permitted"
               },
@@ -73529,10 +74242,20 @@
                   "decimals": 2,
                   "display_decimals": 2
                 },
+                "maximum": null,
                 "minimum": null,
                 "percentage": 2.9,
                 "region": "ar",
                 "regions": {},
+                "reset": {
+                  "fixed": {
+                    "amount": "0.30",
+                    "currency": "usd",
+                    "decimals": 2,
+                    "display_decimals": 2
+                  },
+                  "percentage": 2.9
+                },
                 "source": "default",
                 "unadjustable_reason": "not_permitted"
               },
@@ -73545,10 +74268,15 @@
                 },
                 "ends_at": null,
                 "fixed": null,
+                "maximum": null,
                 "minimum": null,
                 "percentage": 15,
                 "region": null,
                 "regions": {},
+                "reset": {
+                  "fixed": null,
+                  "percentage": 15
+                },
                 "source": "default",
                 "unadjustable_reason": "not_permitted"
               },
@@ -73571,10 +74299,20 @@
                   "decimals": 2,
                   "display_decimals": 2
                 },
+                "maximum": null,
                 "minimum": null,
                 "percentage": 3.9,
                 "region": "cl",
                 "regions": {},
+                "reset": {
+                  "fixed": {
+                    "amount": "0.30",
+                    "currency": "usd",
+                    "decimals": 2,
+                    "display_decimals": 2
+                  },
+                  "percentage": 3.9
+                },
                 "source": "default",
                 "unadjustable_reason": "not_permitted"
               },
@@ -73587,10 +74325,15 @@
                 },
                 "ends_at": null,
                 "fixed": null,
+                "maximum": null,
                 "minimum": null,
                 "percentage": 3,
                 "region": null,
                 "regions": {},
+                "reset": {
+                  "fixed": null,
+                  "percentage": 3
+                },
                 "source": "default",
                 "unadjustable_reason": "not_permitted"
               },
@@ -73613,10 +74356,20 @@
                   "decimals": 2,
                   "display_decimals": 2
                 },
+                "maximum": null,
                 "minimum": null,
                 "percentage": 3.9,
                 "region": "cl",
                 "regions": {},
+                "reset": {
+                  "fixed": {
+                    "amount": "3.00",
+                    "currency": "usd",
+                    "decimals": 2,
+                    "display_decimals": 2
+                  },
+                  "percentage": 3.9
+                },
                 "source": "default",
                 "unadjustable_reason": "not_permitted"
               },
@@ -73629,10 +74382,15 @@
                 },
                 "ends_at": null,
                 "fixed": null,
+                "maximum": null,
                 "minimum": null,
                 "percentage": 15,
                 "region": null,
                 "regions": {},
+                "reset": {
+                  "fixed": null,
+                  "percentage": 15
+                },
                 "source": "default",
                 "unadjustable_reason": "not_permitted"
               },
@@ -73655,10 +74413,20 @@
                   "decimals": 2,
                   "display_decimals": 2
                 },
+                "maximum": null,
                 "minimum": null,
                 "percentage": 2.9,
                 "region": "mx",
                 "regions": {},
+                "reset": {
+                  "fixed": {
+                    "amount": "0.30",
+                    "currency": "usd",
+                    "decimals": 2,
+                    "display_decimals": 2
+                  },
+                  "percentage": 2.9
+                },
                 "source": "default",
                 "unadjustable_reason": "not_permitted"
               },
@@ -73671,10 +74439,15 @@
                 },
                 "ends_at": null,
                 "fixed": null,
+                "maximum": null,
                 "minimum": null,
                 "percentage": 15,
                 "region": null,
                 "regions": {},
+                "reset": {
+                  "fixed": null,
+                  "percentage": 15
+                },
                 "source": "default",
                 "unadjustable_reason": "not_permitted"
               },
@@ -73687,10 +74460,15 @@
                 },
                 "ends_at": null,
                 "fixed": null,
+                "maximum": null,
                 "minimum": null,
                 "percentage": 15,
                 "region": null,
                 "regions": {},
+                "reset": {
+                  "fixed": null,
+                  "percentage": 15
+                },
                 "source": "default",
                 "unadjustable_reason": "not_permitted"
               },
@@ -73703,10 +74481,15 @@
                 },
                 "ends_at": null,
                 "fixed": null,
+                "maximum": null,
                 "minimum": null,
                 "percentage": 15,
                 "region": null,
                 "regions": {},
+                "reset": {
+                  "fixed": null,
+                  "percentage": 15
+                },
                 "source": "default",
                 "unadjustable_reason": "not_permitted"
               },
@@ -73729,10 +74512,20 @@
                   "decimals": 2,
                   "display_decimals": 2
                 },
+                "maximum": null,
                 "minimum": null,
                 "percentage": 2.9,
                 "region": "eu",
                 "regions": {},
+                "reset": {
+                  "fixed": {
+                    "amount": "0.30",
+                    "currency": "usd",
+                    "decimals": 2,
+                    "display_decimals": 2
+                  },
+                  "percentage": 2.9
+                },
                 "source": "default",
                 "unadjustable_reason": "not_permitted"
               },
@@ -73755,10 +74548,20 @@
                   "decimals": 2,
                   "display_decimals": 2
                 },
+                "maximum": null,
                 "minimum": null,
                 "percentage": 2.9,
                 "region": "usa",
                 "regions": {},
+                "reset": {
+                  "fixed": {
+                    "amount": "0.30",
+                    "currency": "usd",
+                    "decimals": 2,
+                    "display_decimals": 2
+                  },
+                  "percentage": 2.9
+                },
                 "source": "default",
                 "unadjustable_reason": "not_permitted"
               },
@@ -73781,10 +74584,20 @@
                   "decimals": 2,
                   "display_decimals": 2
                 },
+                "maximum": null,
                 "minimum": null,
                 "percentage": 1.5,
                 "region": "usa",
                 "regions": {},
+                "reset": {
+                  "fixed": {
+                    "amount": "0.00",
+                    "currency": "usd",
+                    "decimals": 2,
+                    "display_decimals": 2
+                  },
+                  "percentage": 1.5
+                },
                 "source": "default",
                 "unadjustable_reason": "not_permitted"
               },
@@ -73807,10 +74620,20 @@
                   "decimals": 2,
                   "display_decimals": 2
                 },
+                "maximum": null,
                 "minimum": null,
                 "percentage": 4.9,
                 "region": "cl",
                 "regions": {},
+                "reset": {
+                  "fixed": {
+                    "amount": "0.30",
+                    "currency": "usd",
+                    "decimals": 2,
+                    "display_decimals": 2
+                  },
+                  "percentage": 4.9
+                },
                 "source": "default",
                 "unadjustable_reason": "not_permitted"
               },
@@ -73833,10 +74656,20 @@
                   "decimals": 2,
                   "display_decimals": 2
                 },
+                "maximum": null,
                 "minimum": null,
                 "percentage": 3.9,
                 "region": "uk",
                 "regions": {},
+                "reset": {
+                  "fixed": {
+                    "amount": "0.30",
+                    "currency": "usd",
+                    "decimals": 2,
+                    "display_decimals": 2
+                  },
+                  "percentage": 3.9
+                },
                 "source": "default",
                 "unadjustable_reason": "not_permitted"
               },
@@ -73859,10 +74692,20 @@
                   "decimals": 2,
                   "display_decimals": 2
                 },
+                "maximum": null,
                 "minimum": null,
                 "percentage": 3.9,
                 "region": "pe",
                 "regions": {},
+                "reset": {
+                  "fixed": {
+                    "amount": "0.30",
+                    "currency": "usd",
+                    "decimals": 2,
+                    "display_decimals": 2
+                  },
+                  "percentage": 3.9
+                },
                 "source": "default",
                 "unadjustable_reason": "not_permitted"
               },
@@ -73875,10 +74718,15 @@
                 },
                 "ends_at": null,
                 "fixed": null,
+                "maximum": null,
                 "minimum": null,
                 "percentage": 15,
                 "region": null,
                 "regions": {},
+                "reset": {
+                  "fixed": null,
+                  "percentage": 15
+                },
                 "source": "default",
                 "unadjustable_reason": "not_permitted"
               }
@@ -73910,10 +74758,20 @@
                   "decimals": 2,
                   "display_decimals": 2
                 },
+                "maximum": null,
                 "minimum": null,
                 "percentage": null,
                 "region": null,
                 "regions": {},
+                "reset": {
+                  "fixed": {
+                    "amount": "30.00",
+                    "currency": "usd",
+                    "decimals": 2,
+                    "display_decimals": 2
+                  },
+                  "percentage": null
+                },
                 "source": "default",
                 "unadjustable_reason": "not_permitted"
               },
@@ -73926,10 +74784,15 @@
                 },
                 "ends_at": null,
                 "fixed": null,
+                "maximum": null,
                 "minimum": null,
                 "percentage": 0,
                 "region": null,
                 "regions": {},
+                "reset": {
+                  "fixed": null,
+                  "percentage": 0
+                },
                 "source": "default",
                 "unadjustable_reason": "not_permitted"
               },
@@ -73952,10 +74815,20 @@
                   "decimals": 2,
                   "display_decimals": 2
                 },
+                "maximum": null,
                 "minimum": null,
                 "percentage": 0,
                 "region": null,
                 "regions": {},
+                "reset": {
+                  "fixed": {
+                    "amount": "0.00",
+                    "currency": "usd",
+                    "decimals": 2,
+                    "display_decimals": 2
+                  },
+                  "percentage": 0
+                },
                 "source": "default",
                 "unadjustable_reason": "not_permitted"
               },
@@ -73978,10 +74851,20 @@
                   "decimals": 2,
                   "display_decimals": 2
                 },
+                "maximum": null,
                 "minimum": null,
                 "percentage": null,
                 "region": null,
                 "regions": {},
+                "reset": {
+                  "fixed": {
+                    "amount": "2.50",
+                    "currency": "usd",
+                    "decimals": 2,
+                    "display_decimals": 2
+                  },
+                  "percentage": null
+                },
                 "source": "default",
                 "unadjustable_reason": "not_permitted"
               },
@@ -74004,10 +74887,20 @@
                   "decimals": 2,
                   "display_decimals": 2
                 },
+                "maximum": null,
                 "minimum": null,
                 "percentage": 0,
                 "region": null,
                 "regions": {},
+                "reset": {
+                  "fixed": {
+                    "amount": "0.00",
+                    "currency": "usd",
+                    "decimals": 2,
+                    "display_decimals": 2
+                  },
+                  "percentage": 0
+                },
                 "source": "default",
                 "unadjustable_reason": "not_permitted"
               },
@@ -74030,10 +74923,20 @@
                   "decimals": 2,
                   "display_decimals": 2
                 },
+                "maximum": null,
                 "minimum": null,
                 "percentage": null,
                 "region": null,
                 "regions": {},
+                "reset": {
+                  "fixed": {
+                    "amount": "2.50",
+                    "currency": "usd",
+                    "decimals": 2,
+                    "display_decimals": 2
+                  },
+                  "percentage": null
+                },
                 "source": "default",
                 "unadjustable_reason": "not_permitted"
               }
@@ -74169,6 +75072,44 @@
           "title",
           "route",
           "logo_url"
+        ],
+        "type": "object"
+      },
+      "AccountPartner": {
+        "properties": {
+          "email": {
+            "description": "Email address for contacting the partner. Null when the partner has not added their own email address.",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "id": {
+            "description": "User ID, prefixed `user_`.",
+            "type": "string"
+          },
+          "name": {
+            "description": "Display name.",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "profile_picture": {
+            "$ref": "#/components/schemas/UserProfilePicture",
+            "description": "Avatar wrapper; its `url` is always present, using a generated placeholder when the user set no picture."
+          },
+          "username": {
+            "description": "Public username.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "username",
+          "name",
+          "profile_picture",
+          "email"
         ],
         "type": "object"
       },
@@ -74386,6 +75327,7 @@
               "update_payout_profile",
               "card_usage_review",
               "verify_identity",
+              "verify_airwallex_account",
               "sign_formation_documents",
               "connect_fulfillment_tracker",
               "setup_apple_pay_domains",
@@ -83739,6 +84681,7 @@
               "dispute_alert_fee",
               "dispute_hold_adjustment",
               "dispute_representment_fee",
+              "economic_intelligence_percentage_fee",
               "external_card_load_deposit",
               "fraud_prevention_fee",
               "fx_percentage_fee",
@@ -86145,6 +87088,13 @@
             "example": "manual",
             "type": "string"
           },
+          "rewards": {
+            "items": {
+              "$ref": "#/components/schemas/PartnerReferralReward",
+              "description": "Rewards offered by this request."
+            },
+            "type": "array"
+          },
           "status": {
             "description": "The approval state, or null for requests without an approval process.",
             "enum": [
@@ -86175,7 +87125,66 @@
           "created_at",
           "updated_at",
           "account",
-          "partner"
+          "partner",
+          "rewards"
+        ],
+        "type": "object"
+      },
+      "PartnerReferralReward": {
+        "properties": {
+          "bot_qualification_type": {
+            "description": "Activity that qualifies for this reward, when specified.",
+            "enum": [
+              "sales",
+              "ad_spend",
+              null
+            ],
+            "example": "sales",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "id": {
+            "description": "Partner reward ID, prefixed `prwd_`.",
+            "type": "string"
+          },
+          "qualification_amount": {
+            "$ref": "#/components/schemas/Money",
+            "description": "USD amount of qualifying activity required to earn the reward."
+          },
+          "recipient": {
+            "description": "Reward recipient's role, or null for a fixed user who is not the requesting partner.",
+            "enum": [
+              "business",
+              "partner",
+              null
+            ],
+            "example": "business",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "recipient_id": {
+            "description": "Concrete recipient's user or business ID, or null until a business redeems the offer.",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "reward_amount": {
+            "$ref": "#/components/schemas/Money",
+            "description": "USD amount granted after qualification."
+          }
+        },
+        "required": [
+          "id",
+          "recipient",
+          "recipient_id",
+          "bot_qualification_type",
+          "qualification_amount",
+          "reward_amount"
         ],
         "type": "object"
       },
@@ -87223,7 +88232,8 @@
               "billing_percentage_fee",
               "revshare_percentage_fee",
               "application_fee",
-              "high_risk_merchant_fee"
+              "high_risk_merchant_fee",
+              "economic_intelligence_percentage_fee"
             ],
             "example": "whop_processing_fee",
             "type": "string"

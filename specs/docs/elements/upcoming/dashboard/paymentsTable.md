@@ -28,7 +28,7 @@ Mounts inside [`Dashboard`](/elements/upcoming/dashboard/overview). `accountId` 
         ```
 
         ```html JavaScript theme={null}
-        <script src="https://js.whop.cloud/elements/amber/elements.js" data-whop-elements></script>
+        <script src="https://cdn.whop.com/elements/amber/elements.js" data-whop-elements></script>
         <script type="module">
           const dashboard = window.WhopElements().dashboard.create({ /* options */ });
           dashboard.create('paymentsTable', {

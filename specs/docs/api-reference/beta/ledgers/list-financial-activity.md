@@ -10,4 +10,4 @@
 
 ## OpenAPI
 
-<!-- OpenAPI source: `get /financial-activity` in specs/api-v1-native.json (inlined by docs.whop.com; stripped on download) -->
+<!-- OpenAPI source: `get /financial_activity` in specs/api-v1-native.json (inlined by docs.whop.com; stripped on download) -->

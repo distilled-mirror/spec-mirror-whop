@@ -4,9 +4,9 @@
 
 # Dashboard
 
-> An account's own payment records, embedded on your site. Scope it to an account with `accountId`, then mount `paymentsTable` for the account's payments and `paymentDetail` for one payment. Both read with the same credential, so two surfaces side by side always show the same account.
+> An account's own dashboard surfaces, embedded on your site. Scope it to an account with `accountId`, then mount `paymentsTable` for the account's payments, `paymentDetail` for one payment, `required-actions` for the outstanding-action banners Whop's own dashboard shows above the balance — identity verification, deposits, tax, and the rest — and `verification` for the identity-only nudge. Every surface reads with the same credential, so two side by side always show the same account. The banners render nothing once the account has nothing outstanding, so they can sit permanently in a layout, and they report the presses they cannot answer themselves — Add money and Verify — so the host mounts its own deposit or verification flow, such as the `wallet` controller's `deposit` element or the `verifications` controller's `kyc` element.
 
-<Info>This page documents `@whop/elements@1.0.0-beta.5` and `@whop/elements-react@1.0.0-beta.5`.</Info>
+<Info>This page documents `@whop/elements@1.0.0-beta.6` and `@whop/elements-react@1.0.0-beta.6`.</Info>
 
 *Pre-release, not yet part of a stable release.*
 
@@ -17,7 +17,7 @@ Assemble the elements with example data. Drive the controls, add and arrange ele
 <div data-whop-demo-shell style={{ position: "relative", minHeight: "480px", transition: "min-height 200ms ease" }}>
   <div data-whop-demo-skeleton style={{ position: "absolute", inset: "0", borderRadius: "12px", background: "rgba(140, 140, 140, 0.12)", pointerEvents: "none", transition: "opacity 200ms ease" }} />
 
-  <div data-whop-demo-native="playground:dashboard" data-whop-elements-version="1.0.0-beta.5" style={{ position: "relative" }} />
+  <div data-whop-demo-native="playground:dashboard" data-whop-elements-version="1.0.0-beta.6" style={{ position: "relative" }} />
 </div>
 
 <div data-whop-usage="dashboard/playground">
@@ -38,7 +38,7 @@ Assemble the elements with example data. Drive the controls, add and arrange ele
     ```
 
     ```html JavaScript theme={null}
-    <script src="https://js.whop.cloud/elements/amber/elements.js" data-whop-elements></script>
+    <script src="https://cdn.whop.com/elements/amber/elements.js" data-whop-elements></script>
     <script type="module">
       const dashboard = window.WhopElements().dashboard.create({ /* options */ });
     </script>
@@ -51,11 +51,11 @@ Assemble the elements with example data. Drive the controls, add and arrange ele
 Pass these to `whop.dashboard.create({ … })`, or as props on `<Dashboard>` in React.
 
 <ResponseField name="accessToken" type="string">
-  A scoped token every surface under this handle reads with. Mint one token for the whole handle on your server with `POST /api/v1/access_tokens`, and set a fresh one with `update({ accessToken })` before it expires. Reading payments needs `payment:basic:read`; buyer emails additionally need `member:email:read`, the customer journey `member:basic:read`, the tracking column `shipment:basic:read`, and the product and plan names on a payment `access_pass:basic:read` and `plan:basic:read`. Omitted, the reads carry the viewer's own session, which only answers same-origin.
+  A scoped token every surface under this handle reads with. Mint one token for the whole handle on your server with `POST /api/v1/access_tokens`, and set a fresh one with `update({ accessToken })` before it expires. Reading payments needs `payment:basic:read`; buyer emails additionally need `member:email:read`, the customer journey `member:basic:read`, the tracking column `shipment:basic:read`, and the product and plan names on a payment `access_pass:basic:read` and `plan:basic:read`. The banners need `payout:account:read`, and starting verification from the action bar `identity:write`. Omitted, the reads carry the viewer's own session, which only answers same-origin.
 </ResponseField>
 
 <ResponseField name="accountId" type="string" required>
-  Account ID, prefixed `biz_`, whose payments these surfaces read.
+  Account or user ID whose records these surfaces read. Account IDs are prefixed `biz_`; user IDs are prefixed `user_`, can read only the viewer's own outstanding actions, and have no payments.
 </ResponseField>
 
 <ResponseField name="appearance" type="Appearance">
@@ -97,6 +97,14 @@ Destroys every element and sub-controller this handle created, removes the contr
 The elements this group mounts. Each has its own page:
 
 <CardGroup cols={2}>
+  <Card title="RequiredActionsElement" href="/elements/beta/dashboard/required-actions">
+    The outstanding-action banners from Whop's balance dashboard — identity verification, deposits, tax, and the rest — in the same order the API returns them. An account with nothing outstanding renders nothing at all, so the element can sit permanently in a layout. Copy comes from the API. Pressing Verify starts a hosted identity session and leaves for it; Add money reports `depositRequested` and stays put, so the host mounts its own deposit flow — the `wallet` controller's `deposit` element, say; every other button follows the action's own link. Reads with the Dashboard handle's `accessToken`, which needs `payout:account:read`, plus `identity:write` to start verification. A failed read renders nothing rather than an error — a banner should never become the loudest thing on someone else's page.
+  </Card>
+
+  <Card title="VerificationElement" href="/elements/beta/dashboard/verification">
+    A banner asking the account holder to verify their identity, shown only while verification is outstanding — an account that has already verified renders nothing at all, so the element can sit permanently in a layout. The headline and status messages come from the API, with a shorter description when inviting the account holder to start verification, so they track the account's actual state: an unstarted account is invited to unlock cards and payouts, one under review reads as pending, and a failed or flagged one says so. Pressing the button reports `verificationRequested` and stays put, so the host mounts its own verification — the `verifications` controller's `kyc` element, say. Reads with the Dashboard handle's `accessToken`, which needs `payout:account:read`. A failed read renders nothing rather than an error — a nudge should never become the loudest thing on the page.
+  </Card>
+
   <Card title="PaymentsTableElement" href="/elements/beta/dashboard/paymentsTable">
     The dashboard payments table with status cards, search, filters, sorting, row selection, CSV export, column settings, and pagination. Reads all payment pages to compute complete counts and filter locally; intended for accounts with modest payment histories. Customer details and refunds are handed to your application through events.
   </Card>

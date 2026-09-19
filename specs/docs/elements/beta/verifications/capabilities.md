@@ -6,7 +6,7 @@
 
 > The account's verification standing: whether individual and business verification are done, and which capabilities that unlocks. Read-only — pressing a verify button reports `verificationRequested` and stays put, so the host mounts its own flow, such as this namespace's `kyc` element. Both halves can be hidden, so a host that only wants the capability list, or only the two verification rows, can drop the other.
 
-<Info>This page documents `@whop/elements@1.0.0-beta.5` and `@whop/elements-react@1.0.0-beta.5`.</Info>
+<Info>This page documents `@whop/elements@1.0.0-beta.6` and `@whop/elements-react@1.0.0-beta.6`.</Info>
 
 *Pre-release, not yet part of a stable release.*
 
@@ -32,7 +32,7 @@ Mounts inside [`Verifications`](/elements/beta/verifications/overview). Pass pro
         ```
 
         ```html JavaScript theme={null}
-        <script src="https://js.whop.cloud/elements/amber/elements.js" data-whop-elements></script>
+        <script src="https://cdn.whop.com/elements/amber/elements.js" data-whop-elements></script>
         <script type="module">
           const verifications = window.WhopElements().verifications.create({ /* options */ });
           verifications.create('capabilities', { onVerificationRequested: (e) => console.log(e) }).mount('#verifications-capabilities');
@@ -46,7 +46,7 @@ Mounts inside [`Verifications`](/elements/beta/verifications/overview). Pass pro
     <div data-whop-demo-shell style={{ position: "relative", minHeight: "320px", transition: "min-height 200ms ease" }}>
       <div data-whop-demo-skeleton style={{ position: "absolute", inset: "0", borderRadius: "12px", background: "rgba(140, 140, 140, 0.12)", pointerEvents: "none", transition: "opacity 200ms ease" }} />
 
-      <div data-whop-demo-native="element:verifications/capabilities" data-whop-elements-version="1.0.0-beta.5" style={{ position: "relative" }} />
+      <div data-whop-demo-native="element:verifications/capabilities" data-whop-elements-version="1.0.0-beta.6" style={{ position: "relative" }} />
     </div>
 
     <p style={{ fontSize: "0.8125rem", opacity: 0.7 }}>Example data. [Open the Playground](/elements/beta/verifications/overview#playground).</p>

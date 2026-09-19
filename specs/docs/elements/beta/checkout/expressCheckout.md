@@ -6,7 +6,7 @@
 
 > One-press Apple Pay and Google Pay buttons for a checkout — the OS payment sheet collects whatever the session still needs (the buyer's email, a phone number where the seller collects one, a shipping address for physical goods, and in Apple Pay a promo code where the seller offers entry) and one press finishes the purchase. It shares the checkout's entry slot with the full checkout element, so a handle mounts exactly one of the two: this button alone where the purchase is simple enough for a sheet to finish, or the full checkout surface for everything else. Renders only the wallets the buyer's device can actually pay with — and the checkout's own payment method configuration allows — using the served button art, and renders nothing where no wallet is available. Both wallets require the page's domain to be a verified payment method domain: first-party whop.com pages are pre-approved, and any other site must register its domain through the Payment Method Domains API before either button renders there. Offering Google Pay on your own site is subject to the Google Pay API Terms of Service. A checkout the sheet cannot honestly finish — a waitlist join, a transfer, a form question only a page can ask — refuses loudly instead of rendering a doomed button.
 
-<Info>This page documents `@whop/elements@1.0.0-beta.5` and `@whop/elements-react@1.0.0-beta.5`.</Info>
+<Info>This page documents `@whop/elements@1.0.0-beta.6` and `@whop/elements-react@1.0.0-beta.6`.</Info>
 
 *Pre-release, not yet part of a stable release.*
 
@@ -34,7 +34,7 @@ Mounts inside [`Checkout`](/elements/beta/checkout/overview). Pass props and cal
         ```
 
         ```html JavaScript theme={null}
-        <script src="https://js.whop.cloud/elements/amber/elements.js" data-whop-elements></script>
+        <script src="https://cdn.whop.com/elements/amber/elements.js" data-whop-elements></script>
         <script type="module">
           const checkout = window.WhopElements().checkout.create({ /* options */ });
           checkout.create('expressCheckout').mount('#checkout-expressCheckout');
@@ -48,7 +48,7 @@ Mounts inside [`Checkout`](/elements/beta/checkout/overview). Pass props and cal
     <div data-whop-demo-shell style={{ position: "relative", minHeight: "320px", transition: "min-height 200ms ease" }}>
       <div data-whop-demo-skeleton style={{ position: "absolute", inset: "0", borderRadius: "12px", background: "rgba(140, 140, 140, 0.12)", pointerEvents: "none", transition: "opacity 200ms ease" }} />
 
-      <div data-whop-demo-native="element:checkout/expressCheckout" data-whop-elements-version="1.0.0-beta.5" style={{ position: "relative" }} />
+      <div data-whop-demo-native="element:checkout/expressCheckout" data-whop-elements-version="1.0.0-beta.6" style={{ position: "relative" }} />
     </div>
 
     <p style={{ fontSize: "0.8125rem", opacity: 0.7 }}>Example data. [Open the Playground](/elements/beta/checkout/overview#playground).</p>

@@ -6,7 +6,7 @@
 
 > Collects the buyer's email and passes it to `payments.createConfirmationToken()` while mounted. Explicit `billingDetails.email` wins. A matching Whop account shows optional sign-in with code verification. Successful sign-in unlocks saved payment methods in the payment element. Buyers can continue as guests.
 
-<Info>This page documents `@whop/elements@1.0.0-beta.5` and `@whop/elements-react@1.0.0-beta.5`.</Info>
+<Info>This page documents `@whop/elements@1.0.0-beta.6` and `@whop/elements-react@1.0.0-beta.6`.</Info>
 
 *Pre-release, not yet part of a stable release.*
 
@@ -54,7 +54,7 @@
         ```
 
         ```html JavaScript theme={null}
-        <script src="https://js.whop.cloud/elements/amber/elements.js" data-whop-elements></script>
+        <script src="https://cdn.whop.com/elements/amber/elements.js" data-whop-elements></script>
         <script type="module">
           const payments = window.WhopElements().payments.create({ /* options */ });
           payments.create('email', { onChange: (e) => console.log(e) }).mount('#payments-email');
@@ -91,7 +91,7 @@
       <div data-whop-demo-shell style={{ position: "relative", minHeight: "320px", transition: "min-height 200ms ease" }}>
         <div data-whop-demo-skeleton style={{ position: "absolute", inset: "0", borderRadius: "12px", background: "rgba(140, 140, 140, 0.12)", pointerEvents: "none", transition: "opacity 200ms ease" }} />
 
-        <div data-whop-demo-native="element:payments/email" data-whop-elements-version="1.0.0-beta.5" style={{ position: "relative" }} />
+        <div data-whop-demo-native="element:payments/email" data-whop-elements-version="1.0.0-beta.6" style={{ position: "relative" }} />
       </div>
 
       <p style={{ fontSize: "0.8125rem", opacity: 0.7 }}>Example data. [Open the Playground](/elements/beta/payments/overview#playground).</p>

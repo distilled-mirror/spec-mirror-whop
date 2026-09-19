@@ -27,6 +27,7 @@ These exist on the Legacy API and the Current API. Build new integrations agains
 | [Checkout configurations](/api-reference/checkout-configurations/checkout-configuration) | [Checkout configurations](/api-reference/beta/checkout-configurations/checkout-configuration) |
 | Companies                                                                                | [Accounts](/api-reference/beta/accounts/account), same object, renamed                        |
 | [Dispute alerts](/api-reference/dispute-alerts/dispute-alert)                            | [Dispute alerts](/api-reference/beta/dispute-alerts/dispute-alert)                            |
+| Fee markups                                                                              | [Account fees](/api-reference/beta/accounts/account#fee-markups)                              |
 | [Files](/api-reference/files/file)                                                       | Files                                                                                         |
 | [Disputes](/api-reference/disputes/dispute)                                              | [Disputes](/api-reference/beta/disputes/dispute)                                              |
 | [Ledger accounts](/api-reference/ledger-accounts/ledger-account)                         | Ledgers                                                                                       |
@@ -48,4 +49,4 @@ These exist on the Legacy API and the Current API. Build new integrations agains
 
 These have no Current API successor. Using them is fine, and they stay supported.
 
-Access tokens · Account links · Ad reports · Affiliates · AI chats · Authorized users · Chat channels · Company token transactions · Course chapters · Course lesson interactions · Course lessons · Course students · Courses · DM channels · DM members · Entries · Experiences · Fee markups · Forum posts · Forums · Identity profiles · Invoices · Leads · Messages · Payment methods · Payout accounts · Reactions · Refunds · Reviews · Support channels · Topups
+Access tokens · Account links · Ad reports · Affiliates · AI chats · Authorized users · Chat channels · Company token transactions · Course chapters · Course lesson interactions · Course lessons · Course students · Courses · DM channels · DM members · Entries · Experiences · Forum posts · Forums · Identity profiles · Invoices · Leads · Messages · Payment methods · Payout accounts · Reactions · Refunds · Reviews · Support channels · Topups

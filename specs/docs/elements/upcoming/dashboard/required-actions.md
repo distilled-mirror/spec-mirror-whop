@@ -28,7 +28,7 @@ Mounts inside [`Dashboard`](/elements/upcoming/dashboard/overview). `accountId` 
         ```
 
         ```html JavaScript theme={null}
-        <script src="https://js.whop.cloud/elements/amber/elements.js" data-whop-elements></script>
+        <script src="https://cdn.whop.com/elements/amber/elements.js" data-whop-elements></script>
         <script type="module">
           const dashboard = window.WhopElements().dashboard.create({ /* options */ });
           dashboard.create('required-actions', {
@@ -67,7 +67,7 @@ Pass callbacks in the create options or React props.
 
 The viewer pressed a banner button. Fires for every action, including ones the element also handles itself.
 
-**Signature:** `((payload: { action: "deposit_funds" | "review_held_payments" | "accept_airwallex_terms" | "submit_information_request" | "update_automatic_withdrawal_method" | "reauthorize_payout_methods" | "update_payout_profile" | "card_usage_review" | "verify_identity" | "sign_formation_documents" | "connect_fulfillment_tracker" | "setup_apple_pay_domains" | "configure_tax_remitter" | "add_vat_registration" | "enable_two_factor_authentication"; accountId: string; }) => void)`
+**Signature:** `((payload: { action: "deposit_funds" | "review_held_payments" | "accept_airwallex_terms" | "submit_information_request" | "update_automatic_withdrawal_method" | "reauthorize_payout_methods" | "update_payout_profile" | "card_usage_review" | "verify_identity" | "verify_airwallex_account" | "sign_formation_documents" | "connect_fulfillment_tracker" | "setup_apple_pay_domains" | "configure_tax_remitter" | "add_vat_registration" | "enable_two_factor_authentication"; accountId: string; }) => void)`
 
 ### `onIdentityVerificationRequested`
 

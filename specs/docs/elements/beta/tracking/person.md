@@ -6,7 +6,7 @@
 
 > Everything the account knows about one person: who they are, where they came from, what they have spent, and every event they have performed, in order. The view a person click leads to: mount it on the page `links.person` points at, or present it over your own page when `people` or `events` raise `personOpened`. `identifier` takes any identifier a person has been seen under, so a `personOpened` payload resolves here unchanged.
 
-<Info>This page documents `@whop/elements@1.0.0-beta.5` and `@whop/elements-react@1.0.0-beta.5`.</Info>
+<Info>This page documents `@whop/elements@1.0.0-beta.6` and `@whop/elements-react@1.0.0-beta.6`.</Info>
 
 *Pre-release, not yet part of a stable release.*
 
@@ -34,7 +34,7 @@ Mounts inside [`Tracking`](/elements/beta/tracking/overview). `accountId` and `a
         ```
 
         ```html JavaScript theme={null}
-        <script src="https://js.whop.cloud/elements/amber/elements.js" data-whop-elements></script>
+        <script src="https://cdn.whop.com/elements/amber/elements.js" data-whop-elements></script>
         <script type="module">
           const tracking = window.WhopElements().tracking.create({ /* options */ });
           tracking.create('person').mount('#tracking-person');
@@ -48,7 +48,7 @@ Mounts inside [`Tracking`](/elements/beta/tracking/overview). `accountId` and `a
     <div data-whop-demo-shell style={{ position: "relative", minHeight: "320px", transition: "min-height 200ms ease" }}>
       <div data-whop-demo-skeleton style={{ position: "absolute", inset: "0", borderRadius: "12px", background: "rgba(140, 140, 140, 0.12)", pointerEvents: "none", transition: "opacity 200ms ease" }} />
 
-      <div data-whop-demo-native="element:tracking/person" data-whop-elements-version="1.0.0-beta.5" style={{ position: "relative" }} />
+      <div data-whop-demo-native="element:tracking/person" data-whop-elements-version="1.0.0-beta.6" style={{ position: "relative" }} />
     </div>
 
     <p style={{ fontSize: "0.8125rem", opacity: 0.7 }}>Example data. [Open the Playground](/elements/beta/tracking/overview#playground).</p>

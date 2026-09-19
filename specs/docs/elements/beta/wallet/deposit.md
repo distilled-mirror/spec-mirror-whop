@@ -6,7 +6,7 @@
 
 > Funds a Whop account. Renders an amount field and the account's live funding rails — crypto (a per-network deposit address with its QR) and bank transfer (the wire fields for each settlement currency). A business account's rails resolve with no credentials, so they work on any page; a personal (`user_`) account only reveals its rails to itself, so pass `accessToken` for it — omitted, the viewer's own same-origin session covers it. Cards and platform balance are opt-in: pass `savedCards`, `allowNewCard`, or `showPlatformBalance` and the element collects the amount and the choice, then emits `cardDepositRequested` / `addCardRequested` / `platformBalanceSelected` and waits for you to call `showStep({ step: 'amount' })` when your own screen is done.
 
-<Info>This page documents `@whop/elements@1.0.0-beta.5` and `@whop/elements-react@1.0.0-beta.5`.</Info>
+<Info>This page documents `@whop/elements@1.0.0-beta.6` and `@whop/elements-react@1.0.0-beta.6`.</Info>
 
 *Pre-release, not yet part of a stable release.*
 
@@ -34,7 +34,7 @@ Mounts inside [`Wallet`](/elements/beta/wallet/overview). `accountId` and `acces
         ```
 
         ```html JavaScript theme={null}
-        <script src="https://js.whop.cloud/elements/amber/elements.js" data-whop-elements></script>
+        <script src="https://cdn.whop.com/elements/amber/elements.js" data-whop-elements></script>
         <script type="module">
           const wallet = window.WhopElements().wallet.create({ /* options */ });
           wallet.create('deposit', {
@@ -58,7 +58,7 @@ Mounts inside [`Wallet`](/elements/beta/wallet/overview). `accountId` and `acces
     <div data-whop-demo-shell style={{ position: "relative", minHeight: "320px", transition: "min-height 200ms ease" }}>
       <div data-whop-demo-skeleton style={{ position: "absolute", inset: "0", borderRadius: "12px", background: "rgba(140, 140, 140, 0.12)", pointerEvents: "none", transition: "opacity 200ms ease" }} />
 
-      <div data-whop-demo-native="element:wallet/deposit" data-whop-elements-version="1.0.0-beta.5" style={{ position: "relative" }} />
+      <div data-whop-demo-native="element:wallet/deposit" data-whop-elements-version="1.0.0-beta.6" style={{ position: "relative" }} />
     </div>
 
     <p style={{ fontSize: "0.8125rem", opacity: 0.7 }}>Example data. [Open the Playground](/elements/beta/wallet/overview#playground).</p>

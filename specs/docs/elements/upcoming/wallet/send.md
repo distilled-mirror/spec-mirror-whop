@@ -30,7 +30,7 @@ Mounts inside [`Wallet`](/elements/upcoming/wallet/overview). `accountId` and `a
         ```
 
         ```html JavaScript theme={null}
-        <script src="https://js.whop.cloud/elements/amber/elements.js" data-whop-elements></script>
+        <script src="https://cdn.whop.com/elements/amber/elements.js" data-whop-elements></script>
         <script type="module">
           const wallet = window.WhopElements().wallet.create({ /* options */ });
           wallet.create('send', {

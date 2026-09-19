@@ -6,7 +6,7 @@
 
 > Which payment methods ad spend bills against: a primary used first, and an optional backup for when it fails. Both are chosen from the methods already saved on the account, and picking one saves it immediately — there is no separate submit. Adding a card opens a card form over your page and returns to the slot that asked for it. The account's own balance appears alongside its cards wherever the account has one.
 
-<Info>This page documents `@whop/elements@1.0.0-beta.5` and `@whop/elements-react@1.0.0-beta.5`.</Info>
+<Info>This page documents `@whop/elements@1.0.0-beta.6` and `@whop/elements-react@1.0.0-beta.6`.</Info>
 
 *Pre-release, not yet part of a stable release.*
 
@@ -32,7 +32,7 @@ Mounts inside [`Ads`](/elements/beta/ads/overview). `accountId` and `accessToken
         ```
 
         ```html JavaScript theme={null}
-        <script src="https://js.whop.cloud/elements/amber/elements.js" data-whop-elements></script>
+        <script src="https://cdn.whop.com/elements/amber/elements.js" data-whop-elements></script>
         <script type="module">
           const ads = window.WhopElements().ads.create({ /* options */ });
           ads.create('billing-setup').mount('#ads-billing-setup');
@@ -46,7 +46,7 @@ Mounts inside [`Ads`](/elements/beta/ads/overview). `accountId` and `accessToken
     <div data-whop-demo-shell style={{ position: "relative", minHeight: "320px", transition: "min-height 200ms ease" }}>
       <div data-whop-demo-skeleton style={{ position: "absolute", inset: "0", borderRadius: "12px", background: "rgba(140, 140, 140, 0.12)", pointerEvents: "none", transition: "opacity 200ms ease" }} />
 
-      <div data-whop-demo-native="element:ads/billing-setup" data-whop-elements-version="1.0.0-beta.5" style={{ position: "relative" }} />
+      <div data-whop-demo-native="element:ads/billing-setup" data-whop-elements-version="1.0.0-beta.6" style={{ position: "relative" }} />
     </div>
 
     <p style={{ fontSize: "0.8125rem", opacity: 0.7 }}>Example data. [Open the Playground](/elements/beta/ads/overview#playground).</p>

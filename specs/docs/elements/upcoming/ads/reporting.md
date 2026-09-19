@@ -39,7 +39,7 @@ A live, interactive demo of this sub-controller's default arrangement with examp
     ```
 
     ```html JavaScript theme={null}
-    <script src="https://js.whop.cloud/elements/amber/elements.js" data-whop-elements></script>
+    <script src="https://cdn.whop.com/elements/amber/elements.js" data-whop-elements></script>
     <script type="module">
       const ads = window.WhopElements().ads.create({ /* options */ });
       const reporting = ads.create('reporting', { /* options */ });

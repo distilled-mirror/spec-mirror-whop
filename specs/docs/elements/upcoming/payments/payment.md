@@ -73,7 +73,7 @@
         ```
 
         ```html JavaScript theme={null}
-        <script src="https://js.whop.cloud/elements/amber/elements.js" data-whop-elements></script>
+        <script src="https://cdn.whop.com/elements/amber/elements.js" data-whop-elements></script>
         <script type="module">
           const payments = window.WhopElements().payments.create({ /* options */ });
           payments.create('payment', {

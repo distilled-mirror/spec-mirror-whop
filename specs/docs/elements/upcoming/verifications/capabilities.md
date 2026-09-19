@@ -28,7 +28,7 @@ Mounts inside [`Verifications`](/elements/upcoming/verifications/overview). Pass
         ```
 
         ```html JavaScript theme={null}
-        <script src="https://js.whop.cloud/elements/amber/elements.js" data-whop-elements></script>
+        <script src="https://cdn.whop.com/elements/amber/elements.js" data-whop-elements></script>
         <script type="module">
           const verifications = window.WhopElements().verifications.create({ /* options */ });
           verifications.create('capabilities', { onVerificationRequested: (e) => console.log(e) }).mount('#verifications-capabilities');

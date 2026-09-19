@@ -6,7 +6,7 @@
 
 > Install Whop Elements and mount your first element in React, JavaScript, Swift, or React Native.
 
-<Info>This page documents `@whop/elements@1.0.0-beta.5` and `@whop/elements-react@1.0.0-beta.5`.</Info>
+<Info>This page documents `@whop/elements@1.0.0-beta.6` and `@whop/elements-react@1.0.0-beta.6`.</Info>
 
 <div data-whop-platform="web">
   Whop Elements are hosted, themeable UI components you embed in your own site. Each element renders in an isolated frame served from Whop's CDN. You install a thin, fully typed package and the element code stays up to date on its own.
@@ -53,12 +53,12 @@
 <div data-whop-platform="web">
   ## Requirements
 
-  |                         |                                                                                                        |
-  | ----------------------- | ------------------------------------------------------------------------------------------------------ |
-  | React                   | `^19`, for `@whop/elements-react`.                                                                     |
-  | Content Security Policy | `frame-src https://js.whop.cloud`, plus `script-src https://js.whop.cloud` if you load the script tag. |
+  |                         |                                                                                                      |
+  | ----------------------- | ---------------------------------------------------------------------------------------------------- |
+  | React                   | `^19`, for `@whop/elements-react`.                                                                   |
+  | Content Security Policy | `frame-src https://cdn.whop.com`, plus `script-src https://cdn.whop.com` if you load the script tag. |
 
-  <Warning>Elements render in frames served from `js.whop.cloud`. If your CSP does not allow that origin, you get blank space instead of the element, and the error appears only in the browser console.</Warning>
+  <Warning>Elements render in frames served from `cdn.whop.com`. If your CSP does not allow that origin, you get blank space instead of the element, and the error appears only in the browser console.</Warning>
 
   ## Before you start
 
@@ -208,7 +208,7 @@
   ```
 
   ```html JavaScript theme={null}
-  <script src="https://js.whop.cloud/elements/amber/elements.js" data-whop-elements></script>
+  <script src="https://cdn.whop.com/elements/amber/elements.js" data-whop-elements></script>
   <script type="module">
     const payments = window.WhopElements().payments.create({ /* options */ });
     payments.create('payment').mount('#payments-payment');
@@ -327,7 +327,7 @@
   <div data-whop-demo-shell style={{ position: "relative", minHeight: "40px", transition: "min-height 200ms ease" }}>
     <div data-whop-demo-skeleton style={{ position: "absolute", inset: "0", borderRadius: "12px", background: "rgba(140, 140, 140, 0.12)", pointerEvents: "none", transition: "opacity 200ms ease" }} />
 
-    <div data-whop-demo-native="toast:button" data-whop-elements-version="1.0.0-beta.5" style={{ position: "relative" }} />
+    <div data-whop-demo-native="toast:button" data-whop-elements-version="1.0.0-beta.6" style={{ position: "relative" }} />
   </div>
 
   ## What the elements handle, and what you own
@@ -342,13 +342,13 @@
 
   ## Troubleshooting
 
-  | What you see                       | Why                                                                                                    |
-  | ---------------------------------- | ------------------------------------------------------------------------------------------------------ |
-  | Blank space instead of the element | Your CSP blocks `js.whop.cloud`. Add it to `frame-src`, and to `script-src` if you use the script tag. |
-  | `mount()` does nothing             | The selector matched no node. The target must already be in the DOM.                                   |
-  | The element loads but stays empty  | The token is missing a scope that element reads. Check the scopes listed on the element's page.        |
-  | Requests fail on your own domain   | No token was passed. The session fallback works only on whop.com.                                      |
-  | It worked, then stopped            | The token expired. Create a new one and pass it with `update({ accessToken })`.                        |
+  | What you see                       | Why                                                                                                   |
+  | ---------------------------------- | ----------------------------------------------------------------------------------------------------- |
+  | Blank space instead of the element | Your CSP blocks `cdn.whop.com`. Add it to `frame-src`, and to `script-src` if you use the script tag. |
+  | `mount()` does nothing             | The selector matched no node. The target must already be in the DOM.                                  |
+  | The element loads but stays empty  | The token is missing a scope that element reads. Check the scopes listed on the element's page.       |
+  | Requests fail on your own domain   | No token was passed. The session fallback works only on whop.com.                                     |
+  | It worked, then stopped            | The token expired. Create a new one and pass it with `update({ accessToken })`.                       |
 
   ## Available elements
 
@@ -382,7 +382,7 @@
     </Card>
 
     <Card title="Dashboard" href="/elements/beta/dashboard/overview">
-      An account's own payment records, embedded on your site.
+      An account's own dashboard surfaces, embedded on your site.
     </Card>
   </CardGroup>
 

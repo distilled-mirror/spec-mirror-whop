@@ -51,12 +51,12 @@
 <div data-whop-platform="web">
   ## Requirements
 
-  |                         |                                                                                                        |
-  | ----------------------- | ------------------------------------------------------------------------------------------------------ |
-  | React                   | `^19`, for `@whop/elements-react`.                                                                     |
-  | Content Security Policy | `frame-src https://js.whop.cloud`, plus `script-src https://js.whop.cloud` if you load the script tag. |
+  |                         |                                                                                                      |
+  | ----------------------- | ---------------------------------------------------------------------------------------------------- |
+  | React                   | `^19`, for `@whop/elements-react`.                                                                   |
+  | Content Security Policy | `frame-src https://cdn.whop.com`, plus `script-src https://cdn.whop.com` if you load the script tag. |
 
-  <Warning>Elements render in frames served from `js.whop.cloud`. If your CSP does not allow that origin, you get blank space instead of the element, and the error appears only in the browser console.</Warning>
+  <Warning>Elements render in frames served from `cdn.whop.com`. If your CSP does not allow that origin, you get blank space instead of the element, and the error appears only in the browser console.</Warning>
 
   ## Before you start
 
@@ -206,7 +206,7 @@
   ```
 
   ```html JavaScript theme={null}
-  <script src="https://js.whop.cloud/elements/amber/elements.js" data-whop-elements></script>
+  <script src="https://cdn.whop.com/elements/amber/elements.js" data-whop-elements></script>
   <script type="module">
     const payments = window.WhopElements().payments.create({ /* options */ });
     payments.create('payment').mount('#payments-payment');
@@ -340,13 +340,13 @@
 
   ## Troubleshooting
 
-  | What you see                       | Why                                                                                                    |
-  | ---------------------------------- | ------------------------------------------------------------------------------------------------------ |
-  | Blank space instead of the element | Your CSP blocks `js.whop.cloud`. Add it to `frame-src`, and to `script-src` if you use the script tag. |
-  | `mount()` does nothing             | The selector matched no node. The target must already be in the DOM.                                   |
-  | The element loads but stays empty  | The token is missing a scope that element reads. Check the scopes listed on the element's page.        |
-  | Requests fail on your own domain   | No token was passed. The session fallback works only on whop.com.                                      |
-  | It worked, then stopped            | The token expired. Create a new one and pass it with `update({ accessToken })`.                        |
+  | What you see                       | Why                                                                                                   |
+  | ---------------------------------- | ----------------------------------------------------------------------------------------------------- |
+  | Blank space instead of the element | Your CSP blocks `cdn.whop.com`. Add it to `frame-src`, and to `script-src` if you use the script tag. |
+  | `mount()` does nothing             | The selector matched no node. The target must already be in the DOM.                                  |
+  | The element loads but stays empty  | The token is missing a scope that element reads. Check the scopes listed on the element's page.       |
+  | Requests fail on your own domain   | No token was passed. The session fallback works only on whop.com.                                     |
+  | It worked, then stopped            | The token expired. Create a new one and pass it with `update({ accessToken })`.                       |
 
   ## Available elements
 
