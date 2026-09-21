@@ -917,11 +917,11 @@ paths:
                   description: >-
                     Filter audiences only. The People filters that define
                     membership, keyed exactly as `GET /people` accepts them —
-                    for example `{"os": "iOS", "country": "US"}`. Date filters
-                    must be rolling windows — `first_seen_within_days` or
-                    `last_seen_within_days` — so the audience re-anchors on
-                    every refresh; fixed dates such as `first_seen_after` are
-                    rejected. Source values are canonical source paths
+                    for example `{"os": "iOS", "country": "US"}`. Activity dates
+                    `event_from` and `event_to` are inclusive and remain fixed
+                    on refresh. Use `event_within_days`,
+                    `first_seen_within_days` or `last_seen_within_days` for a
+                    rolling window. Source values are canonical source paths
                     (`whop:<campaign>:<group>:<ad>`, `ext:<platform>:...`,
                     `referrer:<domain>`, `direct`), exact or with a trailing
                     `:*` wildcard.
