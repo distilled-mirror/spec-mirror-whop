@@ -6,6 +6,8 @@
 
 > An account’s performance over a window, with a picker for what to plot — spend, impressions, clicks, or any conversion the account records. Read-only.
 
+*Since `v1.0.0`.*
+
 Mounts inside [`Reporting`](/elements/upcoming/ads/reporting), in [`Ads`](/elements/upcoming/ads/overview). Pass props and callbacks through the create options or React props.
 
 <div data-whop-split style={{ display: "flex", gap: "1.5rem", alignItems: "flex-start", flexWrap: "wrap" }}>

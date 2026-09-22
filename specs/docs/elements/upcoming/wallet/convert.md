@@ -6,6 +6,8 @@
 
 > Converts an account's USD balance to Gold or Coinbase Wrapped Bitcoin, and back, through Whop's public swaps API. A cross-origin mount needs an `accessToken` scoped to `company:balance:read` plus `crypto_wallet:swap` or `crypto_wallet:manage`.
 
+*Since `v1.0.0`.*
+
 Mounts inside [`Wallet`](/elements/upcoming/wallet/overview). `accountId` and `accessToken` come from there. Pass props and callbacks through the create options or React props. Keep the created handle, or React `ref`, to call `refresh()`.
 
 <Note>You can mount this element **inline** (`create`) or open it as a **modal** overlay (`createOverlay`).</Note>

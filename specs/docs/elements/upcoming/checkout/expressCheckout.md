@@ -6,6 +6,8 @@
 
 > One-press Apple Pay and Google Pay buttons for a checkout — the OS payment sheet collects whatever the session still needs (the buyer's email, a phone number where the seller collects one, a shipping address for physical goods, and in Apple Pay a promo code where the seller offers entry) and one press finishes the purchase. It shares the checkout's entry slot with the full checkout element, so a handle mounts exactly one of the two: this button alone where the purchase is simple enough for a sheet to finish, or the full checkout surface for everything else. Renders only the wallets the buyer's device can actually pay with — and the checkout's own payment method configuration allows — using the served button art, and renders nothing where no wallet is available. Both wallets require the page's domain to be a verified payment method domain: first-party whop.com pages are pre-approved, and any other site must register its domain through the Payment Method Domains API before either button renders there. Offering Google Pay on your own site is subject to the Google Pay API Terms of Service. A checkout the sheet cannot honestly finish — a waitlist join, a transfer, a form question only a page can ask — refuses loudly instead of rendering a doomed button.
 
+*Since `v1.0.0`.*
+
 Mounts inside [`Checkout`](/elements/upcoming/checkout/overview). Pass props and callbacks through the create options or React props.
 
 <Note>**Exclusive.** `ExpressCheckoutElement` is an alternative to `CheckoutElement` in this Checkout handle. Mount one at a time. Destroy it before mounting another.</Note>

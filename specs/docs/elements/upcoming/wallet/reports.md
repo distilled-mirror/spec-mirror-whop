@@ -6,6 +6,8 @@
 
 > Balance history and the financial activity behind it, including CSV exports. Account statements are available in the Whop dashboard.
 
+*Since `v1.0.0`.*
+
 Mounts inside [`Wallet`](/elements/upcoming/wallet/overview). Create it to get a handle, then mount its elements on that handle. Call `destroy()` to remove the sub-controller. Create it again to get a fresh handle.
 
 ## Preview

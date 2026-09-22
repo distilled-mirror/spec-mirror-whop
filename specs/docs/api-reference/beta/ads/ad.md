@@ -486,6 +486,12 @@ Use the Ads API to list ads for an account, create ads inside ad groups, retriev
       </Accordion>
     </ResponseField>
 
+    <ResponseField name="platform" type="string" required>
+      The ad platform this ad runs on.
+
+      Available options: `meta`, `tiktok`
+    </ResponseField>
+
     <ResponseField name="post_id" type="string | null" required>
       The post the ad network serves for this ad, as `pageID_postID` on Meta — the
       post Meta created for an uploaded creative, or the post being promoted. Use it
@@ -738,7 +744,8 @@ Use the Ads API to list ads for an account, create ads inside ad groups, retriev
       		"utm_campaign": "pickaxe-launch"
       	},
       	"viewed_content_value": 0,
-      	"viewed_contents": 240
+      	"viewed_contents": 240,
+      	"platform": "meta"
       }
       ```
     </div>

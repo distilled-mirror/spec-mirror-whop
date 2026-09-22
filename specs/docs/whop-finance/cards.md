@@ -46,6 +46,10 @@ Platforms can issue cards for their users via API and earn a portion of intercha
 ## Next steps
 
 <CardGroup cols={2}>
+  <Card title="Supported regions" icon="globe" href="/whop-finance/supported-regions">
+    Check supported U.S. states and unsupported countries for consumer and business Whop Cards
+  </Card>
+
   <Card title="Treasury" icon="piggy-bank" href="/whop-finance/treasury">
     Earn up to 6% APY on your Whop balance automatically
   </Card>

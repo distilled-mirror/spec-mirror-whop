@@ -6,6 +6,8 @@
 
 > A business account's card spend over time, using the same interactive bar chart as Whop's cards dashboard. The period picker changes the mounted chart and emits an event so the host can persist the selection.
 
+*Since `v1.0.0`.*
+
 Mounts inside [`Cards`](/elements/upcoming/wallet/cards), in [`Wallet`](/elements/upcoming/wallet/overview). `accountId` and `accessToken` come from `Wallet`. Pass props and callbacks through the create options or React props. Keep the created handle, or React `ref`, to call `refresh()`.
 
 <div data-whop-split style={{ display: "flex", gap: "1.5rem", alignItems: "flex-start", flexWrap: "wrap" }}>

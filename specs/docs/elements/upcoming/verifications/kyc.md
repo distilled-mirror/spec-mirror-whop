@@ -6,6 +6,8 @@
 
 > A complete identity-verification flow. It collects individual KYC or business KYB details, starts or resumes the hosted provider session, handles follow-up information and document requests, polls status, and renders the final result without requiring the host to build verification UI.
 
+*Since `v1.0.0`.*
+
 Mounts inside [`Verifications`](/elements/upcoming/verifications/overview). Pass props and callbacks through the create options or React props. Keep the created handle, or React `ref`, to call `refresh()` and `restart()`.
 
 <div data-whop-split style={{ display: "flex", gap: "1.5rem", alignItems: "flex-start", flexWrap: "wrap" }}>

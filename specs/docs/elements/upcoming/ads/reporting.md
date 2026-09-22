@@ -6,6 +6,8 @@
 
 > An advertising account's reporting: what it spent and what came back, over a window, at whatever level you narrow to. Mount `chart`, `table`, or both — they read the same window, the same credit rule, and the same selection, so two surfaces side by side can never disagree about what they are showing. The `ads` handle's `links` configuration wires the table's click and result counts to your own pages — the ones where you mounted the `tracking` namespace's `people` and `events`.
 
+*Since `v1.0.0`.*
+
 Mounts inside [`Ads`](/elements/upcoming/ads/overview). Create it to get a handle, then mount its elements on that handle. Call `destroy()` to remove the sub-controller. Create it again to get a fresh handle.
 
 ## Preview

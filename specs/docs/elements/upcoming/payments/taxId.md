@@ -6,6 +6,8 @@
 
 > Collects a business tax registration accepted by the API. Labels use buyer-facing names. The placeholder matches the selected format. `country` preselects a type. `onChange` emits committed pairs. The host supplies API validation errors.
 
+*Since `v1.0.0`.*
+
 <div data-whop-platform="web">
   Mounts inside [`Payments`](/elements/upcoming/payments/overview). Pass props and callbacks through the create options or React props.
 </div>

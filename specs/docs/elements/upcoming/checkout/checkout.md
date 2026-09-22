@@ -6,6 +6,8 @@
 
 > The full checkout surface — order summary with the live quote, promo code entry, the currency the buyer pays in, everything this checkout has to collect from the buyer, the composed payment methods surface, and the pay flow. What it collects is whatever the seller set up (email, their own questions, a phone number, a shipping address for physical goods, an explicit agreement to their terms), rendered together on one screen in the order they chose — so a seller who starts asking for something new needs no change here. Renders the whole purchase; the checkout controller owns the session and the credential. After a payment that needs an off-site step, this same surface renders the outcome the server reports when the buyer comes back.
 
+*Since `v1.0.0`.*
+
 Mounts inside [`Checkout`](/elements/upcoming/checkout/overview). Pass props and callbacks through the create options or React props.
 
 <Note>**Exclusive.** `CheckoutElement` is an alternative to `ExpressCheckoutElement` in this Checkout handle. Mount one at a time. Destroy it before mounting another.</Note>

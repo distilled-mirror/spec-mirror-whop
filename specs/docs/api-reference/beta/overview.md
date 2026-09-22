@@ -97,7 +97,7 @@ Accept payments from buyers and handle what comes after.
 
 | Resource                                                                                            | What it's for                                                              |
 | --------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
-| [Payments](/api-reference/beta/payments/list-payments)                                              | A charge against a buyer, and the step they still owe.                     |
+| [Payments](/api-reference/beta/payments/payment)                                                    | A charge against a buyer, and the step they still owe.                     |
 | [Refunds](/api-reference/beta/refunds/list-refunds)                                                 | Money returned to a buyer from a payment.                                  |
 | [Confirmation Tokens](/api-reference/beta/confirmation-tokens/confirmation-token)                   | A short-lived reference to payment details collected from a buyer.         |
 | [Setup Intents](/api-reference/beta/setup-intents/retrieve-setup-status)                            | Saving a buyer's payment method without charging it.                       |
@@ -127,6 +127,7 @@ Sell products and get paid.
 | Resource                                                                                      | What it's for                                                               |
 | --------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
 | [Products](/api-reference/beta/products/product)                                              | The things you sell. Each owns plans and a store page.                      |
+| [Waitlist Entries](/api-reference/beta/waitlist-entries/list-waitlist-entries)                | Join waitlists and manage customer signups awaiting approval.               |
 | [Plans](/api-reference/beta/plans/plan)                                                       | Pricing for a product: one-time, recurring, trials, stock.                  |
 | [Promo Codes](/api-reference/beta/promo-codes/list-promo-codes)                               | Discounts that creators configure for checkout.                             |
 | [Memberships](/api-reference/beta/memberships/membership)                                     | A customer's purchase of a plan, from checkout through cancellation.        |
@@ -165,12 +166,13 @@ Who visits and what converts, captured by the pixel.
 
 Run and measure ad campaigns from your integration.
 
-| Resource                                                     | What it's for                                         |
-| ------------------------------------------------------------ | ----------------------------------------------------- |
-| [Ads](/api-reference/beta/ads/ad)                            | The creative: copy, assets, and destination URL.      |
-| [Ad Campaigns](/api-reference/beta/ad-campaigns/ad-campaign) | Platform, objective, and budget for a set of ads.     |
-| [Ad Groups](/api-reference/beta/ad-groups/ad-group)          | Audience, placements, and schedule within a campaign. |
-| [Audiences](/api-reference/beta/audiences/audience)          | Reusable targeting lists for ad groups.               |
+| Resource                                                                                            | What it's for                                              |
+| --------------------------------------------------------------------------------------------------- | ---------------------------------------------------------- |
+| [Ads](/api-reference/beta/ads/ad)                                                                   | The creative: copy, assets, and destination URL.           |
+| [Ad Conversion Value Rules](/api-reference/beta/ad-conversion-value-rules/ad-conversion-value-rule) | Modify how conversion events are delivered to ad networks. |
+| [Ad Campaigns](/api-reference/beta/ad-campaigns/ad-campaign)                                        | Platform, objective, and budget for a set of ads.          |
+| [Ad Groups](/api-reference/beta/ad-groups/ad-group)                                                 | Audience, placements, and schedule within a campaign.      |
+| [Audiences](/api-reference/beta/audiences/audience)                                                 | Reusable targeting lists for ad groups.                    |
 
 ### Media
 

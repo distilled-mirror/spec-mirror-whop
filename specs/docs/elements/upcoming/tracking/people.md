@@ -6,6 +6,8 @@
 
 > Everyone the account has seen — visitors and customers resolved from pixel activity, with their source, spend, and activity counters. Search, filter by source, event, geography, or device, sort any column, and page through. A row click follows `links.person` when the handle configures it, and otherwise comes back to you as `personOpened`.
 
+*Since `v1.0.0`.*
+
 Mounts inside [`Tracking`](/elements/upcoming/tracking/overview). `accountId` and `accessToken` come from there. Pass props and callbacks through the create options or React props.
 
 <div data-whop-split style={{ display: "flex", gap: "1.5rem", alignItems: "flex-start", flexWrap: "wrap" }}>

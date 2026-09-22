@@ -6,6 +6,8 @@
 
 > Every card transaction on an account, as the sortable table the dashboard shows: date, merchant, amount, cashback, status, card and cardholder, with filters for status, card and cardholder. A host can seed any of those three so the table opens on a narrowed view the reader can still widen. Card and cardholder narrow the read itself; search and status narrow the rows already loaded, so the count and total describe the current view rather than the account's lifetime. Selecting a row reports it — the element never opens a drawer of its own.
 
+*Since `v1.0.0`.*
+
 Mounts inside [`Cards`](/elements/upcoming/wallet/cards), in [`Wallet`](/elements/upcoming/wallet/overview). `accountId` and `accessToken` come from `Wallet`. Pass props and callbacks through the create options or React props. Keep the created handle, or React `ref`, to call `refresh()`.
 
 <div data-whop-split style={{ display: "flex", gap: "1.5rem", alignItems: "flex-start", flexWrap: "wrap" }}>

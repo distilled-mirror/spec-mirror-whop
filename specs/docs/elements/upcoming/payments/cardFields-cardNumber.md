@@ -6,6 +6,8 @@
 
 > PCI-isolated hosted card number field. Card numbers never reach the host page.
 
+*Since `v1.0.0`.*
+
 <div data-whop-platform="web">
   Mounts inside [`CardFields`](/elements/upcoming/payments/cardFields), in [`Payments`](/elements/upcoming/payments/overview). Pass props and callbacks through the create options or React props.
 </div>

@@ -6,9 +6,9 @@
 
 > Everyone the account has seen — visitors and customers resolved from pixel activity, with their source, spend, and activity counters. Search, filter by source, event, geography, or device, sort any column, and page through. A row click follows `links.person` when the handle configures it, and otherwise comes back to you as `personOpened`.
 
-<Info>This page documents `@whop/elements@1.0.0-beta.6` and `@whop/elements-react@1.0.0-beta.6`.</Info>
+<Info>This page documents `@whop/elements@1.0.0` and `@whop/elements-react@1.0.0`.</Info>
 
-*Pre-release, not yet part of a stable release.*
+*Since `v1.0.0`.*
 
 Mounts inside [`Tracking`](/elements/beta/tracking/overview). `accountId` and `accessToken` come from there. Pass props and callbacks through the create options or React props.
 
@@ -52,7 +52,7 @@ Mounts inside [`Tracking`](/elements/beta/tracking/overview). `accountId` and `a
     <div data-whop-demo-shell style={{ position: "relative", minHeight: "320px", transition: "min-height 200ms ease" }}>
       <div data-whop-demo-skeleton style={{ position: "absolute", inset: "0", borderRadius: "12px", background: "rgba(140, 140, 140, 0.12)", pointerEvents: "none", transition: "opacity 200ms ease" }} />
 
-      <div data-whop-demo-native="element:tracking/people" data-whop-elements-version="1.0.0-beta.6" style={{ position: "relative" }} />
+      <div data-whop-demo-native="element:tracking/people" data-whop-elements-version="1.0.0" style={{ position: "relative" }} />
     </div>
 
     <p style={{ fontSize: "0.8125rem", opacity: 0.7 }}>Example data. [Open the Playground](/elements/beta/tracking/overview#playground).</p>

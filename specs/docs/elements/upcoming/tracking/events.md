@@ -6,6 +6,8 @@
 
 > Every event the account measured — page views, leads, purchases, and custom pixel events — as a raw, filterable stream. The rows behind any metric: filter by event, source, geography, or device over the handle’s window, or search one person’s identifier to read their whole journey. A person cell follows `links.person` when the handle configures it, and otherwise comes back to you as `personOpened`.
 
+*Since `v1.0.0`.*
+
 Mounts inside [`Tracking`](/elements/upcoming/tracking/overview). `accountId` and `accessToken` come from there. Pass props and callbacks through the create options or React props.
 
 <div data-whop-split style={{ display: "flex", gap: "1.5rem", alignItems: "flex-start", flexWrap: "wrap" }}>

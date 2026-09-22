@@ -6,6 +6,8 @@
 
 > Everything the account knows about one person: who they are, where they came from, what they have spent, and every event they have performed, in order. The view a person click leads to: mount it on the page `links.person` points at, or present it over your own page when `people` or `events` raise `personOpened`. `identifier` takes any identifier a person has been seen under, so a `personOpened` payload resolves here unchanged.
 
+*Since `v1.0.0`.*
+
 Mounts inside [`Tracking`](/elements/upcoming/tracking/overview). `accountId` and `accessToken` come from there. Pass props and callbacks through the create options or React props.
 
 <Note>You can mount this element **inline** (`create`) or open it as a **modal** overlay (`createOverlay`).</Note>

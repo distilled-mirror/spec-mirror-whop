@@ -6,6 +6,8 @@
 
 > An account's websites: every site built on whop.site plus every domain the Whop Pixel reports, with traffic and attributed revenue per domain. Mount `websites` and it lists them with visitors, page views, sales, revenue, trend, and most-viewed pages. Mount `pixel-setup` alongside it and a site whose pixel the wizard just proved live gets a waiting row automatically, because its first events take a few minutes to reach the stats API and the site would otherwise look lost — you wire nothing up for that, and the row is kept on your page so it is still there if the merchant reloads. Reading stats is privileged, so it needs an `accessToken` — except inside Whop's own app, where the viewer's session carries the read.
 
+*Since `v1.0.0`.*
+
 ## Playground
 
 Assemble the elements with example data. Drive the controls, add and arrange elements, and watch events fire live:

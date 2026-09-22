@@ -68,7 +68,7 @@
       "x-whop-summary": "The user's notification feed: unread badges, mark-read, app sends, and the topic catalog."
     },
     {
-      "description": "A Payment is one charge against a buyer. Create an on-session payment with a `confirmation_token` for the method the buyer selected, or an off-session payment with an existing member's stored payment method.\n\nCollection runs in the background, so the create response is not the outcome. Poll [Retrieve status](/api-reference/beta/payments/retrieve-status) for how far the payment has got and, while it is `requires_action`, what the buyer must do next — follow a redirect, complete 3D Secure, display transfer instructions, or link a bank account. Use the return_url operation to change where they land afterwards, up until they come back.\n",
+      "description": "A Payment is one charge against a buyer. Create an on-session payment with a `confirmation_token` for the method the buyer selected, or an off-session payment with an existing member's stored payment method.\n\nCollection runs in the background, so the create response is not the outcome. Poll [Retrieve status](/api-reference/beta/payments/retrieve-payment-status) for how far the payment has gone and, while it is `requires_action`, what the buyer must do next — follow a redirect, complete 3D Secure, display transfer instructions, or link a bank account. Use the return_url operation to change where they land afterwards, up until they come back.\n",
       "name": "Payments",
       "x-whop-summary": "A charge against a buyer, and the step they still owe."
     },
@@ -83,7 +83,7 @@
       "x-whop-summary": "A short-lived reference to payment details collected from a buyer."
     },
     {
-      "description": "A Setup Intent saves a buyer's payment method for later without taking money now. It runs the same collection flow a payment does, so the buyer may still owe a step — 3D Secure on a card, a hosted enrollment, or linking a bank account.\n\nPoll [Retrieve status](/api-reference/beta/setup-intents/retrieve-status) for how far the setup has got and what is outstanding. Once it reaches `succeeded` the method is on file and can be charged.\n",
+      "description": "A Setup Intent saves a buyer's payment method for later without taking money now. It runs the same collection flow a payment does, so the buyer may still owe a step — 3D Secure on a card, a hosted enrollment, or linking a bank account.\n\nPoll [Retrieve status](/api-reference/beta/setup-intents/retrieve-setup-status) for how far the setup has gone and what is outstanding. Once it reaches `succeeded` the method is on file and can be charged.\n",
       "name": "Setup Intents",
       "x-whop-summary": "Saving a buyer's payment method without charging it."
     },
@@ -149,6 +149,11 @@
       "x-whop-summary": "The things you sell. Each owns plans and a store page."
     },
     {
+      "description": "Join a free plan's waitlist, read or cancel your own signups, and manage signups for accounts you are authorized to operate.\nJoining does not grant membership or charge a payment method. Seller approval runs asynchronously and can charge a saved payment method for a paid plan.\n",
+      "name": "Waitlist Entries",
+      "x-whop-summary": "Join waitlists and manage customer signups awaiting approval."
+    },
+    {
       "description": "A Plan defines how customers buy a product. It controls pricing, billing cadence, availability, tax behavior, checkout fields, and purchase visibility.\n\nUse the Plans API to create plans for products, list existing plans, retrieve or update plan configuration, calculate tax for checkout, and delete plans that should no longer be offered.\n",
       "name": "Plans",
       "x-whop-summary": "Pricing for a product: one-time, recurring, trials, stock."
@@ -211,6 +216,11 @@
       "description": "An Ad is the individual creative unit delivered by an [ad group](/api-reference/beta/ad-groups/ad-group). It holds the copy, creative assets, and destination URL for one ad.\n\nUse the Ads API to list ads for an account, create ads inside ad groups, retrieve or update creative details, delete ads that should stop running, and pause or resume delivery.\n",
       "name": "Ads",
       "x-whop-summary": "The creative: copy, assets, and destination URL."
+    },
+    {
+      "description": "A conversion value rule allows you to report accurate conversion values to Whop while modifying how those values are sent to ad networks. Rules belong to an account and can apply to an account, an ad campaign, an ad group, or an ad.\n\nEach rule contains targets and events that share one value adjustment. Every selected event applies to every selected target. Create, retrieve, edit, delete, pause, or resume one rule by its ID. Create may set an initial active or paused status. Edits keep that status. Filter the list with resource_id to find rules overlapping a campaign, ad group, or ad. Every target must support every selected event; Google does not support named custom events. Create and edit accept replace_rule_ids to replace only the overlapping selections in the same transaction. Other selections keep their values. Remaining selections may split into separate rules so every event still applies to every target. Broader rules remain as fallbacks for other items; the most specific rule applies. Rules with no remaining selections are paused. Unpause automatically replaces overlapping selections using the same behavior as create and edit: other selections keep their values, and broader rules remain as defaults. Resuming an already-active rule makes no changes. Each write succeeds or fails as one transaction. Use Idempotency-Key to safely retry POST requests. Each conversion send attempt uses the rules saved at that time, including retries.\n",
+      "name": "Ad Conversion Value Rules",
+      "x-whop-summary": "Modify how conversion events are delivered to ad networks."
     },
     {
       "description": "An Ad Campaign is the top-level container for paid ads on an ad network. It sets the platform, objective, and budget strategy shared by its [ad groups](/api-reference/beta/ad-groups/ad-group) and ads.\n\nUse the Ad Campaigns API to create campaigns, list campaigns for an account, retrieve or update campaign settings, and pause or resume campaign delivery.\n",
@@ -333,6 +343,7 @@
       "name": "Commerce",
       "tags": [
         "Products",
+        "Waitlist Entries",
         "Plans",
         "Promo Codes",
         "Memberships",
@@ -371,6 +382,7 @@
       "name": "Ads",
       "tags": [
         "Ads",
+        "Ad Conversion Value Rules",
         "Ad Campaigns",
         "Ad Groups",
         "Audiences"
@@ -409,7 +421,7 @@
   "paths": {
     "/accounts": {
       "get": {
-        "description": "Lists accounts visible to the credential. User tokens return the user's business accounts; Account API keys return the requesting account and its connected accounts. Pass `parent_account_id` to return only that parent account's connected accounts.",
+        "description": "Lists accounts visible to the credential. User tokens return the user's business accounts; Account API keys return the requesting account and its connected accounts. Pass `parent_account_id` to return only that parent account's connected accounts. Includes each account's `cards` application summary when the caller has `company:balance:read` access to that account.",
         "operationId": "listAccounts",
         "parameters": [
           {
@@ -5841,7 +5853,7 @@
                 }
               }
             },
-            "description": "payment retried"
+            "description": "payment retry queued"
           },
           "400": {
             "$ref": "#/components/responses/InvalidParameters",
@@ -5930,6 +5942,775 @@
             "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.adCampaigns.unpause({\n    id: \"id\"\n});\n"
           }
         ]
+      }
+    },
+    "/ad_conversion_value_rules": {
+      "get": {
+        "description": "List saved rules the caller can read. Filter by business with account_id.",
+        "operationId": "listAdConversionValueRules",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "account_id",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "status",
+            "required": false,
+            "schema": {
+              "enum": [
+                "active",
+                "paused"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "platform",
+            "required": false,
+            "schema": {
+              "enum": [
+                "tiktok",
+                "meta",
+                "google"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "description": "Campaign, ad group, or ad ID. Return rules covering this item, its ancestors, or its descendants.",
+            "in": "query",
+            "name": "resource_id",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Number of results to return from the start of the range.",
+            "in": "query",
+            "name": "first",
+            "required": false,
+            "schema": {
+              "default": 20,
+              "maximum": 100,
+              "type": "integer"
+            }
+          },
+          {
+            "description": "Return results after this cursor. Use `page_info.end_cursor` from the previous response to fetch the next page.",
+            "in": "query",
+            "name": "after",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Number of results to return from the end of the range.",
+            "in": "query",
+            "name": "last",
+            "required": false,
+            "schema": {
+              "maximum": 100,
+              "type": "integer"
+            }
+          },
+          {
+            "description": "Return results before this cursor. Use `page_info.start_cursor` from the previous response to fetch the previous page.",
+            "in": "query",
+            "name": "before",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "order",
+            "required": false,
+            "schema": {
+              "enum": [
+                "created_at"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "direction",
+            "required": false,
+            "schema": {
+              "enum": [
+                "asc",
+                "desc"
+              ],
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "data": {
+                      "items": {
+                        "$ref": "#/components/schemas/AdConversionValueRule"
+                      },
+                      "type": "array"
+                    },
+                    "page_info": {
+                      "properties": {
+                        "end_cursor": {
+                          "nullable": true,
+                          "type": "string"
+                        },
+                        "has_next_page": {
+                          "example": false,
+                          "type": "boolean"
+                        },
+                        "has_previous_page": {
+                          "example": false,
+                          "type": "boolean"
+                        },
+                        "start_cursor": {
+                          "nullable": true,
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "start_cursor",
+                        "end_cursor",
+                        "has_next_page",
+                        "has_previous_page"
+                      ],
+                      "type": "object"
+                    }
+                  },
+                  "required": [
+                    "data",
+                    "page_info"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Rules"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": [
+              "ad_campaign:basic:read"
+            ]
+          }
+        ],
+        "summary": "List conversion value rules",
+        "tags": [
+          "Ad Conversion Value Rules"
+        ],
+        "x-mint": {
+          "metadata": {
+            "title": "List Conversion Value Rules",
+            "sidebarTitle": "List Conversion Value Rules"
+          }
+        }
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/ApiVersionDate"
+        }
+      ],
+      "post": {
+        "description": "Create one rule covering every selected target and event combination. Active rules cannot overlap for the same platform and event. Customer prices and Whop revenue stay unchanged.",
+        "operationId": "createAdConversionValueRule",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/IdempotencyKey"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "account_id": {
+                    "description": "Business that owns the rule.",
+                    "example": "biz_xxxxxxxxxxxxxx",
+                    "type": "string"
+                  },
+                  "adjustment_type": {
+                    "enum": [
+                      "fixed",
+                      "percentage"
+                    ],
+                    "example": "fixed",
+                    "type": "string"
+                  },
+                  "events": {
+                    "description": "Events adjusted on every selected target. Every platform must support every selected event.",
+                    "items": {
+                      "properties": {
+                        "custom_name": {
+                          "description": "Exact custom event name. Required for custom events; null for standard events.",
+                          "nullable": true,
+                          "type": "string"
+                        },
+                        "event_name": {
+                          "enum": [
+                            "purchase",
+                            "subscribe",
+                            "start_trial",
+                            "lead",
+                            "complete_registration",
+                            "submit_application",
+                            "schedule",
+                            "contact",
+                            "view_content",
+                            "add_to_cart",
+                            "custom"
+                          ],
+                          "example": "lead",
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "event_name"
+                      ],
+                      "type": "object"
+                    },
+                    "maxItems": 100,
+                    "minItems": 1,
+                    "type": "array"
+                  },
+                  "fixed_value": {
+                    "nullable": true,
+                    "properties": {
+                      "amount": {
+                        "description": "Decimal amount with at most 2 decimal places. Fixed values must be greater than 0 and at most 99999999.99.",
+                        "example": "60.00",
+                        "pattern": "^-?(?:[0-9]+(?:\\.[0-9]{1,2})?|\\.[0-9]{1,2})$",
+                        "type": "string"
+                      },
+                      "currency": {
+                        "example": "usd",
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "amount",
+                      "currency"
+                    ],
+                    "type": "object"
+                  },
+                  "metadata": {
+                    "additionalProperties": {
+                      "type": "string"
+                    },
+                    "type": "object"
+                  },
+                  "percentage_change": {
+                    "description": "Signed percent change from negative 100 to 10000. The sent value cannot go below zero.",
+                    "maximum": 10000,
+                    "minimum": -100,
+                    "multipleOf": 0.01,
+                    "nullable": true,
+                    "type": "number"
+                  },
+                  "replace_rule_ids": {
+                    "description": "Exact IDs of active rules whose overlapping selections will be replaced. Other selections keep their values; remaining selections may split into separate rules. Broader rules remain as fallbacks for other items. Stale or incomplete conflict selections fail.",
+                    "items": {
+                      "type": "string"
+                    },
+                    "maxItems": 1000,
+                    "type": "array",
+                    "uniqueItems": true
+                  },
+                  "status": {
+                    "description": "Initial rule status. Defaults to active.",
+                    "enum": [
+                      "active",
+                      "paused"
+                    ],
+                    "example": "active",
+                    "type": "string"
+                  },
+                  "targets": {
+                    "description": "Targets sharing one scope. Every selected event applies to every target. At most 500 target and event combinations.",
+                    "items": {
+                      "properties": {
+                        "platform": {
+                          "enum": [
+                            "tiktok",
+                            "meta",
+                            "google"
+                          ],
+                          "example": "meta",
+                          "type": "string"
+                        },
+                        "resource_id": {
+                          "description": "Campaign, ad group, or ad ID. Null for a business target.",
+                          "nullable": true,
+                          "type": "string"
+                        },
+                        "scope": {
+                          "enum": [
+                            "business",
+                            "campaign",
+                            "ad_group",
+                            "ad"
+                          ],
+                          "example": "business",
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "scope",
+                        "platform"
+                      ],
+                      "type": "object"
+                    },
+                    "maxItems": 100,
+                    "minItems": 1,
+                    "type": "array"
+                  }
+                },
+                "required": [
+                  "account_id",
+                  "adjustment_type",
+                  "targets",
+                  "events"
+                ],
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdConversionValueRule"
+                }
+              }
+            },
+            "description": "Created"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": [
+              "ad_campaign:update"
+            ]
+          }
+        ],
+        "summary": "Create a conversion value rule",
+        "tags": [
+          "Ad Conversion Value Rules"
+        ],
+        "x-mint": {
+          "metadata": {
+            "title": "Create a Conversion Value Rule",
+            "sidebarTitle": "Create a Conversion Value Rule"
+          }
+        }
+      }
+    },
+    "/ad_conversion_value_rules/{id}": {
+      "delete": {
+        "description": "Soft-delete a rule and deactivate all its coverage. Preserve its stored settings.",
+        "operationId": "deleteAdConversionValueRule",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "deleted": {
+                      "example": true,
+                      "type": "boolean"
+                    },
+                    "id": {
+                      "example": "adcvr_xxxxxxxxxxxxxx",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "deleted"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Deleted"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": [
+              "ad_campaign:update"
+            ]
+          }
+        ],
+        "summary": "Delete a conversion value rule",
+        "tags": [
+          "Ad Conversion Value Rules"
+        ],
+        "x-mint": {
+          "metadata": {
+            "title": "Delete a Conversion Value Rule",
+            "sidebarTitle": "Delete a Conversion Value Rule"
+          }
+        }
+      },
+      "get": {
+        "operationId": "retrieveAdConversionValueRule",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdConversionValueRule"
+                }
+              }
+            },
+            "description": "Rule"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": [
+              "ad_campaign:basic:read"
+            ]
+          }
+        ],
+        "summary": "Retrieve a conversion value rule",
+        "tags": [
+          "Ad Conversion Value Rules"
+        ],
+        "x-mint": {
+          "metadata": {
+            "title": "Retrieve a Conversion Value Rule",
+            "sidebarTitle": "Retrieve a Conversion Value Rule"
+          }
+        }
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/ApiVersionDate"
+        },
+        {
+          "description": "Conversion value rule ID.",
+          "in": "path",
+          "name": "id",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "patch": {
+        "description": "Edit a rule without changing its status. Supplied targets or events replace that selection in full. Omitted fields stay unchanged. All changes succeed or fail together.",
+        "operationId": "updateAdConversionValueRule",
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "adjustment_type": {
+                    "enum": [
+                      "fixed",
+                      "percentage"
+                    ],
+                    "example": "fixed",
+                    "type": "string"
+                  },
+                  "events": {
+                    "description": "Events adjusted on every selected target. Every platform must support every selected event.",
+                    "items": {
+                      "properties": {
+                        "custom_name": {
+                          "description": "Exact custom event name. Required for custom events; null for standard events.",
+                          "nullable": true,
+                          "type": "string"
+                        },
+                        "event_name": {
+                          "enum": [
+                            "purchase",
+                            "subscribe",
+                            "start_trial",
+                            "lead",
+                            "complete_registration",
+                            "submit_application",
+                            "schedule",
+                            "contact",
+                            "view_content",
+                            "add_to_cart",
+                            "custom"
+                          ],
+                          "example": "lead",
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "event_name"
+                      ],
+                      "type": "object"
+                    },
+                    "maxItems": 100,
+                    "minItems": 1,
+                    "type": "array"
+                  },
+                  "fixed_value": {
+                    "nullable": true,
+                    "properties": {
+                      "amount": {
+                        "description": "Decimal amount with at most 2 decimal places. Fixed values must be greater than 0 and at most 99999999.99.",
+                        "example": "60.00",
+                        "pattern": "^-?(?:[0-9]+(?:\\.[0-9]{1,2})?|\\.[0-9]{1,2})$",
+                        "type": "string"
+                      },
+                      "currency": {
+                        "example": "usd",
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "amount",
+                      "currency"
+                    ],
+                    "type": "object"
+                  },
+                  "metadata": {
+                    "additionalProperties": {
+                      "type": "string"
+                    },
+                    "type": "object"
+                  },
+                  "percentage_change": {
+                    "description": "Signed percent change from negative 100 to 10000. The sent value cannot go below zero.",
+                    "maximum": 10000,
+                    "minimum": -100,
+                    "multipleOf": 0.01,
+                    "nullable": true,
+                    "type": "number"
+                  },
+                  "replace_rule_ids": {
+                    "description": "Exact IDs of active rules whose overlapping selections will be replaced. Other selections keep their values; remaining selections may split into separate rules. Broader rules remain as fallbacks for other items. Stale or incomplete conflict selections fail.",
+                    "items": {
+                      "type": "string"
+                    },
+                    "maxItems": 1000,
+                    "type": "array",
+                    "uniqueItems": true
+                  },
+                  "targets": {
+                    "description": "Targets sharing one scope. Every selected event applies to every target. At most 500 target and event combinations.",
+                    "items": {
+                      "properties": {
+                        "platform": {
+                          "enum": [
+                            "tiktok",
+                            "meta",
+                            "google"
+                          ],
+                          "example": "meta",
+                          "type": "string"
+                        },
+                        "resource_id": {
+                          "description": "Campaign, ad group, or ad ID. Null for a business target.",
+                          "nullable": true,
+                          "type": "string"
+                        },
+                        "scope": {
+                          "enum": [
+                            "business",
+                            "campaign",
+                            "ad_group",
+                            "ad"
+                          ],
+                          "example": "business",
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "scope",
+                        "platform"
+                      ],
+                      "type": "object"
+                    },
+                    "maxItems": 100,
+                    "minItems": 1,
+                    "type": "array"
+                  }
+                },
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdConversionValueRule"
+                }
+              }
+            },
+            "description": "Updated"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": [
+              "ad_campaign:update"
+            ]
+          }
+        ],
+        "summary": "Update a conversion value rule",
+        "tags": [
+          "Ad Conversion Value Rules"
+        ],
+        "x-mint": {
+          "metadata": {
+            "title": "Update a Conversion Value Rule",
+            "sidebarTitle": "Update a Conversion Value Rule"
+          }
+        }
+      }
+    },
+    "/ad_conversion_value_rules/{id}/pause": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/ApiVersionDate"
+        },
+        {
+          "description": "Conversion value rule ID.",
+          "in": "path",
+          "name": "id",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "post": {
+        "description": "Pause the rule across all selected targets and events.",
+        "operationId": "pauseAdConversionValueRule",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/IdempotencyKey"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdConversionValueRule"
+                }
+              }
+            },
+            "description": "Rule"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": [
+              "ad_campaign:update"
+            ]
+          }
+        ],
+        "summary": "Pause a conversion value rule",
+        "tags": [
+          "Ad Conversion Value Rules"
+        ],
+        "x-mint": {
+          "metadata": {
+            "title": "Pause a Conversion Value Rule",
+            "sidebarTitle": "Pause a Conversion Value Rule"
+          }
+        }
+      }
+    },
+    "/ad_conversion_value_rules/{id}/unpause": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/ApiVersionDate"
+        },
+        {
+          "description": "Conversion value rule ID.",
+          "in": "path",
+          "name": "id",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "post": {
+        "description": "Resume the rule and automatically replace overlapping selections in the same transaction. Other selections keep their values, and broader rules remain as defaults. Rules with no remaining selections are paused. Resuming an already-active rule makes no changes.",
+        "operationId": "unpauseAdConversionValueRule",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/IdempotencyKey"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdConversionValueRule"
+                }
+              }
+            },
+            "description": "Rule"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": [
+              "ad_campaign:update"
+            ]
+          }
+        ],
+        "summary": "Unpause a conversion value rule",
+        "tags": [
+          "Ad Conversion Value Rules"
+        ],
+        "x-mint": {
+          "metadata": {
+            "title": "Unpause a Conversion Value Rule",
+            "sidebarTitle": "Unpause a Conversion Value Rule"
+          }
+        }
       }
     },
     "/ad_groups": {
@@ -24868,6 +25649,7 @@
                   "onchain_wallet_transfer_outgoing",
                   "onchain_withdrawal",
                   "orchestration_percentage_fee",
+                  "partner_grant_reward",
                   "passthrough_gmv",
                   "payment_dispute",
                   "payment_dispute_adjustment",
@@ -25316,6 +26098,7 @@
                   "onchain_wallet_transfer_outgoing",
                   "onchain_withdrawal",
                   "orchestration_percentage_fee",
+                  "partner_grant_reward",
                   "passthrough_gmv",
                   "payment_dispute",
                   "payment_dispute_adjustment",
@@ -25705,6 +26488,7 @@
                               "onchain_withdrawal",
                               "onchain_withdrawal_offset",
                               "orchestration_percentage_fee",
+                              "partner_grant_reward",
                               "passthrough_gmv",
                               "passthrough_gmv_offset",
                               "payment_dispute",
@@ -30580,7 +31364,8 @@
                   "ad_spend",
                   "transfer",
                   "card_interchange",
-                  "onboarding_reward"
+                  "onboarding_reward",
+                  "partner_reward"
                 ],
                 "example": "sales",
                 "type": "string"
@@ -30813,13 +31598,14 @@
                             ]
                           },
                           "income_source": {
-                            "description": "Which income source the commission is on: product-sales gross profit, Whop Ads spend billed to the business, platform balance transfer fees, Whop Card interchange, or a fixed onboarding reward paid to the partner when a referred business qualifies.",
+                            "description": "Which income source the commission is on: product-sales gross profit, Whop Ads spend billed to the business, platform balance transfer fees, Whop Card interchange, or a fixed onboarding or referral link reward paid to the partner when a referred business qualifies.",
                             "enum": [
                               "sales",
                               "ad_spend",
                               "transfer",
                               "card_interchange",
-                              "onboarding_reward"
+                              "onboarding_reward",
+                              "partner_reward"
                             ],
                             "example": "sales",
                             "type": "string"
@@ -31083,10 +31869,42 @@
                                 "type": "object"
                               },
                               {
+                                "properties": {
+                                  "business_id": {
+                                    "description": "The referred business that qualified.",
+                                    "type": "string"
+                                  },
+                                  "created_at": {
+                                    "example": "2026-01-01T12:00:00.000Z",
+                                    "format": "date-time",
+                                    "type": "string"
+                                  },
+                                  "id": {
+                                    "description": "The referral link reward the business qualified for, prefixed `prwd_`.",
+                                    "example": "prwd_xxxxxxxxxxxxxx",
+                                    "type": "string"
+                                  },
+                                  "object": {
+                                    "enum": [
+                                      "partner_reward"
+                                    ],
+                                    "example": "partner_reward",
+                                    "type": "string"
+                                  }
+                                },
+                                "required": [
+                                  "object",
+                                  "id",
+                                  "business_id",
+                                  "created_at"
+                                ],
+                                "type": "object"
+                              },
+                              {
                                 "type": "null"
                               }
                             ],
-                            "description": "The resource that generated the earning: the customer payment receipt for sales and ad spend earnings, the balance transfer for transfer earnings, or the card transaction for card interchange earnings."
+                            "description": "The resource that generated the earning: the customer payment receipt for sales and ad spend earnings, the balance transfer for transfer earnings, the card transaction for card interchange earnings, or the qualifying reward for fixed reward earnings."
                           },
                           "second_tier": {
                             "description": "Whether this earning is a second-tier (grandparent) commission.",
@@ -34065,6 +34883,71 @@
                       "null"
                     ]
                   },
+                  "shipping_address": {
+                    "description": "Where physical goods ship, returned on the payment as `shipping_address`. Only the keys you supply are kept; omit it for digital goods.",
+                    "properties": {
+                      "city": {
+                        "description": "City name.",
+                        "example": "Austin",
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "country": {
+                        "description": "ISO 3166-1 alpha-2 country code, such as `US`.",
+                        "example": "US",
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "line1": {
+                        "description": "First line of the street address.",
+                        "example": "1114 Bouldin Ave",
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "line2": {
+                        "description": "Second line of the street address.",
+                        "example": "Unit B",
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "name": {
+                        "description": "The recipient's full name, as it should appear on the shipping label.",
+                        "example": "Dana Whitfield",
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "postal_code": {
+                        "description": "Postal or ZIP code.",
+                        "example": "78704",
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "state": {
+                        "description": "State, province, or region code, such as `CA`.",
+                        "example": "TX",
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      }
+                    },
+                    "type": [
+                      "object",
+                      "null"
+                    ]
+                  },
                   "statement_descriptor": {
                     "description": "Overrides the text on the buyer's card statement for this payment only. Takes precedence over the product's and account's custom descriptors, and changes neither. Must start with `WHOP*`, be 5-22 characters, contain at least one letter, and use only Latin letters, numbers, spaces, underscores, hyphens, or asterisks.",
                     "example": "WHOP*SHINETIME",
@@ -34531,7 +35414,7 @@
         }
       ],
       "post": {
-        "description": "Voids a payment that has not yet been settled. Voiding cancels the payment before it is captured by the payment processor.",
+        "description": "Voids or cancels an eligible payment. The request is rejected if the payment is no longer eligible.",
         "operationId": "voidPayment",
         "parameters": [
           {
@@ -55379,6 +56262,676 @@
         ]
       }
     },
+    "/waitlist_entries": {
+      "get": {
+        "description": "Lists visible waitlist signups. waitlist_entry:read grants the user's own signups; plan:waitlist:read grants signups for authorized seller accounts. With both permissions, returns their union. Account credentials are limited to their account. Filters narrow this set.",
+        "operationId": "listWaitlistEntries",
+        "parameters": [
+          {
+            "description": "Number of results to return from the start of the range.",
+            "in": "query",
+            "name": "first",
+            "required": false,
+            "schema": {
+              "default": 20,
+              "maximum": 100,
+              "type": "integer"
+            }
+          },
+          {
+            "description": "Return results after this cursor. Use `page_info.end_cursor` from the previous response to fetch the next page.",
+            "in": "query",
+            "name": "after",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Number of results to return from the end of the range.",
+            "in": "query",
+            "name": "last",
+            "required": false,
+            "schema": {
+              "maximum": 100,
+              "type": "integer"
+            }
+          },
+          {
+            "description": "Return results before this cursor. Use `page_info.start_cursor` from the previous response to fetch the previous page.",
+            "in": "query",
+            "name": "before",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Only return signups for this plan, prefixed `plan_`.",
+            "in": "query",
+            "name": "plan_id",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Only return signups submitted to this seller account, prefixed `biz_`.",
+            "in": "query",
+            "name": "account_id",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Only return signups for plans on this product, prefixed `prod_`.",
+            "in": "query",
+            "name": "product_id",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Only return signups in this state. Canceled signups are returned only when `status` is `canceled`.",
+            "in": "query",
+            "name": "status",
+            "required": false,
+            "schema": {
+              "enum": [
+                "pending",
+                "approved",
+                "denied",
+                "canceled"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "description": "Only return signups submitted at or before this ISO 8601 timestamp.",
+            "in": "query",
+            "name": "created_before",
+            "required": false,
+            "schema": {
+              "format": "date_time",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Only return signups submitted at or after this ISO 8601 timestamp.",
+            "in": "query",
+            "name": "created_after",
+            "required": false,
+            "schema": {
+              "format": "date_time",
+              "type": "string"
+            }
+          },
+          {
+            "description": "The field to sort results by. Defaults to `created_at`.",
+            "in": "query",
+            "name": "order",
+            "required": false,
+            "schema": {
+              "enum": [
+                "created_at"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "description": "The sort direction for results. Defaults to descending.",
+            "in": "query",
+            "name": "direction",
+            "required": false,
+            "schema": {
+              "enum": [
+                "asc",
+                "desc"
+              ],
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "data": {
+                      "items": {
+                        "$ref": "#/components/schemas/WaitlistEntry"
+                      },
+                      "type": "array"
+                    },
+                    "page_info": {
+                      "properties": {
+                        "end_cursor": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "has_next_page": {
+                          "example": false,
+                          "type": "boolean"
+                        },
+                        "has_previous_page": {
+                          "example": false,
+                          "type": "boolean"
+                        },
+                        "start_cursor": {
+                          "example": "WyJjdXJzb3IiLDFd",
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "has_next_page",
+                        "has_previous_page",
+                        "start_cursor",
+                        "end_cursor"
+                      ],
+                      "type": "object"
+                    }
+                  },
+                  "required": [
+                    "data",
+                    "page_info"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "own signups only"
+          },
+          "400": {
+            "$ref": "#/components/responses/InvalidParameters",
+            "description": "invalid status"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized",
+            "description": "not signed in"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden",
+            "description": "missing read scope"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound",
+            "description": "unknown plan"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "List Waitlist Entries",
+        "tags": [
+          "Waitlist Entries"
+        ],
+        "x-mint": {
+          "metadata": {
+            "sidebarTitle": "List"
+          }
+        }
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/ApiVersionDate"
+        }
+      ],
+      "post": {
+        "description": "Joins a free waitlist plan as the authenticated user. Requires waitlist_entry:create. Repeated joins return the existing pending entry, or an approved entry with a valid membership. Paid plans are rejected; no payment method is collected and no membership is granted.",
+        "operationId": "createWaitlistEntry",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/IdempotencyKey"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "custom_field_responses": {
+                    "description": "Answers to the plan's checkout questions. Every required question must be answered.",
+                    "items": {
+                      "properties": {
+                        "answer": {
+                          "description": "The buyer's answer.",
+                          "type": "string"
+                        },
+                        "custom_field_id": {
+                          "description": "The checkout question being answered, prefixed `field_`.",
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "custom_field_id",
+                        "answer"
+                      ],
+                      "type": "object"
+                    },
+                    "type": "array"
+                  },
+                  "metadata": {
+                    "description": "Custom key-value pairs to store on the signup. Max 50 keys, 100 chars per key, 500 chars per string value. Ignored when the request returns an existing signup.",
+                    "type": "object"
+                  },
+                  "plan_id": {
+                    "description": "The free waitlist plan to join, prefixed `plan_`.",
+                    "example": "plan_xxxxxxxxxxxxxx",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "plan_id"
+                ],
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WaitlistEntry"
+                }
+              }
+            },
+            "description": "joined"
+          },
+          "400": {
+            "$ref": "#/components/responses/InvalidParameters",
+            "description": "paid plan refused"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized",
+            "description": "not signed in"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden",
+            "description": "missing write scope"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound",
+            "description": "unknown plan"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Create Waitlist Entry",
+        "tags": [
+          "Waitlist Entries"
+        ],
+        "x-mint": {
+          "metadata": {
+            "sidebarTitle": "Create"
+          }
+        }
+      }
+    },
+    "/waitlist_entries/approve_all": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/ApiVersionDate"
+        }
+      ],
+      "post": {
+        "description": "Queues approval of every pending signup for an account, optionally narrowed to a plan. Requires plan:waitlist:manage. Paid signups may charge saved payment methods. Approval runs asynchronously: list signups with `status` set to `pending` to follow progress, and retrieve a signup to read its outcome. Signups created after this request are excluded.",
+        "operationId": "approveAllWaitlistEntries",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/IdempotencyKey"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "account_id": {
+                    "description": "The seller account whose pending signups to approve, prefixed `biz_`.",
+                    "example": "biz_xxxxxxxxxxxxxx",
+                    "type": "string"
+                  },
+                  "plan_id": {
+                    "description": "Only approve signups for this plan, prefixed `plan_`. Omit to include every waitlist plan on the account.",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "account_id"
+                ],
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "account_id": {
+                      "description": "The seller account whose signups were queued, prefixed `biz_`.",
+                      "example": "biz_xxxxxxxxxxxxxx",
+                      "type": "string"
+                    },
+                    "plan_id": {
+                      "description": "The plan the request was narrowed to, prefixed `plan_`, or `null` when every waitlist plan on the account was included.",
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "queued": {
+                      "description": "Whether any pending signups were queued for approval. `false` when there were none.",
+                      "example": true,
+                      "type": "boolean"
+                    }
+                  },
+                  "required": [
+                    "account_id",
+                    "plan_id",
+                    "queued"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "approval queued"
+          },
+          "400": {
+            "$ref": "#/components/responses/InvalidParameters",
+            "description": "missing account"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized",
+            "description": "not signed in"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden",
+            "description": "missing write scope"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound",
+            "description": "unknown account"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Approve All Waitlist Entries",
+        "tags": [
+          "Waitlist Entries"
+        ]
+      }
+    },
+    "/waitlist_entries/{id}": {
+      "get": {
+        "description": "Retrieves a signup owned by the caller with waitlist_entry:read, or submitted to an account they can read with plan:waitlist:read.",
+        "operationId": "retrieveWaitlistEntry",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WaitlistEntry"
+                }
+              }
+            },
+            "description": "signup"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized",
+            "description": "not signed in"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden",
+            "description": "missing read scope"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound",
+            "description": "not visible"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Retrieve Waitlist Entry",
+        "tags": [
+          "Waitlist Entries"
+        ],
+        "x-mint": {
+          "metadata": {
+            "sidebarTitle": "Retrieve"
+          }
+        }
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/ApiVersionDate"
+        },
+        {
+          "description": "Waitlist signup ID, prefixed `entry_`.",
+          "in": "path",
+          "name": "id",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    "/waitlist_entries/{id}/approve": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/ApiVersionDate"
+        },
+        {
+          "description": "Waitlist signup ID, prefixed `entry_`.",
+          "in": "path",
+          "name": "id",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "post": {
+        "description": "Queues approval of a pending signup. Requires plan:waitlist:manage on its seller account. Paid signups may charge their saved payment method. Returns the signup's current state; retrieve it to read `status` and `approval_failure_reason` after processing.",
+        "operationId": "approveWaitlistEntry",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/IdempotencyKey"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WaitlistEntry"
+                }
+              }
+            },
+            "description": "current signup state"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized",
+            "description": "not signed in"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden",
+            "description": "missing write scope"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound",
+            "description": "unknown signup"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict",
+            "description": "not pending"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Approve Waitlist Entry",
+        "tags": [
+          "Waitlist Entries"
+        ]
+      }
+    },
+    "/waitlist_entries/{id}/cancel": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/ApiVersionDate"
+        },
+        {
+          "description": "Waitlist signup ID, prefixed `entry_`.",
+          "in": "path",
+          "name": "id",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "post": {
+        "description": "Withdraws the caller's pending personal signup. Requires waitlist_entry:cancel. Does not cancel an approved membership.",
+        "operationId": "cancelWaitlistEntry",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/IdempotencyKey"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WaitlistEntry"
+                }
+              }
+            },
+            "description": "current signup state"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized",
+            "description": "not signed in"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden",
+            "description": "missing write scope"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound",
+            "description": "unknown signup"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict",
+            "description": "not pending"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Cancel Waitlist Entry",
+        "tags": [
+          "Waitlist Entries"
+        ]
+      }
+    },
+    "/waitlist_entries/{id}/deny": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/ApiVersionDate"
+        },
+        {
+          "description": "Waitlist signup ID, prefixed `entry_`.",
+          "in": "path",
+          "name": "id",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "post": {
+        "description": "Denies a pending signup. Requires plan:waitlist:manage on its seller account.",
+        "operationId": "denyWaitlistEntry",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/IdempotencyKey"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WaitlistEntry"
+                }
+              }
+            },
+            "description": "current signup state"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized",
+            "description": "not signed in"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden",
+            "description": "missing write scope"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound",
+            "description": "unknown signup"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict",
+            "description": "not pending"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Deny Waitlist Entry",
+        "tags": [
+          "Waitlist Entries"
+        ]
+      }
+    },
     "/webhooks": {
       "get": {
         "description": "Returns a paginated list of webhook endpoints configured for an account, ordered by most recently created.",
@@ -57682,6 +59235,7 @@
                   "lead_form_id": null,
                   "messaging_config": null,
                   "multi_advertiser_ads": true,
+                  "platform": "meta",
                   "post_id": null,
                   "post_source": null,
                   "post_thumbnail_url": null,
@@ -57889,6 +59443,15 @@
                           }
                         ]
                       },
+                      "platform": {
+                        "description": "The ad platform this ad runs on.",
+                        "enum": [
+                          "meta",
+                          "tiktok"
+                        ],
+                        "example": "meta",
+                        "type": "string"
+                      },
                       "post_id": {
                         "description": "The post the ad network serves for this ad, as `pageID_postID` on Meta — the post Meta created for an uploaded creative, or the post being promoted. Use it to open the live post, or to promote the same post from another ad. `null` until the network has created the post.",
                         "example": "xxxxxxxxxxxxxxxx_98765",
@@ -57974,6 +59537,7 @@
                     "required": [
                       "id",
                       "title",
+                      "platform",
                       "status",
                       "delivery_status",
                       "primary_texts",
@@ -61074,7 +62638,8 @@
         "summary": "CardTransaction Completed",
         "tags": [
           "Cards"
-        ]
+        ],
+        "x-group-title": "Cards"
       }
     },
     "card_transaction.created": {
@@ -61212,7 +62777,8 @@
         "summary": "CardTransaction Created",
         "tags": [
           "Cards"
-        ]
+        ],
+        "x-group-title": "Cards"
       }
     },
     "card_transaction.declined": {
@@ -61350,7 +62916,8 @@
         "summary": "CardTransaction Declined",
         "tags": [
           "Cards"
-        ]
+        ],
+        "x-group-title": "Cards"
       }
     },
     "card_transaction.reversed": {
@@ -61488,7 +63055,8 @@
         "summary": "CardTransaction Reversed",
         "tags": [
           "Cards"
-        ]
+        ],
+        "x-group-title": "Cards"
       }
     },
     "card_transaction.updated": {
@@ -61626,7 +63194,8 @@
         "summary": "CardTransaction Updated",
         "tags": [
           "Cards"
-        ]
+        ],
+        "x-group-title": "Cards"
       }
     },
     "deposit.succeeded": {
@@ -61953,7 +63522,8 @@
         "summary": "Dispute Created",
         "tags": [
           "Disputes"
-        ]
+        ],
+        "x-group-title": "Payins"
       }
     },
     "dispute.updated": {
@@ -62140,7 +63710,8 @@
         "summary": "Dispute Updated",
         "tags": [
           "Disputes"
-        ]
+        ],
+        "x-group-title": "Payins"
       }
     },
     "dispute_alert.created": {
@@ -62277,7 +63848,8 @@
         "summary": "Dispute Alert Created",
         "tags": [
           "Dispute alerts"
-        ]
+        ],
+        "x-group-title": "Payins"
       }
     },
     "export.completed": {
@@ -62811,7 +64383,8 @@
         "summary": "IdentityProfile Updated",
         "tags": [
           "Verifications"
-        ]
+        ],
+        "x-group-title": "Payouts"
       }
     },
     "member.created": {
@@ -62949,7 +64522,8 @@
         "summary": "Member Created",
         "tags": [
           "Members"
-        ]
+        ],
+        "x-group-title": "CRM"
       }
     },
     "member.updated": {
@@ -63087,7 +64661,8 @@
         "summary": "Member Updated",
         "tags": [
           "Members"
-        ]
+        ],
+        "x-group-title": "CRM"
       }
     },
     "membership.activated": {
@@ -63226,7 +64801,8 @@
         "summary": "Membership Activated",
         "tags": [
           "Memberships"
-        ]
+        ],
+        "x-group-title": "CRM"
       }
     },
     "membership.cancel_at_period_end_changed": {
@@ -63366,6 +64942,7 @@
         "tags": [
           "Memberships"
         ],
+        "x-group-title": "CRM",
         "x-mint": {
           "metadata": {
             "title": "Membership Cancel at Period End Changed",
@@ -63510,7 +65087,8 @@
         "summary": "Membership Deactivated",
         "tags": [
           "Memberships"
-        ]
+        ],
+        "x-group-title": "CRM"
       }
     },
     "membership.trial_ending_soon": {
@@ -63650,6 +65228,7 @@
         "tags": [
           "Memberships"
         ],
+        "x-group-title": "CRM",
         "x-mint": {
           "metadata": {
             "title": "Membership Trial Ending Soon",
@@ -63929,7 +65508,8 @@
         "summary": "Payment Authorized",
         "tags": [
           "Payments"
-        ]
+        ],
+        "x-group-title": "Payins"
       }
     },
     "payment.canceled": {
@@ -64203,7 +65783,8 @@
         "summary": "Payment Canceled",
         "tags": [
           "Payments"
-        ]
+        ],
+        "x-group-title": "Payins"
       }
     },
     "payment.created": {
@@ -64477,7 +66058,8 @@
         "summary": "Payment Created",
         "tags": [
           "Payments"
-        ]
+        ],
+        "x-group-title": "Payins"
       }
     },
     "payment.failed": {
@@ -64751,7 +66333,8 @@
         "summary": "Payment Failed",
         "tags": [
           "Payments"
-        ]
+        ],
+        "x-group-title": "Payins"
       }
     },
     "payment.pending": {
@@ -65021,7 +66604,8 @@
         "summary": "Payment Pending",
         "tags": [
           "Payments"
-        ]
+        ],
+        "x-group-title": "Payins"
       }
     },
     "payment.requires_action": {
@@ -65296,6 +66880,7 @@
         "tags": [
           "Payments"
         ],
+        "x-group-title": "Payins",
         "x-mint": {
           "metadata": {
             "title": "Payment Requires Action",
@@ -65575,7 +67160,8 @@
         "summary": "Payment Succeeded",
         "tags": [
           "Payments"
-        ]
+        ],
+        "x-group-title": "Payins"
       }
     },
     "payout.created": {
@@ -67534,7 +69120,8 @@
         "summary": "PayoutMethod Created",
         "tags": [
           "Payouts"
-        ]
+        ],
+        "x-group-title": "Payouts"
       }
     },
     "plan.created": {
@@ -67728,6 +69315,12 @@
                   "id": "plan_xxxxxxxxxxxxxx",
                   "image": null,
                   "initial_price": 0,
+                  "initial_price_due": {
+                    "amount": "50.00",
+                    "currency": "usd",
+                    "decimals": 2,
+                    "display_decimals": 2
+                  },
                   "internal_notes": "Maintenance tier. Upsell the interior shampoo add-on at renewal.",
                   "invoice": null,
                   "member_count": 0,
@@ -68022,6 +69615,12 @@
                   "id": "plan_xxxxxxxxxxxxxx",
                   "image": null,
                   "initial_price": 0,
+                  "initial_price_due": {
+                    "amount": "50.00",
+                    "currency": "usd",
+                    "decimals": 2,
+                    "display_decimals": 2
+                  },
                   "internal_notes": "Maintenance tier. Upsell the interior shampoo add-on at renewal.",
                   "invoice": null,
                   "member_count": 0,
@@ -68316,6 +69915,12 @@
                   "id": "plan_xxxxxxxxxxxxxx",
                   "image": null,
                   "initial_price": 0,
+                  "initial_price_due": {
+                    "amount": "0.00",
+                    "currency": "usd",
+                    "decimals": 2,
+                    "display_decimals": 2
+                  },
                   "internal_notes": "Maintenance tier. Upsell the interior shampoo add-on at renewal.",
                   "invoice": null,
                   "member_count": 0,
@@ -68573,7 +70178,8 @@
         "summary": "Product Created",
         "tags": [
           "Products"
-        ]
+        ],
+        "x-group-title": "Payins"
       }
     },
     "product.deleted": {
@@ -68730,7 +70336,8 @@
         "summary": "Product Deleted",
         "tags": [
           "Products"
-        ]
+        ],
+        "x-group-title": "Payins"
       }
     },
     "product.published": {
@@ -68887,7 +70494,8 @@
         "summary": "Product Published",
         "tags": [
           "Products"
-        ]
+        ],
+        "x-group-title": "Payins"
       }
     },
     "product.unpublished": {
@@ -69044,7 +70652,8 @@
         "summary": "Product Unpublished",
         "tags": [
           "Products"
-        ]
+        ],
+        "x-group-title": "Payins"
       }
     },
     "product.updated": {
@@ -69201,7 +70810,8 @@
         "summary": "Product Updated",
         "tags": [
           "Products"
-        ]
+        ],
+        "x-group-title": "Payins"
       }
     },
     "resolution_center_case.created": {
@@ -69371,7 +70981,8 @@
         "summary": "ResolutionCenterCase Created",
         "tags": [
           "Resolution Center Cases"
-        ]
+        ],
+        "x-group-title": "Payins"
       }
     },
     "resolution_center_case.decided": {
@@ -69537,7 +71148,8 @@
         "summary": "ResolutionCenterCase Decided",
         "tags": [
           "Resolution Center Cases"
-        ]
+        ],
+        "x-group-title": "Payins"
       }
     },
     "resolution_center_case.updated": {
@@ -69703,7 +71315,8 @@
         "summary": "ResolutionCenterCase Updated",
         "tags": [
           "Resolution Center Cases"
-        ]
+        ],
+        "x-group-title": "Payins"
       }
     },
     "shipment.created": {
@@ -69834,7 +71447,8 @@
         "summary": "Shipment Created",
         "tags": [
           "Shipments"
-        ]
+        ],
+        "x-group-title": "CRM"
       }
     },
     "shipment.updated": {
@@ -69965,7 +71579,8 @@
         "summary": "Shipment Updated",
         "tags": [
           "Shipments"
-        ]
+        ],
+        "x-group-title": "CRM"
       }
     },
     "swap.completed": {
@@ -71738,7 +73353,7 @@
             ]
           },
           "cards": {
-            "description": "Whop Cards application details for the account. Computed only on `retrieve` and `me` for callers with `company:balance:read` scope; `null` otherwise, or when the account has no card application.",
+            "description": "Whop Cards application details for the account. Returned on `list`, `retrieve`, and `me` for callers with `company:balance:read` scope; `null` otherwise, or when the account has no card application or blocking application review.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/AccountCards"
@@ -75082,8 +76697,39 @@
                 "maximum": null,
                 "minimum": null,
                 "percentage": 3.9,
-                "region": "uk",
-                "regions": {},
+                "region": "au",
+                "regions": {
+                  "uk": {
+                    "default": {
+                      "fixed": {
+                        "amount": "0.30",
+                        "currency": "usd",
+                        "decimals": 2,
+                        "display_decimals": 2
+                      },
+                      "percentage": 3.9
+                    },
+                    "fixed": {
+                      "amount": "0.30",
+                      "currency": "usd",
+                      "decimals": 2,
+                      "display_decimals": 2
+                    },
+                    "maximum": null,
+                    "minimum": null,
+                    "percentage": 3.9,
+                    "reset": {
+                      "fixed": {
+                        "amount": "0.30",
+                        "currency": "usd",
+                        "decimals": 2,
+                        "display_decimals": 2
+                      },
+                      "percentage": 3.9
+                    },
+                    "source": "default"
+                  }
+                },
                 "reset": {
                   "fixed": {
                     "amount": "0.30",
@@ -75743,14 +77389,13 @@
             "enum": [
               "deposit_funds",
               "review_held_payments",
-              "accept_airwallex_terms",
               "submit_information_request",
               "update_automatic_withdrawal_method",
               "reauthorize_payout_methods",
               "update_payout_profile",
               "card_usage_review",
               "verify_identity",
-              "verify_airwallex_account",
+              "scale_account_setup",
               "sign_formation_documents",
               "connect_fulfillment_tracker",
               "setup_apple_pay_domains",
@@ -76673,6 +78318,15 @@
               }
             ]
           },
+          "platform": {
+            "description": "The ad platform this ad runs on.",
+            "enum": [
+              "meta",
+              "tiktok"
+            ],
+            "example": "meta",
+            "type": "string"
+          },
           "post_id": {
             "description": "The post the ad network serves for this ad, as `pageID_postID` on Meta — the post Meta created for an uploaded creative, or the post being promoted. Use it to open the live post, or to promote the same post from another ad. `null` until the network has created the post.",
             "example": "xxxxxxxxxxxxxxxx_98765",
@@ -76915,6 +78569,7 @@
           "added_to_cart_value",
           "id",
           "title",
+          "platform",
           "status",
           "delivery_status",
           "primary_texts",
@@ -77452,6 +79107,180 @@
         ],
         "type": "object"
       },
+      "AdConversionValueRule": {
+        "properties": {
+          "account_id": {
+            "description": "Business that owns this shared, editable rule.",
+            "example": "biz_xxxxxxxxxxxxxx",
+            "type": "string"
+          },
+          "adjustment_type": {
+            "description": "Set a fixed amount or change the original value by a signed percentage.",
+            "enum": [
+              "fixed",
+              "percentage"
+            ],
+            "example": "fixed",
+            "type": "string"
+          },
+          "created_at": {
+            "description": "When the rule was created, as an ISO 8601 timestamp.",
+            "example": "2026-01-01T12:00:00.000Z",
+            "type": "string"
+          },
+          "events": {
+            "items": {
+              "$ref": "#/components/schemas/AdConversionValueRuleEvent",
+              "description": "Events adjusted on every selected target."
+            },
+            "type": "array"
+          },
+          "fixed_value": {
+            "description": "Amount sent for a fixed rule. Null for a percentage rule.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/Money"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "id": {
+            "description": "Conversion value rule ID, prefixed adcvr_.",
+            "example": "adcvr_xxxxxxxxxxxxxx",
+            "type": "string"
+          },
+          "metadata": {
+            "description": "Free-form string keys and values for the caller.",
+            "example": {},
+            "type": "object"
+          },
+          "percentage_change": {
+            "description": "Signed percent change: 20 increases by 20%, negative 20 decreases by 20%. The sent value cannot go below zero. Null for a fixed rule.",
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "status": {
+            "description": "Whether this rule is active or paused.",
+            "enum": [
+              "active",
+              "paused"
+            ],
+            "example": "active",
+            "type": "string"
+          },
+          "targets": {
+            "items": {
+              "$ref": "#/components/schemas/AdConversionValueRuleTarget",
+              "description": "Targets covered by this rule. Every selected event applies to every target."
+            },
+            "type": "array"
+          },
+          "updated_at": {
+            "description": "When the rule was edited, as an ISO 8601 timestamp.",
+            "example": "2026-01-01T12:00:00.000Z",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "account_id",
+          "status",
+          "targets",
+          "events",
+          "adjustment_type",
+          "fixed_value",
+          "percentage_change",
+          "metadata",
+          "created_at",
+          "updated_at"
+        ],
+        "type": "object"
+      },
+      "AdConversionValueRuleEvent": {
+        "properties": {
+          "custom_name": {
+            "description": "Exact custom event name. Null for standard events.",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "event_name": {
+            "description": "Event to adjust. Purchase includes Whop purchases and external purchase events.",
+            "enum": [
+              "purchase",
+              "subscribe",
+              "start_trial",
+              "lead",
+              "complete_registration",
+              "submit_application",
+              "schedule",
+              "contact",
+              "view_content",
+              "add_to_cart",
+              "custom"
+            ],
+            "example": "lead",
+            "type": "string"
+          }
+        },
+        "required": [
+          "event_name",
+          "custom_name"
+        ],
+        "type": "object"
+      },
+      "AdConversionValueRuleTarget": {
+        "properties": {
+          "platform": {
+            "description": "Ad platform that receives the adjusted value.",
+            "enum": [
+              "tiktok",
+              "meta",
+              "google"
+            ],
+            "example": "meta",
+            "type": "string"
+          },
+          "resource_id": {
+            "description": "Selected campaign, ad group, or ad ID. Null for a business target.",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "resource_title": {
+            "description": "Name of the selected item. Null when it is no longer available.",
+            "example": "Shine Time Auto Detailing",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "scope": {
+            "description": "Business, campaign, ad group, or ad covered by this target.",
+            "enum": [
+              "business",
+              "campaign",
+              "ad_group",
+              "ad"
+            ],
+            "example": "business",
+            "type": "string"
+          }
+        },
+        "required": [
+          "scope",
+          "resource_id",
+          "resource_title",
+          "platform"
+        ],
+        "type": "object"
+      },
       "AdCreative": {
         "properties": {
           "crop": {
@@ -77947,6 +79776,15 @@
             },
             "type": "array"
           },
+          "platform": {
+            "description": "The ad platform this ad group runs on.",
+            "enum": [
+              "meta",
+              "tiktok"
+            ],
+            "example": "meta",
+            "type": "string"
+          },
           "purchase_value": {
             "description": "USD value of pixel-attributed purchases.",
             "example": 7920,
@@ -78144,6 +79982,7 @@
           "added_to_cart_value",
           "id",
           "title",
+          "platform",
           "status",
           "delivery_status",
           "optimization_goal",
@@ -78269,6 +80108,10 @@
       },
       "AdGroupCustomLocation": {
         "properties": {
+          "country_code": {
+            "description": "ISO 3166-1 alpha-2 country the point falls in. Send it under a special ad category, where the campaign must declare the countries its ad sets reach.",
+            "type": "string"
+          },
           "distance_unit": {
             "description": "Unit for `radius`.",
             "enum": [
@@ -78747,6 +80590,10 @@
             "description": "Circular areas, each a coordinate plus a radius. At most 200 across include and exclude.",
             "items": {
               "properties": {
+                "country_code": {
+                  "description": "ISO 3166-1 alpha-2 country the point falls in, as `DE`. Send it under a special ad category: the campaign must declare the countries its ad sets reach, and a coordinate names none.",
+                  "type": "string"
+                },
                 "distance_unit": {
                   "description": "Unit for `radius`. Defaults to `mile`.",
                   "enum": [
@@ -85141,6 +86988,7 @@
               "onchain_wallet_transfer_outgoing",
               "onchain_withdrawal",
               "orchestration_percentage_fee",
+              "partner_grant_reward",
               "passthrough_gmv",
               "payment_dispute",
               "payment_dispute_adjustment",
@@ -88202,7 +90050,7 @@
             ]
           },
           "voidable": {
-            "description": "True when the payment is `open` on a past-due membership and its processor supports voiding — see `POST /payments/{id}/void`.",
+            "description": "True when the payment can be voided or canceled. The request is rejected if the payment is no longer eligible — see `POST /payments/{id}/void`.",
             "example": false,
             "type": "boolean"
           }
@@ -90003,12 +91851,12 @@
         "properties": {
           "action": {
             "description": "The permission action's identifier, for example `company:basic:read`.",
-            "example": "ai_prompt:create",
+            "example": "waitlist_entry:cancel",
             "type": "string"
           },
           "allowed_on_api_key": {
             "description": "Whether an API key can be granted the permission.",
-            "example": true,
+            "example": false,
             "type": "boolean"
           },
           "allowed_on_app": {
@@ -90051,7 +91899,7 @@
           },
           "name": {
             "description": "Human-readable name of the action.",
-            "example": "ai_prompt:create",
+            "example": "waitlist_entry:cancel",
             "type": "string"
           }
         },
@@ -90070,6 +91918,9 @@
       "PermissionAction": {
         "description": "A permission action identifier, such as `company:basic:read`.",
         "enum": [
+          "waitlist_entry:read",
+          "waitlist_entry:create",
+          "waitlist_entry:cancel",
           "experiment:manage",
           "experiment:read",
           "ai_prompt:create",
@@ -90338,9 +92189,12 @@
           "user:notifications:update",
           "user:profile:update"
         ],
-        "example": "experiment:manage",
+        "example": "waitlist_entry:read",
         "type": "string",
         "x-enumNames": [
+          "WaitlistEntryRead",
+          "WaitlistEntryCreate",
+          "WaitlistEntryCancel",
           "ExperimentManage",
           "ExperimentRead",
           "AiPromptCreate",
@@ -90918,6 +92772,10 @@
             "example": 0,
             "type": "number"
           },
+          "initial_price_due": {
+            "$ref": "#/components/schemas/Money",
+            "description": "Total charged at checkout for one unit, before promo codes and tax: `initial_price` plus the first `renewal_price` for recurring plans, or `initial_price` alone while a free trial applies. The trial does not apply when the viewing user has already used one for this plan."
+          },
           "internal_notes": {
             "description": "Private notes not shown to customers. `null` unless the actor has the `plan:basic:read` scope on the plan's account.",
             "example": "Maintenance tier. Upsell the interior shampoo add-on at renewal.",
@@ -91130,6 +92988,7 @@
           "expiration_days",
           "initial_price",
           "renewal_price",
+          "initial_price_due",
           "formatted_price",
           "trial_period_days",
           "three_ds_level",
@@ -91318,6 +93177,10 @@
             "description": "Initial purchase price in plan currency.",
             "example": 0,
             "type": "number"
+          },
+          "initial_price_due": {
+            "$ref": "#/components/schemas/Money",
+            "description": "Total charged at checkout for one unit, before promo codes and tax: `initial_price` plus the first `renewal_price` for recurring plans, or `initial_price` alone while a free trial applies. The trial does not apply when the viewing user has already used one for this plan."
           },
           "internal_notes": {
             "description": "Private notes not shown to customers. `null` unless the actor has the `plan:basic:read` scope on the plan's account.",
@@ -91521,6 +93384,7 @@
           "expiration_days",
           "initial_price",
           "renewal_price",
+          "initial_price_due",
           "formatted_price",
           "trial_period_days",
           "three_ds_level",
@@ -95031,6 +96895,138 @@
         },
         "required": [
           "error"
+        ],
+        "type": "object"
+      },
+      "WaitlistEntry": {
+        "properties": {
+          "account_id": {
+            "description": "The seller account, prefixed `biz_`.",
+            "example": "biz_xxxxxxxxxxxxxx",
+            "type": "string"
+          },
+          "approval_failure_reason": {
+            "description": "Why the last approval attempt failed, or `null` when none has. `plan_unavailable` — the plan, product, or seller account was deleted. `already_member` — the user already has a membership on a one-per-user product. `checkout_failed` — checkout failed, usually a declined payment, and the signup was denied. `unknown` — another failure; retry. Cleared when approval is requeued.",
+            "enum": [
+              "plan_unavailable",
+              "already_member",
+              "checkout_failed",
+              "unknown",
+              null
+            ],
+            "example": "plan_unavailable",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "buyer_account_id": {
+            "description": "The account the signup was submitted on behalf of, prefixed `biz_`, or `null` when the user signed up for themselves.",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "created_at": {
+            "description": "When this signup was submitted, as an ISO 8601 timestamp.",
+            "example": "2026-01-01T12:00:00.000Z",
+            "type": "string"
+          },
+          "custom_field_responses": {
+            "items": {
+              "$ref": "#/components/schemas/WaitlistEntryCustomFieldResponse",
+              "description": "The buyer's answers to checkout questions."
+            },
+            "type": "array"
+          },
+          "id": {
+            "description": "The waitlist signup ID, prefixed `entry_`.",
+            "example": "entry_xxxxxxxxxxxxxx",
+            "type": "string"
+          },
+          "membership_id": {
+            "description": "The membership created for this signup, prefixed `mem_`, or `null` when there is none. Check the membership's status to determine access.",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "metadata": {
+            "description": "Custom key-value metadata associated with this signup.",
+            "example": {},
+            "type": "object"
+          },
+          "plan_id": {
+            "description": "The plan this signup belongs to, prefixed `plan_`.",
+            "example": "plan_xxxxxxxxxxxxxx",
+            "type": "string"
+          },
+          "product_id": {
+            "description": "The product this signup belongs to, prefixed `prod_`, or `null` when the plan has no product.",
+            "example": "prod_xxxxxxxxxxxxxx",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "status": {
+            "description": "The signup's current state. Approval runs asynchronously, so a signup stays `pending` until processing completes. `approved` alone does not prove an active membership; check `membership_id`.",
+            "enum": [
+              "pending",
+              "approved",
+              "denied",
+              "canceled"
+            ],
+            "example": "canceled",
+            "type": "string"
+          },
+          "updated_at": {
+            "description": "When this signup last changed, as an ISO 8601 timestamp.",
+            "example": "2026-01-01T12:00:00.000Z",
+            "type": "string"
+          },
+          "user_id": {
+            "description": "The user who submitted this signup, prefixed `user_`.",
+            "example": "user_xxxxxxxxxxxxxx",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "status",
+          "approval_failure_reason",
+          "plan_id",
+          "account_id",
+          "product_id",
+          "user_id",
+          "buyer_account_id",
+          "membership_id",
+          "custom_field_responses",
+          "metadata",
+          "created_at",
+          "updated_at"
+        ],
+        "type": "object"
+      },
+      "WaitlistEntryCustomFieldResponse": {
+        "properties": {
+          "answer": {
+            "description": "The buyer's answer.",
+            "type": "string"
+          },
+          "id": {
+            "description": "The answer's ID, prefixed `cfrp_`.",
+            "type": "string"
+          },
+          "question": {
+            "description": "The question shown when the signup was submitted.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "question",
+          "answer"
         ],
         "type": "object"
       },

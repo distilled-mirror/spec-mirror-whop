@@ -6,6 +6,8 @@
 
 > The account action row from Whop's balance dashboard. Deposit, Send, Withdraw, and Convert open the Wallet controller's built-in overlays. Accept opens Whop's checkout-link creator for a business account or company creation for a personal account. Each button also emits its requested event so the embedding page can observe the action.
 
+*Since `v1.0.0`.*
+
 Mounts inside [`Wallet`](/elements/upcoming/wallet/overview). Pass props and callbacks through the create options or React props.
 
 <div data-whop-split style={{ display: "flex", gap: "1.5rem", alignItems: "flex-start", flexWrap: "wrap" }}>

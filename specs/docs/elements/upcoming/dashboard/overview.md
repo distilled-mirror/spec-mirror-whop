@@ -6,6 +6,8 @@
 
 > An account's own dashboard surfaces, embedded on your site. Scope it to an account with `accountId`, then mount `paymentsTable` for the account's payments, `paymentDetail` for one payment, `required-actions` for the outstanding-action banners Whop's own dashboard shows above the balance — identity verification, deposits, tax, and the rest — and `verification` for the identity-only nudge. Every surface reads with the same credential, so two side by side always show the same account. The banners render nothing once the account has nothing outstanding, so they can sit permanently in a layout, and they report the presses they cannot answer themselves — Add money and Verify — so the host mounts its own deposit or verification flow, such as the `wallet` controller's `deposit` element or the `verifications` controller's `kyc` element.
 
+*Since `v1.0.0`.*
+
 ## Playground
 
 Assemble the elements with example data. Drive the controls, add and arrange elements, and watch events fire live:

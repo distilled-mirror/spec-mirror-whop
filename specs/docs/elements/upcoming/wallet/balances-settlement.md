@@ -6,6 +6,8 @@
 
 > The account balance details shown by Whop's dashboard: available funds, pending settlement dates, reserve terms, and any negative balance. It opens as a 550px modal and uses the balances handle's account, currency, and credential.
 
+*Since `v1.0.0`.*
+
 Opens as a modal from [`Balances`](/elements/upcoming/wallet/balances), in [`Wallet`](/elements/upcoming/wallet/overview): `wallet.create('balances').createOverlay('settlement')`. Pass props and callbacks in the create options.
 
 <Note>This element is **modal-only**. Open it with `createOverlay`; it has no inline mount.</Note>

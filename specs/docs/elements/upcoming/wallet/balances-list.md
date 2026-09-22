@@ -6,6 +6,8 @@
 
 > The holdings behind an account's balance. Every currency and token gets its own row, showing its name and its value in dollars, largest first. Rows can report which one the viewer tapped, so you can open your own screen for it. When `openHoldingOnSelect` is on, a row click shows that holding's balance page in place of this unit's chart and list.
 
+*Since `v1.0.0`.*
+
 <div data-whop-platform="web">
   Mounts inside [`Balances`](/elements/upcoming/wallet/balances), in [`Wallet`](/elements/upcoming/wallet/overview). `accountId` and `openHoldingOnSelect` come from `Wallet`. Pass props and callbacks through the create options or React props.
 </div>

@@ -6,6 +6,8 @@
 
 > One card and what has been spent on it: the card itself, what it has spent against its limit, and its latest transactions. Opens as a drawer. The card face, its reveal and its lock come from the `whopCard` element composed inside, so a host gets one surface rather than assembling three. Pressing a transaction, or asking for the full list, reports the request — the drawer never navigates.
 
+*Since `v1.0.0`.*
+
 Opens as a modal from [`Wallet`](/elements/upcoming/wallet/overview): `wallet.createOverlay('cardDetails')`. Pass props and callbacks in the create options.
 
 <Note>This element is **modal-only**. Open it with `createOverlay`; it has no inline mount.</Note>

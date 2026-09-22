@@ -6,6 +6,8 @@
 
 > Financial activity with date, currency, direction, and movement filters, pagination, and CSV export. Mount independently or open it from the balance report.
 
+*Since `v1.0.0`.*
+
 Mounts inside [`Reports`](/elements/upcoming/wallet/reports), in [`Wallet`](/elements/upcoming/wallet/overview). `accountId` and `accessToken` come from `Wallet`. Pass props and callbacks through the create options or React props. Keep the created handle, or React `ref`, to call `refresh()`.
 
 <div data-whop-split style={{ display: "flex", gap: "1.5rem", alignItems: "flex-start", flexWrap: "wrap" }}>

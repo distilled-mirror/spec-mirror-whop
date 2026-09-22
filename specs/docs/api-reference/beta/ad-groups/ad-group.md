@@ -436,6 +436,12 @@ Use the Ad Groups API to create ad groups in campaigns, list or retrieve targeti
       </Accordion>
     </ResponseField>
 
+    <ResponseField name="platform" type="string" required>
+      The ad platform this ad group runs on.
+
+      Available options: `meta`, `tiktok`
+    </ResponseField>
+
     <ResponseField name="purchase_value" type="number" required>
       USD value of pixel-attributed purchases.
     </ResponseField>
@@ -482,6 +488,11 @@ Use the Ad Groups API to create ad groups in campaigns, list or retrieve targeti
               Circular areas, each a coordinate plus a radius.
 
               <Accordion title="Properties" defaultOpen={true}>
+                <ResponseField name="country_code" type="string">
+                  ISO 3166-1 alpha-2 country the point falls in. Send it under a special ad
+                  category, where the campaign must declare the countries its ad sets reach.
+                </ResponseField>
+
                 <ResponseField name="distance_unit" type="string" required>
                   Unit for `radius`.
 
@@ -549,6 +560,11 @@ Use the Ad Groups API to create ad groups in campaigns, list or retrieve targeti
               Circular areas, each a coordinate plus a radius.
 
               <Accordion title="Properties" defaultOpen={true}>
+                <ResponseField name="country_code" type="string">
+                  ISO 3166-1 alpha-2 country the point falls in. Send it under a special ad
+                  category, where the campaign must declare the countries its ad sets reach.
+                </ResponseField>
+
                 <ResponseField name="distance_unit" type="string" required>
                   Unit for `radius`.
 
@@ -851,7 +867,8 @@ Use the Ad Groups API to create ad groups in campaigns, list or retrieve targeti
       	"unique_clicks": 600,
       	"updated_at": "2026-06-02T12:00:00Z",
       	"viewed_content_value": 0,
-      	"viewed_contents": 300
+      	"viewed_contents": 300,
+      	"platform": "meta"
       }
       ```
     </div>

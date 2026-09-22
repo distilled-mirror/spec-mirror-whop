@@ -6,6 +6,8 @@
 
 > One currency's total split into available, pending, reserve, and negative balances. Zero-value rows disappear, and the surface deliberately contains no money-movement buttons so the host owns those actions.
 
+*Since `v1.0.0`.*
+
 Mounts inside [`Balances`](/elements/upcoming/wallet/balances), in [`Wallet`](/elements/upcoming/wallet/overview). `accountId` and `accessToken` come from `Wallet`. Pass props and callbacks through the create options or React props. Keep the created handle, or React `ref`, to call `refresh()`.
 
 <div data-whop-split style={{ display: "flex", gap: "1.5rem", alignItems: "flex-start", flexWrap: "wrap" }}>

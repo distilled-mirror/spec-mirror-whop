@@ -161,6 +161,30 @@ Use the Plans API to create plans for products, list existing plans, retrieve or
       Initial purchase price in plan currency.
     </ResponseField>
 
+    <ResponseField name="initial_price_due" type="object" required>
+      Total charged at checkout for one unit, before promo codes and tax: `initial_price` plus the first `renewal_price` for recurring plans, or `initial_price` alone while a free trial applies. The trial does not apply when the viewing user has already used one for this plan.
+
+      <Accordion title="Properties" defaultOpen={true}>
+        <ResponseField name="amount" type="string" required>
+          The amount in major units, as an exact decimal string — `"10.00"` is ten
+          dollars. A string so no float rounds it in transit.
+        </ResponseField>
+
+        <ResponseField name="currency" type="string" required>
+          Three-letter ISO 4217 currency code, lowercase.
+        </ResponseField>
+
+        <ResponseField name="decimals" type="integer" required>
+          How many decimal places the amount CARRIES — the precision the charge itself
+          runs at.
+        </ResponseField>
+
+        <ResponseField name="display_decimals" type="integer" required>
+          How many decimal places to SHOW. Usually equal to `decimals`, and deliberately not always: COP is charged in centavos but written in whole pesos, so it is `2` and `0`. Format the number in your own locale using this.
+        </ResponseField>
+      </Accordion>
+    </ResponseField>
+
     <ResponseField name="internal_notes" type="string | null" required>
       Private notes not shown to customers. `null` unless the actor has the
       `plan:basic:read` scope on the plan's account.
@@ -334,6 +358,12 @@ Use the Plans API to create plans for products, list existing plans, retrieve or
       	"purchase_url": "https://whop.com/pickaxe-analytics/checkout/plan_xxxxxxxxxxxxx",
       	"release_method": "buy_now",
       	"renewal_price": 29,
+      	"initial_price_due": {
+      		"currency": "usd",
+      		"amount": "29.00",
+      		"decimals": 2,
+      		"display_decimals": 2
+      	},
       	"split_pay_required_payments": null,
       	"stock": null,
       	"strike_through_initial_price": null,

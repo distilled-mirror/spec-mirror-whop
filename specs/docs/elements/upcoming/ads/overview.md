@@ -6,6 +6,8 @@
 
 > An advertising account. Scope it to a Whop account with `accountId` — the ad account underneath is assigned server-side and never surfaces here — then mount `reporting` for what the account spent and what came back, or `campaign-creator` to build a campaign.
 
+*Since `v1.0.0`.*
+
 ## Playground
 
 Assemble the elements with example data. Drive the controls, add and arrange elements, and watch events fire live:

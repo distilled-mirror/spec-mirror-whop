@@ -6,6 +6,8 @@
 
 > Which payment methods ad spend bills against: a primary used first, and an optional backup for when it fails. Both are chosen from the methods already saved on the account, and picking one saves it immediately — there is no separate submit. Adding a card opens a card form over your page and returns to the slot that asked for it. The account's own balance appears alongside its cards wherever the account has one.
 
+*Since `v1.0.0`.*
+
 Mounts inside [`Ads`](/elements/upcoming/ads/overview). `accountId` and `accessToken` come from there. Pass props and callbacks through the create options or React props.
 
 <div data-whop-split style={{ display: "flex", gap: "1.5rem", alignItems: "flex-start", flexWrap: "wrap" }}>

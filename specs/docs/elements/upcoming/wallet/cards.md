@@ -6,6 +6,8 @@
 
 > An account's card surfaces, mounted from one place: the compact issued-card list, the full sortable roster, the spend chart, and a single revealable card. Mount the faces the page needs — they share the account and the credential this unit is minted with, so a page showing a chart above a roster wires them once.
 
+*Since `v1.0.0`.*
+
 Mounts inside [`Wallet`](/elements/upcoming/wallet/overview). Create it to get a handle, then mount its elements on that handle. Call `destroy()` to remove the sub-controller. Create it again to get a fresh handle.
 
 ## Preview

@@ -6,6 +6,8 @@
 
 > Whop's merchant-of-record notice: the Whop wordmark with links to the buyer terms and privacy policy. Mount it alongside every payment collection surface.
 
+*Since `v1.0.0`.*
+
 <div data-whop-platform="web">
   Mounts inside [`Payments`](/elements/upcoming/payments/overview). Pass props and callbacks through the create options or React props.
 </div>

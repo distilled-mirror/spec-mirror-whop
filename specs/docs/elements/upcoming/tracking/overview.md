@@ -6,6 +6,8 @@
 
 > An account's tracked audience: everyone its pixel has seen, and every event they performed. Scope it to an account with `accountId`, then mount `people`, `events`, or both. They read the same window and the same credit rule, so two surfaces side by side can never disagree about what they are showing. `person` is where a click on either of them leads: one person's whole record, mountable inline or presentable over your page. `links` wires their person links to your own pages.
 
+*Since `v1.0.0`.*
+
 ## Playground
 
 Assemble the elements with example data. Drive the controls, add and arrange elements, and watch events fire live:

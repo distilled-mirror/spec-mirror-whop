@@ -6,6 +6,8 @@
 
 > Collects and verifies identity information for an account. Mount `kyc` for a complete KYC or KYB flow backed by the Verifications API.
 
+*Since `v1.0.0`.*
+
 ## Playground
 
 Assemble the elements with example data. Drive the controls, add and arrange elements, and watch events fire live:

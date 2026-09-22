@@ -35,7 +35,11 @@ Every version automatically gets new endpoints and optional fields. Breaking cha
 
 ## Changelog
 
+The TypeScript SDK releases listed below use the API version in that entry by default. Overriding `apiVersionDate` changes the response version, but not the SDK types.
+
 <Update label="2026-09-15" description="Three distinct 3D Secure policies" tags={["Latest"]}>
+  TypeScript SDK: [`@whop/sdk@1.1.5`](https://unpkg.com/@whop/sdk@1.1.5/dist/esm/BaseClient.mjs).
+
   Accounts, plans, checkout configurations, and checkout sessions expose three 3D Secure choices:
 
   * `mandate_challenge` requests a challenge before processing a supported on-session card payment.
@@ -58,6 +62,8 @@ Every version automatically gets new endpoints and optional fields. Breaking cha
 </Update>
 
 <Update label="2026-09-11" description="Business categories come from one table">
+  TypeScript SDK: [`@whop/sdk@1.1.4`](https://unpkg.com/@whop/sdk@1.1.4/dist/esm/BaseClient.mjs).
+
   Account `business_type`, `industry_group`, and `industry_type` are strings drawn from Whop's business categories table instead of fixed enums. New categories appear without a new API version. The [business types and industries glossary](/api-reference/beta/accounts/business-types) lists the current values.
 
   * `coaching_and_courses` is now `education`, `physical_product` is now `ecommerce`, and `marketplace` is now `platform`.
@@ -76,6 +82,8 @@ Every version automatically gets new endpoints and optional fields. Breaking cha
 </Update>
 
 <Update label="2026-09-09" description="Named Whop withdrawal holds on pending funds">
+  TypeScript SDK: [`@whop/sdk@1.1.3`](https://unpkg.com/@whop/sdk@1.1.3/dist/esm/BaseClient.mjs).
+
   Account `payment_controls.undated_pending_reason` can be `withdrawals_disabled` when Whop has blocked withdrawals, so those pending funds can't become available.
 
   `kyc_incomplete`, `pending_information_request`, and `null` for funds that are still clearing are unchanged.
@@ -96,6 +104,8 @@ Every version automatically gets new endpoints and optional fields. Breaking cha
 </Update>
 
 <Update label="2026-09-02-2" description="Deposit destinations are an account ID">
+  TypeScript SDK: [`@whop/sdk@1.1.1`](https://unpkg.com/@whop/sdk@1.1.1/dist/esm/BaseClient.mjs), [`@whop/sdk@1.1.2`](https://unpkg.com/@whop/sdk@1.1.2/dist/esm/BaseClient.mjs).
+
   `POST /deposits` takes a `destination` account ID string — `biz_…` or `user_…` — and nothing else.
 
   * Raw wallet addresses are no longer accepted. Fund an account and read its addresses from `methods.crypto`.
@@ -108,6 +118,8 @@ Every version automatically gets new endpoints and optional fields. Breaking cha
 </Update>
 
 <Update label="2026-09-02-1" description="Payments become a native resource">
+  TypeScript SDK: [`@whop/sdk@1.1.0`](https://unpkg.com/@whop/sdk@1.1.0/dist/esm/BaseClient.mjs).
+
   `POST /payments`, `GET /payments` and `GET /payments/{id}` are now served by the native Payments API, and the Payment object takes the shape of every other native resource.
 
   * Related records are foreign-key ids instead of embedded objects: `account_id` (was `company`), `plan_id`, `product_id`, `membership_id`, `member_id`, `promo_code_id`, `shipment_id`, `payment_method_id`. The buyer is a `user` summary (`id`, `username`, `name`, `profile_picture`).
@@ -161,6 +173,8 @@ Every version automatically gets new endpoints and optional fields. Breaking cha
 </Update>
 
 <Update label="2026-08-21-1" description="Native Files API">
+  TypeScript SDK: [`@whop/sdk@1.0.14`](https://unpkg.com/@whop/sdk@1.0.14/dist/esm/BaseClient.mjs).
+
   `POST /files` and `GET /files/{id}` are served natively with a redesigned file object, and multipart uploads finish through the new `POST /files/{id}/complete`.
 
   * File responses carry the standard envelope: `object`, `visibility`, and an ISO 8601 `created_at`. The `size` and `url` fields are `null` until the upload is `ready`.
@@ -168,6 +182,8 @@ Every version automatically gets new endpoints and optional fields. Breaking cha
 </Update>
 
 <Update label="2026-08-21" description="Payouts status v2">
+  TypeScript SDK: [`@whop/sdk@1.0.13`](https://unpkg.com/@whop/sdk@1.0.13/dist/esm/BaseClient.mjs).
+
   The payout object's lifecycle vocabulary is rebuilt and its money fields become decimal strings.
 
   * `status` speaks eight words: `requested`, `in_review`, `processing`, `completed`, `reversed`, `canceled`, `failed`, `denied`. A settled payout the provider reverses reads `reversed`, with the return code and `funds_returned_at` in `failure`.
@@ -187,6 +203,8 @@ Every version automatically gets new endpoints and optional fields. Breaking cha
 </Update>
 
 <Update label="2026-08-13" description="In-transit balance breakdowns">
+  TypeScript SDK: [`@whop/sdk@1.0.11`](https://unpkg.com/@whop/sdk@1.0.11/dist/esm/BaseClient.mjs).
+
   Account and personal balance breakdowns now expose `in_transit` alongside `pending`.
 
   * Add `pending` and `in_transit` to present the total amount awaiting settlement.

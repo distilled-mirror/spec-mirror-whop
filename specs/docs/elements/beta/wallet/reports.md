@@ -6,9 +6,9 @@
 
 > Balance history and the financial activity behind it, including CSV exports. Account statements are available in the Whop dashboard.
 
-<Info>This page documents `@whop/elements@1.0.0-beta.6` and `@whop/elements-react@1.0.0-beta.6`.</Info>
+<Info>This page documents `@whop/elements@1.0.0` and `@whop/elements-react@1.0.0`.</Info>
 
-*Pre-release, not yet part of a stable release.*
+*Since `v1.0.0`.*
 
 Mounts inside [`Wallet`](/elements/beta/wallet/overview). Create it to get a handle, then mount its elements on that handle. Call `destroy()` to remove the sub-controller. Create it again to get a fresh handle.
 
@@ -19,7 +19,7 @@ A live, interactive demo of this sub-controller's default arrangement with examp
 <div data-whop-demo-shell style={{ position: "relative", minHeight: "480px", transition: "min-height 200ms ease" }}>
   <div data-whop-demo-skeleton style={{ position: "absolute", inset: "0", borderRadius: "12px", background: "rgba(140, 140, 140, 0.12)", pointerEvents: "none", transition: "opacity 200ms ease" }} />
 
-  <div data-whop-demo-native="unit:reports" data-whop-elements-version="1.0.0-beta.6" style={{ position: "relative" }} />
+  <div data-whop-demo-native="unit:reports" data-whop-elements-version="1.0.0" style={{ position: "relative" }} />
 </div>
 
 <div data-whop-usage="wallet/reports">

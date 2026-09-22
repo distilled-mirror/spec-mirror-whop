@@ -6,9 +6,9 @@
 
 > The outstanding-action banners from Whop's balance dashboard — identity verification, deposits, tax, and the rest — in the same order the API returns them. An account with nothing outstanding renders nothing at all, so the element can sit permanently in a layout. Copy comes from the API. Pressing Verify starts a hosted identity session and leaves for it; Add money reports `depositRequested` and stays put, so the host mounts its own deposit flow — the `wallet` controller's `deposit` element, say; every other button follows the action's own link. Reads with the Dashboard handle's `accessToken`, which needs `payout:account:read`, plus `identity:write` to start verification. A failed read renders nothing rather than an error — a banner should never become the loudest thing on someone else's page.
 
-<Info>This page documents `@whop/elements@1.0.0-beta.6` and `@whop/elements-react@1.0.0-beta.6`.</Info>
+<Info>This page documents `@whop/elements@1.0.0` and `@whop/elements-react@1.0.0`.</Info>
 
-*Pre-release, not yet part of a stable release.*
+*Since `v1.0.0`.*
 
 Mounts inside [`Dashboard`](/elements/beta/dashboard/overview). `accountId` and `accessToken` come from there. Pass props and callbacks through the create options or React props. Keep the created handle, or React `ref`, to call `refresh()`.
 
@@ -50,7 +50,7 @@ Mounts inside [`Dashboard`](/elements/beta/dashboard/overview). `accountId` and 
     <div data-whop-demo-shell style={{ position: "relative", minHeight: "320px", transition: "min-height 200ms ease" }}>
       <div data-whop-demo-skeleton style={{ position: "absolute", inset: "0", borderRadius: "12px", background: "rgba(140, 140, 140, 0.12)", pointerEvents: "none", transition: "opacity 200ms ease" }} />
 
-      <div data-whop-demo-native="element:dashboard/required-actions" data-whop-elements-version="1.0.0-beta.6" style={{ position: "relative" }} />
+      <div data-whop-demo-native="element:dashboard/required-actions" data-whop-elements-version="1.0.0" style={{ position: "relative" }} />
     </div>
 
     <p style={{ fontSize: "0.8125rem", opacity: 0.7 }}>Example data. [Open the Playground](/elements/beta/dashboard/overview#playground).</p>
@@ -71,7 +71,7 @@ Pass callbacks in the create options or React props.
 
 The viewer pressed a banner button. Fires for every action, including ones the element also handles itself.
 
-**Signature:** `((payload: { action: "deposit_funds" | "review_held_payments" | "accept_airwallex_terms" | "submit_information_request" | "update_automatic_withdrawal_method" | "reauthorize_payout_methods" | "update_payout_profile" | "card_usage_review" | "verify_identity" | "verify_airwallex_account" | "sign_formation_documents" | "connect_fulfillment_tracker" | "setup_apple_pay_domains" | "configure_tax_remitter" | "add_vat_registration" | "enable_two_factor_authentication"; accountId: string; }) => void)`
+**Signature:** `((payload: { action: "deposit_funds" | "review_held_payments" | "submit_information_request" | "update_automatic_withdrawal_method" | "reauthorize_payout_methods" | "update_payout_profile" | "card_usage_review" | "verify_identity" | "scale_account_setup" | "sign_formation_documents" | "connect_fulfillment_tracker" | "setup_apple_pay_domains" | "configure_tax_remitter" | "add_vat_registration" | "enable_two_factor_authentication"; accountId: string; }) => void)`
 
 ### `onIdentityVerificationRequested`
 

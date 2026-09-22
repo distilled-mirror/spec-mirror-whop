@@ -267,7 +267,7 @@ To clear a platform default, send `child_markups: { payments: null }` to the pla
     </ResponseField>
 
     <ResponseField name="cards" type="object | null" required>
-      Whop Cards application details for the account. Computed only on `retrieve` and `me` for callers with `company:balance:read` scope; `null` otherwise, or when the account has no card application.
+      Whop Cards application details for the account. Returned on `list`, `retrieve`, and `me` for callers with `company:balance:read` scope; `null` otherwise, or when the account has no card application or blocking application review.
 
       <Accordion title="Properties" defaultOpen={true}>
         <ResponseField name="kind" type="string | null" required>
@@ -896,7 +896,7 @@ To clear a platform default, send `child_markups: { payments: null }` to the pla
         <ResponseField name="action" type="string" required>
           What the holder must do; new values may be added, so handle unknown actions gracefully
 
-          Available options: `deposit_funds`, `review_held_payments`, `accept_airwallex_terms`, `submit_information_request`, `update_automatic_withdrawal_method`, `reauthorize_payout_methods`, `update_payout_profile`, `card_usage_review`, `verify_identity`, `verify_airwallex_account`, `sign_formation_documents`, `connect_fulfillment_tracker`, `setup_apple_pay_domains`, `configure_tax_remitter`, `add_vat_registration`, `enable_two_factor_authentication`
+          Available options: `deposit_funds`, `review_held_payments`, `submit_information_request`, `update_automatic_withdrawal_method`, `reauthorize_payout_methods`, `update_payout_profile`, `card_usage_review`, `verify_identity`, `scale_account_setup`, `sign_formation_documents`, `connect_fulfillment_tracker`, `setup_apple_pay_domains`, `configure_tax_remitter`, `add_vat_registration`, `enable_two_factor_authentication`
         </ResponseField>
 
         <ResponseField name="blocked_capabilities" type="string[]" required>

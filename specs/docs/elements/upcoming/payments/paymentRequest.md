@@ -6,6 +6,8 @@
 
 > Low-level Apple Pay or Google Pay sheet for custom buttons, express checkout, and shipping callbacks. Wallet tiles automate this flow through `payments.createConfirmationToken`. Await `canMakePayment()` to check availability and prime the sheet, then call `show(type)` synchronously in the user-interaction handler. The resolved `ctok` is a `ctok_`-prefixed confirmation token. Confirm it server-side like an element-minted token.
 
+*Since `v1.0.0`.*
+
 <div data-whop-platform="web">
   Create this [`Payments`](/elements/upcoming/payments/overview) resource without mounting an element: `whop.payments.paymentRequest.create({ … })` in vanilla or `useWhop().payments.paymentRequest.create({ … })` in React.
 

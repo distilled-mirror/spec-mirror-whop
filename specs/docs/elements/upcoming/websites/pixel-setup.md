@@ -6,6 +6,8 @@
 
 > Installs the Whop Pixel and wires conversion events: copy the snippet, check a page for it, confirm the events fire. Mount it inline, or inside your own overlay.
 
+*Since `v1.0.0`.*
+
 Mounts inside [`Websites`](/elements/upcoming/websites/overview). Pass props and callbacks through the create options or React props.
 
 <Note>You can mount this element **inline** (`create`) or open it as a **modal** overlay (`createOverlay`).</Note>

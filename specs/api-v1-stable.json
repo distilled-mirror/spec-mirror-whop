@@ -6191,14 +6191,6 @@
         ],
         "type": "string"
       },
-      "EntriesSortableColumns": {
-        "description": "Which columns can be used to sort.",
-        "enum": [
-          "id",
-          "created_at"
-        ],
-        "type": "string"
-      },
       "Entry": {
         "description": "An entry represents a user's signup for a waitlisted plan.",
         "properties": {
@@ -6338,116 +6330,6 @@
           "user",
           "created_at",
           "custom_field_responses"
-        ],
-        "type": "object"
-      },
-      "EntryListItem": {
-        "description": "An entry represents a user's signup for a waitlisted plan.",
-        "properties": {
-          "created_at": {
-            "description": "The datetime the entry was created.",
-            "example": "2023-12-01T05:00:00.401Z",
-            "format": "date-time",
-            "type": [
-              "string",
-              "null"
-            ]
-          },
-          "id": {
-            "description": "The unique identifier for the entry.",
-            "example": "entry_xxxxxxxxxxxx",
-            "type": "string"
-          },
-          "plan": {
-            "description": "The waitlisted plan that this entry is a signup for.",
-            "properties": {
-              "id": {
-                "description": "The unique identifier for the plan.",
-                "example": "plan_xxxxxxxxxxxxx",
-                "type": "string"
-              }
-            },
-            "required": [
-              "id"
-            ],
-            "type": [
-              "object",
-              "null"
-            ]
-          },
-          "product": {
-            "description": "The product associated with this entry's waitlisted plan. Null if the plan is not tied to a product.",
-            "properties": {
-              "id": {
-                "description": "The unique identifier for the product.",
-                "example": "prod_xxxxxxxxxxxxx",
-                "type": "string"
-              },
-              "title": {
-                "description": "The display name of the product shown to customers on the product page and in search results.",
-                "example": "Pickaxe Analytics",
-                "type": "string"
-              }
-            },
-            "required": [
-              "id",
-              "title"
-            ],
-            "type": [
-              "object",
-              "null"
-            ]
-          },
-          "status": {
-            "$ref": "#/components/schemas/EntryStatus",
-            "description": "The current status of the waitlist entry (e.g., drafted, pending, approved, denied)."
-          },
-          "user": {
-            "description": "The user who submitted this waitlist entry.",
-            "properties": {
-              "email": {
-                "description": "The user's email address. Requires the member:email:read permission to access. Null if not authorized.",
-                "example": "john.doe@example.com",
-                "type": [
-                  "string",
-                  "null"
-                ]
-              },
-              "id": {
-                "description": "The unique identifier for the user.",
-                "example": "user_xxxxxxxxxxxxx",
-                "type": "string"
-              },
-              "name": {
-                "description": "The user's display name shown on their public profile.",
-                "example": "John Doe",
-                "type": [
-                  "string",
-                  "null"
-                ]
-              },
-              "username": {
-                "description": "The user's unique username shown on their public profile.",
-                "example": "johndoe42",
-                "type": "string"
-              }
-            },
-            "required": [
-              "id",
-              "name",
-              "username",
-              "email"
-            ],
-            "type": "object"
-          }
-        },
-        "required": [
-          "id",
-          "plan",
-          "product",
-          "status",
-          "user",
-          "created_at"
         ],
         "type": "object"
       },
@@ -12383,7 +12265,7 @@
             ]
           },
           "voidable": {
-            "description": "True when the payment is tied to a membership in `past_due`, the payment status is `open`, and the processor allows voiding payments; otherwise false.",
+            "description": "True when the payment can be voided or canceled. The request is rejected if the payment is no longer eligible.",
             "type": "boolean"
           }
         },
@@ -13555,7 +13437,7 @@
             ]
           },
           "voidable": {
-            "description": "True when the payment is tied to a membership in `past_due`, the payment status is `open`, and the processor allows voiding payments; otherwise false.",
+            "description": "True when the payment can be voided or canceled. The request is rejected if the payment is no longer eligible.",
             "type": "boolean"
           }
         },
@@ -58464,1754 +58346,6 @@
         ]
       }
     },
-    "/entries": {
-      "get": {
-        "description": "Returns a paginated list of waitlist entries for a company, with optional filtering by product, plan, status, and creation date.\n\nRequired permissions:\n - `plan:waitlist:read`\n - `member:email:read`",
-        "operationId": "listEntry",
-        "parameters": [
-          {
-            "explode": true,
-            "in": "query",
-            "name": "after",
-            "required": false,
-            "schema": {
-              "description": "Returns the elements in the list that come after the specified cursor.",
-              "type": "string"
-            },
-            "style": "form"
-          },
-          {
-            "explode": true,
-            "in": "query",
-            "name": "before",
-            "required": false,
-            "schema": {
-              "description": "Returns the elements in the list that come before the specified cursor.",
-              "type": "string"
-            },
-            "style": "form"
-          },
-          {
-            "explode": true,
-            "in": "query",
-            "name": "first",
-            "required": false,
-            "schema": {
-              "description": "Returns the first _n_ elements from the list.",
-              "example": 42,
-              "type": "integer"
-            },
-            "style": "form"
-          },
-          {
-            "explode": true,
-            "in": "query",
-            "name": "last",
-            "required": false,
-            "schema": {
-              "description": "Returns the last _n_ elements from the list.",
-              "example": 42,
-              "type": "integer"
-            },
-            "style": "form"
-          },
-          {
-            "explode": true,
-            "in": "query",
-            "name": "direction",
-            "required": false,
-            "schema": {
-              "$ref": "#/components/schemas/Direction",
-              "description": "The sort direction for results. Defaults to descending."
-            },
-            "style": "form"
-          },
-          {
-            "explode": true,
-            "in": "query",
-            "name": "order",
-            "required": false,
-            "schema": {
-              "$ref": "#/components/schemas/EntriesSortableColumns",
-              "description": "The column to sort waitlist entries by. Defaults to creation date."
-            },
-            "style": "form"
-          },
-          {
-            "explode": true,
-            "in": "query",
-            "name": "product_ids",
-            "required": false,
-            "schema": {
-              "description": "Filter entries to only those for specific products.",
-              "items": {
-                "description": "Represents a unique identifier that is Base64 obfuscated. It is often used to refetch an object or as key for a cache. The ID type appears in a JSON response as a String; however, it is not intended to be human-readable. When expected as an input type, any string (such as `\"VXNlci0xMA==\"`) or integer (such as `4`) input value will be accepted as an ID.",
-                "type": "string"
-              },
-              "type": "array"
-            },
-            "style": "form"
-          },
-          {
-            "explode": true,
-            "in": "query",
-            "name": "plan_ids",
-            "required": false,
-            "schema": {
-              "description": "Filter entries to only those for specific plans.",
-              "items": {
-                "description": "Represents a unique identifier that is Base64 obfuscated. It is often used to refetch an object or as key for a cache. The ID type appears in a JSON response as a String; however, it is not intended to be human-readable. When expected as an input type, any string (such as `\"VXNlci0xMA==\"`) or integer (such as `4`) input value will be accepted as an ID.",
-                "type": "string"
-              },
-              "type": "array"
-            },
-            "style": "form"
-          },
-          {
-            "explode": true,
-            "in": "query",
-            "name": "statuses",
-            "required": false,
-            "schema": {
-              "description": "Filter entries by their current status.",
-              "items": {
-                "$ref": "#/components/schemas/EntryStatus"
-              },
-              "type": "array"
-            },
-            "style": "form"
-          },
-          {
-            "explode": true,
-            "in": "query",
-            "name": "created_before",
-            "required": false,
-            "schema": {
-              "description": "Only return entries created before this timestamp.",
-              "example": "2023-12-01T05:00:00.401Z",
-              "format": "date-time",
-              "type": "string"
-            },
-            "style": "form"
-          },
-          {
-            "explode": true,
-            "in": "query",
-            "name": "created_after",
-            "required": false,
-            "schema": {
-              "description": "Only return entries created after this timestamp.",
-              "example": "2023-12-01T05:00:00.401Z",
-              "format": "date-time",
-              "type": "string"
-            },
-            "style": "form"
-          },
-          {
-            "explode": true,
-            "in": "query",
-            "name": "account_id",
-            "required": true,
-            "schema": {
-              "description": "The unique identifier of the company to list waitlist entries for.",
-              "example": "biz_xxxxxxxxxxxxxx",
-              "type": "string"
-            },
-            "style": "form"
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "description": "The connection type for PublicEntry.",
-                  "properties": {
-                    "data": {
-                      "description": "A list of nodes.",
-                      "items": {
-                        "$ref": "#/components/schemas/EntryListItem"
-                      },
-                      "type": "array"
-                    },
-                    "page_info": {
-                      "$ref": "#/components/schemas/PageInfo",
-                      "description": "Information to aid in pagination."
-                    }
-                  },
-                  "required": [
-                    "data",
-                    "page_info"
-                  ],
-                  "type": "object"
-                }
-              }
-            },
-            "description": "A successful response"
-          },
-          "400": {
-            "content": {
-              "application/json": {
-                "example": {
-                  "error": {
-                    "code": "parameter_missing",
-                    "message": "Missing required parameter: amount.",
-                    "param": "amount",
-                    "type": "invalid_request_error"
-                  }
-                },
-                "schema": {
-                  "properties": {
-                    "error": {
-                      "properties": {
-                        "code": {
-                          "description": "A short string indicating the specific error code, e.g. 'parameter_missing', 'parameter_invalid', 'invalid_json'",
-                          "type": [
-                            "string",
-                            "null"
-                          ]
-                        },
-                        "message": {
-                          "type": "string"
-                        },
-                        "param": {
-                          "description": "The parameter that caused the error, if applicable",
-                          "type": [
-                            "string",
-                            "null"
-                          ]
-                        },
-                        "type": {
-                          "type": "string"
-                        }
-                      },
-                      "required": [
-                        "type",
-                        "message"
-                      ],
-                      "type": "object"
-                    }
-                  },
-                  "required": [
-                    "error"
-                  ],
-                  "type": "object"
-                }
-              }
-            },
-            "description": "Bad request"
-          },
-          "401": {
-            "content": {
-              "application/json": {
-                "example": {
-                  "error": {
-                    "message": "Invalid or missing API key",
-                    "type": "unauthorized"
-                  }
-                },
-                "schema": {
-                  "properties": {
-                    "error": {
-                      "properties": {
-                        "code": {
-                          "description": "A short string indicating the specific error code, e.g. 'parameter_missing', 'parameter_invalid', 'invalid_json'",
-                          "type": [
-                            "string",
-                            "null"
-                          ]
-                        },
-                        "message": {
-                          "type": "string"
-                        },
-                        "param": {
-                          "description": "The parameter that caused the error, if applicable",
-                          "type": [
-                            "string",
-                            "null"
-                          ]
-                        },
-                        "type": {
-                          "type": "string"
-                        }
-                      },
-                      "required": [
-                        "type",
-                        "message"
-                      ],
-                      "type": "object"
-                    }
-                  },
-                  "required": [
-                    "error"
-                  ],
-                  "type": "object"
-                }
-              }
-            },
-            "description": "Unauthorized"
-          },
-          "403": {
-            "content": {
-              "application/json": {
-                "example": {
-                  "error": {
-                    "message": "You do not have permission to access this resource",
-                    "type": "forbidden"
-                  }
-                },
-                "schema": {
-                  "properties": {
-                    "error": {
-                      "properties": {
-                        "code": {
-                          "description": "A short string indicating the specific error code, e.g. 'parameter_missing', 'parameter_invalid', 'invalid_json'",
-                          "type": [
-                            "string",
-                            "null"
-                          ]
-                        },
-                        "message": {
-                          "type": "string"
-                        },
-                        "param": {
-                          "description": "The parameter that caused the error, if applicable",
-                          "type": [
-                            "string",
-                            "null"
-                          ]
-                        },
-                        "type": {
-                          "type": "string"
-                        }
-                      },
-                      "required": [
-                        "type",
-                        "message"
-                      ],
-                      "type": "object"
-                    }
-                  },
-                  "required": [
-                    "error"
-                  ],
-                  "type": "object"
-                }
-              }
-            },
-            "description": "Forbidden"
-          },
-          "404": {
-            "content": {
-              "application/json": {
-                "example": {
-                  "error": {
-                    "message": "Resource not found",
-                    "type": "not_found"
-                  }
-                },
-                "schema": {
-                  "properties": {
-                    "error": {
-                      "properties": {
-                        "code": {
-                          "description": "A short string indicating the specific error code, e.g. 'parameter_missing', 'parameter_invalid', 'invalid_json'",
-                          "type": [
-                            "string",
-                            "null"
-                          ]
-                        },
-                        "message": {
-                          "type": "string"
-                        },
-                        "param": {
-                          "description": "The parameter that caused the error, if applicable",
-                          "type": [
-                            "string",
-                            "null"
-                          ]
-                        },
-                        "type": {
-                          "type": "string"
-                        }
-                      },
-                      "required": [
-                        "type",
-                        "message"
-                      ],
-                      "type": "object"
-                    }
-                  },
-                  "required": [
-                    "error"
-                  ],
-                  "type": "object"
-                }
-              }
-            },
-            "description": "Not found"
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "example": {
-                  "error": null
-                },
-                "schema": {
-                  "properties": {
-                    "error": {
-                      "properties": {
-                        "code": {
-                          "description": "A short string indicating the specific error code, e.g. 'parameter_missing', 'parameter_invalid', 'invalid_json'",
-                          "type": [
-                            "string",
-                            "null"
-                          ]
-                        },
-                        "message": {
-                          "type": "string"
-                        },
-                        "param": {
-                          "description": "The parameter that caused the error, if applicable",
-                          "type": [
-                            "string",
-                            "null"
-                          ]
-                        },
-                        "type": {
-                          "type": "string"
-                        }
-                      },
-                      "required": [
-                        "type",
-                        "message"
-                      ],
-                      "type": "object"
-                    }
-                  },
-                  "required": [
-                    "error"
-                  ],
-                  "type": "object"
-                }
-              }
-            },
-            "description": "Verification required"
-          },
-          "429": {
-            "content": {
-              "application/json": {
-                "example": {
-                  "error": null
-                },
-                "schema": {
-                  "properties": {
-                    "error": {
-                      "properties": {
-                        "code": {
-                          "description": "A short string indicating the specific error code, e.g. 'parameter_missing', 'parameter_invalid', 'invalid_json'",
-                          "type": [
-                            "string",
-                            "null"
-                          ]
-                        },
-                        "message": {
-                          "type": "string"
-                        },
-                        "param": {
-                          "description": "The parameter that caused the error, if applicable",
-                          "type": [
-                            "string",
-                            "null"
-                          ]
-                        },
-                        "type": {
-                          "type": "string"
-                        }
-                      },
-                      "required": [
-                        "type",
-                        "message"
-                      ],
-                      "type": "object"
-                    }
-                  },
-                  "required": [
-                    "error"
-                  ],
-                  "type": "object"
-                }
-              }
-            },
-            "description": "Too many requests"
-          },
-          "500": {
-            "content": {
-              "application/json": {
-                "example": {
-                  "error": {
-                    "message": "An unexpected error occurred",
-                    "type": "internal_server_error"
-                  }
-                },
-                "schema": {
-                  "properties": {
-                    "error": {
-                      "properties": {
-                        "code": {
-                          "description": "A short string indicating the specific error code, e.g. 'parameter_missing', 'parameter_invalid', 'invalid_json'",
-                          "type": [
-                            "string",
-                            "null"
-                          ]
-                        },
-                        "message": {
-                          "type": "string"
-                        },
-                        "param": {
-                          "description": "The parameter that caused the error, if applicable",
-                          "type": [
-                            "string",
-                            "null"
-                          ]
-                        },
-                        "type": {
-                          "type": "string"
-                        }
-                      },
-                      "required": [
-                        "type",
-                        "message"
-                      ],
-                      "type": "object"
-                    }
-                  },
-                  "required": [
-                    "error"
-                  ],
-                  "type": "object"
-                }
-              }
-            },
-            "description": "Internal server error"
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": [
-              "plan:waitlist:read",
-              "member:email:read"
-            ]
-          }
-        ],
-        "summary": "List entries",
-        "tags": [
-          "Entries"
-        ],
-        "x-group-title": "CRM",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.entries.list({\n    first: 42,\n    last: 42,\n    company_id: \"biz_xxxxxxxxxxxxxx\",\n    created_before: \"2023-12-01T05:00:00Z\",\n    created_after: \"2023-12-01T05:00:00Z\"\n});\n"
-          }
-        ]
-      }
-    },
-    "/entries/{id}": {
-      "get": {
-        "description": "Retrieves the details of an existing waitlist entry.\n\nRequired permissions:\n - `plan:waitlist:read`\n - `member:email:read`",
-        "operationId": "retrieveEntry",
-        "parameters": [
-          {
-            "description": "The unique identifier of the waitlist entry to retrieve.",
-            "in": "path",
-            "name": "id",
-            "required": true,
-            "schema": {
-              "example": "entry_xxxxxxxxxxxx",
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Entry"
-                }
-              }
-            },
-            "description": "A successful response"
-          },
-          "400": {
-            "content": {
-              "application/json": {
-                "example": {
-                  "error": {
-                    "code": "parameter_missing",
-                    "message": "Missing required parameter: amount.",
-                    "param": "amount",
-                    "type": "invalid_request_error"
-                  }
-                },
-                "schema": {
-                  "properties": {
-                    "error": {
-                      "properties": {
-                        "code": {
-                          "description": "A short string indicating the specific error code, e.g. 'parameter_missing', 'parameter_invalid', 'invalid_json'",
-                          "type": [
-                            "string",
-                            "null"
-                          ]
-                        },
-                        "message": {
-                          "type": "string"
-                        },
-                        "param": {
-                          "description": "The parameter that caused the error, if applicable",
-                          "type": [
-                            "string",
-                            "null"
-                          ]
-                        },
-                        "type": {
-                          "type": "string"
-                        }
-                      },
-                      "required": [
-                        "type",
-                        "message"
-                      ],
-                      "type": "object"
-                    }
-                  },
-                  "required": [
-                    "error"
-                  ],
-                  "type": "object"
-                }
-              }
-            },
-            "description": "Bad request"
-          },
-          "401": {
-            "content": {
-              "application/json": {
-                "example": {
-                  "error": {
-                    "message": "Invalid or missing API key",
-                    "type": "unauthorized"
-                  }
-                },
-                "schema": {
-                  "properties": {
-                    "error": {
-                      "properties": {
-                        "code": {
-                          "description": "A short string indicating the specific error code, e.g. 'parameter_missing', 'parameter_invalid', 'invalid_json'",
-                          "type": [
-                            "string",
-                            "null"
-                          ]
-                        },
-                        "message": {
-                          "type": "string"
-                        },
-                        "param": {
-                          "description": "The parameter that caused the error, if applicable",
-                          "type": [
-                            "string",
-                            "null"
-                          ]
-                        },
-                        "type": {
-                          "type": "string"
-                        }
-                      },
-                      "required": [
-                        "type",
-                        "message"
-                      ],
-                      "type": "object"
-                    }
-                  },
-                  "required": [
-                    "error"
-                  ],
-                  "type": "object"
-                }
-              }
-            },
-            "description": "Unauthorized"
-          },
-          "403": {
-            "content": {
-              "application/json": {
-                "example": {
-                  "error": {
-                    "message": "You do not have permission to access this resource",
-                    "type": "forbidden"
-                  }
-                },
-                "schema": {
-                  "properties": {
-                    "error": {
-                      "properties": {
-                        "code": {
-                          "description": "A short string indicating the specific error code, e.g. 'parameter_missing', 'parameter_invalid', 'invalid_json'",
-                          "type": [
-                            "string",
-                            "null"
-                          ]
-                        },
-                        "message": {
-                          "type": "string"
-                        },
-                        "param": {
-                          "description": "The parameter that caused the error, if applicable",
-                          "type": [
-                            "string",
-                            "null"
-                          ]
-                        },
-                        "type": {
-                          "type": "string"
-                        }
-                      },
-                      "required": [
-                        "type",
-                        "message"
-                      ],
-                      "type": "object"
-                    }
-                  },
-                  "required": [
-                    "error"
-                  ],
-                  "type": "object"
-                }
-              }
-            },
-            "description": "Forbidden"
-          },
-          "404": {
-            "content": {
-              "application/json": {
-                "example": {
-                  "error": {
-                    "message": "Resource not found",
-                    "type": "not_found"
-                  }
-                },
-                "schema": {
-                  "properties": {
-                    "error": {
-                      "properties": {
-                        "code": {
-                          "description": "A short string indicating the specific error code, e.g. 'parameter_missing', 'parameter_invalid', 'invalid_json'",
-                          "type": [
-                            "string",
-                            "null"
-                          ]
-                        },
-                        "message": {
-                          "type": "string"
-                        },
-                        "param": {
-                          "description": "The parameter that caused the error, if applicable",
-                          "type": [
-                            "string",
-                            "null"
-                          ]
-                        },
-                        "type": {
-                          "type": "string"
-                        }
-                      },
-                      "required": [
-                        "type",
-                        "message"
-                      ],
-                      "type": "object"
-                    }
-                  },
-                  "required": [
-                    "error"
-                  ],
-                  "type": "object"
-                }
-              }
-            },
-            "description": "Not found"
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "example": {
-                  "error": null
-                },
-                "schema": {
-                  "properties": {
-                    "error": {
-                      "properties": {
-                        "code": {
-                          "description": "A short string indicating the specific error code, e.g. 'parameter_missing', 'parameter_invalid', 'invalid_json'",
-                          "type": [
-                            "string",
-                            "null"
-                          ]
-                        },
-                        "message": {
-                          "type": "string"
-                        },
-                        "param": {
-                          "description": "The parameter that caused the error, if applicable",
-                          "type": [
-                            "string",
-                            "null"
-                          ]
-                        },
-                        "type": {
-                          "type": "string"
-                        }
-                      },
-                      "required": [
-                        "type",
-                        "message"
-                      ],
-                      "type": "object"
-                    }
-                  },
-                  "required": [
-                    "error"
-                  ],
-                  "type": "object"
-                }
-              }
-            },
-            "description": "Verification required"
-          },
-          "429": {
-            "content": {
-              "application/json": {
-                "example": {
-                  "error": null
-                },
-                "schema": {
-                  "properties": {
-                    "error": {
-                      "properties": {
-                        "code": {
-                          "description": "A short string indicating the specific error code, e.g. 'parameter_missing', 'parameter_invalid', 'invalid_json'",
-                          "type": [
-                            "string",
-                            "null"
-                          ]
-                        },
-                        "message": {
-                          "type": "string"
-                        },
-                        "param": {
-                          "description": "The parameter that caused the error, if applicable",
-                          "type": [
-                            "string",
-                            "null"
-                          ]
-                        },
-                        "type": {
-                          "type": "string"
-                        }
-                      },
-                      "required": [
-                        "type",
-                        "message"
-                      ],
-                      "type": "object"
-                    }
-                  },
-                  "required": [
-                    "error"
-                  ],
-                  "type": "object"
-                }
-              }
-            },
-            "description": "Too many requests"
-          },
-          "500": {
-            "content": {
-              "application/json": {
-                "example": {
-                  "error": {
-                    "message": "An unexpected error occurred",
-                    "type": "internal_server_error"
-                  }
-                },
-                "schema": {
-                  "properties": {
-                    "error": {
-                      "properties": {
-                        "code": {
-                          "description": "A short string indicating the specific error code, e.g. 'parameter_missing', 'parameter_invalid', 'invalid_json'",
-                          "type": [
-                            "string",
-                            "null"
-                          ]
-                        },
-                        "message": {
-                          "type": "string"
-                        },
-                        "param": {
-                          "description": "The parameter that caused the error, if applicable",
-                          "type": [
-                            "string",
-                            "null"
-                          ]
-                        },
-                        "type": {
-                          "type": "string"
-                        }
-                      },
-                      "required": [
-                        "type",
-                        "message"
-                      ],
-                      "type": "object"
-                    }
-                  },
-                  "required": [
-                    "error"
-                  ],
-                  "type": "object"
-                }
-              }
-            },
-            "description": "Internal server error"
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": [
-              "plan:waitlist:read",
-              "member:email:read"
-            ]
-          }
-        ],
-        "summary": "Retrieve entry",
-        "tags": [
-          "Entries"
-        ],
-        "x-group-title": "CRM",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.entries.retrieve({\n    id: \"entry_xxxxxxxxxxxx\"\n});\n"
-          }
-        ]
-      }
-    },
-    "/entries/{id}/approve": {
-      "post": {
-        "description": "Approve a pending waitlist entry, triggering the checkout process to grant the user access to the plan.\n\nRequired permissions:\n - `plan:waitlist:manage`",
-        "operationId": "approveEntry",
-        "parameters": [
-          {
-            "description": "The unique identifier of the waitlist entry to approve.",
-            "in": "path",
-            "name": "id",
-            "required": true,
-            "schema": {
-              "example": "entry_xxxxxxxxxxxx",
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "description": "An object representing an asynchronous job.",
-                  "properties": {
-                    "job_id": {
-                      "description": "The ID of the job.",
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "job_id"
-                  ],
-                  "type": "object"
-                }
-              }
-            },
-            "description": "A successful response"
-          },
-          "400": {
-            "content": {
-              "application/json": {
-                "example": {
-                  "error": {
-                    "code": "parameter_missing",
-                    "message": "Missing required parameter: amount.",
-                    "param": "amount",
-                    "type": "invalid_request_error"
-                  }
-                },
-                "schema": {
-                  "properties": {
-                    "error": {
-                      "properties": {
-                        "code": {
-                          "description": "A short string indicating the specific error code, e.g. 'parameter_missing', 'parameter_invalid', 'invalid_json'",
-                          "type": [
-                            "string",
-                            "null"
-                          ]
-                        },
-                        "message": {
-                          "type": "string"
-                        },
-                        "param": {
-                          "description": "The parameter that caused the error, if applicable",
-                          "type": [
-                            "string",
-                            "null"
-                          ]
-                        },
-                        "type": {
-                          "type": "string"
-                        }
-                      },
-                      "required": [
-                        "type",
-                        "message"
-                      ],
-                      "type": "object"
-                    }
-                  },
-                  "required": [
-                    "error"
-                  ],
-                  "type": "object"
-                }
-              }
-            },
-            "description": "Bad request"
-          },
-          "401": {
-            "content": {
-              "application/json": {
-                "example": {
-                  "error": {
-                    "message": "Invalid or missing API key",
-                    "type": "unauthorized"
-                  }
-                },
-                "schema": {
-                  "properties": {
-                    "error": {
-                      "properties": {
-                        "code": {
-                          "description": "A short string indicating the specific error code, e.g. 'parameter_missing', 'parameter_invalid', 'invalid_json'",
-                          "type": [
-                            "string",
-                            "null"
-                          ]
-                        },
-                        "message": {
-                          "type": "string"
-                        },
-                        "param": {
-                          "description": "The parameter that caused the error, if applicable",
-                          "type": [
-                            "string",
-                            "null"
-                          ]
-                        },
-                        "type": {
-                          "type": "string"
-                        }
-                      },
-                      "required": [
-                        "type",
-                        "message"
-                      ],
-                      "type": "object"
-                    }
-                  },
-                  "required": [
-                    "error"
-                  ],
-                  "type": "object"
-                }
-              }
-            },
-            "description": "Unauthorized"
-          },
-          "403": {
-            "content": {
-              "application/json": {
-                "example": {
-                  "error": {
-                    "message": "You do not have permission to access this resource",
-                    "type": "forbidden"
-                  }
-                },
-                "schema": {
-                  "properties": {
-                    "error": {
-                      "properties": {
-                        "code": {
-                          "description": "A short string indicating the specific error code, e.g. 'parameter_missing', 'parameter_invalid', 'invalid_json'",
-                          "type": [
-                            "string",
-                            "null"
-                          ]
-                        },
-                        "message": {
-                          "type": "string"
-                        },
-                        "param": {
-                          "description": "The parameter that caused the error, if applicable",
-                          "type": [
-                            "string",
-                            "null"
-                          ]
-                        },
-                        "type": {
-                          "type": "string"
-                        }
-                      },
-                      "required": [
-                        "type",
-                        "message"
-                      ],
-                      "type": "object"
-                    }
-                  },
-                  "required": [
-                    "error"
-                  ],
-                  "type": "object"
-                }
-              }
-            },
-            "description": "Forbidden"
-          },
-          "404": {
-            "content": {
-              "application/json": {
-                "example": {
-                  "error": {
-                    "message": "Resource not found",
-                    "type": "not_found"
-                  }
-                },
-                "schema": {
-                  "properties": {
-                    "error": {
-                      "properties": {
-                        "code": {
-                          "description": "A short string indicating the specific error code, e.g. 'parameter_missing', 'parameter_invalid', 'invalid_json'",
-                          "type": [
-                            "string",
-                            "null"
-                          ]
-                        },
-                        "message": {
-                          "type": "string"
-                        },
-                        "param": {
-                          "description": "The parameter that caused the error, if applicable",
-                          "type": [
-                            "string",
-                            "null"
-                          ]
-                        },
-                        "type": {
-                          "type": "string"
-                        }
-                      },
-                      "required": [
-                        "type",
-                        "message"
-                      ],
-                      "type": "object"
-                    }
-                  },
-                  "required": [
-                    "error"
-                  ],
-                  "type": "object"
-                }
-              }
-            },
-            "description": "Not found"
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "example": {
-                  "error": null
-                },
-                "schema": {
-                  "properties": {
-                    "error": {
-                      "properties": {
-                        "code": {
-                          "description": "A short string indicating the specific error code, e.g. 'parameter_missing', 'parameter_invalid', 'invalid_json'",
-                          "type": [
-                            "string",
-                            "null"
-                          ]
-                        },
-                        "message": {
-                          "type": "string"
-                        },
-                        "param": {
-                          "description": "The parameter that caused the error, if applicable",
-                          "type": [
-                            "string",
-                            "null"
-                          ]
-                        },
-                        "type": {
-                          "type": "string"
-                        }
-                      },
-                      "required": [
-                        "type",
-                        "message"
-                      ],
-                      "type": "object"
-                    }
-                  },
-                  "required": [
-                    "error"
-                  ],
-                  "type": "object"
-                }
-              }
-            },
-            "description": "Verification required"
-          },
-          "429": {
-            "content": {
-              "application/json": {
-                "example": {
-                  "error": null
-                },
-                "schema": {
-                  "properties": {
-                    "error": {
-                      "properties": {
-                        "code": {
-                          "description": "A short string indicating the specific error code, e.g. 'parameter_missing', 'parameter_invalid', 'invalid_json'",
-                          "type": [
-                            "string",
-                            "null"
-                          ]
-                        },
-                        "message": {
-                          "type": "string"
-                        },
-                        "param": {
-                          "description": "The parameter that caused the error, if applicable",
-                          "type": [
-                            "string",
-                            "null"
-                          ]
-                        },
-                        "type": {
-                          "type": "string"
-                        }
-                      },
-                      "required": [
-                        "type",
-                        "message"
-                      ],
-                      "type": "object"
-                    }
-                  },
-                  "required": [
-                    "error"
-                  ],
-                  "type": "object"
-                }
-              }
-            },
-            "description": "Too many requests"
-          },
-          "500": {
-            "content": {
-              "application/json": {
-                "example": {
-                  "error": {
-                    "message": "An unexpected error occurred",
-                    "type": "internal_server_error"
-                  }
-                },
-                "schema": {
-                  "properties": {
-                    "error": {
-                      "properties": {
-                        "code": {
-                          "description": "A short string indicating the specific error code, e.g. 'parameter_missing', 'parameter_invalid', 'invalid_json'",
-                          "type": [
-                            "string",
-                            "null"
-                          ]
-                        },
-                        "message": {
-                          "type": "string"
-                        },
-                        "param": {
-                          "description": "The parameter that caused the error, if applicable",
-                          "type": [
-                            "string",
-                            "null"
-                          ]
-                        },
-                        "type": {
-                          "type": "string"
-                        }
-                      },
-                      "required": [
-                        "type",
-                        "message"
-                      ],
-                      "type": "object"
-                    }
-                  },
-                  "required": [
-                    "error"
-                  ],
-                  "type": "object"
-                }
-              }
-            },
-            "description": "Internal server error"
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": [
-              "plan:waitlist:manage"
-            ]
-          }
-        ],
-        "summary": "Approve entry",
-        "tags": [
-          "Entries"
-        ],
-        "x-group-title": "CRM",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.entries.approve({\n    id: \"entry_xxxxxxxxxxxx\"\n});\n"
-          }
-        ]
-      }
-    },
-    "/entries/{id}/deny": {
-      "post": {
-        "description": "Deny a pending waitlist entry, preventing the user from gaining access to the plan.\n\nRequired permissions:\n - `plan:waitlist:manage`\n - `plan:basic:read`\n - `member:email:read`",
-        "operationId": "denyEntry",
-        "parameters": [
-          {
-            "description": "The unique identifier of the waitlist entry to deny.",
-            "in": "path",
-            "name": "id",
-            "required": true,
-            "schema": {
-              "example": "entry_xxxxxxxxxxxx",
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Entry"
-                }
-              }
-            },
-            "description": "A successful response"
-          },
-          "400": {
-            "content": {
-              "application/json": {
-                "example": {
-                  "error": {
-                    "code": "parameter_missing",
-                    "message": "Missing required parameter: amount.",
-                    "param": "amount",
-                    "type": "invalid_request_error"
-                  }
-                },
-                "schema": {
-                  "properties": {
-                    "error": {
-                      "properties": {
-                        "code": {
-                          "description": "A short string indicating the specific error code, e.g. 'parameter_missing', 'parameter_invalid', 'invalid_json'",
-                          "type": [
-                            "string",
-                            "null"
-                          ]
-                        },
-                        "message": {
-                          "type": "string"
-                        },
-                        "param": {
-                          "description": "The parameter that caused the error, if applicable",
-                          "type": [
-                            "string",
-                            "null"
-                          ]
-                        },
-                        "type": {
-                          "type": "string"
-                        }
-                      },
-                      "required": [
-                        "type",
-                        "message"
-                      ],
-                      "type": "object"
-                    }
-                  },
-                  "required": [
-                    "error"
-                  ],
-                  "type": "object"
-                }
-              }
-            },
-            "description": "Bad request"
-          },
-          "401": {
-            "content": {
-              "application/json": {
-                "example": {
-                  "error": {
-                    "message": "Invalid or missing API key",
-                    "type": "unauthorized"
-                  }
-                },
-                "schema": {
-                  "properties": {
-                    "error": {
-                      "properties": {
-                        "code": {
-                          "description": "A short string indicating the specific error code, e.g. 'parameter_missing', 'parameter_invalid', 'invalid_json'",
-                          "type": [
-                            "string",
-                            "null"
-                          ]
-                        },
-                        "message": {
-                          "type": "string"
-                        },
-                        "param": {
-                          "description": "The parameter that caused the error, if applicable",
-                          "type": [
-                            "string",
-                            "null"
-                          ]
-                        },
-                        "type": {
-                          "type": "string"
-                        }
-                      },
-                      "required": [
-                        "type",
-                        "message"
-                      ],
-                      "type": "object"
-                    }
-                  },
-                  "required": [
-                    "error"
-                  ],
-                  "type": "object"
-                }
-              }
-            },
-            "description": "Unauthorized"
-          },
-          "403": {
-            "content": {
-              "application/json": {
-                "example": {
-                  "error": {
-                    "message": "You do not have permission to access this resource",
-                    "type": "forbidden"
-                  }
-                },
-                "schema": {
-                  "properties": {
-                    "error": {
-                      "properties": {
-                        "code": {
-                          "description": "A short string indicating the specific error code, e.g. 'parameter_missing', 'parameter_invalid', 'invalid_json'",
-                          "type": [
-                            "string",
-                            "null"
-                          ]
-                        },
-                        "message": {
-                          "type": "string"
-                        },
-                        "param": {
-                          "description": "The parameter that caused the error, if applicable",
-                          "type": [
-                            "string",
-                            "null"
-                          ]
-                        },
-                        "type": {
-                          "type": "string"
-                        }
-                      },
-                      "required": [
-                        "type",
-                        "message"
-                      ],
-                      "type": "object"
-                    }
-                  },
-                  "required": [
-                    "error"
-                  ],
-                  "type": "object"
-                }
-              }
-            },
-            "description": "Forbidden"
-          },
-          "404": {
-            "content": {
-              "application/json": {
-                "example": {
-                  "error": {
-                    "message": "Resource not found",
-                    "type": "not_found"
-                  }
-                },
-                "schema": {
-                  "properties": {
-                    "error": {
-                      "properties": {
-                        "code": {
-                          "description": "A short string indicating the specific error code, e.g. 'parameter_missing', 'parameter_invalid', 'invalid_json'",
-                          "type": [
-                            "string",
-                            "null"
-                          ]
-                        },
-                        "message": {
-                          "type": "string"
-                        },
-                        "param": {
-                          "description": "The parameter that caused the error, if applicable",
-                          "type": [
-                            "string",
-                            "null"
-                          ]
-                        },
-                        "type": {
-                          "type": "string"
-                        }
-                      },
-                      "required": [
-                        "type",
-                        "message"
-                      ],
-                      "type": "object"
-                    }
-                  },
-                  "required": [
-                    "error"
-                  ],
-                  "type": "object"
-                }
-              }
-            },
-            "description": "Not found"
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "example": {
-                  "error": null
-                },
-                "schema": {
-                  "properties": {
-                    "error": {
-                      "properties": {
-                        "code": {
-                          "description": "A short string indicating the specific error code, e.g. 'parameter_missing', 'parameter_invalid', 'invalid_json'",
-                          "type": [
-                            "string",
-                            "null"
-                          ]
-                        },
-                        "message": {
-                          "type": "string"
-                        },
-                        "param": {
-                          "description": "The parameter that caused the error, if applicable",
-                          "type": [
-                            "string",
-                            "null"
-                          ]
-                        },
-                        "type": {
-                          "type": "string"
-                        }
-                      },
-                      "required": [
-                        "type",
-                        "message"
-                      ],
-                      "type": "object"
-                    }
-                  },
-                  "required": [
-                    "error"
-                  ],
-                  "type": "object"
-                }
-              }
-            },
-            "description": "Verification required"
-          },
-          "429": {
-            "content": {
-              "application/json": {
-                "example": {
-                  "error": null
-                },
-                "schema": {
-                  "properties": {
-                    "error": {
-                      "properties": {
-                        "code": {
-                          "description": "A short string indicating the specific error code, e.g. 'parameter_missing', 'parameter_invalid', 'invalid_json'",
-                          "type": [
-                            "string",
-                            "null"
-                          ]
-                        },
-                        "message": {
-                          "type": "string"
-                        },
-                        "param": {
-                          "description": "The parameter that caused the error, if applicable",
-                          "type": [
-                            "string",
-                            "null"
-                          ]
-                        },
-                        "type": {
-                          "type": "string"
-                        }
-                      },
-                      "required": [
-                        "type",
-                        "message"
-                      ],
-                      "type": "object"
-                    }
-                  },
-                  "required": [
-                    "error"
-                  ],
-                  "type": "object"
-                }
-              }
-            },
-            "description": "Too many requests"
-          },
-          "500": {
-            "content": {
-              "application/json": {
-                "example": {
-                  "error": {
-                    "message": "An unexpected error occurred",
-                    "type": "internal_server_error"
-                  }
-                },
-                "schema": {
-                  "properties": {
-                    "error": {
-                      "properties": {
-                        "code": {
-                          "description": "A short string indicating the specific error code, e.g. 'parameter_missing', 'parameter_invalid', 'invalid_json'",
-                          "type": [
-                            "string",
-                            "null"
-                          ]
-                        },
-                        "message": {
-                          "type": "string"
-                        },
-                        "param": {
-                          "description": "The parameter that caused the error, if applicable",
-                          "type": [
-                            "string",
-                            "null"
-                          ]
-                        },
-                        "type": {
-                          "type": "string"
-                        }
-                      },
-                      "required": [
-                        "type",
-                        "message"
-                      ],
-                      "type": "object"
-                    }
-                  },
-                  "required": [
-                    "error"
-                  ],
-                  "type": "object"
-                }
-              }
-            },
-            "description": "Internal server error"
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": [
-              "plan:waitlist:manage",
-              "plan:basic:read",
-              "member:email:read"
-            ]
-          }
-        ],
-        "summary": "Deny entry",
-        "tags": [
-          "Entries"
-        ],
-        "x-group-title": "CRM",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.entries.deny({\n    id: \"entry_xxxxxxxxxxxx\"\n});\n"
-          }
-        ]
-      }
-    },
     "/experiences": {
       "get": {
         "description": "Returns a paginated list of experiences belonging to a company, with optional filtering by product and app.",
@@ -90931,7 +89065,7 @@
     },
     "/payments/{id}/void": {
       "post": {
-        "description": "Void a payment that has not yet been settled. Voiding cancels the payment before it is captured by the payment processor.\n\nRequired permissions:\n - `payment:manage`\n - `plan:basic:read`\n - `access_pass:basic:read`\n - `member:email:read`\n - `member:basic:read`\n - `member:phone:read`\n - `promo_code:basic:read`\n - `shipment:basic:read`\n - `payment:dispute:read`\n - `payment:resolution_center_case:read`",
+        "description": "Void or cancel an eligible payment. The request is rejected if the payment is no longer eligible.\n\nRequired permissions:\n - `payment:manage`\n - `plan:basic:read`\n - `access_pass:basic:read`\n - `member:email:read`\n - `member:basic:read`\n - `member:phone:read`\n - `promo_code:basic:read`\n - `shipment:basic:read`\n - `payment:dispute:read`\n - `payment:resolution_center_case:read`",
         "operationId": "voidPayment",
         "parameters": [
           {
@@ -111026,7 +109160,8 @@
         "summary": "CardTransaction Completed",
         "tags": [
           "Card transactions"
-        ]
+        ],
+        "x-group-title": "Cards"
       }
     },
     "card_transaction.created": {
@@ -111165,7 +109300,8 @@
         "summary": "CardTransaction Created",
         "tags": [
           "Card transactions"
-        ]
+        ],
+        "x-group-title": "Cards"
       }
     },
     "card_transaction.declined": {
@@ -111304,7 +109440,8 @@
         "summary": "CardTransaction Declined",
         "tags": [
           "Card transactions"
-        ]
+        ],
+        "x-group-title": "Cards"
       }
     },
     "card_transaction.reversed": {
@@ -111443,7 +109580,8 @@
         "summary": "CardTransaction Reversed",
         "tags": [
           "Card transactions"
-        ]
+        ],
+        "x-group-title": "Cards"
       }
     },
     "card_transaction.updated": {
@@ -111582,7 +109720,8 @@
         "summary": "CardTransaction Updated",
         "tags": [
           "Card transactions"
-        ]
+        ],
+        "x-group-title": "Cards"
       }
     },
     "chat.message.created": {
@@ -112253,7 +110392,8 @@
         "summary": "CourseLessonInteraction Completed",
         "tags": [
           "Course lesson interactions"
-        ]
+        ],
+        "x-group-title": "Courses"
       }
     },
     "dispute.created": {
@@ -112432,7 +110572,8 @@
         "summary": "Dispute Created",
         "tags": [
           "Disputes"
-        ]
+        ],
+        "x-group-title": "Payins"
       }
     },
     "dispute.updated": {
@@ -112611,7 +110752,8 @@
         "summary": "Dispute Updated",
         "tags": [
           "Disputes"
-        ]
+        ],
+        "x-group-title": "Payins"
       }
     },
     "dispute_alert.created": {
@@ -112741,7 +110883,8 @@
         "summary": "Dispute Alert Created",
         "tags": [
           "Dispute alerts"
-        ]
+        ],
+        "x-group-title": "Payins"
       }
     },
     "entry.approved": {
@@ -112885,7 +111028,8 @@
         "summary": "Entry Approved",
         "tags": [
           "Entries"
-        ]
+        ],
+        "x-group-title": "CRM"
       }
     },
     "entry.created": {
@@ -113029,7 +111173,8 @@
         "summary": "Entry Created",
         "tags": [
           "Entries"
-        ]
+        ],
+        "x-group-title": "CRM"
       }
     },
     "entry.deleted": {
@@ -113173,7 +111318,8 @@
         "summary": "Entry Deleted",
         "tags": [
           "Entries"
-        ]
+        ],
+        "x-group-title": "CRM"
       }
     },
     "entry.denied": {
@@ -113317,7 +111463,8 @@
         "summary": "Entry Denied",
         "tags": [
           "Entries"
-        ]
+        ],
+        "x-group-title": "CRM"
       }
     },
     "identity_profile.updated": {
@@ -113450,7 +111597,8 @@
         "summary": "IdentityProfile Updated",
         "tags": [
           "Identity profiles"
-        ]
+        ],
+        "x-group-title": "Payouts"
       }
     },
     "invoice.created": {
@@ -113626,7 +111774,8 @@
         "summary": "Invoice Created",
         "tags": [
           "Invoices"
-        ]
+        ],
+        "x-group-title": "Payins"
       }
     },
     "invoice.marked_uncollectible": {
@@ -113802,7 +111951,8 @@
         "summary": "Invoice Marked uncollectible",
         "tags": [
           "Invoices"
-        ]
+        ],
+        "x-group-title": "Payins"
       }
     },
     "invoice.paid": {
@@ -113978,7 +112128,8 @@
         "summary": "Invoice Paid",
         "tags": [
           "Invoices"
-        ]
+        ],
+        "x-group-title": "Payins"
       }
     },
     "invoice.past_due": {
@@ -114154,7 +112305,8 @@
         "summary": "Invoice Past due",
         "tags": [
           "Invoices"
-        ]
+        ],
+        "x-group-title": "Payins"
       }
     },
     "invoice.voided": {
@@ -114330,7 +112482,8 @@
         "summary": "Invoice Voided",
         "tags": [
           "Invoices"
-        ]
+        ],
+        "x-group-title": "Payins"
       }
     },
     "ledger_account.funds_available": {
@@ -114473,7 +112626,8 @@
         "summary": "LedgerAccount Funds available",
         "tags": [
           "Ledger accounts"
-        ]
+        ],
+        "x-group-title": "Payouts"
       }
     },
     "member.created": {
@@ -114616,7 +112770,8 @@
         "summary": "Member Created",
         "tags": [
           "Members"
-        ]
+        ],
+        "x-group-title": "CRM"
       }
     },
     "member.updated": {
@@ -114759,7 +112914,8 @@
         "summary": "Member Updated",
         "tags": [
           "Members"
-        ]
+        ],
+        "x-group-title": "CRM"
       }
     },
     "membership.activated": {
@@ -114925,7 +113081,8 @@
         "summary": "Membership Activated",
         "tags": [
           "Memberships"
-        ]
+        ],
+        "x-group-title": "CRM"
       }
     },
     "membership.cancel_at_period_end_changed": {
@@ -115091,7 +113248,8 @@
         "summary": "Membership Cancel at period end changed",
         "tags": [
           "Memberships"
-        ]
+        ],
+        "x-group-title": "CRM"
       }
     },
     "membership.deactivated": {
@@ -115257,7 +113415,8 @@
         "summary": "Membership Deactivated",
         "tags": [
           "Memberships"
-        ]
+        ],
+        "x-group-title": "CRM"
       }
     },
     "membership.trial_ending_soon": {
@@ -115423,7 +113582,8 @@
         "summary": "Membership Trial ending soon",
         "tags": [
           "Memberships"
-        ]
+        ],
+        "x-group-title": "CRM"
       }
     },
     "payment.authorized": {
@@ -115671,7 +113831,8 @@
         "summary": "Payment Authorized",
         "tags": [
           "Payments"
-        ]
+        ],
+        "x-group-title": "Payins"
       }
     },
     "payment.canceled": {
@@ -115919,7 +114080,8 @@
         "summary": "Payment Canceled",
         "tags": [
           "Payments"
-        ]
+        ],
+        "x-group-title": "Payins"
       }
     },
     "payment.created": {
@@ -116167,7 +114329,8 @@
         "summary": "Payment Created",
         "tags": [
           "Payments"
-        ]
+        ],
+        "x-group-title": "Payins"
       }
     },
     "payment.failed": {
@@ -116415,7 +114578,8 @@
         "summary": "Payment Failed",
         "tags": [
           "Payments"
-        ]
+        ],
+        "x-group-title": "Payins"
       }
     },
     "payment.pending": {
@@ -116660,7 +114824,8 @@
         "summary": "Payment Pending",
         "tags": [
           "Payments"
-        ]
+        ],
+        "x-group-title": "Payins"
       }
     },
     "payment.requires_action": {
@@ -116904,7 +115069,8 @@
         "summary": "Payment Requires action",
         "tags": [
           "Payments"
-        ]
+        ],
+        "x-group-title": "Payins"
       }
     },
     "payment.succeeded": {
@@ -117152,7 +115318,8 @@
         "summary": "Payment Succeeded",
         "tags": [
           "Payments"
-        ]
+        ],
+        "x-group-title": "Payins"
       }
     },
     "payout_account.status_updated": {
@@ -117293,7 +115460,8 @@
         "summary": "PayoutAccount Status updated",
         "tags": [
           "Payout accounts"
-        ]
+        ],
+        "x-group-title": "Payouts"
       }
     },
     "payout_method.created": {
@@ -117427,7 +115595,8 @@
         "summary": "PayoutMethod Created",
         "tags": [
           "Payout methods"
-        ]
+        ],
+        "x-group-title": "Payouts"
       }
     },
     "product.created": {
@@ -117580,7 +115749,8 @@
         "summary": "Product Created",
         "tags": [
           "Products"
-        ]
+        ],
+        "x-group-title": "Payins"
       }
     },
     "product.deleted": {
@@ -118165,7 +116335,8 @@
         "summary": "Product Deleted",
         "tags": [
           "Products"
-        ]
+        ],
+        "x-group-title": "Payins"
       }
     },
     "product.published": {
@@ -118318,7 +116489,8 @@
         "summary": "Product Published",
         "tags": [
           "Products"
-        ]
+        ],
+        "x-group-title": "Payins"
       }
     },
     "product.unpublished": {
@@ -118471,7 +116643,8 @@
         "summary": "Product Unpublished",
         "tags": [
           "Products"
-        ]
+        ],
+        "x-group-title": "Payins"
       }
     },
     "product.updated": {
@@ -118624,7 +116797,8 @@
         "summary": "Product Updated",
         "tags": [
           "Products"
-        ]
+        ],
+        "x-group-title": "Payins"
       }
     },
     "refund.created": {
@@ -118792,7 +116966,8 @@
         "summary": "Refund Created",
         "tags": [
           "Refunds"
-        ]
+        ],
+        "x-group-title": "Payins"
       }
     },
     "refund.updated": {
@@ -118960,7 +117135,8 @@
         "summary": "Refund Updated",
         "tags": [
           "Refunds"
-        ]
+        ],
+        "x-group-title": "Payins"
       }
     },
     "resolution_center_case.created": {
@@ -119117,7 +117293,8 @@
         "summary": "ResolutionCenterCase Created",
         "tags": [
           "Resolution center cases"
-        ]
+        ],
+        "x-group-title": "Payins"
       }
     },
     "resolution_center_case.decided": {
@@ -119268,7 +117445,8 @@
         "summary": "ResolutionCenterCase Decided",
         "tags": [
           "Resolution center cases"
-        ]
+        ],
+        "x-group-title": "Payins"
       }
     },
     "resolution_center_case.updated": {
@@ -119422,7 +117600,8 @@
         "summary": "ResolutionCenterCase Updated",
         "tags": [
           "Resolution center cases"
-        ]
+        ],
+        "x-group-title": "Payins"
       }
     },
     "setup_intent.canceled": {
@@ -119563,7 +117742,8 @@
         "summary": "SetupIntent Canceled",
         "tags": [
           "Setup intents"
-        ]
+        ],
+        "x-group-title": "Payins"
       }
     },
     "setup_intent.requires_action": {
@@ -119704,7 +117884,8 @@
         "summary": "SetupIntent Requires action",
         "tags": [
           "Setup intents"
-        ]
+        ],
+        "x-group-title": "Payins"
       }
     },
     "setup_intent.succeeded": {
@@ -119856,7 +118037,8 @@
         "summary": "SetupIntent Succeeded",
         "tags": [
           "Setup intents"
-        ]
+        ],
+        "x-group-title": "Payins"
       }
     },
     "shipment.created": {
@@ -119988,7 +118170,8 @@
         "summary": "Shipment Created",
         "tags": [
           "Shipments"
-        ]
+        ],
+        "x-group-title": "CRM"
       }
     },
     "shipment.updated": {
@@ -120120,7 +118303,8 @@
         "summary": "Shipment Updated",
         "tags": [
           "Shipments"
-        ]
+        ],
+        "x-group-title": "CRM"
       }
     },
     "verification.succeeded": {
@@ -120245,7 +118429,8 @@
         "summary": "Verification Succeeded",
         "tags": [
           "Verifications"
-        ]
+        ],
+        "x-group-title": "Payouts"
       }
     }
   }

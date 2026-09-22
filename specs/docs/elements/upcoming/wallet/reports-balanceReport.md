@@ -6,6 +6,8 @@
 
 > Balance history with date, timezone, and currency controls, starting and ending balances, and money-in and money-out breakdowns. Drill into activity and export it without leaving the element.
 
+*Since `v1.0.0`.*
+
 Mounts inside [`Reports`](/elements/upcoming/wallet/reports), in [`Wallet`](/elements/upcoming/wallet/overview). `accountId` and `accessToken` come from `Wallet`. Pass props and callbacks through the create options or React props. Keep the created handle, or React `ref`, to call `refresh()`.
 
 <div data-whop-split style={{ display: "flex", gap: "1.5rem", alignItems: "flex-start", flexWrap: "wrap" }}>

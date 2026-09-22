@@ -169,9 +169,9 @@ tags:
 
       Collection runs in the background, so the create response is not the
       outcome. Poll [Retrieve
-      status](/api-reference/beta/payments/retrieve-status) for how far the
-      payment has got and, while it is `requires_action`, what the buyer must do
-      next — follow a redirect, complete 3D Secure, display transfer
+      status](/api-reference/beta/payments/retrieve-payment-status) for how far
+      the payment has gone and, while it is `requires_action`, what the buyer
+      must do next — follow a redirect, complete 3D Secure, display transfer
       instructions, or link a bank account. Use the return_url operation to
       change where they land afterwards, up until they come back.
     name: Payments
@@ -209,8 +209,9 @@ tags:
       linking a bank account.
 
 
-      Poll [Retrieve status](/api-reference/beta/setup-intents/retrieve-status)
-      for how far the setup has got and what is outstanding. Once it reaches
+      Poll [Retrieve
+      status](/api-reference/beta/setup-intents/retrieve-setup-status) for how
+      far the setup has gone and what is outstanding. Once it reaches
       `succeeded` the method is on file and can be charged.
     name: Setup Intents
     x-whop-summary: Saving a buyer's payment method without charging it.
@@ -357,6 +358,15 @@ tags:
       products, retrieve a product, and create, update, or delete products.
     name: Products
     x-whop-summary: The things you sell. Each owns plans and a store page.
+  - description: >
+      Join a free plan's waitlist, read or cancel your own signups, and manage
+      signups for accounts you are authorized to operate.
+
+      Joining does not grant membership or charge a payment method. Seller
+      approval runs asynchronously and can charge a saved payment method for a
+      paid plan.
+    name: Waitlist Entries
+    x-whop-summary: Join waitlists and manage customer signups awaiting approval.
   - description: >
       A Plan defines how customers buy a product. It controls pricing, billing
       cadence, availability, tax behavior, checkout fields, and purchase
@@ -552,6 +562,33 @@ tags:
       and pause or resume delivery.
     name: Ads
     x-whop-summary: 'The creative: copy, assets, and destination URL.'
+  - description: >
+      A conversion value rule allows you to report accurate conversion values to
+      Whop while modifying how those values are sent to ad networks. Rules
+      belong to an account and can apply to an account, an ad campaign, an ad
+      group, or an ad.
+
+
+      Each rule contains targets and events that share one value adjustment.
+      Every selected event applies to every selected target. Create, retrieve,
+      edit, delete, pause, or resume one rule by its ID. Create may set an
+      initial active or paused status. Edits keep that status. Filter the list
+      with resource_id to find rules overlapping a campaign, ad group, or ad.
+      Every target must support every selected event; Google does not support
+      named custom events. Create and edit accept replace_rule_ids to replace
+      only the overlapping selections in the same transaction. Other selections
+      keep their values. Remaining selections may split into separate rules so
+      every event still applies to every target. Broader rules remain as
+      fallbacks for other items; the most specific rule applies. Rules with no
+      remaining selections are paused. Unpause automatically replaces
+      overlapping selections using the same behavior as create and edit: other
+      selections keep their values, and broader rules remain as defaults.
+      Resuming an already-active rule makes no changes. Each write succeeds or
+      fails as one transaction. Use Idempotency-Key to safely retry POST
+      requests. Each conversion send attempt uses the rules saved at that time,
+      including retries.
+    name: Ad Conversion Value Rules
+    x-whop-summary: Modify how conversion events are delivered to ad networks.
   - description: >
       An Ad Campaign is the top-level container for paid ads on an ad network.
       It sets the platform, objective, and budget strategy shared by its [ad

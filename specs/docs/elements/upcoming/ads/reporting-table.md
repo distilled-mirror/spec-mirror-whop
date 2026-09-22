@@ -6,6 +6,8 @@
 
 > An advertising account's campaigns, ad groups, and ads in one table, with the tabs that move between them: pick rows to narrow the level below, search, sort, break the numbers down, choose your columns, and pause, resume, duplicate, or delete straight from a row. The window it reports on and the rows it is filtered to live on the handle, so a chart mounted beside it reports on exactly the same thing.
 
+*Since `v1.0.0`.*
+
 Mounts inside [`Reporting`](/elements/upcoming/ads/reporting), in [`Ads`](/elements/upcoming/ads/overview). `accountId` and `accessToken` come from `Ads`. Pass props and callbacks through the create options or React props.
 
 <div data-whop-split style={{ display: "flex", gap: "1.5rem", alignItems: "flex-start", flexWrap: "wrap" }}>

@@ -6,6 +6,8 @@
 
 > An account's balance and a chart of how it changed. The total and its change sit at the top, the chart below that, and the time range buttons at the bottom. The viewer can read individual points on the chart and switch the time range themselves.
 
+*Since `v1.0.0`.*
+
 <div data-whop-platform="web">
   Mounts inside [`Balances`](/elements/upcoming/wallet/balances), in [`Wallet`](/elements/upcoming/wallet/overview). `accountId` and `currency` come from `Wallet`. Pass props and callbacks through the create options or React props.
 </div>

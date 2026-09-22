@@ -6,6 +6,8 @@
 
 > A standalone detail drawer for one movement. Point it at a prefetched financial-activity row, a ledger activity ID, or a card transaction ID — a prefetched row takes precedence, otherwise the element retrieves the record itself. A card transaction opens the card receipt: merchant, amount, status, the card it was charged to, its cardholder on a company account, the settlement date, category, currency conversion and cashback.
 
+*Since `v1.0.0`.*
+
 Opens as a modal from [`Wallet`](/elements/upcoming/wallet/overview): `wallet.createOverlay('activityDetail')`. Pass props and callbacks in the create options.
 
 <Note>This element is **modal-only**. Open it with `createOverlay`; it has no inline mount.</Note>

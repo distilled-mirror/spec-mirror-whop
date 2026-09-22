@@ -6,6 +6,8 @@
 
 > Drives a full hosted checkout for one or more plans — itemized price summary, promo codes, the currency the buyer pays in, and the whole payment collection surface (the payments elements, composed inside) — against the Whop checkout sessions API. Mount it with `items`, a single `plan`, or a `checkoutConfiguration` you authored and the element opens the checkout session itself; the session credential never leaves the element. A setup-mode checkout configuration mounts the same element as a payment-method save: nothing is charged, the buyer’s method is stored for you to charge later, and the finished checkout redirects with `setup_intent_id`. The buyer pays inside the element, and a finished checkout redirects the current tab to `returnUrl`, including the page that contains the element. Fulfill from webhooks rather than a browser callback. Without a `returnUrl`, the buyer rests on the element’s own success face. The element automatically drives an off-site payment step, such as 3DS or a bank page. On whop.com, it brings the buyer back into the restored checkout; in an embed, the buyer returns to the same `returnUrl`. A failed payment reopens the same checkout with the reason shown, so the buyer can pay again. Every option is set at creation: the element mints a checkout session from these values when it mounts. Changing one later with `update()` or new React props fails instead of changing the existing order. Mount a new checkout to change what is being purchased.
 
+*Since `v1.0.0`.*
+
 ## Playground
 
 Assemble the elements with example data. Drive the controls, add and arrange elements, and watch events fire live:

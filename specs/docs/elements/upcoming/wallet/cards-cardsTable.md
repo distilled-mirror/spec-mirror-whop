@@ -6,6 +6,8 @@
 
 > A sortable table of every issued card on an account, including cardholder, last month's spend, limit, and creation date. Rows and the create button emit events so the host owns card details and issuance flows.
 
+*Since `v1.0.0`.*
+
 Mounts inside [`Cards`](/elements/upcoming/wallet/cards), in [`Wallet`](/elements/upcoming/wallet/overview). `accountId` and `accessToken` come from `Wallet`. Pass props and callbacks through the create options or React props. Keep the created handle, or React `ref`, to call `refresh()`.
 
 <div data-whop-split style={{ display: "flex", gap: "1.5rem", alignItems: "flex-start", flexWrap: "wrap" }}>

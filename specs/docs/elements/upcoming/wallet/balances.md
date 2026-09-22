@@ -6,6 +6,8 @@
 
 > Three views of an account's money. The balance view shows the total, a chart of how it changed, and a picker for the time range. The list view shows the holdings that make up that total, valued in dollars. The breakdown view splits one currency into available, pending, reserve, and negative amounts without money-movement controls. When `openHoldingOnSelect` is on, a list row replaces this unit's canvas — the chart and the list — with that holding's balance page instead of only reporting the click.
 
+*Since `v1.0.0`.*
+
 <div data-whop-platform="web">
   Mounts inside [`Wallet`](/elements/upcoming/wallet/overview). Create it to get a handle, then mount its elements on that handle. Call `destroy()` to remove the sub-controller. Create it again to get a fresh handle.
 
