@@ -8,6 +8,8 @@ An Ad Campaign is the top-level container for paid ads on an ad network. It sets
 
 Use the Ad Campaigns API to create campaigns, list campaigns for an account, retrieve or update campaign settings, and pause or resume campaign delivery.
 
+Ads billing combines eligible spend across the account's campaigns. A failed payment blocks delivery with `delivery_status: payment_failed` while preserving the configured active/paused `status`. Fix the account's payment method and [retry its ads payment](/api-reference/beta/accounts/retry-failed-ads-payments) once for the account. The retry is asynchronous: acceptance does not confirm payment. Successful settlement clears the block; active campaigns can resume if otherwise eligible, while paused campaigns stay paused. See [billing and retries](/developer/ads/overview#paying-for-ads).
+
 ## Endpoints
 
 | Endpoint                                                                                                  | Request                                                                               |
@@ -169,7 +171,7 @@ Use the Ad Campaigns API to create campaigns, list campaigns for an account, ret
     </ResponseField>
 
     <ResponseField name="delivery_status" type="string" required>
-      Whether the campaign's ads are delivering right now, and if not, why. When several states apply at once, the highest-precedence one is returned.
+      Whether the campaign's ads are delivering right now, and if not, why. Account billing failures set payment\_failed without changing the configured status. Successful payment retry clears that block and recalculates delivery. When several states apply at once, the highest-precedence one is returned.
 
       Available options: `payment_failed`, `all_ads_rejected`, `draft`, `no_ad_groups`, `no_ads`, `paused`, `processing`, `issues`, `scheduled`, `completed`, `ad_groups_off`, `active`
     </ResponseField>
@@ -297,7 +299,7 @@ Use the Ad Campaigns API to create campaigns, list campaigns for an account, ret
     </ResponseField>
 
     <ResponseField name="status" type="string" required>
-      The lifecycle status of the ad campaign.
+      The configured lifecycle status of the ad campaign. Billing failures preserve active or paused here and set delivery\_status to payment\_failed.
 
       Available options: `active`, `paused`, `inactive`, `stale`, `pending_refund`, `payment_failed`, `draft`, `in_review`, `flagged`, `importing`, `imported`, `duplicating`
     </ResponseField>

@@ -21,6 +21,7 @@ The `business_type`, `industry_group`, and `industry_type` fields classify accou
 | [List Account Reserves](/api-reference/beta/accounts/list-account-reserves)               | <Badge color="blue" size="sm" stroke>GET</Badge> `/accounts/{account_id}/reserves`        |
 | [Create Account](/api-reference/beta/accounts/create-account)                             | <Badge color="green" size="sm" stroke>POST</Badge> `/accounts`                            |
 | [Form Company](/api-reference/beta/accounts/form-company)                                 | <Badge color="green" size="sm" stroke>POST</Badge> `/accounts/{id}/form_company`          |
+| [Retry Failed Ads Payments](/api-reference/beta/accounts/retry-failed-ads-payments)       | <Badge color="green" size="sm" stroke>POST</Badge> `/accounts/{id}/retry_ads_payment`     |
 | [Suspend a Connected Account](/api-reference/beta/accounts/suspend-a-connected-account)   | <Badge color="green" size="sm" stroke>POST</Badge> `/accounts/{id}/suspend`               |
 | [Transfer Account Ownership](/api-reference/beta/accounts/transfer-account-ownership)     | <Badge color="green" size="sm" stroke>POST</Badge> `/accounts/{id}/transfer_ownership`    |
 | [Update Account](/api-reference/beta/accounts/update-account)                             | <Badge color="orange" size="sm" stroke>PATCH</Badge> `/accounts/{id}`                     |
@@ -85,6 +86,45 @@ await client.accounts.fees.update("biz_connected_account", {
 ```
 
 To clear a platform default, send `child_markups: { payments: null }` to the platform account. An explicit `{ percentage: 0, fixed: 0 }` remains a configured rate; use `null` to restore inheritance.
+
+## Legal Documents
+
+An account publishes its legal documents as PDF files: `terms_of_service`, `privacy_policy`, `return_policy`, `cancellation_policy`, `shipping_policy`, and `eula`. Each reads back as a [File](/api-reference/files/file) and is set through [Update Account](/api-reference/beta/accounts/update-account) with the `id` of a file you [uploaded](/developer/guides/upload-files).
+
+New disputes default their policy evidence from these documents. The cancellation policy slot takes `cancellation_policy`, then `terms_of_service`, then `return_policy`. The refund policy slot takes `return_policy`, then `terms_of_service`. Either slot falls back to Whop's platform policy when none is set, and `shipping_policy` rides along on physical-goods disputes. Set them once here, and use [Upload Dispute Evidence](/api-reference/beta/disputes/upload-dispute-evidence) only when one dispute needs a different version of a policy.
+
+<CodeGroup>
+  ```typescript TypeScript theme={null}
+  import { readFile } from "node:fs/promises";
+
+  const file = await client.files.create({ filename: "terms-of-service.pdf" });
+  await fetch(file.upload_url!, {
+  	method: "PUT",
+  	headers: file.upload_headers as Record<string, string>,
+  	body: await readFile("./terms-of-service.pdf"),
+  });
+
+  await client.accounts.update({
+  	id: "biz_xxxxxxxxxxxxx",
+  	terms_of_service: { id: file.id },
+  });
+  ```
+
+  ```python Python theme={null}
+  import requests
+
+  file = client.files.create(filename="terms-of-service.pdf")
+  with open("./terms-of-service.pdf", "rb") as contents:
+      requests.put(file.upload_url, headers=file.upload_headers or {}, data=contents)
+
+  client.accounts.update(
+      "biz_xxxxxxxxxxxxx",
+      terms_of_service={"id": file.id},
+  )
+  ```
+</CodeGroup>
+
+Send `null` for a document to remove it. Only PDF files are accepted.
 
 ## Attributes
 
@@ -186,6 +226,86 @@ To clear a platform default, send `child_markups: { payments: null }` to the pla
     <ResponseField name="can_transfer_pending_balance_to_children" type="boolean" required>
       Whether pending funds may be transferred from this platform account to its
       connected accounts.
+    </ResponseField>
+
+    <ResponseField name="cancellation_policy" type="object | null" required>
+      The account's cancellation policy document, or `null` if they have not published one.
+
+      <Accordion title="Properties" defaultOpen={true}>
+        <ResponseField name="id" type="string" required>
+          The file's ID, prefixed `file_`.
+        </ResponseField>
+
+        <ResponseField name="content_type" type="string | null" required>
+          The file's MIME type, e.g. `application/pdf`.
+        </ResponseField>
+
+        <ResponseField name="created_at" type="string" required>
+          When the file was created, as an ISO 8601 timestamp.
+        </ResponseField>
+
+        <ResponseField name="filename" type="string | null" required>
+          The original filename, including its extension.
+        </ResponseField>
+
+        <ResponseField name="multipart_chunk_size" type="integer | null">
+          The byte size each part (except the last) must be. Present only on create, and
+          only for multipart uploads.
+        </ResponseField>
+
+        <ResponseField name="multipart_upload_id" type="string | null">
+          The ID of the multipart upload, passed back to `complete`. Present only on
+          create, and only for multipart uploads.
+        </ResponseField>
+
+        <ResponseField name="multipart_upload_urls" type="object[] | null">
+          The presigned URL for each part. Present only on create, and only for multipart uploads.
+
+          <Accordion title="Properties" defaultOpen={true}>
+            <ResponseField name="part_number" type="integer" required>
+              The 1-based index of this part within the multipart upload.
+            </ResponseField>
+
+            <ResponseField name="url" type="string" required>
+              The presigned URL to PUT this part's bytes to.
+            </ResponseField>
+          </Accordion>
+        </ResponseField>
+
+        <ResponseField name="object" type="string" required>
+          The type of this object, always `file`.
+        </ResponseField>
+
+        <ResponseField name="size" type="integer | null" required>
+          The file size in bytes. `null` until the upload has finished.
+        </ResponseField>
+
+        <ResponseField name="upload_headers" type="object">
+          Headers to send with the upload PUT. Present only on create.
+        </ResponseField>
+
+        <ResponseField name="upload_status" type="string" required>
+          Where the file is in its upload lifecycle.
+
+          Available options: `pending`, `processing`, `ready`, `failed`
+        </ResponseField>
+
+        <ResponseField name="upload_url" type="string | null">
+          Presigned URL to PUT the file's bytes to. Present only on create, and only for
+          single-part uploads.
+        </ResponseField>
+
+        <ResponseField name="url" type="string | null" required>
+          A URL to download the file: a permanent CDN URL for public files, a signed
+          expiring URL for private ones. `null` until the upload has finished.
+        </ResponseField>
+
+        <ResponseField name="visibility" type="string" required>
+          `public` files are served via an unsigned CDN URL; `private` files via a signed, expiring URL.
+
+          Available options: `public`, `private`
+        </ResponseField>
+      </Accordion>
     </ResponseField>
 
     <ResponseField name="capabilities" type="object | null" required>
@@ -1011,6 +1131,101 @@ To clear a platform default, send `child_markups: { payments: null }` to the pla
       </Accordion>
     </ResponseField>
 
+    <ResponseField name="rewards" type="object[]">
+      Business rewards attached through this account's active referral link, with account-specific progress and ledger status. Present on retrieve responses; empty without both balance and stats read access.
+
+      <Accordion title="Properties" defaultOpen={true}>
+        <ResponseField name="id" type="string" required>
+          Reward definition ID, prefixed `prwd_`. Progress and status apply to the
+          containing account.
+        </ResponseField>
+
+        <ResponseField name="qualification_amount" type="object" required>
+          Qualifying USD volume required to earn this reward.
+
+          <Accordion title="Properties" defaultOpen={true}>
+            <ResponseField name="amount" type="string" required>
+              The amount in major units, as an exact decimal string — `"10.00"` is ten
+              dollars. A string so no float rounds it in transit.
+            </ResponseField>
+
+            <ResponseField name="currency" type="string" required>
+              Three-letter ISO 4217 currency code, lowercase.
+            </ResponseField>
+
+            <ResponseField name="decimals" type="integer" required>
+              How many decimal places the amount CARRIES — the precision the charge itself
+              runs at.
+            </ResponseField>
+
+            <ResponseField name="display_decimals" type="integer" required>
+              How many decimal places to SHOW. Usually equal to `decimals`, and deliberately not always: COP is charged in centavos but written in whole pesos, so it is `2` and `0`. Format the number in your own locale using this.
+            </ResponseField>
+          </Accordion>
+        </ResponseField>
+
+        <ResponseField name="qualification_progress" type="object" required>
+          Qualifying USD volume for the reward’s activity accumulated by this account since attribution, calculated using the fulfillment rules.
+
+          <Accordion title="Properties" defaultOpen={true}>
+            <ResponseField name="amount" type="string" required>
+              The amount in major units, as an exact decimal string — `"10.00"` is ten
+              dollars. A string so no float rounds it in transit.
+            </ResponseField>
+
+            <ResponseField name="currency" type="string" required>
+              Three-letter ISO 4217 currency code, lowercase.
+            </ResponseField>
+
+            <ResponseField name="decimals" type="integer" required>
+              How many decimal places the amount CARRIES — the precision the charge itself
+              runs at.
+            </ResponseField>
+
+            <ResponseField name="display_decimals" type="integer" required>
+              How many decimal places to SHOW. Usually equal to `decimals`, and deliberately not always: COP is charged in centavos but written in whole pesos, so it is `2` and `0`. Format the number in your own locale using this.
+            </ResponseField>
+          </Accordion>
+        </ResponseField>
+
+        <ResponseField name="qualification_type" type="string" required>
+          Activity that qualifies this account for the reward.
+
+          Available options: `sales`, `ad_spend`
+        </ResponseField>
+
+        <ResponseField name="reward_amount" type="object" required>
+          USD balance credit for this reward. Uses the saved grant amount once fulfillment has started.
+
+          <Accordion title="Properties" defaultOpen={true}>
+            <ResponseField name="amount" type="string" required>
+              The amount in major units, as an exact decimal string — `"10.00"` is ten
+              dollars. A string so no float rounds it in transit.
+            </ResponseField>
+
+            <ResponseField name="currency" type="string" required>
+              Three-letter ISO 4217 currency code, lowercase.
+            </ResponseField>
+
+            <ResponseField name="decimals" type="integer" required>
+              How many decimal places the amount CARRIES — the precision the charge itself
+              runs at.
+            </ResponseField>
+
+            <ResponseField name="display_decimals" type="integer" required>
+              How many decimal places to SHOW. Usually equal to `decimals`, and deliberately not always: COP is charged in centavos but written in whole pesos, so it is `2` and `0`. Format the number in your own locale using this.
+            </ResponseField>
+          </Accordion>
+        </ResponseField>
+
+        <ResponseField name="status" type="string" required>
+          This account's reward state. Credited requires a posted ledger entry; processing includes a met requirement awaiting fulfillment. Reversing and reversed reflect a subsequent reward reversal.
+
+          Available options: `in_progress`, `processing`, `credited`, `reversing`, `reversed`, `unavailable`
+        </ResponseField>
+      </Accordion>
+    </ResponseField>
+
     <ResponseField name="route" type="string" required>
       Account public route identifier.
     </ResponseField>
@@ -1018,6 +1233,86 @@ To clear a platform default, send `child_markups: { payments: null }` to the pla
     <ResponseField name="send_customer_emails" type="boolean" required>
       Whether Whop sends transactional emails to customers on behalf of this
       account.
+    </ResponseField>
+
+    <ResponseField name="shipping_policy" type="object | null" required>
+      The account's shipping policy document, or `null` if they have not published one.
+
+      <Accordion title="Properties" defaultOpen={true}>
+        <ResponseField name="id" type="string" required>
+          The file's ID, prefixed `file_`.
+        </ResponseField>
+
+        <ResponseField name="content_type" type="string | null" required>
+          The file's MIME type, e.g. `application/pdf`.
+        </ResponseField>
+
+        <ResponseField name="created_at" type="string" required>
+          When the file was created, as an ISO 8601 timestamp.
+        </ResponseField>
+
+        <ResponseField name="filename" type="string | null" required>
+          The original filename, including its extension.
+        </ResponseField>
+
+        <ResponseField name="multipart_chunk_size" type="integer | null">
+          The byte size each part (except the last) must be. Present only on create, and
+          only for multipart uploads.
+        </ResponseField>
+
+        <ResponseField name="multipart_upload_id" type="string | null">
+          The ID of the multipart upload, passed back to `complete`. Present only on
+          create, and only for multipart uploads.
+        </ResponseField>
+
+        <ResponseField name="multipart_upload_urls" type="object[] | null">
+          The presigned URL for each part. Present only on create, and only for multipart uploads.
+
+          <Accordion title="Properties" defaultOpen={true}>
+            <ResponseField name="part_number" type="integer" required>
+              The 1-based index of this part within the multipart upload.
+            </ResponseField>
+
+            <ResponseField name="url" type="string" required>
+              The presigned URL to PUT this part's bytes to.
+            </ResponseField>
+          </Accordion>
+        </ResponseField>
+
+        <ResponseField name="object" type="string" required>
+          The type of this object, always `file`.
+        </ResponseField>
+
+        <ResponseField name="size" type="integer | null" required>
+          The file size in bytes. `null` until the upload has finished.
+        </ResponseField>
+
+        <ResponseField name="upload_headers" type="object">
+          Headers to send with the upload PUT. Present only on create.
+        </ResponseField>
+
+        <ResponseField name="upload_status" type="string" required>
+          Where the file is in its upload lifecycle.
+
+          Available options: `pending`, `processing`, `ready`, `failed`
+        </ResponseField>
+
+        <ResponseField name="upload_url" type="string | null">
+          Presigned URL to PUT the file's bytes to. Present only on create, and only for
+          single-part uploads.
+        </ResponseField>
+
+        <ResponseField name="url" type="string | null" required>
+          A URL to download the file: a permanent CDN URL for public files, a signed
+          expiring URL for private ones. `null` until the upload has finished.
+        </ResponseField>
+
+        <ResponseField name="visibility" type="string" required>
+          `public` files are served via an unsigned CDN URL; `private` files via a signed, expiring URL.
+
+          Available options: `public`, `private`
+        </ResponseField>
+      </Accordion>
     </ResponseField>
 
     <ResponseField name="show_joined_whops" type="boolean" required>
@@ -1067,9 +1362,10 @@ To clear a platform default, send `child_markups: { payments: null }` to the pla
     </ResponseField>
 
     <ResponseField name="status_reason" type="string | null" required>
-      Why the account was suspended, in language safe to show the account owner.
-      Computed on `retrieve`, `me`, and `suspend`; `null` otherwise, when `status`
-      is not `suspended`, and when the suspension was recorded without a reason.
+      Why the account was suspended, as the label shown to the account owner, such
+      as `Suspended - Fraudulent payment activity`. Computed on `retrieve`, `me`,
+      and `suspend`; `null` otherwise, when `status` is not `suspended`, and when
+      the suspension was recorded without a reason.
     </ResponseField>
 
     <ResponseField name="store_page_config" type="object" required>
@@ -1340,6 +1636,7 @@ To clear a platform default, send `child_markups: { payments: null }` to the pla
       	"banner_image_url": "https://cdn.whop.com/banner.png",
       	"business_type": "physical_products",
       	"can_transfer_pending_balance_to_children": false,
+      	"cancellation_policy": null,
       	"country": "US",
       	"created_at": "2026-06-01T12:00:00Z",
       	"description": "Petal Post delivers fresh bouquets.",
@@ -1505,6 +1802,7 @@ To clear a platform default, send `child_markups: { payments: null }` to the pla
       	],
       	"return_policy": null,
       	"route": "petal-post",
+      	"shipping_policy": null,
       	"website": "https://petalpost.example",
       	"send_customer_emails": true,
       	"show_joined_whops": false,

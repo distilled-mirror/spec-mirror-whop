@@ -25,6 +25,12 @@ Retrieve your profile with `/partners/{id}`. Use `/partners/links` for your stan
 
 <Columns cols={2}>
   <Column>
+    <ResponseField name="certification_complete" type="boolean" required>
+      Whether the user finished the partner certification course: every visible quiz
+      and knowledge check has a passing result, or, when the course has none, every
+      visible lesson is marked completed.
+    </ResponseField>
+
     <ResponseField name="joined_at" type="string | null" required>
       When the user joined the partner program, as an ISO 8601 timestamp. Null when
       they have not joined.
@@ -133,6 +139,7 @@ Retrieve your profile with `/partners/{id}`. Use `/partners/links` for your stan
       	"joined_at": "2026-09-01T12:00:00.000Z",
       	"whop_partner_verified_at": null,
       	"verification_waitlist_joined": false,
+      	"certification_complete": false,
       	"referred_businesses_count": 12,
       	"payout_rates": [
       		{

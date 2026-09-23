@@ -562,4 +562,8 @@
   * [`EmailElement`](/elements/upcoming/payments/email): the buyer's email
   * [`TaxIdElement`](/elements/upcoming/payments/taxId): a registration type and number
   * [`BrandingElement`](/elements/upcoming/payments/branding): the Powered by Whop mark, required on every form
+
+  The checkout elements:
+
+  * [`ExpressCheckoutElement`](/elements/upcoming/checkout/expressCheckout): one Apple Pay or Google Pay press that pays a whole checkout, under `<Checkout>`
 </div>

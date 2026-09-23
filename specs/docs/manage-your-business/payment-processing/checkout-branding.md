@@ -119,3 +119,24 @@ https://whop.com/checkout/plan_XXXXXXXXX?email=customer@example.com&email.hidden
 </Note>
 
 These parameters also work with [embedded checkout](/payments/checkout-embed). In the embedded checkout, use the `prefill`, `disableEmail`, and `hideEmail` props instead.
+
+## Add a known phone number and address
+
+Fill in the customer's phone number, billing details, and shipping address with URL parameters. The customer can still edit every prefilled field.
+
+| Parameter                                                 | Effect                                                                                   |
+| --------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| `phone`                                                   | Fills in the phone number, including the billing phone for payment methods that need one |
+| `name`                                                    | Fills in the billing name                                                                |
+| `address.line1`, `address.line2`, `address.city`          | Fill in the billing address                                                              |
+| `address.state`, `address.postal_code`, `address.country` | Fill in the billing address                                                              |
+| `shipping.name`                                           | Fills in the shipping recipient's name                                                   |
+| `shipping.address.line1`, `shipping.address.city`, …      | Fill in the shipping address, with the same fields as the billing address                |
+
+Include the country code in `phone` and encode the plus sign as `%2B`, for example `phone=%2B14155552671`. Use a two-letter country code for `country`, such as `US`.
+
+### Example
+
+```
+https://whop.com/checkout/plan_XXXXXXXXX?email=customer@example.com&phone=%2B14155552671&name=Ada+Lovelace&address.country=US&address.postal_code=94107
+```

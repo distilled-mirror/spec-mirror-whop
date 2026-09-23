@@ -4,7 +4,7 @@
 
 # Overview
 
-Whop Ads runs paid ads on networks like Meta directly from your Whop account. You fund campaigns from your balance. Whop handles the ad account, review, launch, and billing.
+Whop Ads runs paid ads on networks like Meta directly from your Whop account. Ads spend is billed to the account's configured card or balance across its campaigns. Whop handles the ad account, review, launch, and billing.
 
 Two API calls take you from nothing to a live ad: generate a creative, then create the campaign, ad group, and ad in one request.
 
@@ -16,6 +16,12 @@ Two API calls take you from nothing to a live ad: generate a creative, then crea
 | [Ad Group](/api-reference/beta/ad-groups/ad-group)          | Targeting, placements, and budget for a set of ads.     |
 | [Ad](/api-reference/beta/ads/ad)                            | The creative unit — copy, assets, destination URL.      |
 | [Audience](/api-reference/beta/audiences/audience)          | A custom audience to target or exclude in ad groups.    |
+
+## Billing and payment recovery
+
+Spend is collected at account level across campaigns. A failed payment blocks delivery with `delivery_status: "payment_failed"` while preserving each campaign's configured active/paused `status`. Fix the account's payment method, then call [Retry Failed Ads Payments](/api-reference/beta/accounts/retry-failed-ads-payments) once for the account. The response queues a background attempt; it does not confirm payment. After settlement, active campaigns can resume and paused campaigns stay paused, subject to other delivery requirements.
+
+See [Paying for ads](/developer/ads/overview#paying-for-ads) for the dashboard flow, request example, duplicate-request behavior, and legacy campaign handling.
 
 ## One-time setup
 

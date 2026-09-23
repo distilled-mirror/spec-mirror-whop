@@ -12231,6 +12231,13 @@
                   "null"
                 ]
               },
+              "authorization_code": {
+                "description": "The card issuer's authorization code for this charge. Null when the processor did not return one.",
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
               "card_holder_name": {
                 "description": "Whether the cardholder name the customer entered matched the name the issuer has on file.",
                 "type": [
@@ -12257,7 +12264,8 @@
               "address_line1",
               "zip_code",
               "card_holder_name",
-              "card_security_code"
+              "card_security_code",
+              "authorization_code"
             ],
             "type": [
               "object",
@@ -20800,7 +20808,7 @@
     "termsOfService": "https://whop.com/tos-developer-api/",
     "title": "Whop API",
     "version": "1.0.0",
-    "x-api-version-date": "2026-09-15"
+    "x-api-version-date": "2026-09-22-2"
   },
   "openapi": "3.1.0",
   "paths": {

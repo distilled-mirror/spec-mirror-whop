@@ -84,7 +84,7 @@ Use the Disputes API to list disputes, edit the evidence packet while a dispute 
         </ResponseField>
 
         <ResponseField name="cancellation_policy_attachment" type="object | null" required>
-          The cancellation policy document. Falls back to Whop's platform policy when the seller has not uploaded their own.
+          The cancellation policy document. Defaults to the account's cancellation policy, then its terms of service, then its return policy, then Whop's platform policy.
 
           <Accordion title="Properties" defaultOpen={true}>
             <ResponseField name="id" type="string | null" required>
@@ -172,7 +172,7 @@ Use the Disputes API to list disputes, edit the evidence packet while a dispute 
             <ResponseField name="document_type" type="string" required>
               What kind of evidence the document is.
 
-              Available options: `return_policy`, `shipping_policy`, `physical_fulfillment`, `customer_order_history`, `product_image`, `prior_transactions`, `customer_session`, `digital_fulfillment`, `subscription`
+              Available options: `return_policy`, `shipping_policy`, `cancellation_policy`, `terms_of_service`, `physical_fulfillment`, `customer_order_history`, `product_image`, `prior_transactions`, `customer_session`, `digital_fulfillment`, `subscription`
             </ResponseField>
 
             <ResponseField name="filename" type="string | null" required>
@@ -248,7 +248,7 @@ Use the Disputes API to list disputes, edit the evidence packet while a dispute 
         </ResponseField>
 
         <ResponseField name="refund_policy_attachment" type="object | null" required>
-          The refund policy document. Falls back to Whop's platform policy when the seller has not uploaded their own.
+          The refund policy document. Defaults to the account's return policy, then its terms of service, then Whop's platform policy.
 
           <Accordion title="Properties" defaultOpen={true}>
             <ResponseField name="id" type="string | null" required>
@@ -482,9 +482,18 @@ Use the Disputes API to list disputes, edit the evidence packet while a dispute 
               Card payments only: the card's network, last four, and issuer identification number.
 
               <Accordion title="Properties" defaultOpen={true}>
-                <ResponseField name="brand" type="string" required>
+                <ResponseField name="brand" type="string | null" required>
                   The network identifier (`visa`, `amex`, …), matching `card.networks` entries
-                  and saved card payment methods.
+                  and saved card payment methods. Null when the vault did not record the
+                  network.
+                </ResponseField>
+
+                <ResponseField name="exp_month" type="number | null" required>
+                  The card's expiry month, 1 to 12. Null when the vault did not record it.
+                </ResponseField>
+
+                <ResponseField name="exp_year" type="number | null" required>
+                  The card's four-digit expiry year. Null when the vault did not record it.
                 </ResponseField>
 
                 <ResponseField name="issuer_identification_number" type="string | null" required>
@@ -781,7 +790,9 @@ Use the Disputes API to list disputes, edit the evidence packet while a dispute 
       			"card": {
       				"brand": "visa",
       				"last4": "4242",
-      				"issuer_identification_number": "41111111"
+      				"issuer_identification_number": "41111111",
+      				"exp_month": 11,
+      				"exp_year": 2030
       			},
       			"installment_count": null
       		}

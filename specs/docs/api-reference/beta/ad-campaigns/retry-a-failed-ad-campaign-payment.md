@@ -4,7 +4,7 @@
 
 # Retry a Failed Ad Campaign Payment
 
-> Retries billing for an ad campaign whose payment previously failed.
+> Queues a background payment retry for the campaign's entire account, including other campaigns with failed payments. Deprecated: API versions 2026-09-22 and later return 410 Gone. Use POST /accounts/{id}/retry_ads_payment instead. The returned campaign does not confirm payment success; read delivery_status and issues for the outcome.
 
 
 

@@ -3,7 +3,7 @@
     "https://docs.whop.com/llms.txt",
     "https://docs.whop.com/sitemap.xml"
   ],
-  "count": 1138,
+  "count": 1146,
   "pages": [
     {
       "page": "https://docs.whop.com/account-settings/account-security/delete-your-account",
@@ -575,6 +575,15 @@
       "page": "https://docs.whop.com/api-reference/beta/accounts/retrieve-account-preferences",
       "markdown": "https://docs.whop.com/api-reference/beta/accounts/retrieve-account-preferences.md",
       "file": "api-reference/beta/accounts/retrieve-account-preferences.md",
+      "indexes": [
+        "llms.txt",
+        "sitemap"
+      ]
+    },
+    {
+      "page": "https://docs.whop.com/api-reference/beta/accounts/retry-failed-ads-payments",
+      "markdown": "https://docs.whop.com/api-reference/beta/accounts/retry-failed-ads-payments.md",
+      "file": "api-reference/beta/accounts/retry-failed-ads-payments.md",
       "indexes": [
         "llms.txt",
         "sitemap"
@@ -3456,9 +3465,72 @@
       ]
     },
     {
+      "page": "https://docs.whop.com/api-reference/beta/setup-intents/create-setup-intent",
+      "markdown": "https://docs.whop.com/api-reference/beta/setup-intents/create-setup-intent.md",
+      "file": "api-reference/beta/setup-intents/create-setup-intent.md",
+      "indexes": [
+        "llms.txt",
+        "sitemap"
+      ]
+    },
+    {
+      "page": "https://docs.whop.com/api-reference/beta/setup-intents/list-setup-intents",
+      "markdown": "https://docs.whop.com/api-reference/beta/setup-intents/list-setup-intents.md",
+      "file": "api-reference/beta/setup-intents/list-setup-intents.md",
+      "indexes": [
+        "llms.txt",
+        "sitemap"
+      ]
+    },
+    {
+      "page": "https://docs.whop.com/api-reference/beta/setup-intents/retrieve-setup-intent",
+      "markdown": "https://docs.whop.com/api-reference/beta/setup-intents/retrieve-setup-intent.md",
+      "file": "api-reference/beta/setup-intents/retrieve-setup-intent.md",
+      "indexes": [
+        "llms.txt",
+        "sitemap"
+      ]
+    },
+    {
       "page": "https://docs.whop.com/api-reference/beta/setup-intents/retrieve-setup-status",
       "markdown": "https://docs.whop.com/api-reference/beta/setup-intents/retrieve-setup-status.md",
       "file": "api-reference/beta/setup-intents/retrieve-setup-status.md",
+      "indexes": [
+        "llms.txt",
+        "sitemap"
+      ]
+    },
+    {
+      "page": "https://docs.whop.com/api-reference/beta/setup-intents/setup-intent",
+      "markdown": "https://docs.whop.com/api-reference/beta/setup-intents/setup-intent.md",
+      "file": "api-reference/beta/setup-intents/setup-intent.md",
+      "indexes": [
+        "llms.txt",
+        "sitemap"
+      ]
+    },
+    {
+      "page": "https://docs.whop.com/api-reference/beta/setup-intents/setupintent-canceled",
+      "markdown": "https://docs.whop.com/api-reference/beta/setup-intents/setupintent-canceled.md",
+      "file": "api-reference/beta/setup-intents/setupintent-canceled.md",
+      "indexes": [
+        "llms.txt",
+        "sitemap"
+      ]
+    },
+    {
+      "page": "https://docs.whop.com/api-reference/beta/setup-intents/setupintent-requires-action",
+      "markdown": "https://docs.whop.com/api-reference/beta/setup-intents/setupintent-requires-action.md",
+      "file": "api-reference/beta/setup-intents/setupintent-requires-action.md",
+      "indexes": [
+        "llms.txt",
+        "sitemap"
+      ]
+    },
+    {
+      "page": "https://docs.whop.com/api-reference/beta/setup-intents/setupintent-succeeded",
+      "markdown": "https://docs.whop.com/api-reference/beta/setup-intents/setupintent-succeeded.md",
+      "file": "api-reference/beta/setup-intents/setupintent-succeeded.md",
       "indexes": [
         "llms.txt",
         "sitemap"

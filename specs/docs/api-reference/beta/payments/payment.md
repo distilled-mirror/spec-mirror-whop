@@ -149,6 +149,53 @@ Collection runs in the background, so the create response is not the outcome. Po
       For installment methods, how many payments the charge splits into.
     </ResponseField>
 
+    <ResponseField name="holds" type="object[]" required>
+      The active holds on this payment. Each hold has its own release date, independent of `settlement_time_at`. Empty when nothing is held; released holds are omitted.
+
+      <Accordion title="Properties" defaultOpen={true}>
+        <ResponseField name="amount" type="object" required>
+          The amount currently held, in the hold's currency.
+
+          <Accordion title="Properties" defaultOpen={true}>
+            <ResponseField name="amount" type="string" required>
+              The amount in major units, as an exact decimal string — `"10.00"` is ten
+              dollars. A string so no float rounds it in transit.
+            </ResponseField>
+
+            <ResponseField name="currency" type="string" required>
+              Three-letter ISO 4217 currency code, lowercase.
+            </ResponseField>
+
+            <ResponseField name="decimals" type="integer" required>
+              How many decimal places the amount CARRIES — the precision the charge itself
+              runs at.
+            </ResponseField>
+
+            <ResponseField name="display_decimals" type="integer" required>
+              How many decimal places to SHOW. Usually equal to `decimals`, and deliberately not always: COP is charged in centavos but written in whole pesos, so it is `2` and `0`. Format the number in your own locale using this.
+            </ResponseField>
+          </Accordion>
+        </ResponseField>
+
+        <ResponseField name="percentage" type="number | null" required>
+          The reserve percentage recorded when the hold was created, for example 3.5 for
+          3.5%. Null for other hold types or when no percentage was recorded.
+        </ResponseField>
+
+        <ResponseField name="release_at" type="string | null" required>
+          When the held funds are scheduled to become available, as an ISO 8601
+          timestamp. Never earlier than the payment's settlement date. Null when release
+          depends on an event, such as shipment resolution, rather than a date.
+        </ResponseField>
+
+        <ResponseField name="type" type="string" required>
+          The reason funds are held: `reserve`, `bnpl`, `sequra`, `fraud_hold`, or `preshipment_hold`.
+
+          Available options: `reserve`, `bnpl`, `sequra`, `fraud_hold`, `preshipment_hold`
+        </ResponseField>
+      </Accordion>
+    </ResponseField>
+
     <ResponseField name="last_payment_attempt_at" type="string | null" required>
       When the most recent charge attempt ran, or null.
     </ResponseField>
@@ -250,9 +297,18 @@ Collection runs in the background, so the create response is not the outcome. Po
           Card payments only: the card's network, last four, and issuer identification number.
 
           <Accordion title="Properties" defaultOpen={true}>
-            <ResponseField name="brand" type="string" required>
+            <ResponseField name="brand" type="string | null" required>
               The network identifier (`visa`, `amex`, …), matching `card.networks` entries
-              and saved card payment methods.
+              and saved card payment methods. Null when the vault did not record the
+              network.
+            </ResponseField>
+
+            <ResponseField name="exp_month" type="number | null" required>
+              The card's expiry month, 1 to 12. Null when the vault did not record it.
+            </ResponseField>
+
+            <ResponseField name="exp_year" type="number | null" required>
+              The card's four-digit expiry year. Null when the vault did not record it.
             </ResponseField>
 
             <ResponseField name="issuer_identification_number" type="string | null" required>
@@ -517,10 +573,11 @@ Collection runs in the background, so the create response is not the outcome. Po
     </ResponseField>
 
     <ResponseField name="settlement_time_at" type="string | null" required>
-      When the funds post to the account's available balance, at midnight UTC. The
-      `financial_activity.funds_available` webhook's `posted_at` carries the same
-      value when the settlement that clears it posts. Null until the payment is
-      paid, and always null in list responses — retrieve the payment for it.
+      When the portion not listed in `holds` posts to the account's available
+      balance, at midnight UTC. The `financial_activity.funds_available` webhook's
+      `posted_at` carries the same value when the settlement that clears it posts.
+      Null until the payment is paid, and always null in list responses — retrieve
+      the payment for it.
     </ResponseField>
 
     <ResponseField name="shipment_id" type="string | null" required>
@@ -743,6 +800,11 @@ Collection runs in the background, so the create response is not the outcome. Po
           The Address Verification Service (AVS) result for the billing street address.
         </ResponseField>
 
+        <ResponseField name="authorization_code" type="string | null" required>
+          The card issuer's authorization code for this charge, or null when the
+          processor did not return one.
+        </ResponseField>
+
         <ResponseField name="card_holder_name" type="string | null" required>
           Whether the cardholder name matched the issuer's records.
         </ResponseField>
@@ -826,7 +888,9 @@ Collection runs in the background, so the create response is not the outcome. Po
       		"card": {
       			"brand": "visa",
       			"issuer_identification_number": "41111111",
-      			"last4": "4242"
+      			"last4": "4242",
+      			"exp_month": 11,
+      			"exp_year": 2030
       		},
       		"display_name": "Visa •••• 4242",
       		"icons": {
@@ -893,6 +957,19 @@ Collection runs in the background, so the create response is not the outcome. Po
       	"retryable": false,
       	"risk_score": 12,
       	"risk_signals": null,
+      	"holds": [
+      		{
+      			"type": "reserve",
+      			"amount": {
+      				"amount": "1.00",
+      				"currency": "usd",
+      				"decimals": 2,
+      				"display_decimals": 2
+      			},
+      			"percentage": 3.5,
+      			"release_at": "2026-04-01T00:00:00.000Z"
+      		}
+      	],
       	"settlement_time_at": "2026-01-03T12:00:00.000Z",
       	"shipment_id": null,
       	"shipping_address": {
@@ -949,6 +1026,7 @@ Collection runs in the background, so the create response is not the outcome. Po
       	},
       	"verification_checks": {
       		"address_line1": "PASS",
+      		"authorization_code": "A1B2C3",
       		"card_holder_name": "PASS",
       		"card_security_code": "PASS",
       		"zip_code": "PASS"

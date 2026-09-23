@@ -47,7 +47,7 @@ info:
   termsOfService: https://whop.com/tos-developer-api/
   title: Whop API
   version: 1.0.0
-  x-api-version-date: '2026-09-15'
+  x-api-version-date: 2026-09-22-2
 servers:
   - description: Production Whop API
     url: https://api.whop.com/api/v1
@@ -231,15 +231,19 @@ tags:
     x-whop-summary: A short-lived reference to payment details collected from a buyer.
   - description: >
       A Setup Intent saves a buyer's payment method for later without taking
-      money now. It runs the same collection flow a payment does, so the buyer
-      may still owe a step — 3D Secure on a card, a hosted enrollment, or
+      money now. Create one from a confirmation token the payment elements
+      collected in setup mode, or from a payment method already on file to
+      re-verify it. It runs the same collection flow a payment does, so the
+      buyer may still owe a step: 3D Secure on a card, a hosted enrollment, or
       linking a bank account.
 
 
-      Poll [Retrieve
+      The create response is the setup intent as created, not its outcome. Hand
+      its `client_secret` to the elements' `handleNextAction`, or poll [Retrieve
       status](/api-reference/beta/setup-intents/retrieve-setup-status) for how
       far the setup has gone and what is outstanding. Once it reaches
-      `succeeded` the method is on file and can be charged.
+      `succeeded`, `payment_method_id` names the saved method and Create Payment
+      charges it.
     name: Setup Intents
     x-whop-summary: Saving a buyer's payment method without charging it.
   - description: >
@@ -333,9 +337,11 @@ tags:
     name: Cards
     x-whop-summary: Issue cards that spend from a balance.
   - description: >
-      Cashback rules designate a funding platform, a merchant name and category,
-      a rate, and an eligibility window. An optional account ID limits the rule
-      to one of the platform's direct connected accounts.
+      Cashback rules designate a funding platform, optional merchant name and
+      category filters, a rate, and an eligibility window. Every supplied
+      merchant filter must match. An account ID limits the rule to one of the
+      platform's direct connected accounts and is required when both merchant
+      filters are omitted or null.
 
 
       Use the Cashback Rules API to create future-dated rules, update their
@@ -625,6 +631,17 @@ tags:
       Use the Ad Campaigns API to create campaigns, list campaigns for an
       account, retrieve or update campaign settings, and pause or resume
       campaign delivery.
+
+
+      Ads billing combines eligible spend across the account's campaigns. A
+      failed payment blocks delivery with `delivery_status: payment_failed`
+      while preserving the configured active/paused `status`. Fix the account's
+      payment method and [retry its ads
+      payment](/api-reference/beta/accounts/retry-failed-ads-payments) once for
+      the account. The retry is asynchronous: acceptance does not confirm
+      payment. Successful settlement clears the block; active campaigns can
+      resume if otherwise eligible, while paused campaigns stay paused. See
+      [billing and retries](/developer/ads/overview#paying-for-ads).
     name: Ad Campaigns
     x-whop-summary: Platform, objective, and budget for a set of ads.
   - description: >
@@ -1052,7 +1069,7 @@ components:
       name: Api-Version-Date
       required: false
       schema:
-        example: '2026-09-15'
+        example: 2026-09-22-2
         type: string
     IdempotencyKey:
       description: >-

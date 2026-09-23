@@ -37,7 +37,30 @@ Every version automatically gets new endpoints and optional fields. Breaking cha
 
 The TypeScript SDK releases listed below use the API version in that entry by default. Overriding `apiVersionDate` changes the response version, but not the SDK types.
 
-<Update label="2026-09-15" description="Three distinct 3D Secure policies" tags={["Latest"]}>
+<Update label="2026-09-22-2" description="Account rewards show partner reward progress" tags={["Latest"]}>
+  Retrieve Account returns partner reward milestones in `rewards`. Each milestone includes qualification progress and payout status for that account. The field contains an empty array when there are no matching rewards or the caller lacks balance or stats read access.
+
+  The legacy onboarding reward format is retired. Earlier API versions omit `rewards` from account responses.
+</Update>
+
+<Update label="2026-09-22-1" description="Setup intents become a native resource">
+  The native Payments API now serves `POST /setup_intents`, `GET /setup_intents`, and `GET /setup_intents/{id}`. The Setup Intent object takes the shape of every other native resource.
+
+  * Related records are foreign-key ids instead of embedded objects: `account_id` (was `company`), `member_id` (was `member`), `payment_method_id` (was `payment_method`), and `checkout_configuration_id` (was `checkout_configuration`). The buyer is a `user` summary (`id`, `username`, `name`, `profile_picture`).
+  * `error_message` moves into `last_setup_error`, the same `{ code, message }` block Retrieve setup status returns. It stays `null` until something fails, and drops once the setup succeeds.
+  * `return_url`, `payment_method_type`, and `updated_at` are new. `created_at` and `updated_at` are ISO 8601 timestamps.
+  * `payment_instrument`, the display-shaped method the Payment object already carries, is on the Setup Intent too, so a saved card renders without a second request. Its `card` gains `exp_month` and `exp_year` on both resources. `card.brand` can be `null`: a saved card whose network the vault didn't record keeps its last four and expiry instead of losing the whole `card` object.
+  * Creating a setup intent answers `201 Created` (was `200`), honors `Idempotency-Key`, and requires exactly one of `confirmation_token` or `payment_method_id`. A confirmation token from another account is a `404`.
+  * `client_secret` comes back on create and retrieve, and only for setups created through this API. It requires a caller who may act on the setup: the account's `payment:charge` credential or the buyer's own token. List rows always carry `null`.
+  * `setup_intent.requires_action`, `setup_intent.succeeded`, and `setup_intent.canceled` webhooks pinned at or after this version deliver this same Setup Intent object as their `data`. Webhooks pinned earlier, and webhooks without a pin, keep the previous payload.
+  * `GET /setup_intents` lists with the standard `{ data, page_info }` envelope and cursor pagination. `account_id` is optional: an account API key lists its own account, and a user token lists every account it can read. `status` is a new filter, and an invalid value is a `400`. `created_before` and `created_after` work as before.
+</Update>
+
+<Update label="2026-09-22" description="Ads payment retries use the account endpoint">
+  `POST /ad_campaigns/{id}/retry_payment` returns `410 Gone`. Use `POST /accounts/{id}/retry_ads_payment` with the account's `biz_` ID to queue one payment retry for all its campaigns. An accepted retry doesn't confirm payment success. Check campaign `delivery_status` and `issues` for the outcome.
+</Update>
+
+<Update label="2026-09-15" description="Three distinct 3D Secure policies">
   TypeScript SDK: [`@whop/sdk@1.1.5`](https://unpkg.com/@whop/sdk@1.1.5/dist/esm/BaseClient.mjs).
 
   Accounts, plans, checkout configurations, and checkout sessions expose three 3D Secure choices:

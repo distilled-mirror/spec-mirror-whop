@@ -63,6 +63,10 @@ Mounts inside [`Checkout`](/elements/upcoming/checkout/overview). Pass props and
   Keeps the buyer from editing the prefilled `buyerEmail` — an invoice link names who it was issued to. Only holds while the field still shows that email; a session email that already differs is never locked to it, and without a `buyerEmail` there is nothing to lock. Defaults to `false`.
 </ResponseField>
 
+<ResponseField name="defaultValues" type="{ phone?: string | undefined; shippingAddress?: { name?: string | undefined; line1?: string | undefined; line2?: string | undefined; city?: string | undefined; state?: string | undefined; postal_code?: string | undefined; country?: string | undefined; } | undefined; billingDetails?: { name?: string | undefined; phone?: string | undefined; address?: { line1?: string | undefined; line2?: string | undefined; city?: string | undefined; state?: string | undefined; postal_code?: string | undefined; country?: string | undefined; } | undefined; } | undefined; }">
+  Prefills what the host page already knows about the buyer. The buyer can edit every prefilled field, and a phone number or complete shipping address the session already holds wins over it. `phone` fills the checkout's phone number field when the seller collects one, in E.164 format such as `+14155552671`; when that field exists it also supplies the billing phone for methods that need one, so pass `phone` rather than `billingDetails.phone`. `shippingAddress` fills the shipping address when the checkout collects one (`country` is an ISO 3166-1 alpha-2 code; with a country the form cannot use, only the name is prefilled). `billingDetails` prefills the payment method's billing details like the payment element's `defaultValues.billingDetails`. Use `buyerEmail` for the email. Unreleased, in development.
+</ResponseField>
+
 ## Events
 
 Pass callbacks in the create options or React props.

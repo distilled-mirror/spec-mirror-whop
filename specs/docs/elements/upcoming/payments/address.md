@@ -122,16 +122,20 @@
     Browser autocomplete purpose: `billing` (default) or `shipping`. Defaults to `"billing"`.
   </ResponseField>
 
-  <ResponseField name="layout" type="&#x22;full&#x22; | &#x22;compact&#x22;">
-    `full` (default) stacks labeled fields. `compact` groups placeholder-labeled fields within one border. Defaults to `"full"`.
+  <ResponseField name="name" type="&#x22;split&#x22; | &#x22;combined&#x22; | &#x22;none&#x22;">
+    The name row: one full-name field (default), split first/last fields, or none. Defaults to `"combined"`.
   </ResponseField>
 
   <ResponseField name="line2" type="&#x22;never&#x22; | &#x22;toggle&#x22; | &#x22;always&#x22;">
     Address line 2: always visible (default), revealed by a text button (`toggle`), or never collected. Defaults to `"always"`.
   </ResponseField>
 
-  <ResponseField name="name" type="&#x22;split&#x22; | &#x22;combined&#x22; | &#x22;none&#x22;">
-    The name row: one full-name field (default), split first/last fields, or none. Defaults to `"combined"`.
+  <ResponseField name="defaultValues" type="{ name?: string | undefined; address?: { name?: string | undefined; first_name?: string | undefined; last_name?: string | undefined; organization?: string | undefined; organization_type?: &#x22;business&#x22; | &#x22;individual&#x22; | undefined; line1?: string | undefined; line2?: string | undefined; city?: string | undefined; state?: string | undefined; postal_code?: string | undefined; country?: string | undefined; } | undefined; }">
+    Seed values applied once before first paint (`address.country` is an ISO 3166-1 alpha-2 country code). Takes precedence over IP-country detection.
+  </ResponseField>
+
+  <ResponseField name="layout" type="&#x22;full&#x22; | &#x22;compact&#x22;">
+    `full` (default) stacks labeled fields. `compact` groups placeholder-labeled fields within one border. Defaults to `"full"`.
   </ResponseField>
 
   <ResponseField name="scope" type="&#x22;full&#x22; | &#x22;minimal&#x22;">
@@ -140,10 +144,6 @@
 
   <ResponseField name="organization" type="&#x22;name&#x22; | &#x22;none&#x22; | &#x22;name_with_type&#x22;">
     Organization fields: none (default), name only, or name with a business/individual selector. Defaults to `"none"`.
-  </ResponseField>
-
-  <ResponseField name="defaultValues" type="{ name?: string | undefined; address?: { name?: string | undefined; first_name?: string | undefined; last_name?: string | undefined; organization?: string | undefined; organization_type?: &#x22;business&#x22; | &#x22;individual&#x22; | undefined; line1?: string | undefined; line2?: string | undefined; city?: string | undefined; state?: string | undefined; postal_code?: string | undefined; country?: string | undefined; } | undefined; }">
-    Seed values applied once before first paint (`address.country` is an ISO 3166-1 alpha-2 country code). Takes precedence over IP-country detection.
   </ResponseField>
 
   <ResponseField name="detectCountry" type="boolean">

@@ -4,7 +4,7 @@
 
 # Cashback Rule
 
-Cashback rules designate a funding platform, a merchant name and category, a rate, and an eligibility window. An optional account ID limits the rule to one of the platform's direct connected accounts.
+Cashback rules designate a funding platform, optional merchant name and category filters, a rate, and an eligibility window. Every supplied merchant filter must match. An account ID limits the rule to one of the platform's direct connected accounts and is required when both merchant filters are omitted or null.
 
 Use the Cashback Rules API to create future-dated rules, update their merchant name, MCC, description, or expiration, and list every rule funded by the authenticated platform, including expired and discarded rules. Discarded rules cannot be updated. Creating or updating a rule does not transfer funds.
 
@@ -47,13 +47,15 @@ Use the Cashback Rules API to create future-dated rules, update their merchant n
       the authenticated credential.
     </ResponseField>
 
-    <ResponseField name="merchant_category_code" type="string" required>
-      Four-digit merchant category code. Both merchant filters must match.
+    <ResponseField name="merchant_category_code" type="string | null" required>
+      Four-digit merchant category code. Null matches any MCC. When both merchant
+      filters are null, scoped\_account\_id is required.
     </ResponseField>
 
-    <ResponseField name="merchant_name" type="string" required>
-      Raw merchant name reported by the card provider. Matched together with the
-      merchant category code; not a substring or enriched display-name match.
+    <ResponseField name="merchant_name" type="string | null" required>
+      Raw merchant name reported by the card provider. Null matches any merchant
+      name. When set, matches together with any MCC filter; not a substring or
+      enriched display-name match.
     </ResponseField>
 
     <ResponseField name="rate_bps" type="integer" required>

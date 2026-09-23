@@ -235,6 +235,7 @@
   	},
   	"verification_checks": {
   		"address_line1": "<string>",
+  		"authorization_code": "<string>",
   		"card_holder_name": "<string>",
   		"card_security_code": "<string>",
   		"zip_code": "<string>"
@@ -1242,6 +1243,11 @@
     <ResponseField name="address_line1" type="string | null" required>
       Whether the billing street address the customer entered matched the address
       the issuer has on file.
+    </ResponseField>
+
+    <ResponseField name="authorization_code" type="string | null" required>
+      The card issuer's authorization code for this charge. Null when the processor
+      did not return one.
     </ResponseField>
 
     <ResponseField name="card_holder_name" type="string | null" required>

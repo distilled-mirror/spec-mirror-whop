@@ -139,6 +139,13 @@ Aggregated financial, audience, and traffic reporting.
 
 `list` (the metric catalog) · `get` (one metric, with filters, breakdowns, and intervals)
 
+Array flags repeat (`--ad_campaign_ids adcamp_a --ad_campaign_ids adcamp_b`). Object flags take JSON, such as the ordered steps of a funnel:
+
+```bash theme={null}
+whop stats get funnel --from 2026-09-01 --to 2026-09-21 \
+  --steps '{"1":{"event":"pixel.page"},"2":{"event":"payment.completed"}}'
+```
+
 ### `verifications`
 
 Legal identity that Whop requires before payouts and card issuing.
