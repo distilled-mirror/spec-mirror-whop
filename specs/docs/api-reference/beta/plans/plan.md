@@ -46,6 +46,10 @@ Use the Plans API to create plans for products, list existing plans, retrieve or
       check processor compatibility or feature flags.
     </ResponseField>
 
+    <ResponseField name="attributes" type="object | null" required>
+      Attribute values that make this plan one variant of its product, as a map of attribute name to value, e.g. `\{"color": "Blue", "size": "Large"}`. Names are snake\_case identifiers and come back in alphabetical order. Every variant plan on a product carries the same attribute names and a distinct set of values; the product lists the full option set as `variant_attributes`. `null` for a plan that is not a variant.
+    </ResponseField>
+
     <ResponseField name="billing_period" type="number | null" required>
       Number of days between recurring charges, such as 30 for monthly or 365 for
       annual. `null` for one-time plans.
@@ -240,6 +244,11 @@ Use the Plans API to create plans for products, list existing plans, retrieve or
       Recurring price charged every billing period.
     </ResponseField>
 
+    <ResponseField name="sku" type="string | null" required>
+      Stock keeping unit, free text set by the seller (e.g. `TSHIRT-LARGE-BLUE`).
+      Not enforced unique. `null` when unset.
+    </ResponseField>
+
     <ResponseField name="split_pay_required_payments" type="number | null" required>
       Installment payments required before the subscription pauses. Must be greater
       than 1. `null` if split pay is not configured.
@@ -273,7 +282,8 @@ Use the Plans API to create plans for products, list existing plans, retrieve or
     </ResponseField>
 
     <ResponseField name="title" type="string | null" required>
-      Plan display name shown to customers. Maximum 30 characters. `null` if no
+      Plan display name shown to customers. Maximum 30 characters. A variant created
+      without one defaults to its attribute values joined with `/`. `null` if no
       title has been set.
     </ResponseField>
 
@@ -308,6 +318,10 @@ Use the Plans API to create plans for products, list existing plans, retrieve or
       		"title": "Pickaxe"
       	},
       	"adaptive_pricing_enabled": true,
+      	"attributes": {
+      		"seats": "5",
+      		"tier": "Pro"
+      	},
       	"billing_period": 30,
       	"cancel_discount_intervals": null,
       	"cancel_discount_percentage": null,
@@ -364,13 +378,14 @@ Use the Plans API to create plans for products, list existing plans, retrieve or
       		"decimals": 2,
       		"display_decimals": 2
       	},
+      	"sku": "PICKAXE-PRO-5-MONTHLY",
       	"split_pay_required_payments": null,
       	"stock": null,
       	"strike_through_initial_price": null,
       	"strike_through_renewal_price": null,
       	"tax_type": "exclusive",
       	"three_ds_level": "frictionless_if_required",
-      	"title": "Monthly",
+      	"title": "Pro / 5 seats",
       	"trial_period_days": 7,
       	"unlimited_stock": true,
       	"updated_at": "2023-12-01T05:00:00.401Z",

@@ -35,7 +35,7 @@ Use the Disputes API to list disputes, edit the evidence packet while a dispute 
       The disputed amount, in whole units of `currency`.
     </ResponseField>
 
-    <ResponseField name="buyer" type="object | null" required>
+    <ResponseField name="buyer" type="object" required>
       The customer who filed the dispute.
 
       <Accordion title="Properties" defaultOpen={true}>
@@ -152,7 +152,7 @@ Use the Disputes API to list disputes, edit the evidence packet while a dispute 
         </ResponseField>
 
         <ResponseField name="documents" type="object[]" required>
-          Additional evidence documents uploaded through `POST /disputes/\{id}/upload_evidence`, beyond the four fixed slots. Each rides into the submitted packet under its `document_type`.
+          Additional evidence documents, beyond the four fixed slots — set via `evidence.documents` on `PATCH /disputes/\{id}`. Each rides into the submitted packet under its `document_type`.
 
           <Accordion title="Properties" defaultOpen={true}>
             <ResponseField name="id" type="string" required>
@@ -160,7 +160,7 @@ Use the Disputes API to list disputes, edit the evidence packet while a dispute 
             </ResponseField>
 
             <ResponseField name="content_type" type="string | null" required>
-              The uploaded file's MIME type. Uploads are restricted to the types the processor accepts.
+              The uploaded file's MIME type. Uploads are restricted to the types the processor accepts, and rejected without one — never null.
 
               Available options: `application/pdf`, `application/json`, `image/jpeg`, `image/png`, `image/webp`
             </ResponseField>
@@ -170,9 +170,9 @@ Use the Disputes API to list disputes, edit the evidence packet while a dispute 
             </ResponseField>
 
             <ResponseField name="document_type" type="string" required>
-              What kind of evidence the document is.
+              What this document proves, in the processor's own evidence vocabulary. `return_policy`, `cancellation_policy`, and `terms_of_service` are the seller's policy documents — uploading one overrides the account's copy for this dispute (`return_policy`, `cancellation_policy`, and `customer_communication` also override the matching fixed evidence slot). `shipping_policy` is the seller's shipping terms. `customer_communication` is correspondence with the buyer — a support thread or chat log. `product_image` is a photo of the product or service the buyer received. `physical_fulfillment` is proof a physical order shipped and arrived; `digital_fulfillment` is proof the buyer accessed a digital product. `customer_order_history` is the buyer's past orders with this seller; `prior_transactions` is their broader payment history across the platform, for a fraud defense. `customer_session` is checkout forensics — IP, device fingerprint, AVS/CVV, 3D Secure result. `subscription` is membership lifecycle evidence — renewals, cancellation, reminders sent.
 
-              Available options: `return_policy`, `shipping_policy`, `cancellation_policy`, `terms_of_service`, `physical_fulfillment`, `customer_order_history`, `product_image`, `prior_transactions`, `customer_session`, `digital_fulfillment`, `subscription`
+              Available options: `return_policy`, `shipping_policy`, `cancellation_policy`, `terms_of_service`, `physical_fulfillment`, `customer_order_history`, `product_image`, `prior_transactions`, `customer_session`, `digital_fulfillment`, `subscription`, `customer_communication`
             </ResponseField>
 
             <ResponseField name="filename" type="string | null" required>
@@ -318,8 +318,9 @@ Use the Disputes API to list disputes, edit the evidence packet while a dispute 
     </ResponseField>
 
     <ResponseField name="evidence_due_at" type="string | null" required>
-      The deadline to submit evidence, as an ISO 8601 timestamp. Whop reserves the
-      last 24 hours before the processor's own cutoff to forward the submission.
+      The deadline to submit evidence, as an ISO 8601 timestamp. `null` when the
+      network already auto-resolved the dispute (Visa RDR) with no evidence round,
+      or when the processor hasn't reported a deadline for this dispute.
     </ResponseField>
 
     <ResponseField name="evidence_editable" type="boolean" required>
@@ -334,34 +335,6 @@ Use the Disputes API to list disputes, edit the evidence packet while a dispute 
 
     <ResponseField name="evidence_submitted_at" type="string | null" required>
       When the evidence was submitted to the processor, as an ISO 8601 timestamp.
-    </ResponseField>
-
-    <ResponseField name="generated_response_attachment" type="object | null" required>
-      The AI-generated representment document filed with the processor on the seller's behalf, once ready. Null until generation completes, and for disputes not using Whop Dispute Fighter.
-
-      <Accordion title="Properties" defaultOpen={true}>
-        <ResponseField name="id" type="string | null" required>
-          The attachment's ID. `null` for a Whop-hosted policy, which is not an uploaded
-          file.
-        </ResponseField>
-
-        <ResponseField name="content_type" type="string | null" required>
-          The uploaded file's MIME type.
-        </ResponseField>
-
-        <ResponseField name="filename" type="string | null" required>
-          The uploaded file's name.
-        </ResponseField>
-
-        <ResponseField name="platform" type="boolean" required>
-          Whether this is Whop's own hosted policy, standing in because the seller
-          uploaded none. Sending it back on a PATCH changes nothing.
-        </ResponseField>
-
-        <ResponseField name="url" type="string | null" required>
-          A URL to download the attachment.
-        </ResponseField>
-      </Accordion>
     </ResponseField>
 
     <ResponseField name="inquiry" type="boolean" required>
@@ -445,7 +418,7 @@ Use the Disputes API to list disputes, edit the evidence packet while a dispute 
       </Accordion>
     </ResponseField>
 
-    <ResponseField name="payment" type="object | null" required>
+    <ResponseField name="payment" type="object" required>
       The payment being disputed.
 
       <Accordion title="Properties" defaultOpen={true}>
@@ -635,7 +608,7 @@ Use the Disputes API to list disputes, edit the evidence packet while a dispute 
         </ResponseField>
 
         <ResponseField name="payment_processor" type="string | null" required>
-          The processor that handled the payment, such as `stripe`.
+          Deprecated: no longer populated. Always `null`. DEPRECATED: No longer populated. Always null.
         </ResponseField>
       </Accordion>
     </ResponseField>
@@ -646,11 +619,6 @@ Use the Disputes API to list disputes, edit the evidence packet while a dispute 
 
     <ResponseField name="product_id" type="string | null" required>
       The product the disputed payment was for, prefixed `prod_`.
-    </ResponseField>
-
-    <ResponseField name="rapid_dispute_resolution" type="boolean" required>
-      Whether Visa Rapid Dispute Resolution settled this automatically. These refund
-      the customer without an evidence round.
     </ResponseField>
 
     <ResponseField name="reason" type="string" required>
@@ -737,7 +705,6 @@ Use the Disputes API to list disputes, edit the evidence packet while a dispute 
       	"evidence_editable": true,
       	"evidence_locked_reason": null,
       	"evidence_submitted_at": null,
-      	"generated_response_attachment": null,
       	"inquiry": false,
       	"issuer_comments": [
       		{
@@ -753,7 +720,7 @@ Use the Disputes API to list disputes, edit the evidence packet while a dispute 
       		"created_at": "2026-05-01T09:30:00Z",
       		"currency": "usd",
       		"payment_method_type": "card",
-      		"payment_processor": "stripe",
+      		"payment_processor": null,
       		"payment_instrument": {
       			"payment_method_type": "card",
       			"display_name": "Visa •••• 4242",
@@ -816,7 +783,6 @@ Use the Disputes API to list disputes, edit the evidence packet while a dispute 
       	],
       	"plan_id": "plan_xxxxxxxxxxxxx",
       	"product_id": "prod_xxxxxxxxxxxxx",
-      	"rapid_dispute_resolution": false,
       	"reason": "fraudulent",
       	"reason_code": "10.4",
       	"status": "needs_response",

@@ -22,28 +22,34 @@ If you're unsure which laws apply to you, consider seeking advice from a qualifi
 
 You can't sell or offer prohibited products and services on Whop, regardless of how you list them. Whop prohibits the following products and services:
 
+* **Academic fraud** — Essay mills, contract cheating, or completing academic work for hire.
 * **Adult content, products and services** — Pornographic or sexually explicit material depicting real sexual acts, or services intended primarily for adult sexual gratification.
 * **Alcohol and Tobacco Products** — Alcoholic beverages, tobacco products, e-cigarettes, vaping devices, and nicotine products.
 * **Cannabis and Marijuana Products** — Cannabis, marijuana, cannabis-derived products, Tetrahydrocannabinol (THC) products, and related paraphernalia.
 * **Controlled Substances, Pharmaceuticals, and nutraceuticals** — Prescription medications, controlled substances, or unregulated health supplements. This includes supplements that lack Food and Drug Administration (FDA) approval or make unsubstantiated therapeutic or health claims. It also includes products promoted as cures, treatments, or disease-prevention remedies without substantiated evidence or regulatory authorization.
-* **Debt and Lending Services** — Credit repair, loan modification, debt relief, personal-loan brokering, or other forms of consumer lending that require state or federal licensing. Proprietary trading firms ("prop firms") are also prohibited on Whop.
+* **Debt and Lending Services** — Credit repair, loan modification, debt relief, debt collection, personal-loan brokering, or other forms of consumer lending that require state or federal licensing. Proprietary trading firms ("prop firms") are also prohibited on Whop.
 * **Fireworks** — Pyrotechnic devices and explosive entertainment products.
 * **Fraudulent government documents or services** — Impersonation of government agencies or the offering of forged, altered, or unauthorized government documents, credentials, or services.
-* **Gambling** — Betting platforms, wagering operations, lotteries, or other gambling activities that violate state or federal law. Excludes information, analysis, picks, or other advisory services related to gambling or sports betting.
+* **Gambling** — Betting platforms, wagering operations, lotteries, bidding-fee ("penny") auctions, or other gambling activities that violate state or federal law. Excludes information, analysis, picks, or other advisory services related to gambling or sports betting.
+* **Hacking, surveillance, and platform manipulation** — Malware, phishing kits, credential stealers, and other hacking tools; stalkerware and non-consensual tracking software; covert recording devices and signal-jamming equipment; data-scraping tools; and the sale of fake followers, likes, or other artificial engagement.
 * **Hate content or violent content** — Material that promotes hatred or discrimination based on protected characteristics. It also includes material that glorifies or incites real-world violence.
 * **Human parts** — Organs, tissue, blood, bodily fluids, or other biological materials.
-* **Identity services** — Unauthorized creation, sale, or alteration of identification documents, credentials, or other forms of government-issued or personal identification.
-* **Infringing or Counterfeit Goods** — Unauthorized copies, counterfeit goods, or any product that violates intellectual property rights, including trademark, patent, or copyright infringement.
+* **Identity services** — Unauthorized creation, sale, or alteration of identification documents, credentials, or other forms of government-issued or personal identification. This includes fake employment references and the sale of accounts on social media, retail, gaming, or other third-party platforms.
+* **Infringing or Counterfeit Goods** — Unauthorized copies, counterfeit goods, or any product that violates intellectual property rights, including trademark, patent, or copyright infringement. This includes game cheats, hacks, or exploits and unofficial in-game currency.
 * **Pirated Content and Unauthorized Streaming** — Pirated digital content, illegal streaming platforms, or unauthorized access to Internet Protocol Television (IPTV) services or content streams. This prohibition covers promoting, selling, or facilitating piracy or distributing copyrighted material without authorization.
 * **Legal services** — Professional legal advice, representation, or attorney services.
 * **"Lifetime access" offers** — Whop prohibits businesses from advertising or promising "lifetime" access. You must disclose the access period for your offer.
-* **Non-fiat currencies and digital assets** — Selling cryptocurrencies, NFTs, and other digital or alternative currencies. Whop may permit educational or informational content that doesn't involve direct sales, exchanges, or investment solicitation.
+* **Medical and health services** — Counseling, therapy, and other mental health services, and intravenous (IV) vitamin or hydration treatments.
+* **Non-fiat currencies and digital assets** — Selling cryptocurrencies, NFTs, and other digital or alternative currencies, as well as staking or yield products and cloud mining services. Whop may permit educational or informational content that doesn't involve direct sales, exchanges, or investment solicitation.
+* **Political, religious, and charitable organizations** — Political campaigns, political fundraising, political organizations, religious organizations, unregistered charities, and personal fundraising campaigns.
+* **Private investigation and repossession services** — Private detective services and asset recovery or repossession services.
 * **Pyramid Schemes and Multi-Level Marketing** — You may not use Whop for pyramid schemes, which violate Federal Trade Commission (FTC) rules. You also may not run Multi-Level Marketing (MLM) programs where most earnings come from recruiting instead of selling to customers outside your network.
+* **Telemarketing and door-to-door sales** — Outbound telemarketing, inbound teleservices, and in-person sales at residences.
 * **Ticket Reselling** — Tickets acquired through bots or automated systems, or resold in violation of applicable laws.
-* **Timeshare services** — Vacation property ownership programs or resale services involving timeshares or fractional real estate interests.
-* **Unregistered Financial Services** — Investment products, asset management, or financial instruments offered without proper federal, state, or equivalent regulatory registration and licensing.
-* **Weapons or explosives** — Firearms, ammunition, bombs, or materials intended for combat use. This category includes instructions to manufacture or modify weapons or explosives.
-* **Wildlife** — Protected animals, endangered species, or products derived from illegal wildlife trade.
+* **Timeshares, airlines, and cruises** — Vacation property ownership programs or resale services involving timeshares or fractional real estate interests, commercial airline tickets, and cruise line bookings.
+* **Unregistered Financial Services** — Investment products, asset management, or financial instruments offered without proper federal, state, or equivalent regulatory registration and licensing. This includes escrow services, payment facilitation for other merchants, check cashing, crowdfunding platforms, and standalone tipping or donation platforms.
+* **Weapons or explosives** — Firearms, ammunition, bombs, hazardous chemical substances, or materials intended for combat use. This category includes instructions to manufacture or modify weapons or explosives.
+* **Wildlife and cultural artifacts** — Protected animals, endangered species, products derived from illegal wildlife trade, and illegally obtained antiquities or cultural artifacts.
 
 Generally, Whop can't support businesses that its Financial Partners don't support. Whop or its Financial Partners may, in their sole discretion, prohibit any business category, merchant, or transaction for legal, regulatory, reputational, or business reasons.
 
@@ -67,7 +73,7 @@ All merchants on Whop must comply with broader legal and regulatory requirements
 
 Whop uses automated content moderation tools and a dedicated trust and safety team to monitor platform activity. This includes store pages, chats, DMs, forum posts, media, and livestreams. The community also plays an active role in flagging violations.
 
-Whop reviews all merchants at key milestones: account creation, marketplace listing, first payment, first payout, and recurring revenue thresholds. If something looks wrong, Whop investigates. If a merchant can't prove what they're selling, Whop freezes payouts until they provide proof.
+Whop classifies every business at signup based on what it actually sells, then re-checks that classification on a recurring schedule and whenever the business or its processing pattern changes. Each check is assessed automatically, and high-value or conflicting cases go to the Trust & Safety team for manual review. If Whop can't verify what a merchant sells, it pauses payouts and requests proof. A merchant who doesn't respond may be suspended.
 
 ## What happens if you violate Whop policies
 

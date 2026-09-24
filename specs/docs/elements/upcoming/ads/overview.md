@@ -170,7 +170,7 @@ The elements this group mounts. Each has its own page:
   </Card>
 
   <Card title="CampaignCreatorElement" href="/elements/upcoming/ads/campaign-creator">
-    The advertising campaign builder: objective and budget, ad groups with their targeting and schedule, and the ads themselves with their creative — the whole flow through to launch. Opens empty to build a new campaign, or on an existing one when you pass `campaignId`. It runs the pixel checker too: a launch is gated on the ad group’s conversion event being live on the destination URL, and the `pixel-setup` wizard opens inside this element to fix an install that is missing. The one token you set on the `ads` handle must carry the pixel scopes alongside the campaign scopes — `ad_campaign:create` and `company:basic:read` — rather than using a separate token per element.
+    The advertising campaign builder: objective and budget, ad groups with their targeting and schedule, and the ads themselves with their creative — the whole flow through to launch. Opens empty to build a new campaign, or on an existing one when you pass `campaignId`. It runs the pixel checker too: a launch is gated on the ad group’s conversion event being live on the destination URL, and the `pixel-setup` wizard opens inside this element to fix an install that is missing. Budgets are entered and shown in the account’s `ads_reporting_currency` — the currency its reports already use — and converted to and billed in USD at the current exchange rate. The one token you set on the `ads` handle must carry the pixel scopes alongside the campaign scopes — `ad_campaign:create` and `company:basic:read` — rather than using a separate token per element.
   </Card>
 </CardGroup>
 

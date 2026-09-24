@@ -1540,6 +1540,564 @@ Send `null` for a document to remove it. Only PDF files are accepted.
       missing balance-read permission, or unavailable balance source.
     </ResponseField>
 
+    <ResponseField name="trading" type="trading_account | null" required>
+      Live trading state. Opt in with `include_trading=true` on single-account reads; `null` otherwise, without trading permission, or without an Ethereum wallet. Provider failures return an error, not a zero balance.
+
+      <Accordion title="Properties" defaultOpen={true}>
+        <ResponseField name="id" type="string" required>
+          The Whop wallet ID backing this trading account, prefixed `cwal_`.
+        </ResponseField>
+
+        <ResponseField name="account_id" type="string | null" required>
+          The account that owns this trading account, prefixed `biz_`. `null` when a
+          user owns it.
+        </ResponseField>
+
+        <ResponseField name="hyperliquid" type="object | null" required>
+          Hyperliquid-specific state. Present when `provider` is `hyperliquid`, otherwise `null`.
+
+          <Accordion title="Properties" defaultOpen={true}>
+            <ResponseField name="address" type="string" required>
+              Lowercase wallet address that holds the Hyperliquid account.
+            </ResponseField>
+
+            <ResponseField name="builder_fee_bps" type="string | null" required>
+              Builder fee Whop charges on orders, in basis points as a decimal string, or
+              `null` when no fee is configured.
+            </ResponseField>
+
+            <ResponseField name="margin_summary" type="object" required>
+              Account value, margin, and withdrawable balance, all in USD.
+
+              <Accordion title="Properties" defaultOpen={true}>
+                <ResponseField name="account_value" type="object" required>
+                  Total account value in USD, including unrealized profit and loss.
+
+                  <Accordion title="Properties" defaultOpen={true}>
+                    <ResponseField name="amount" type="string" required>
+                      The amount in major units, as an exact decimal string — `"10.00"` is ten
+                      dollars. A string so no float rounds it in transit.
+                    </ResponseField>
+
+                    <ResponseField name="currency" type="string" required>
+                      Three-letter ISO 4217 currency code, lowercase.
+                    </ResponseField>
+
+                    <ResponseField name="decimals" type="integer" required>
+                      How many decimal places the amount CARRIES — the precision the charge itself
+                      runs at.
+                    </ResponseField>
+
+                    <ResponseField name="display_decimals" type="integer" required>
+                      How many decimal places to SHOW. Usually equal to `decimals`, and deliberately not always: COP is charged in centavos but written in whole pesos, so it is `2` and `0`. Format the number in your own locale using this.
+                    </ResponseField>
+                  </Accordion>
+                </ResponseField>
+
+                <ResponseField name="total_margin_used" type="object" required>
+                  Margin allocated across open positions, in USD.
+
+                  <Accordion title="Properties" defaultOpen={true}>
+                    <ResponseField name="amount" type="string" required>
+                      The amount in major units, as an exact decimal string — `"10.00"` is ten
+                      dollars. A string so no float rounds it in transit.
+                    </ResponseField>
+
+                    <ResponseField name="currency" type="string" required>
+                      Three-letter ISO 4217 currency code, lowercase.
+                    </ResponseField>
+
+                    <ResponseField name="decimals" type="integer" required>
+                      How many decimal places the amount CARRIES — the precision the charge itself
+                      runs at.
+                    </ResponseField>
+
+                    <ResponseField name="display_decimals" type="integer" required>
+                      How many decimal places to SHOW. Usually equal to `decimals`, and deliberately not always: COP is charged in centavos but written in whole pesos, so it is `2` and `0`. Format the number in your own locale using this.
+                    </ResponseField>
+                  </Accordion>
+                </ResponseField>
+
+                <ResponseField name="total_position_notional" type="object" required>
+                  Combined notional value of open positions, in USD.
+
+                  <Accordion title="Properties" defaultOpen={true}>
+                    <ResponseField name="amount" type="string" required>
+                      The amount in major units, as an exact decimal string — `"10.00"` is ten
+                      dollars. A string so no float rounds it in transit.
+                    </ResponseField>
+
+                    <ResponseField name="currency" type="string" required>
+                      Three-letter ISO 4217 currency code, lowercase.
+                    </ResponseField>
+
+                    <ResponseField name="decimals" type="integer" required>
+                      How many decimal places the amount CARRIES — the precision the charge itself
+                      runs at.
+                    </ResponseField>
+
+                    <ResponseField name="display_decimals" type="integer" required>
+                      How many decimal places to SHOW. Usually equal to `decimals`, and deliberately not always: COP is charged in centavos but written in whole pesos, so it is `2` and `0`. Format the number in your own locale using this.
+                    </ResponseField>
+                  </Accordion>
+                </ResponseField>
+
+                <ResponseField name="total_raw_usd" type="object" required>
+                  Raw USD balance as Hyperliquid reports it, excluding position value.
+
+                  <Accordion title="Properties" defaultOpen={true}>
+                    <ResponseField name="amount" type="string" required>
+                      The amount in major units, as an exact decimal string — `"10.00"` is ten
+                      dollars. A string so no float rounds it in transit.
+                    </ResponseField>
+
+                    <ResponseField name="currency" type="string" required>
+                      Three-letter ISO 4217 currency code, lowercase.
+                    </ResponseField>
+
+                    <ResponseField name="decimals" type="integer" required>
+                      How many decimal places the amount CARRIES — the precision the charge itself
+                      runs at.
+                    </ResponseField>
+
+                    <ResponseField name="display_decimals" type="integer" required>
+                      How many decimal places to SHOW. Usually equal to `decimals`, and deliberately not always: COP is charged in centavos but written in whole pesos, so it is `2` and `0`. Format the number in your own locale using this.
+                    </ResponseField>
+                  </Accordion>
+                </ResponseField>
+
+                <ResponseField name="withdrawable" type="object" required>
+                  USD that can be withdrawn now without closing positions.
+
+                  <Accordion title="Properties" defaultOpen={true}>
+                    <ResponseField name="amount" type="string" required>
+                      The amount in major units, as an exact decimal string — `"10.00"` is ten
+                      dollars. A string so no float rounds it in transit.
+                    </ResponseField>
+
+                    <ResponseField name="currency" type="string" required>
+                      Three-letter ISO 4217 currency code, lowercase.
+                    </ResponseField>
+
+                    <ResponseField name="decimals" type="integer" required>
+                      How many decimal places the amount CARRIES — the precision the charge itself
+                      runs at.
+                    </ResponseField>
+
+                    <ResponseField name="display_decimals" type="integer" required>
+                      How many decimal places to SHOW. Usually equal to `decimals`, and deliberately not always: COP is charged in centavos but written in whole pesos, so it is `2` and `0`. Format the number in your own locale using this.
+                    </ResponseField>
+                  </Accordion>
+                </ResponseField>
+              </Accordion>
+            </ResponseField>
+
+            <ResponseField name="websocket_subscriptions" type="object[]" required>
+              Subscriptions for live account updates. Send each `message` unchanged after connecting to `websocket_url`.
+
+              <Accordion title="Properties" defaultOpen={true}>
+                <ResponseField name="channel" type="string" required>
+                  The live update stream this subscription opens.
+
+                  Available options: `clearinghouse_state`, `open_orders`, `order_updates`, `user_fills`, `user_events`
+                </ResponseField>
+
+                <ResponseField name="message" type="string" required>
+                  JSON subscription message to send unchanged over the Hyperliquid WebSocket.
+                </ResponseField>
+              </Accordion>
+            </ResponseField>
+
+            <ResponseField name="websocket_url" type="string" required>
+              Hyperliquid WebSocket URL to connect to directly for live updates.
+            </ResponseField>
+          </Accordion>
+        </ResponseField>
+
+        <ResponseField name="object" type="string" required />
+
+        <ResponseField name="open_orders" type="trading_order[]" required>
+          Resting orders that have not filled or been canceled.
+
+          <Accordion title="Properties" defaultOpen={true}>
+            <ResponseField name="id" type="string" required>
+              Trading order ID, prefixed `trdord_`.
+            </ResponseField>
+
+            <ResponseField name="client_order_id" type="string | null" required>
+              Client order ID, prefixed `trdcloid_`, or `null` when the order was placed
+              without one.
+            </ResponseField>
+
+            <ResponseField name="created_at" type="string | null" required>
+              When the order was placed, as an ISO 8601 timestamp, or `null` when the
+              provider omits it.
+            </ResponseField>
+
+            <ResponseField name="hyperliquid" type="object | null" required>
+              Hyperliquid-specific order details. Present on Hyperliquid orders, otherwise `null`.
+
+              <Accordion title="Properties" defaultOpen={true}>
+                <ResponseField name="reduce_only" type="boolean | null" required>
+                  Whether the order can only reduce an existing position, or `null` when
+                  Hyperliquid omits it.
+                </ResponseField>
+
+                <ResponseField name="trigger_price" type="object | null" required>
+                  Trigger price in USD for take-profit and stop-loss orders, or `null` for orders without a trigger.
+
+                  <Accordion title="Properties" defaultOpen={true}>
+                    <ResponseField name="amount" type="string" required>
+                      The amount in major units, as an exact decimal string — `"10.00"` is ten
+                      dollars. A string so no float rounds it in transit.
+                    </ResponseField>
+
+                    <ResponseField name="currency" type="string" required>
+                      Three-letter ISO 4217 currency code, lowercase.
+                    </ResponseField>
+
+                    <ResponseField name="decimals" type="integer" required>
+                      How many decimal places the amount CARRIES — the precision the charge itself
+                      runs at.
+                    </ResponseField>
+
+                    <ResponseField name="display_decimals" type="integer" required>
+                      How many decimal places to SHOW. Usually equal to `decimals`, and deliberately not always: COP is charged in centavos but written in whole pesos, so it is `2` and `0`. Format the number in your own locale using this.
+                    </ResponseField>
+                  </Accordion>
+                </ResponseField>
+              </Accordion>
+            </ResponseField>
+
+            <ResponseField name="market" type="string" required>
+              Market symbol on the provider, such as `ETH`.
+            </ResponseField>
+
+            <ResponseField name="object" type="string" required />
+
+            <ResponseField name="order_type" type="string" required>
+              Available options: `limit`, `market`, `take_profit`, `stop_loss`
+            </ResponseField>
+
+            <ResponseField name="original_size" type="string | null" required>
+              Size when the order was placed, as a decimal string, or `null` when the
+              provider omits it.
+            </ResponseField>
+
+            <ResponseField name="price" type="object" required>
+              Limit price in USD.
+
+              <Accordion title="Properties" defaultOpen={true}>
+                <ResponseField name="amount" type="string" required>
+                  The amount in major units, as an exact decimal string — `"10.00"` is ten
+                  dollars. A string so no float rounds it in transit.
+                </ResponseField>
+
+                <ResponseField name="currency" type="string" required>
+                  Three-letter ISO 4217 currency code, lowercase.
+                </ResponseField>
+
+                <ResponseField name="decimals" type="integer" required>
+                  How many decimal places the amount CARRIES — the precision the charge itself
+                  runs at.
+                </ResponseField>
+
+                <ResponseField name="display_decimals" type="integer" required>
+                  How many decimal places to SHOW. Usually equal to `decimals`, and deliberately not always: COP is charged in centavos but written in whole pesos, so it is `2` and `0`. Format the number in your own locale using this.
+                </ResponseField>
+              </Accordion>
+            </ResponseField>
+
+            <ResponseField name="provider_order_id" type="string | null" required>
+              The provider's own order ID, as a string.
+            </ResponseField>
+
+            <ResponseField name="side" type="string" required>
+              Available options: `buy`, `sell`
+            </ResponseField>
+
+            <ResponseField name="size" type="string" required>
+              Remaining order size as a decimal string.
+            </ResponseField>
+
+            <ResponseField name="status" type="string" required>
+              Available options: `open`, `filled`, `canceled`, `triggered`, `rejected`
+            </ResponseField>
+
+            <ResponseField name="status_updated_at" type="string | null" required>
+              When the status last changed, as an ISO 8601 timestamp, or `null` when the
+              provider omits it.
+            </ResponseField>
+
+            <ResponseField name="time_in_force" type="string | null" required>
+              How long the order stays active. `null` when the provider omits it or reports a policy outside the supported values.
+
+              Available options: `add_liquidity_only`, `good_til_canceled`, `immediate_or_cancel`
+            </ResponseField>
+          </Accordion>
+        </ResponseField>
+
+        <ResponseField name="positions" type="trading_position[]" required>
+          Open positions. Positions with zero size are omitted.
+
+          <Accordion title="Properties" defaultOpen={true}>
+            <ResponseField name="id" type="string" required>
+              Trading position ID, prefixed `trdpos_`. Stable for a market within one
+              trading account.
+            </ResponseField>
+
+            <ResponseField name="entry_price" type="object | null" required>
+              Average entry price in USD, or `null` when the provider omits it.
+
+              <Accordion title="Properties" defaultOpen={true}>
+                <ResponseField name="amount" type="string" required>
+                  The amount in major units, as an exact decimal string — `"10.00"` is ten
+                  dollars. A string so no float rounds it in transit.
+                </ResponseField>
+
+                <ResponseField name="currency" type="string" required>
+                  Three-letter ISO 4217 currency code, lowercase.
+                </ResponseField>
+
+                <ResponseField name="decimals" type="integer" required>
+                  How many decimal places the amount CARRIES — the precision the charge itself
+                  runs at.
+                </ResponseField>
+
+                <ResponseField name="display_decimals" type="integer" required>
+                  How many decimal places to SHOW. Usually equal to `decimals`, and deliberately not always: COP is charged in centavos but written in whole pesos, so it is `2` and `0`. Format the number in your own locale using this.
+                </ResponseField>
+              </Accordion>
+            </ResponseField>
+
+            <ResponseField name="hyperliquid" type="object | null" required>
+              Hyperliquid perpetual details. Present on Hyperliquid positions, otherwise `null`.
+
+              <Accordion title="Properties" defaultOpen={true}>
+                <ResponseField name="cumulative_funding" type="object" required>
+                  Funding paid on the position over several windows, in USD.
+
+                  <Accordion title="Properties" defaultOpen={true}>
+                    <ResponseField name="all_time" type="object | null" required>
+                      Funding paid on this market across the account's history, in USD, or `null` when unavailable.
+
+                      <Accordion title="Properties" defaultOpen={true}>
+                        <ResponseField name="amount" type="string" required>
+                          The amount in major units, as an exact decimal string — `"10.00"` is ten
+                          dollars. A string so no float rounds it in transit.
+                        </ResponseField>
+
+                        <ResponseField name="currency" type="string" required>
+                          Three-letter ISO 4217 currency code, lowercase.
+                        </ResponseField>
+
+                        <ResponseField name="decimals" type="integer" required>
+                          How many decimal places the amount CARRIES — the precision the charge itself
+                          runs at.
+                        </ResponseField>
+
+                        <ResponseField name="display_decimals" type="integer" required>
+                          How many decimal places to SHOW. Usually equal to `decimals`, and deliberately not always: COP is charged in centavos but written in whole pesos, so it is `2` and `0`. Format the number in your own locale using this.
+                        </ResponseField>
+                      </Accordion>
+                    </ResponseField>
+
+                    <ResponseField name="since_change" type="object | null" required>
+                      Funding paid since the position size last changed, in USD, or `null` when unavailable.
+
+                      <Accordion title="Properties" defaultOpen={true}>
+                        <ResponseField name="amount" type="string" required>
+                          The amount in major units, as an exact decimal string — `"10.00"` is ten
+                          dollars. A string so no float rounds it in transit.
+                        </ResponseField>
+
+                        <ResponseField name="currency" type="string" required>
+                          Three-letter ISO 4217 currency code, lowercase.
+                        </ResponseField>
+
+                        <ResponseField name="decimals" type="integer" required>
+                          How many decimal places the amount CARRIES — the precision the charge itself
+                          runs at.
+                        </ResponseField>
+
+                        <ResponseField name="display_decimals" type="integer" required>
+                          How many decimal places to SHOW. Usually equal to `decimals`, and deliberately not always: COP is charged in centavos but written in whole pesos, so it is `2` and `0`. Format the number in your own locale using this.
+                        </ResponseField>
+                      </Accordion>
+                    </ResponseField>
+
+                    <ResponseField name="since_open" type="object | null" required>
+                      Funding paid since the position opened, in USD, or `null` when unavailable.
+
+                      <Accordion title="Properties" defaultOpen={true}>
+                        <ResponseField name="amount" type="string" required>
+                          The amount in major units, as an exact decimal string — `"10.00"` is ten
+                          dollars. A string so no float rounds it in transit.
+                        </ResponseField>
+
+                        <ResponseField name="currency" type="string" required>
+                          Three-letter ISO 4217 currency code, lowercase.
+                        </ResponseField>
+
+                        <ResponseField name="decimals" type="integer" required>
+                          How many decimal places the amount CARRIES — the precision the charge itself
+                          runs at.
+                        </ResponseField>
+
+                        <ResponseField name="display_decimals" type="integer" required>
+                          How many decimal places to SHOW. Usually equal to `decimals`, and deliberately not always: COP is charged in centavos but written in whole pesos, so it is `2` and `0`. Format the number in your own locale using this.
+                        </ResponseField>
+                      </Accordion>
+                    </ResponseField>
+                  </Accordion>
+                </ResponseField>
+
+                <ResponseField name="leverage" type="object" required>
+                  Margin mode and multiplier for the position.
+
+                  <Accordion title="Properties" defaultOpen={true}>
+                    <ResponseField name="type" type="string" required>
+                      `cross` shares margin across positions; `isolated` limits margin to this position.
+
+                      Available options: `cross`, `isolated`
+                    </ResponseField>
+
+                    <ResponseField name="value" type="integer" required>
+                      Multiplier applied to the position's margin, such as `10` for 10x.
+                    </ResponseField>
+                  </Accordion>
+                </ResponseField>
+
+                <ResponseField name="liquidation_price" type="object | null" required>
+                  Estimated liquidation price in USD, or `null` when Hyperliquid reports none.
+
+                  <Accordion title="Properties" defaultOpen={true}>
+                    <ResponseField name="amount" type="string" required>
+                      The amount in major units, as an exact decimal string — `"10.00"` is ten
+                      dollars. A string so no float rounds it in transit.
+                    </ResponseField>
+
+                    <ResponseField name="currency" type="string" required>
+                      Three-letter ISO 4217 currency code, lowercase.
+                    </ResponseField>
+
+                    <ResponseField name="decimals" type="integer" required>
+                      How many decimal places the amount CARRIES — the precision the charge itself
+                      runs at.
+                    </ResponseField>
+
+                    <ResponseField name="display_decimals" type="integer" required>
+                      How many decimal places to SHOW. Usually equal to `decimals`, and deliberately not always: COP is charged in centavos but written in whole pesos, so it is `2` and `0`. Format the number in your own locale using this.
+                    </ResponseField>
+                  </Accordion>
+                </ResponseField>
+
+                <ResponseField name="margin_used" type="object" required>
+                  Margin allocated to the position, in USD.
+
+                  <Accordion title="Properties" defaultOpen={true}>
+                    <ResponseField name="amount" type="string" required>
+                      The amount in major units, as an exact decimal string — `"10.00"` is ten
+                      dollars. A string so no float rounds it in transit.
+                    </ResponseField>
+
+                    <ResponseField name="currency" type="string" required>
+                      Three-letter ISO 4217 currency code, lowercase.
+                    </ResponseField>
+
+                    <ResponseField name="decimals" type="integer" required>
+                      How many decimal places the amount CARRIES — the precision the charge itself
+                      runs at.
+                    </ResponseField>
+
+                    <ResponseField name="display_decimals" type="integer" required>
+                      How many decimal places to SHOW. Usually equal to `decimals`, and deliberately not always: COP is charged in centavos but written in whole pesos, so it is `2` and `0`. Format the number in your own locale using this.
+                    </ResponseField>
+                  </Accordion>
+                </ResponseField>
+
+                <ResponseField name="return_on_equity" type="string" required>
+                  Return on equity as a decimal ratio string, such as `0.1` for 10%.
+                </ResponseField>
+              </Accordion>
+            </ResponseField>
+
+            <ResponseField name="market" type="string" required>
+              Market symbol on the provider, such as `ETH`.
+            </ResponseField>
+
+            <ResponseField name="object" type="string" required />
+
+            <ResponseField name="position_value" type="object" required>
+              Current position value in USD.
+
+              <Accordion title="Properties" defaultOpen={true}>
+                <ResponseField name="amount" type="string" required>
+                  The amount in major units, as an exact decimal string — `"10.00"` is ten
+                  dollars. A string so no float rounds it in transit.
+                </ResponseField>
+
+                <ResponseField name="currency" type="string" required>
+                  Three-letter ISO 4217 currency code, lowercase.
+                </ResponseField>
+
+                <ResponseField name="decimals" type="integer" required>
+                  How many decimal places the amount CARRIES — the precision the charge itself
+                  runs at.
+                </ResponseField>
+
+                <ResponseField name="display_decimals" type="integer" required>
+                  How many decimal places to SHOW. Usually equal to `decimals`, and deliberately not always: COP is charged in centavos but written in whole pesos, so it is `2` and `0`. Format the number in your own locale using this.
+                </ResponseField>
+              </Accordion>
+            </ResponseField>
+
+            <ResponseField name="side" type="string" required>
+              Available options: `long`, `short`
+            </ResponseField>
+
+            <ResponseField name="size" type="string" required>
+              Absolute position size as a decimal string.
+            </ResponseField>
+
+            <ResponseField name="unrealized_pnl" type="object" required>
+              Unrealized profit or loss in USD. Negative for a loss.
+
+              <Accordion title="Properties" defaultOpen={true}>
+                <ResponseField name="amount" type="string" required>
+                  The amount in major units, as an exact decimal string — `"10.00"` is ten
+                  dollars. A string so no float rounds it in transit.
+                </ResponseField>
+
+                <ResponseField name="currency" type="string" required>
+                  Three-letter ISO 4217 currency code, lowercase.
+                </ResponseField>
+
+                <ResponseField name="decimals" type="integer" required>
+                  How many decimal places the amount CARRIES — the precision the charge itself
+                  runs at.
+                </ResponseField>
+
+                <ResponseField name="display_decimals" type="integer" required>
+                  How many decimal places to SHOW. Usually equal to `decimals`, and deliberately not always: COP is charged in centavos but written in whole pesos, so it is `2` and `0`. Format the number in your own locale using this.
+                </ResponseField>
+              </Accordion>
+            </ResponseField>
+          </Accordion>
+        </ResponseField>
+
+        <ResponseField name="provider" type="string" required>
+          Trading venue that holds the positions and orders.
+
+          Available options: `hyperliquid`
+        </ResponseField>
+
+        <ResponseField name="user_id" type="string | null" required>
+          The user who owns this trading account, prefixed `user_`. `null` when an account owns it.
+        </ResponseField>
+      </Accordion>
+    </ResponseField>
+
     <ResponseField name="use_logo_as_opengraph_image_fallback" type="boolean" required>
       Whether the account uses its logo as the fallback Open Graph image.
     </ResponseField>
@@ -1587,6 +2145,165 @@ Send `null` for a document to remove it. Only PDF files are accepted.
       ```json Account theme={null}
       {
       	"id": "biz_xxxxxxxxxxxxx",
+      	"trading": {
+      		"id": "cwal_xxxxxxxxxxxxx",
+      		"object": "trading_account",
+      		"account_id": "biz_xxxxxxxxxxxxx",
+      		"user_id": null,
+      		"provider": "hyperliquid",
+      		"positions": [
+      			{
+      				"id": "trdpos_9f2c4e1a7b3d5f60",
+      				"object": "trading_position",
+      				"market": "ETH",
+      				"side": "long",
+      				"size": "0.5",
+      				"entry_price": {
+      					"currency": "usd",
+      					"amount": "3000.0",
+      					"decimals": 2,
+      					"display_decimals": 2
+      				},
+      				"position_value": {
+      					"currency": "usd",
+      					"amount": "1525.0",
+      					"decimals": 2,
+      					"display_decimals": 2
+      				},
+      				"unrealized_pnl": {
+      					"currency": "usd",
+      					"amount": "25.0",
+      					"decimals": 2,
+      					"display_decimals": 2
+      				},
+      				"hyperliquid": {
+      					"leverage": {
+      						"type": "cross",
+      						"value": 10
+      					},
+      					"liquidation_price": {
+      						"currency": "usd",
+      						"amount": "2750.50",
+      						"decimals": 2,
+      						"display_decimals": 2
+      					},
+      					"margin_used": {
+      						"currency": "usd",
+      						"amount": "152.50",
+      						"decimals": 2,
+      						"display_decimals": 2
+      					},
+      					"return_on_equity": "0.1639",
+      					"cumulative_funding": {
+      						"all_time": {
+      							"currency": "usd",
+      							"amount": "1.25",
+      							"decimals": 2,
+      							"display_decimals": 2
+      						},
+      						"since_open": {
+      							"currency": "usd",
+      							"amount": "0.40",
+      							"decimals": 2,
+      							"display_decimals": 2
+      						},
+      						"since_change": {
+      							"currency": "usd",
+      							"amount": "0.00",
+      							"decimals": 2,
+      							"display_decimals": 2
+      						}
+      					}
+      				}
+      			}
+      		],
+      		"open_orders": [
+      			{
+      				"id": "trdord_123456789",
+      				"object": "trading_order",
+      				"client_order_id": null,
+      				"provider_order_id": "123456789",
+      				"market": "ETH",
+      				"side": "buy",
+      				"size": "0.25",
+      				"original_size": "0.25",
+      				"price": {
+      					"currency": "usd",
+      					"amount": "2900.0",
+      					"decimals": 2,
+      					"display_decimals": 2
+      				},
+      				"order_type": "limit",
+      				"time_in_force": "good_til_canceled",
+      				"status": "open",
+      				"created_at": "2026-09-23T15:04:05.000Z",
+      				"status_updated_at": null,
+      				"hyperliquid": {
+      					"reduce_only": false,
+      					"trigger_price": null
+      				}
+      			}
+      		],
+      		"hyperliquid": {
+      			"address": "0x1234567890abcdef1234567890abcdef12345678",
+      			"builder_fee_bps": null,
+      			"margin_summary": {
+      				"account_value": {
+      					"currency": "usd",
+      					"amount": "1025.00",
+      					"decimals": 2,
+      					"display_decimals": 2
+      				},
+      				"total_position_notional": {
+      					"currency": "usd",
+      					"amount": "1525.00",
+      					"decimals": 2,
+      					"display_decimals": 2
+      				},
+      				"total_raw_usd": {
+      					"currency": "usd",
+      					"amount": "-500.00",
+      					"decimals": 2,
+      					"display_decimals": 2
+      				},
+      				"total_margin_used": {
+      					"currency": "usd",
+      					"amount": "152.50",
+      					"decimals": 2,
+      					"display_decimals": 2
+      				},
+      				"withdrawable": {
+      					"currency": "usd",
+      					"amount": "872.50",
+      					"decimals": 2,
+      					"display_decimals": 2
+      				}
+      			},
+      			"websocket_url": "wss://api.hyperliquid.xyz/ws",
+      			"websocket_subscriptions": [
+      				{
+      					"channel": "clearinghouse_state",
+      					"message": "{\"method\":\"subscribe\",\"subscription\":{\"type\":\"clearinghouseState\",\"user\":\"0x1234567890abcdef1234567890abcdef12345678\"}}"
+      				},
+      				{
+      					"channel": "open_orders",
+      					"message": "{\"method\":\"subscribe\",\"subscription\":{\"type\":\"openOrders\",\"user\":\"0x1234567890abcdef1234567890abcdef12345678\"}}"
+      				},
+      				{
+      					"channel": "order_updates",
+      					"message": "{\"method\":\"subscribe\",\"subscription\":{\"type\":\"orderUpdates\",\"user\":\"0x1234567890abcdef1234567890abcdef12345678\"}}"
+      				},
+      				{
+      					"channel": "user_fills",
+      					"message": "{\"method\":\"subscribe\",\"subscription\":{\"type\":\"userFills\",\"user\":\"0x1234567890abcdef1234567890abcdef12345678\"}}"
+      				},
+      				{
+      					"channel": "user_events",
+      					"message": "{\"method\":\"subscribe\",\"subscription\":{\"type\":\"userEvents\",\"user\":\"0x1234567890abcdef1234567890abcdef12345678\"}}"
+      				}
+      			]
+      		}
+      	},
       	"balances": [
       		{
       			"balance": "1250.5",
@@ -1634,7 +2351,7 @@ Send `null` for a document to remove it. Only PDF files are accepted.
       		}
       	],
       	"banner_image_url": "https://cdn.whop.com/banner.png",
-      	"business_type": "physical_products",
+      	"business_type": "ecommerce",
       	"can_transfer_pending_balance_to_children": false,
       	"cancellation_policy": null,
       	"country": "US",

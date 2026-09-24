@@ -20,7 +20,7 @@ info:
   termsOfService: https://whop.com/tos-developer-api/
   title: Whop API
   version: 1.0.0
-  x-api-version-date: 2026-09-22-2
+  x-api-version-date: '2026-09-23'
 servers:
   - description: Production Whop API
     url: https://api.whop.com/api/v1
@@ -285,7 +285,11 @@ tags:
       Use Ledger Activity to build a statement or transaction feed for an
       account or user. Reconcile against your own records with `amount` (signed,
       in the currency's smallest precision units) and `posted_at`, and use
-      `available_at` to know when inflows became withdrawable.
+      `available_at` to group credits and debits by when they affect available
+      funds. Pending activity uses its scheduled release date; activity posted
+      to available funds uses its posted time, including refunds, disputes and
+      payouts. Default activity excludes some movements, including opt-in
+      reserves.
     name: Ledgers
     x-whop-docs-title: Financial Activity
     x-whop-summary: The activity feed behind an account or user's balance.
@@ -483,11 +487,10 @@ tags:
       payout terms.
 
 
-      Retrieve your profile with `/partners/{id}`. Use `/partners/links` for
-      your standard referral URL and paginated promotion links, including reward
-      amounts, requirements, redemption counts, and availability. You can also
-      enroll in the partner program, review referred users and businesses, track
-      earnings, and see the partner leaderboard.
+      Retrieve your profile with `/partners/{id}`. Use
+      `/partner_referral_requests` to create and manage referral links and their
+      rewards. You can also enroll in the partner program, review referred users
+      and businesses, track earnings, and see the partner leaderboard.
     name: Partners
     x-whop-summary: >-
       Your partner profile, referral links, payout rates, and referred
@@ -1189,9 +1192,11 @@ components:
     bearerAuth:
       bearerFormat: auth-scheme
       description: >-
-        An Account API key, account-scoped JWT, App API key, or user OAuth
-        token. Prepend the key or token with `Bearer`, for example `Bearer
-        ***************************`.
+        An Account API key, an App API key, an account access token, an
+        account-scoped user token, or a user OAuth token. Prepend the key or
+        token with `Bearer`, for example `Bearer ***************************`.
+        See [Auth & API keys](/developer/guides/auth-scoping) for how to get
+        each one.
       scheme: bearer
       type: http
 

@@ -28,12 +28,6 @@ Use the Dispute alerts API to list alerts for an account, filter them by type or
       alert is unmatched.
     </ResponseField>
 
-    <ResponseField name="actionable" type="boolean" required>
-      Whether refunding the payment can still avoid a chargeback. `false` once the
-      payment has been disputed or fully refunded, or when the alert could not be
-      matched to a payment — `not_actionable_reason` says which.
-    </ResponseField>
-
     <ResponseField name="amount" type="number" required>
       The alerted amount, in whole units of `currency`. This is what the issuer
       reported, which can differ from the payment's own amount.
@@ -59,13 +53,9 @@ Use the Dispute alerts API to list alerts for an account, filter them by type or
     </ResponseField>
 
     <ResponseField name="issuer" type="string | null" required>
-      Name of the bank that issued the card and filed the report.
-    </ResponseField>
-
-    <ResponseField name="not_actionable_reason" type="string | null" required>
-      Why refunding can no longer avoid a chargeback. `network_resolved` when a Visa RDR already closed the case, `payment_unmatched` when no payment matched, `payment_not_captured` when it never captured money, `payment_disputed` once the payment carries a dispute, `payment_refunded` once fully refunded. `null` while `actionable` is true.
-
-      Available options: `network_resolved`, `payment_unmatched`, `payment_not_captured`, `payment_disputed`, `payment_refunded`
+      Deprecated: always `null` outside Whop's own dashboard. Name of the bank that
+      issued the card and filed the report. DEPRECATED: Always null outside Whop's
+      own dashboard.
     </ResponseField>
 
     <ResponseField name="payment_id" type="string | null" required>
@@ -83,7 +73,10 @@ Use the Dispute alerts API to list alerts for an account, filter them by type or
     </ResponseField>
 
     <ResponseField name="transaction_at" type="string | null" required>
-      When the reported transaction was made, as an ISO 8601 timestamp.
+      When the reported transaction was made, as an ISO 8601 timestamp — falls back
+      to when the matched payment was made if the issuer's own report didn't carry
+      one. Should not be `null` in practice; treat one as a data issue rather than
+      expected behavior.
     </ResponseField>
 
     <ResponseField name="type" type="string" required>
@@ -103,12 +96,10 @@ Use the Dispute alerts API to list alerts for an account, filter them by type or
       {
       	"id": "dspa_xxxxxxxxxxxxx",
       	"type": "dispute_alert",
-      	"actionable": true,
-      	"not_actionable_reason": null,
       	"amount": 69.95,
       	"currency": "usd",
       	"card_brand": "visa",
-      	"issuer": "JPMorgan Chase Bank",
+      	"issuer": null,
       	"account_id": "biz_xxxxxxxxxxxxxx",
       	"payment_id": "pay_xxxxxxxxxxxxxx",
       	"product_id": "prod_xxxxxxxxxxxxx",

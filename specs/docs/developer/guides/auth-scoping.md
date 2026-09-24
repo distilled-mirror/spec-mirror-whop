@@ -4,16 +4,17 @@
 
 # Auth & API Keys
 
-> The four Whop credential types, when to use each, and how to scope a credential down to the actions it actually needs.
+> The five Whop credential types, when to use each, and how to scope a credential down to the actions it actually needs.
 
-Whop has four credential types. Which one you need depends on whose data you are reaching and where the code runs. Pick from this table, then scope the credential down before it goes near production.
+Whop has five credential types. Which one you need depends on whose data you are reaching and where the code runs. Pick from this table, then scope the credential down before it goes near production.
 
-| Credential                    | Acts as                      | Lives                                      | Use when                                                                                      |
-| ----------------------------- | ---------------------------- | ------------------------------------------ | --------------------------------------------------------------------------------------------- |
-| **API key**                   | Your account, or your app    | Your server                                | Your backend reaches your own account, or every account that installed your app               |
-| **Account-scoped user token** | One user, inside one account | Minted on your server, used in your client | Your product already has its own users and you need them to reach Whop without a Whop sign-in |
-| **iframe user token**         | The user viewing your app    | Sent by Whop, verified by you              | Your app renders inside Whop and you need to know who is looking at it                        |
-| **OAuth token**               | A user who signed in to Whop | Your server, after the OAuth flow          | You want users to sign in with Whop and grant your app access to their account                |
+| Credential                    | Acts as                                 | Lives                                      | Use when                                                                                      |
+| ----------------------------- | --------------------------------------- | ------------------------------------------ | --------------------------------------------------------------------------------------------- |
+| **API key**                   | Your account, or your app               | Your server                                | Your backend reaches your own account, or every account that installed your app               |
+| **Account-scoped user token** | One user, inside one account            | Minted on your server, used in your client | Your product already has its own users and you need them to reach Whop without a Whop sign-in |
+| **Account access token**      | Your account, with narrowed permissions | Minted on your server, used in your client | A client needs short-lived access to your account without holding your API key                |
+| **iframe user token**         | The user viewing your app               | Sent by Whop, verified by you              | Your app renders inside Whop and you need to know who is looking at it                        |
+| **OAuth token**               | A user who signed in to Whop            | Your server, after the OAuth flow          | You want users to sign in with Whop and grant your app access to their account                |
 
 ## API keys
 
@@ -70,6 +71,12 @@ These actions appear across Whop's guides today:
 | `company:balance:read`        | Read an account's balance       |
 
 The API doesn't publish a fixed list, so treat this as the documented set rather than the complete one. The authoritative bound is always the minting credential's own permissions.
+
+## Account access tokens
+
+An account access token acts as the account itself, with no user attached. Create one with `POST /api/v1/access_tokens`, passing only `account_id` and the `scoped_actions` to allow. It expires on the same schedule as an account-scoped user token.
+
+Use it when a client needs your account's access for a short time, such as an embedded component, and no specific user is involved. Endpoints that act as a user, like notification or preference endpoints, reject it.
 
 ## `iframe` user tokens
 

@@ -6,7 +6,7 @@
 
 A Ledger Activity row is a single financial event on an account's ledger — a payment, payout, refund, transfer, on-chain deposit, swap, or card transaction. Each row is derived from the underlying ledger lines and carries a typed `resource` and `source` so you can present and link the event without extra lookups.
 
-Use Ledger Activity to build a statement or transaction feed for an account or user. Reconcile against your own records with `amount` (signed, in the currency's smallest precision units) and `posted_at`, and use `available_at` to know when inflows became withdrawable.
+Use Ledger Activity to build a statement or transaction feed for an account or user. Reconcile against your own records with `amount` (signed, in the currency's smallest precision units) and `posted_at`, and use `available_at` to group credits and debits by when they affect available funds. Pending activity uses its scheduled release date; activity posted to available funds uses its posted time, including refunds, disputes and payouts. Default activity excludes some movements, including opt-in reserves.
 
 ## Endpoints
 
@@ -34,12 +34,13 @@ Use Ledger Activity to build a statement or transaction feed for an account or u
     </ResponseField>
 
     <ResponseField name="available_at" type="string | null" required>
-      ISO 8601 timestamp these funds became (or are scheduled to become)
-      withdrawable: the posted time for already-settled funds, or 00:00:00 UTC on
-      the scheduled release date for pending funds. Present only on inflows entering
-      the balance (payments, top-ups, incoming transfers/affiliate); null on
-      payouts, refunds, disputes and on-chain rows. The available\_after/before
-      filters window on its UTC settlement date.
+      ISO 8601 timestamp when this activity affects available funds: 00:00:00 UTC on
+      the scheduled release date for credits and debits in a pending good-funds
+      release bucket; the posted time for credits and debits to settled available
+      funds, including refunds, disputes and payouts. Null for activity outside
+      these paths, including on-chain rows. The available\_after/before filters use
+      its UTC date; default activity excludes some movements, including opt-in
+      reserves.
     </ResponseField>
 
     <ResponseField name="currency" type="object" required>

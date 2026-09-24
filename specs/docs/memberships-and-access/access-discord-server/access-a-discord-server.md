@@ -17,9 +17,9 @@ Connect your Discord account to Whop to access the Discord servers included with
     Sign in at [whop.com](https://whop.com).
   </Step>
 
-  <Step title="Go to Connected Accounts" titleSize="h3">
-    Go to the [**Connected
-    Accounts**](https://whop.com/@me/settings/connected-accounts/) settings page
+  <Step title="Go to Social accounts" titleSize="h3">
+    Go to the [**Social
+    accounts**](https://whop.com/@me/settings/social-accounts/) settings page
     on Whop to view and edit your account settings.
   </Step>
 
@@ -37,7 +37,7 @@ Connect your Discord account to Whop to access the Discord servers included with
   </Step>
 </Steps>
 
-**On mobile:** Open your mobile browser, go to the same [Connected Accounts](https://whop.com/@me/settings/connected-accounts/) page, tap **Add Account**, and follow the same steps to log into Discord and authorize Whop.
+**On mobile:** Open your mobile browser, go to the same [Social accounts](https://whop.com/@me/settings/social-accounts/) page, tap **Add Account**, and follow the same steps to log into Discord and authorize Whop.
 
 ## Server access
 

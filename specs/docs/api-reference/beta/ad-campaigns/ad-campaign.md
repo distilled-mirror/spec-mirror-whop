@@ -48,8 +48,19 @@ Ads billing combines eligible spend across the account's campaigns. A failed pay
     </ResponseField>
 
     <ResponseField name="budget_amount" type="number | null" required>
-      The campaign's budget, in the ad account's currency. `null` when each ad group
-      sets its own budget instead.
+      The campaign's budget in USD, which is what it is stored and billed in. `null`
+      when each ad group sets its own budget instead.
+    </ResponseField>
+
+    <ResponseField name="budget_amount_local" type="number | null" required>
+      The same budget stated in `budget_currency` at today's exchange rate, for
+      display in the account's ads reporting currency. `null` when `budget_amount`
+      is.
+    </ResponseField>
+
+    <ResponseField name="budget_currency" type="string" required>
+      The ISO 4217 code `budget_amount_local` is in: the account's
+      `ads_reporting_currency` preference. `usd` unless the account changed it.
     </ResponseField>
 
     <ResponseField name="budget_optimization" type="string | null" required>
@@ -173,7 +184,7 @@ Ads billing combines eligible spend across the account's campaigns. A failed pay
     <ResponseField name="delivery_status" type="string" required>
       Whether the campaign's ads are delivering right now, and if not, why. Account billing failures set payment\_failed without changing the configured status. Successful payment retry clears that block and recalculates delivery. When several states apply at once, the highest-precedence one is returned.
 
-      Available options: `payment_failed`, `all_ads_rejected`, `draft`, `no_ad_groups`, `no_ads`, `paused`, `processing`, `issues`, `scheduled`, `completed`, `ad_groups_off`, `active`
+      Available options: `payment_failed`, `in_appeal`, `all_ads_rejected`, `draft`, `no_ad_groups`, `no_ads`, `paused`, `processing`, `issues`, `scheduled`, `completed`, `ad_groups_off`, `active`
     </ResponseField>
 
     <ResponseField name="frequency" type="number | null" required>
@@ -237,7 +248,7 @@ Ads billing combines eligible spend across the account's campaigns. A failed pay
     <ResponseField name="platform" type="string" required>
       The ad network the campaign runs on.
 
-      Available options: `meta`, `tiktok`
+      Available options: `meta`, `tiktok`, `google`
     </ResponseField>
 
     <ResponseField name="purchase_value" type="number" required>
@@ -348,6 +359,8 @@ Ads billing combines eligible spend across the account's campaigns. A failed pay
       	"added_to_carts": 42,
       	"bid_type": "minimum_cost",
       	"budget_amount": 250,
+      	"budget_amount_local": 250,
+      	"budget_currency": "usd",
       	"budget_optimization": "ad_campaign",
       	"budget_type": "daily",
       	"click_through_rate": 0.032,

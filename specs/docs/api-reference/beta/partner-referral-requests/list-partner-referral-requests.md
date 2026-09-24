@@ -4,7 +4,7 @@
 
 # List Partner Referral Requests
 
-> Lists requests sent by an eligible partner and requests for accounts where the authenticated user currently holds the owner role. Filters narrow that combined view. Use a Whop login session or an account API key with `partner:referral_request:read`. The key must have been created by the account's current owner. Account API keys return their owner's sent requests and incoming requests for the key's account.
+> Lists requests sent by an eligible partner and requests for accounts where the authenticated user currently holds the owner role. Enrolled, non-suspended partners can read their links without verification; reading their sent manual requests requires verification. Filters narrow that combined view. Use a Whop login session or an account API key with `partner:referral_request:read`. The key must have been created by the account's current owner. Account API keys return their owner's sent requests and incoming requests for the key's account.
 
 
 

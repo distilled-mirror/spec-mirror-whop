@@ -79,13 +79,14 @@ See [Paying for ads](/developer/ads/overview#paying-for-ads) for the dashboard f
 
     Not ready to spend? Add `"status": "draft"` to `ad_campaign`, then launch later with [`PATCH /ad_campaigns/{id}`](/api-reference/beta/ad-campaigns/update-an-ad-campaign) `{"status": "active"}`.
 
-    | Field       | Rule                                                                                                                                      |
-    | ----------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
-    | `creatives` | One entry with no `format` is required (the base asset). `square` / `vertical` / `horizontal` are optional crops on top.                  |
-    | `url`       | Required for website ads. Your whop.com store page works as-is; an external page needs your [Whop pixel](/developer/ads/pixel) installed. |
-    | Budget      | One level owns it: `budget_amount` on the ad group (default), or on the campaign with `budget_optimization: "ad_campaign"` — never both.  |
-    | Targeting   | Omit `demographics` / `placements` / `devices` for automatic optimization. `regions` uses ISO 3166 (`"US"`, `"US-CA"`).                   |
-    | `lead_form` | Only with an instant-form `conversion_location`.                                                                                          |
+    | Field       | Rule                                                                                                                                                                                                                                                                                                                                               |
+    | ----------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+    | `creatives` | One entry with no `format` is required (the base asset). `square` / `vertical` / `horizontal` are optional crops on top.                                                                                                                                                                                                                           |
+    | `url`       | Required for website ads. Your whop.com store page works as-is; an external page needs your [Whop pixel](/developer/ads/pixel) installed.                                                                                                                                                                                                          |
+    | Budget      | One level owns it: `budget_amount` on the ad group (default), or on the campaign with `budget_optimization: "ad_campaign"` — never both.                                                                                                                                                                                                           |
+    | Currency    | `budget_amount` is USD, which budgets are stored and billed in. To state a budget in the account's `ads_reporting_currency` instead, send `budget_amount_local`; Whop converts it at the current rate and stores the USD result. Send one or the other, never both. Responses carry `budget_amount`, `budget_amount_local`, and `budget_currency`. |
+    | Targeting   | Omit `demographics` / `placements` / `devices` for automatic optimization. `regions` uses ISO 3166 (`"US"`, `"US-CA"`).                                                                                                                                                                                                                            |
+    | `lead_form` | Only with an instant-form `conversion_location`.                                                                                                                                                                                                                                                                                                   |
 
     To reuse existing containers, pass `ad_group_id` instead of `ad_group`, or `ad_campaign_id` instead of `ad_campaign`.
   </Step>
@@ -101,12 +102,14 @@ See [Paying for ads](/developer/ads/overview#paying-for-ads) for the dashboard f
 
 Every gate is a `400` whose message says what to fix:
 
-| Error contains                                   | Fix                                                                                                                           |
-| ------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------- |
-| `The Whop pixel was not detected on <url>`       | Use your own whop.com store page, or [install the pixel](/developer/ads/pixel) on the landing page.                           |
-| `A Facebook page is required`                    | Connect one via `POST /social_accounts` (human OAuth step), pass it in `social_accounts`.                                     |
-| `Connect an ads payment method before launching` | Create with `ad_campaign.status: "draft"`, have the user connect a payment method in the dashboard, then `PATCH` to `active`. |
-| `Include a base creative`                        | Add a `creatives` entry with no `format`.                                                                                     |
-| `A destination URL is required`                  | Pass `url`.                                                                                                                   |
-| `budget_amount is required` / `can't be set`     | Move the budget to the right level (see the earlier field rules).                                                             |
-| `402` + `deposit_url` (media)                    | Send the user to `deposit_url` to top up, then retry.                                                                         |
+| Error contains                                              | Fix                                                                                                                           |
+| ----------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| `The Whop pixel was not detected on <url>`                  | Use your own whop.com store page, or [install the pixel](/developer/ads/pixel) on the landing page.                           |
+| `A Facebook page is required`                               | Connect one via `POST /social_accounts` (human OAuth step), pass it in `social_accounts`.                                     |
+| `Connect an ads payment method before launching`            | Create with `ad_campaign.status: "draft"`, have the user connect a payment method in the dashboard, then `PATCH` to `active`. |
+| `Include a base creative`                                   | Add a `creatives` entry with no `format`.                                                                                     |
+| `A destination URL is required`                             | Pass `url`.                                                                                                                   |
+| `budget_amount is required` / `can't be set`                | Move the budget to the right level (see the earlier field rules).                                                             |
+| `Provide either budget_amount (USD) or budget_amount_local` | The two fields named different budgets; send one. An echoed `GET` body, whose local amount restates the stored one, is fine.  |
+| `503` `Exchange rate for <currency> is unavailable`         | Whop has no fresh rate for the account's reporting currency right now; retry in a few minutes.                                |
+| `402` + `deposit_url` (media)                               | Send the user to `deposit_url` to top up, then retry.                                                                         |

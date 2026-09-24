@@ -16151,6 +16151,7 @@
           "splitit",
           "sunbit",
           "swish",
+          "tabby",
           "tamara",
           "touch_n_go",
           "twint",
@@ -20808,7 +20809,7 @@
     "termsOfService": "https://whop.com/tos-developer-api/",
     "title": "Whop API",
     "version": "1.0.0",
-    "x-api-version-date": "2026-09-22-2"
+    "x-api-version-date": "2026-09-23"
   },
   "openapi": "3.1.0",
   "paths": {
@@ -115838,6 +115839,8 @@
                   "route": "ceramic-coating-package",
                   "title": "Ceramic Coating Package",
                   "updated_at": "2026-01-01T12:00:00.000Z",
+                  "variant_attributes": null,
+                  "variants": null,
                   "verified": false,
                   "visibility": "visible"
                 },
@@ -116254,6 +116257,484 @@
                         "example": "2026-01-01T12:00:00.000Z",
                         "type": "string"
                       },
+                      "variant_attributes": {
+                        "description": "The option set the product's variants span, as a map of attribute name to the values in use, e.g. `{\"color\": [\"Blue\", \"Red\"], \"size\": [\"S\", \"M\", \"L\"]}`. Derived from the visible, non-invoice plans that carry `attributes`: keys alphabetical, values in the order the plans were created. Read-only. `null` when the product has no variants.",
+                        "example": {
+                          "color": [
+                            "Red",
+                            "Blue"
+                          ],
+                          "size": [
+                            "M",
+                            "S"
+                          ]
+                        },
+                        "type": [
+                          "object",
+                          "null"
+                        ]
+                      },
+                      "variants": {
+                        "items": {
+                          "properties": {
+                            "account": {
+                              "description": "Account that sells this plan; `null` for standalone invoice plans.",
+                              "oneOf": [
+                                {
+                                  "properties": {
+                                    "id": {
+                                      "description": "Account ID, prefixed `biz_`.",
+                                      "example": "biz_xxxxxxxxxxxxxx",
+                                      "type": "string"
+                                    },
+                                    "title": {
+                                      "description": "Account display name.",
+                                      "example": "Shine Time Auto Detailing",
+                                      "type": "string"
+                                    }
+                                  },
+                                  "required": [
+                                    "id",
+                                    "title"
+                                  ],
+                                  "type": "object"
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            },
+                            "adaptive_pricing_enabled": {
+                              "description": "Whether adaptive pricing is enabled for this plan. Raw setting — does not check processor compatibility or feature flags.",
+                              "example": true,
+                              "type": "boolean"
+                            },
+                            "attributes": {
+                              "additionalProperties": {
+                                "type": "string"
+                              },
+                              "description": "Attribute values that make this plan one variant of its product, as a map of attribute name to value, e.g. `{\"color\": \"Blue\", \"size\": \"Large\"}`. Names are snake_case identifiers and come back in alphabetical order. Every variant plan on a product carries the same attribute names and a distinct set of values; the product lists the full option set as `variant_attributes`. `null` for a plan that is not a variant.",
+                              "example": {
+                                "color": "Blue",
+                                "size": "S"
+                              },
+                              "type": [
+                                "object",
+                                "null"
+                              ]
+                            },
+                            "billing_period": {
+                              "description": "Number of days between recurring charges, such as 30 for monthly or 365 for annual. `null` for one-time plans.",
+                              "example": 30,
+                              "type": [
+                                "number",
+                                "null"
+                              ]
+                            },
+                            "cancel_discount_intervals": {
+                              "description": "Billing intervals the cancellation discount applies to (`0` forever, `1` first payment, or a month count). `null` when none is offered or the actor lacks the `plan:basic:read` scope.",
+                              "example": 3,
+                              "type": [
+                                "number",
+                                "null"
+                              ]
+                            },
+                            "cancel_discount_percentage": {
+                              "description": "Cancellation discount as a whole-number percentage. `null` when none is offered or the actor lacks the `plan:basic:read` scope.",
+                              "example": 20,
+                              "type": [
+                                "number",
+                                "null"
+                              ]
+                            },
+                            "checkout_styling": {
+                              "description": "Plan-level checkout styling (`background_color`, `button_color`, `font_family`, `border_style`); `null` inherits the account default.",
+                              "example": {
+                                "background_color": "#0f172a",
+                                "border_style": "rounded",
+                                "button_color": "#f59e0b",
+                                "font_family": "roboto"
+                              },
+                              "type": [
+                                "object",
+                                "null"
+                              ]
+                            },
+                            "created_at": {
+                              "description": "When the plan was created, as an ISO 8601 timestamp.",
+                              "example": "2026-01-01T12:00:00.000Z",
+                              "type": "string"
+                            },
+                            "currency": {
+                              "description": "Three-letter ISO currency code for this plan's prices.",
+                              "example": "usd",
+                              "type": "string"
+                            },
+                            "custom_fields": {
+                              "items": {
+                                "properties": {
+                                  "field_type": {
+                                    "description": "Custom field input type.",
+                                    "enum": [
+                                      "text"
+                                    ],
+                                    "example": "text",
+                                    "type": "string"
+                                  },
+                                  "id": {
+                                    "description": "Custom field ID, prefixed `field_`.",
+                                    "example": "field_xxxxxxxxxxxxxx",
+                                    "type": "string"
+                                  },
+                                  "name": {
+                                    "description": "Field label shown to customer at checkout.",
+                                    "example": "Vehicle make and model",
+                                    "type": "string"
+                                  },
+                                  "order": {
+                                    "description": "Field position on checkout form.",
+                                    "example": 0,
+                                    "type": "number"
+                                  },
+                                  "placeholder": {
+                                    "description": "Placeholder text shown in the empty field. `null` if none is set.",
+                                    "example": "2021 Audi S5",
+                                    "type": [
+                                      "string",
+                                      "null"
+                                    ]
+                                  },
+                                  "required": {
+                                    "description": "Whether the customer must complete this field to check out.",
+                                    "example": true,
+                                    "type": "boolean"
+                                  }
+                                },
+                                "required": [
+                                  "id",
+                                  "field_type",
+                                  "name",
+                                  "order",
+                                  "placeholder",
+                                  "required"
+                                ],
+                                "type": "object"
+                              },
+                              "type": "array"
+                            },
+                            "description": {
+                              "description": "Customer-visible plan description. Maximum 1000 characters. `null` if no description is set.",
+                              "example": "Two hand washes a month, interior vacuum, and a quarterly sealant top-up.",
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "expiration_days": {
+                              "description": "Access duration in days for expiration-based plans, such as 365 for a one-year pass. `null` for plans without an expiration.",
+                              "example": 365,
+                              "type": [
+                                "number",
+                                "null"
+                              ]
+                            },
+                            "formatted_price": {
+                              "description": "Human-readable price for display (currency + interval), e.g. \"$10 / month\".",
+                              "example": "$59.00 / month",
+                              "type": "string"
+                            },
+                            "id": {
+                              "description": "Plan ID, prefixed `plan_`.",
+                              "example": "plan_xxxxxxxxxxxxxx",
+                              "type": "string"
+                            },
+                            "image": {
+                              "description": "Pricing-tier image (`url`, `blurhash`) shown on the product page; `null` when no image is set.",
+                              "example": {
+                                "blurhash": "LA6bDXT$E3b:R6i+RibEIWbp%ej1",
+                                "url": "https://whop-assets-example.s3.amazonaws.com/uploads/image/2026-01-01/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+                              },
+                              "type": [
+                                "object",
+                                "null"
+                              ]
+                            },
+                            "initial_price": {
+                              "description": "Initial purchase price in plan currency.",
+                              "example": 0,
+                              "type": "number"
+                            },
+                            "initial_price_due": {
+                              "properties": {
+                                "amount": {
+                                  "description": "The amount in major units, as an exact decimal string — `\"10.00\"` is ten dollars. A string so no float rounds it in transit.",
+                                  "example": "-2.50",
+                                  "type": "string"
+                                },
+                                "currency": {
+                                  "description": "Three-letter ISO 4217 currency code, lowercase.",
+                                  "example": "usd",
+                                  "type": "string"
+                                },
+                                "decimals": {
+                                  "description": "How many decimal places the amount CARRIES — the precision the charge itself runs at.",
+                                  "example": 2,
+                                  "type": "integer"
+                                },
+                                "display_decimals": {
+                                  "description": "How many decimal places to SHOW. Usually equal to `decimals`, and deliberately not always: COP is charged in centavos but written in whole pesos, so it is `2` and `0`. Format the number in your own locale using this.",
+                                  "example": 2,
+                                  "type": "integer"
+                                }
+                              },
+                              "required": [
+                                "currency",
+                                "amount",
+                                "decimals",
+                                "display_decimals"
+                              ],
+                              "type": "object"
+                            },
+                            "internal_notes": {
+                              "description": "Private notes not shown to customers. `null` unless the actor has the `plan:basic:read` scope on the plan's account.",
+                              "example": "Maintenance tier. Upsell the interior shampoo add-on at renewal.",
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "invoice": {
+                              "description": "Invoice this plan was generated for; `null` unless created for an invoice.",
+                              "example": {
+                                "id": "inv_xxxxxxxxxxxxxx"
+                              },
+                              "type": [
+                                "object",
+                                "null"
+                              ]
+                            },
+                            "member_count": {
+                              "description": "Active memberships through this plan. `null` unless the actor has the `plan:basic:read` scope on the plan's account.",
+                              "example": 0,
+                              "type": [
+                                "number",
+                                "null"
+                              ]
+                            },
+                            "metadata": {
+                              "description": "Custom key-value pairs stored on the plan. Included in webhook payloads for payment and membership events. Maximum 50 keys, 100 characters per key, 500 characters per value. The reserved keys `custom_cta` and `custom_cta_url`, when set, override the product's checkout call to action for this plan.",
+                              "example": {
+                                "custom_cta": "subscribe",
+                                "custom_cta_url": "https://shinetime.example/wash-club"
+                              },
+                              "type": [
+                                "object",
+                                "null"
+                              ]
+                            },
+                            "offer_cancel_discount": {
+                              "description": "Whether a cancellation discount is offered. `null` unless the actor has the `plan:basic:read` scope on the plan's account.",
+                              "example": true,
+                              "type": [
+                                "boolean",
+                                "null"
+                              ]
+                            },
+                            "payment_method_configuration": {
+                              "description": "Payment method configuration (`enabled`, `disabled`, `include_platform_defaults`); `null` when plan uses default settings.",
+                              "example": {
+                                "disabled": [
+                                  "crypto"
+                                ],
+                                "enabled": [
+                                  "card"
+                                ],
+                                "include_platform_defaults": true
+                              },
+                              "type": [
+                                "object",
+                                "null"
+                              ]
+                            },
+                            "plan_type": {
+                              "description": "Billing model for this plan.",
+                              "enum": [
+                                "renewal",
+                                "one_time"
+                              ],
+                              "example": "renewal",
+                              "type": "string"
+                            },
+                            "product": {
+                              "description": "Product this plan belongs to; `null` for standalone plans.",
+                              "example": {
+                                "id": "prod_xxxxxxxxxxxxxx",
+                                "title": "Ceramic Coating Package"
+                              },
+                              "type": [
+                                "object",
+                                "null"
+                              ]
+                            },
+                            "purchase_url": {
+                              "description": "URL where customers can purchase this plan directly.",
+                              "example": "https://whop.com/checkout/plan_xxxxxxxxxxxxxx",
+                              "type": "string"
+                            },
+                            "release_method": {
+                              "description": "Sales method for this plan.",
+                              "enum": [
+                                "buy_now",
+                                "waitlist"
+                              ],
+                              "example": "buy_now",
+                              "type": "string"
+                            },
+                            "renewal_price": {
+                              "description": "Recurring price charged every billing period.",
+                              "example": 59,
+                              "type": "number"
+                            },
+                            "sku": {
+                              "description": "Stock keeping unit, free text set by the seller (e.g. `TSHIRT-LARGE-BLUE`). Not enforced unique. `null` when unset.",
+                              "example": "CERAMIC-COATING-S-BLUE",
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "split_pay_required_payments": {
+                              "description": "Installment payments required before the subscription pauses. Must be greater than 1. `null` if split pay is not configured.",
+                              "example": 4,
+                              "type": [
+                                "number",
+                                "null"
+                              ]
+                            },
+                            "stock": {
+                              "description": "Units available for purchase. `null` unless the actor has the `plan:basic:read` scope on the plan's account.",
+                              "example": 0,
+                              "type": [
+                                "number",
+                                "null"
+                              ]
+                            },
+                            "strike_through_initial_price": {
+                              "description": "Original initial price shown with a strikethrough, in the plan's currency. `null` when no strikethrough is set.",
+                              "example": 99,
+                              "type": [
+                                "number",
+                                "null"
+                              ]
+                            },
+                            "strike_through_renewal_price": {
+                              "description": "Original renewal price shown with a strikethrough, in the plan's currency. `null` when no strikethrough is set.",
+                              "example": 79,
+                              "type": [
+                                "number",
+                                "null"
+                              ]
+                            },
+                            "three_ds_level": {
+                              "description": "3D Secure behavior for supported on-session card payments. `mandate_challenge` requires a 3DS challenge before payment processing; `mandate_if_required` mandates a challenge only when the payment processor requires it; `frictionless_if_required` uses the regular frictionless 3DS flow. Payments of $1,000 or more use `mandate_if_required` unless `mandate_challenge` is selected. Risk and authentication recovery requirements can override the preference. `null` inherits the account default.",
+                              "enum": [
+                                "mandate_challenge",
+                                "mandate_if_required",
+                                "frictionless_if_required",
+                                null
+                              ],
+                              "example": "frictionless_if_required",
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "title": {
+                              "description": "Plan display name shown to customers. Maximum 30 characters. A variant created without one defaults to its attribute values joined with ` / `. `null` if no title has been set.",
+                              "example": "Unlimited Wash Club",
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "trial_period_days": {
+                              "description": "Free trial days before the first renewal charge. `null` if no trial is configured or the user has already used a trial for this plan.",
+                              "example": 7,
+                              "type": [
+                                "number",
+                                "null"
+                              ]
+                            },
+                            "unlimited_stock": {
+                              "description": "Whether the plan has unlimited stock. When `true`, the `stock` field is ignored; waitlist plans always report `true`.",
+                              "example": false,
+                              "type": "boolean"
+                            },
+                            "updated_at": {
+                              "description": "When the plan was last updated, as an ISO 8601 timestamp.",
+                              "example": "2026-01-01T12:00:00.000Z",
+                              "type": "string"
+                            },
+                            "visibility": {
+                              "description": "Controls where this plan can be seen. When `hidden`, the plan is reachable only by its direct link.",
+                              "enum": [
+                                "visible",
+                                "hidden",
+                                "archived",
+                                "quick_link"
+                              ],
+                              "example": "visible",
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "id",
+                            "created_at",
+                            "updated_at",
+                            "visibility",
+                            "plan_type",
+                            "release_method",
+                            "currency",
+                            "account",
+                            "product",
+                            "invoice",
+                            "billing_period",
+                            "title",
+                            "description",
+                            "purchase_url",
+                            "expiration_days",
+                            "initial_price",
+                            "renewal_price",
+                            "initial_price_due",
+                            "formatted_price",
+                            "trial_period_days",
+                            "three_ds_level",
+                            "member_count",
+                            "internal_notes",
+                            "metadata",
+                            "sku",
+                            "attributes",
+                            "stock",
+                            "unlimited_stock",
+                            "split_pay_required_payments",
+                            "adaptive_pricing_enabled",
+                            "strike_through_initial_price",
+                            "strike_through_renewal_price",
+                            "checkout_styling",
+                            "offer_cancel_discount",
+                            "cancel_discount_percentage",
+                            "cancel_discount_intervals",
+                            "payment_method_configuration",
+                            "image",
+                            "custom_fields"
+                          ],
+                          "type": "object"
+                        },
+                        "type": [
+                          "array",
+                          "null"
+                        ]
+                      },
                       "verified": {
                         "description": "Whether the product has been verified by Whop.",
                         "example": false,
@@ -116286,6 +116767,7 @@
                       "labels",
                       "account",
                       "default_plan",
+                      "variant_attributes",
                       "custom_cta",
                       "custom_cta_url",
                       "custom_statement_descriptor",
@@ -116296,6 +116778,7 @@
                       "product_tax_code",
                       "owner_user",
                       "marketplace_status",
+                      "variants",
                       "gallery_images"
                     ],
                     "type": "object"

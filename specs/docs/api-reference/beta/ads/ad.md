@@ -219,7 +219,7 @@ Use the Ads API to list ads for an account, create ads inside ad groups, retriev
     <ResponseField name="delivery_status" type="string" required>
       Whether the ad is delivering right now, and if not, why. When several states apply at once, the highest-precedence one is returned.
 
-      Available options: `rejected`, `in_review`, `draft`, `campaign_paused`, `ad_group_paused`, `paused`, `processing`, `issues`, `scheduled`, `learning_limited`, `learning`, `active`
+      Available options: `in_appeal`, `rejected`, `in_review`, `draft`, `campaign_paused`, `ad_group_paused`, `paused`, `processing`, `issues`, `scheduled`, `learning_limited`, `learning`, `active`
     </ResponseField>
 
     <ResponseField name="descriptions" type="string[]" required>
@@ -280,16 +280,30 @@ Use the Ads API to list ads for an account, create ads inside ad groups, retriev
               Text of the follow-up button.
             </ResponseField>
 
+            <ResponseField name="button_type" type="string | null" required>
+              What the follow-up button does. `null` on forms saved before the button was configurable.
+
+              Available options: `website`, `call`, `download`
+            </ResponseField>
+
             <ResponseField name="description" type="string | null" required>
               Body text under the headline.
+            </ResponseField>
+
+            <ResponseField name="file_url" type="string | null" required>
+              File the follow-up button opens. Set when `button_type` is `download`.
             </ResponseField>
 
             <ResponseField name="headline" type="string | null" required>
               Headline of the completion screen.
             </ResponseField>
 
+            <ResponseField name="phone_number" type="string | null" required>
+              Number the follow-up button calls. Set when `button_type` is `call`.
+            </ResponseField>
+
             <ResponseField name="url" type="string | null" required>
-              Website the follow-up button opens. `null` when the screen has no button.
+              Website the follow-up button opens. Set when `button_type` is `website`.
             </ResponseField>
           </Accordion>
         </ResponseField>
@@ -489,7 +503,7 @@ Use the Ads API to list ads for an account, create ads inside ad groups, retriev
     <ResponseField name="platform" type="string" required>
       The ad platform this ad runs on.
 
-      Available options: `meta`, `tiktok`
+      Available options: `meta`, `tiktok`, `google`
     </ResponseField>
 
     <ResponseField name="post_id" type="string | null" required>

@@ -4,7 +4,7 @@
 
 # Create a Partner Referral Request
 
-> Creates a pending manual request for an existing business as the authenticated, enrolled, verified Whop partner. Provide exactly one of account_id or account_url. Whop business and product links resolve to their business. A business owner must accept before attribution changes. An existing pending manual request from the same partner returns 200; a new request returns 201. Use a Whop login session or an account API key with `partner:referral_request:create`. The key must have been created by the account's current owner. Account API keys submit requests as their account owner, who must be enrolled, verified, and not suspended.
+> Creates a pending manual request for an existing business as the authenticated, enrolled, verified Whop partner. Provide exactly one of account_id or account_url. Whop business and product links resolve to their business. A business owner must accept before attribution changes. An existing pending manual request from the same partner returns 200; a new request returns 201. Alternatively, send request_type=link without a code, business, or redemption limit to get your oldest saved referral link, or create one with a randomly generated code when none exists. Provide a custom code or redemption limit to create a new link; omitted codes are generated randomly. Only authorized staff may configure rewards or select another partner. Link creation requires partner enrollment and a non-suspended account, but not verification. Use a Whop login session or an account API key with `partner:referral_request:create`. The key must have been created by the account's current owner and acts as that owner.
 
 
 

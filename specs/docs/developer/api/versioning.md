@@ -37,7 +37,19 @@ Every version automatically gets new endpoints and optional fields. Breaking cha
 
 The TypeScript SDK releases listed below use the API version in that entry by default. Overriding `apiVersionDate` changes the response version, but not the SDK types.
 
-<Update label="2026-09-22-2" description="Account rewards show partner reward progress" tags={["Latest"]}>
+<Update label="2026-09-23" description="Trading access appears in permission checks" tags={["Latest"]}>
+  `GET /permissions` includes `crypto_wallet:trade` and `crypto_wallet:trade:read` when listing or checking permission actions for an account.
+</Update>
+
+<Update label="2026-09-22-4" description="Economic Intelligence operation descriptions">
+  Economic Intelligence recommendations return `expected_tool_calls` as an ordered array of objects with `tool_name` and `description`. Descriptions identify the planned action and affected resource. Older recommendations have a `null` description.
+</Update>
+
+<Update label="2026-09-22-3" description="Partner referral links use one request type">
+  Partner referral requests use `request_type: "link"` for links with or without rewards. Use `link` when creating or filtering links. Only authorized staff can configure rewards.
+</Update>
+
+<Update label="2026-09-22-2" description="Account rewards show partner reward progress">
   Retrieve Account returns partner reward milestones in `rewards`. Each milestone includes qualification progress and payout status for that account. The field contains an empty array when there are no matching rewards or the caller lacks balance or stats read access.
 
   The legacy onboarding reward format is retired. Earlier API versions omit `rewards` from account responses.

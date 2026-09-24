@@ -184,6 +184,19 @@ Send money from a balance to a bank or wallet.
 
 `create` · `get` · `list` · `methods` · `create-method` · `update-method` · `delete-method` · `supported-methods`
 
+### Trading balances on accounts and users
+
+Read trading balances, positions and open orders from the supported provider. These commands don't place orders or move funds. Hyperliquid is currently supported.
+
+<Note>
+  Trading is available by request. Email [support@whop.com](mailto:support@whop.com) to get access.
+</Note>
+
+```bash theme={null}
+whop accounts get biz_xxx --include_trading true --format json
+whop users get me --include_trading true --format json
+```
+
 ### `cards`
 
 Issue cards that spend from a balance.

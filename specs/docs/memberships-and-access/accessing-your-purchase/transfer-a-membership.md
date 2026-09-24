@@ -64,8 +64,8 @@ If you linked your Discord account to the wrong Whop account, you may need to di
     Go to your [Profile](https://whop.com/@me/).
   </Step>
 
-  <Step title="Open Settings > Connected accounts" titleSize="h3">
-    Select **Edit profile** to open **Settings** > **[Connected accounts](https://whop.com/@me/settings/connected-accounts/)**.
+  <Step title="Open Settings > Social accounts" titleSize="h3">
+    Select **Edit profile** to open **Settings** > **[Social accounts](https://whop.com/@me/settings/social-accounts/)**.
   </Step>
 
   <Step title="Unlink the Discord account" titleSize="h3">
@@ -100,4 +100,4 @@ To switch the Discord account associated with your Whop purchase:
   </Step>
 </Steps>
 
-To switch: go to the **[Connected Accounts](https://whop.com/@me/settings/connected-accounts/)** page on Whop, disconnect the current Discord account, then connect the new one.
+To switch: go to the **[Social accounts](https://whop.com/@me/settings/social-accounts/)** page on Whop, disconnect the current Discord account, then connect the new one.

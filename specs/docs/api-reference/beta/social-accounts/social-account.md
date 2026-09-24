@@ -59,7 +59,7 @@ Use the Social Accounts API to list connected accounts, create a Whop-managed Fa
         <ResponseField name="platform" type="string" required>
           The platform the parent social account exists on.
 
-          Available options: `x`, `instagram`, `youtube`, `tiktok`, `facebook`, `discord`, `telegram`
+          Available options: `x`, `instagram`, `youtube`, `tiktok`, `facebook`, `discord`, `telegram`, `linkedin`
         </ResponseField>
 
         <ResponseField name="profile_picture_url" type="string | null" required>
@@ -80,7 +80,7 @@ Use the Social Accounts API to list connected accounts, create a Whop-managed Fa
     <ResponseField name="platform" type="string" required>
       The platform the social account exists on.
 
-      Available options: `x`, `instagram`, `youtube`, `tiktok`, `facebook`, `discord`, `telegram`
+      Available options: `x`, `instagram`, `youtube`, `tiktok`, `facebook`, `discord`, `telegram`, `linkedin`
     </ResponseField>
 
     <ResponseField name="profile_picture_url" type="string | null" required>

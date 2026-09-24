@@ -71,8 +71,19 @@ Use the Ad Groups API to create ad groups in campaigns, list or retrieve targeti
     </ResponseField>
 
     <ResponseField name="budget_amount" type="number | null" required>
-      This ad group's budget, in the ad account's currency. `null` when the budget
-      is set on the campaign instead.
+      This ad group's budget in USD, which is what it is stored and billed in.
+      `null` when the budget is set on the campaign instead.
+    </ResponseField>
+
+    <ResponseField name="budget_amount_local" type="number | null" required>
+      The same budget stated in `budget_currency` at today's exchange rate, for
+      display in the account's ads reporting currency. `null` when `budget_amount`
+      is.
+    </ResponseField>
+
+    <ResponseField name="budget_currency" type="string" required>
+      The ISO 4217 code `budget_amount_local` is in: the account's
+      `ads_reporting_currency` preference. `usd` unless the account changed it.
     </ResponseField>
 
     <ResponseField name="budget_type" type="string | null" required>
@@ -201,7 +212,7 @@ Use the Ad Groups API to create ad groups in campaigns, list or retrieve targeti
     <ResponseField name="delivery_status" type="string" required>
       Whether ads in this ad group are delivering right now, and if not, why. When several states apply at once, the highest-precedence one is returned.
 
-      Available options: `all_ads_rejected`, `rejected`, `draft`, `no_ads`, `campaign_paused`, `paused`, `processing`, `issues`, `scheduled`, `completed`, `ads_off`, `learning_limited`, `learning`, `active`
+      Available options: `in_appeal`, `all_ads_rejected`, `rejected`, `draft`, `no_ads`, `campaign_paused`, `paused`, `processing`, `issues`, `scheduled`, `completed`, `ads_off`, `learning_limited`, `learning`, `active`
     </ResponseField>
 
     <ResponseField name="demographics" type="object" required>
@@ -439,7 +450,7 @@ Use the Ad Groups API to create ad groups in campaigns, list or retrieve targeti
     <ResponseField name="platform" type="string" required>
       The ad platform this ad group runs on.
 
-      Available options: `meta`, `tiktok`
+      Available options: `meta`, `tiktok`, `google`
     </ResponseField>
 
     <ResponseField name="purchase_value" type="number" required>
@@ -706,6 +717,8 @@ Use the Ad Groups API to create ad groups in campaigns, list or retrieve targeti
       	},
       	"bid_type": "minimum_cost",
       	"budget_amount": 100,
+      	"budget_amount_local": 100,
+      	"budget_currency": "usd",
       	"budget_type": "daily",
       	"click_through_rate": 0.036,
       	"clicks": 720,

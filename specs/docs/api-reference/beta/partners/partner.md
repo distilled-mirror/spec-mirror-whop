@@ -6,7 +6,7 @@
 
 Get started at [whop.com/network](https://whop.com/network). A Partner is a user who refers people and businesses to Whop. The partner profile includes enrollment, active direct business referral counts, and default payout terms.
 
-Retrieve your profile with `/partners/{id}`. Use `/partners/links` for your standard referral URL and paginated promotion links, including reward amounts, requirements, redemption counts, and availability. You can also enroll in the partner program, review referred users and businesses, track earnings, and see the partner leaderboard.
+Retrieve your profile with `/partners/{id}`. Use `/partner_referral_requests` to create and manage referral links and their rewards. You can also enroll in the partner program, review referred users and businesses, track earnings, and see the partner leaderboard.
 
 ## Endpoints
 
@@ -17,7 +17,6 @@ Retrieve your profile with `/partners/{id}`. Use `/partners/links` for your stan
 | [Retrieve a referred business](/api-reference/beta/partners/retrieve-a-referred-business)             | <Badge color="blue" size="sm" stroke>GET</Badge> `/partners/businesses/{id}`          |
 | [List referred business earnings](/api-reference/beta/partners/list-referred-business-earnings)       | <Badge color="blue" size="sm" stroke>GET</Badge> `/partners/businesses/{id}/earnings` |
 | [Retrieve the leaderboard](/api-reference/beta/partners/retrieve-the-leaderboard)                     | <Badge color="blue" size="sm" stroke>GET</Badge> `/partners/leaderboard`              |
-| [List partner links](/api-reference/beta/partners/list-partner-links)                                 | <Badge color="blue" size="sm" stroke>GET</Badge> `/partners/links`                    |
 | [List the users the caller referred](/api-reference/beta/partners/list-the-users-the-caller-referred) | <Badge color="blue" size="sm" stroke>GET</Badge> `/partners/referred_users`           |
 | [Enroll as a Whop partner](/api-reference/beta/partners/enroll-as-a-whop-partner)                     | <Badge color="green" size="sm" stroke>POST</Badge> `/partners`                        |
 

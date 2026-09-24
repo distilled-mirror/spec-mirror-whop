@@ -4,7 +4,7 @@
 
 # Update Dispute
 
-> Edits a dispute's evidence, while it is still editable. Sending it is a separate call.
+> Edits a dispute's evidence, while it is still editable. Sending it is a separate call. `evidence.documents`, when provided, replaces the full set of documents beyond the four fixed evidence slots — see its own description.
 
 
 
