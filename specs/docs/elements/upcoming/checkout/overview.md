@@ -96,6 +96,12 @@ Pass these to `whop.checkout.create({ … })`, or as props on `<Checkout>` in Re
 
 Pass callbacks in the create options or React props.
 
+### `onComplete`
+
+Fires once per mount when the checkout completes and its result stands. `result` says what stands: `payment` (the buyer paid — `paymentId`), `waitlist_entry` (the buyer joined a waitlist — `entryId`) or `setup` (a setup-mode checkout saved the payment method — `setupIntentId`); `sessionId` is the checkout session either way. Fires before any `returnUrl` navigation, so this is where your own analytics or ad pixels record the purchase. Fulfill from webhooks, not from this callback: a checkout restored on a later page load fires it again for the same result.
+
+**Signature:** `((payload: CheckoutPaymentCompletion | CheckoutWaitlistCompletion | CheckoutSetupCompletion) => void)`
+
 ### `onLoadingChange`
 
 Runs when the grouped loading state changes. The value is `true` while any mounted element is still loading.
@@ -173,6 +179,66 @@ Checkout attribution recorded with the session. The element maps these fields to
 ### `source`
 
 **Signature:** `string | undefined`
+
+## `CheckoutPaymentCompletion`
+
+The buyer paid.
+
+### `sessionId`
+
+The checkout session, prefixed `chs_`.
+
+**Signature:** `string`
+
+### `result`
+
+**Signature:** `"payment"`
+
+### `paymentId`
+
+The payment, prefixed `pay_` — the id to record the purchase under.
+
+**Signature:** `string`
+
+## `CheckoutWaitlistCompletion`
+
+The buyer joined a waitlist; nothing was charged.
+
+### `sessionId`
+
+The checkout session, prefixed `chs_`.
+
+**Signature:** `string`
+
+### `result`
+
+**Signature:** `"waitlist_entry"`
+
+### `entryId`
+
+The waitlist entry, prefixed `ent_`.
+
+**Signature:** `string`
+
+## `CheckoutSetupCompletion`
+
+A setup-mode checkout saved the buyer's payment method; nothing was charged.
+
+### `sessionId`
+
+The checkout session, prefixed `chs_`.
+
+**Signature:** `string`
+
+### `result`
+
+**Signature:** `"setup"`
+
+### `setupIntentId`
+
+The saved setup, prefixed `sint_`.
+
+**Signature:** `string`
 
 ## Elements
 

@@ -50,9 +50,9 @@ Once the bytes land, the file processes and its `upload_status` becomes `ready`.
     "context"
     "os"
 
-    whopsdk "github.com/whopio/whopsdk-go"
-    whopclient "github.com/whopio/whopsdk-go/client"
-    "github.com/whopio/whopsdk-go/option"
+    whopsdk "github.com/whopio/whopsdk-go/v2"
+    whopclient "github.com/whopio/whopsdk-go/v2/client"
+    "github.com/whopio/whopsdk-go/v2/option"
   )
 
   client := whopclient.NewWhop(

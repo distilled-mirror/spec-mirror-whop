@@ -518,8 +518,14 @@ Send `null` for a document to remove it. Only PDF files are accepted.
       Account promotional description.
     </ResponseField>
 
+    <ResponseField name="dispute_fighter_enabled" type="boolean" required>
+      Whether Whop assembles and files dispute evidence for this account. Enabling
+      it opts the account into the success fee charged on disputes it wins.
+    </ResponseField>
+
     <ResponseField name="economic_intelligence" type="boolean" required>
-      Whether economic intelligence is enabled for the account.
+      Whether Economic Intelligence is on for the account. It turns off
+      automatically when its committed period ends.
     </ResponseField>
 
     <ResponseField name="email" type="string | null" required>
@@ -651,6 +657,10 @@ Send `null` for a document to remove it. Only PDF files are accepted.
       Account Open Graph image variant.
 
       Available options: `white`, `black`, `orange`
+    </ResponseField>
+
+    <ResponseField name="orchestration_enabled" type="boolean" required>
+      Whether payment orchestration is enabled for this account.
     </ResponseField>
 
     <ResponseField name="other_business_description" type="string | null" required>
@@ -1016,7 +1026,7 @@ Send `null` for a document to remove it. Only PDF files are accepted.
         <ResponseField name="action" type="string" required>
           What the holder must do; new values may be added, so handle unknown actions gracefully
 
-          Available options: `deposit_funds`, `review_held_payments`, `submit_information_request`, `update_automatic_withdrawal_method`, `reauthorize_payout_methods`, `update_payout_profile`, `card_usage_review`, `verify_identity`, `scale_account_setup`, `sign_formation_documents`, `connect_fulfillment_tracker`, `setup_apple_pay_domains`, `configure_tax_remitter`, `add_vat_registration`, `enable_two_factor_authentication`
+          Available options: `deposit_funds`, `review_held_payments`, `submit_information_request`, `update_automatic_withdrawal_method`, `reauthorize_payout_methods`, `update_payout_profile`, `card_usage_review`, `verify_identity`, `scale_account_setup`, `sign_formation_documents`, `connect_fulfillment_tracker`, `setup_apple_pay_domains`, `configure_tax_remitter`, `add_vat_registration`, `accept_payout_terms`, `enable_two_factor_authentication`
         </ResponseField>
 
         <ResponseField name="blocked_capabilities" type="string[]" required>
@@ -2410,6 +2420,8 @@ Send `null` for a document to remove it. Only PDF files are accepted.
       	},
       	"privacy_policy": null,
       	"require_2fa": true,
+      	"dispute_fighter_enabled": false,
+      	"orchestration_enabled": true,
       	"collect_vat_id": false,
       	"capabilities": {
       		"accept_card_payments": "active",

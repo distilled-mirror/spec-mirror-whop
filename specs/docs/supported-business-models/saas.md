@@ -54,26 +54,26 @@ If you would prefer to not have manage your own user table or even a database, c
   </Step>
 
   <Step title="Add checkout link to your website" titleSize="h3">
-    There are two primary ways to send customers to checkout: an embedded checkout or a hosted checkout link.
+    There are two primary ways to send customers to checkout: the Checkout element on your own site or a hosted checkout link.
 
-    ### Embedded checkout
+    ### Checkout element
 
-    Follow these two steps to embed the checkout on your page. First, include the Whop Checkout loader script:
+    Mount the [Checkout element](/elements/latest/checkout/overview) from Whop Elements. First, include the Elements script:
 
     ```html theme={null}
-    <!-- Step 1 – Include the Whop Checkout loader -->
-    <script
-      async
-      defer
-      src="https://js.whop.com/static/checkout/loader.js"
-    ></script>
+    <!-- Step 1 – Include Whop Elements -->
+    <script src="https://cdn.whop.com/elements/amber/elements.js" data-whop-elements></script>
     ```
 
-    Then, add the checkout element where you want it to appear. Replace `plan_XXXXXXXXX` with your actual plan ID from the dashboard.
+    Then add a container where you want the checkout to appear and mount the element into it. Replace `plan_XXXXXXXXX` with your actual plan ID from the dashboard.
 
     ```html theme={null}
-    <!-- Step 2 – Add the checkout element -->
-    <div data-whop-checkout-plan-id="plan_XXXXXXXXX"></div>
+    <!-- Step 2 – Mount the checkout element -->
+    <div id="checkout"></div>
+    <script type="module">
+      const checkout = window.WhopElements().checkout.create({ plan: "plan_XXXXXXXXX" });
+      checkout.create("checkout").mount("#checkout");
+    </script>
     ```
 
     ### Hosted checkout link

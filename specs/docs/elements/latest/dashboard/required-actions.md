@@ -6,7 +6,7 @@
 
 > The outstanding-action banners from Whop's balance dashboard — identity verification, deposits, tax, and the rest — in the same order the API returns them. An account with nothing outstanding renders nothing at all, so the element can sit permanently in a layout. Copy comes from the API. Pressing Verify starts a hosted identity session and leaves for it; Add money reports `depositRequested` and stays put, so the host mounts its own deposit flow — the `wallet` controller's `deposit` element, say; every other button follows the action's own link. Reads with the Dashboard handle's `accessToken`, which needs `payout:account:read`, plus `identity:write` to start verification. A failed read renders nothing rather than an error — a banner should never become the loudest thing on someone else's page.
 
-<Info>This page documents `@whop/elements@1.0.0` and `@whop/elements-react@1.0.0`.</Info>
+<Info>This page documents `@whop/elements@1.1.0` and `@whop/elements-react@1.1.0`.</Info>
 
 *Since `v1.0.0`.*
 
@@ -50,7 +50,7 @@ Mounts inside [`Dashboard`](/elements/latest/dashboard/overview). `accountId` an
     <div data-whop-demo-shell style={{ position: "relative", minHeight: "320px", transition: "min-height 200ms ease" }}>
       <div data-whop-demo-skeleton style={{ position: "absolute", inset: "0", borderRadius: "12px", background: "rgba(140, 140, 140, 0.12)", pointerEvents: "none", transition: "opacity 200ms ease" }} />
 
-      <div data-whop-demo-native="element:dashboard/required-actions" data-whop-elements-version="1.0.0" style={{ position: "relative" }} />
+      <div data-whop-demo-native="element:dashboard/required-actions" data-whop-elements-version="1.1.0" style={{ position: "relative" }} />
     </div>
 
     <p style={{ fontSize: "0.8125rem", opacity: 0.7 }}>Example data. [Open the Playground](/elements/latest/dashboard/overview#playground).</p>

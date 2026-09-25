@@ -8,28 +8,27 @@
 
 <Note>
   This resource has a successor in the [Whop
-  API](/api-reference/beta/setup-intents/retrieve-setup-status). This page stays
-  fully supported.
+  API](/api-reference/beta/setup-intents/setup-intent). This page stays fully
+  supported.
 </Note>
 
 <Note>
-  **There is no `createSetupIntent` endpoint.** Setup intents are created indirectly by creating a [Checkout Configuration](/api-reference/checkout-configurations/create-a-checkout-configuration) with `mode: "setup"`. The buyer completes that checkout, and Whop creates the setup intent behind the scenes. Listen for the `setup_intent.succeeded` webhook to receive the payment method ID once it's saved.
+  Create a setup intent with [Create setup intent](/api-reference/setup-intents/create-setup-intent), passing a confirmation token from the [payment elements](/elements/latest/payments/overview) mounted in `mode: "setup"`, or an existing payment method to re-verify. A setup-mode [Checkout Configuration](/api-reference/beta/checkout-configurations/create-a-checkout-configuration) creates one for you when the buyer completes that checkout. Either way, listen for the `setup_intent.succeeded` webhook to receive the payment method ID once it's saved.
 
   See [Save payment methods](/developer/guides/save-payment-methods) for the full flow.
 </Note>
 
 ```typescript theme={null}
-// Create a setup intent by opening a checkout in setup mode
-const checkoutConfiguration = await client.checkoutConfigurations.create({
+// Create a setup intent from a confirmation token the payment elements minted in setup mode
+const setupIntent = await client.setupIntents.create({
 	account_id: "biz_xxxxxxxxxxxxx",
-	mode: "setup",
-	redirect_url: "https://yoursite.com/return",
+	confirmation_token: "ctok_xxxxxxxxxxxxxx",
+	return_url: "https://yoursite.com/billing/saved",
 	metadata: { customer_id: "your_internal_id" },
 });
 
-// Redirect the buyer to checkoutConfiguration.purchase_url
-// or use <WhopCheckoutEmbed sessionId={checkoutConfiguration.id} />.
-// Then listen for setup_intent.succeeded on your webhook handler.
+// Hand setupIntent.client_secret to the elements' handleNextAction for any pending step,
+// then listen for setup_intent.succeeded on your webhook handler.
 ```
 
 <ResponseExample>
@@ -242,7 +241,7 @@ const checkoutConfiguration = await client.checkoutConfigurations.create({
     <ResponseField name="payment_method_type" type="PaymentMethodTypes" required>
       The payment method type of the payment method
 
-      Available options: `acss_debit`, `addi`, `affirm`, `afterpay_clearpay`, `alipay`, `alma`, `amazon_pay`, `apple`, `apple_pay`, `au_bank_transfer`, `au_becs_debit`, `bacs_debit`, `bancolombia`, `bancontact`, `bank_wire`, `billie`, `blik`, `boleto`, `bre_b`, `ca_bank_transfer`, `capchase_pay`, `card`, `card_installments_three`, `card_installments_six`, `card_installments_twelve`, `cashapp`, `claritypay`, `coinbase`, `crypto`, `custom`, `customer_balance`, `demo_pay`, `efecty`, `eps`, `eu_bank_transfer`, `fpx`, `flex_pay`, `gb_bank_transfer`, `gcash`, `giropay`, `google_pay`, `gopay`, `grabpay`, `id_bank_transfer`, `ideal`, `interac`, `kakao_pay`, `klarna`, `klarna_pay_now`, `konbini`, `kr_card`, `kr_market`, `kriya`, `kueski`, `link`, `mb_way`, `m_pesa`, `mercado_pago`, `mercado_pago_ar`, `mercado_pago_mx`, `mobilepay`, `modo`, `mondu`, `multibanco`, `naver_pay`, `nequi`, `netbanking`, `ng_bank`, `ng_bank_transfer`, `ng_card`, `ng_market`, `ng_ussd`, `ng_wallet`, `nupay`, `nz_bank_account`, `oney`, `oney_3x`, `oney_4x`, `opay`, `oxxo`, `p24`, `pago_efectivo`, `pse`, `pay_by_bank`, `payco`, `paynow`, `paypal`, `paypay`, `payto`, `pix`, `platform_balance`, `promptpay`, `qris`, `rapipago`, `rechnung`, `revolut_pay`, `samsung_pay`, `satispay`, `scalapay`, `sencillito`, `sepa_debit`, `sequra`, `servipag`, `sezzle`, `shop_pay`, `shopeepay`, `sofort`, `south_korea_market`, `spei`, `splitit`, `sunbit`, `swish`, `tabby`, `tamara`, `touch_n_go`, `twint`, `upi`, `us_bank_account`, `us_bank_transfer`, `venmo`, `verve`, `vipps`, `webpay`, `wechat_pay`, `yape`, `zip`, `coinflow`, `unknown`
+      Available options: `acss_debit`, `addi`, `affirm`, `afterpay_clearpay`, `alipay`, `alipayhk`, `alma`, `amazon_pay`, `apple`, `apple_pay`, `au_bank_transfer`, `au_becs_debit`, `bacs_debit`, `bancolombia`, `bancontact`, `bank_wire`, `billie`, `blik`, `boleto`, `bre_b`, `ca_bank_transfer`, `capchase_pay`, `card`, `card_installments_three`, `card_installments_six`, `card_installments_twelve`, `cashapp`, `claritypay`, `coinbase`, `crypto`, `custom`, `customer_balance`, `demo_pay`, `efecty`, `eps`, `eu_bank_transfer`, `fpx`, `flex_pay`, `gb_bank_transfer`, `gcash`, `giropay`, `google_pay`, `gopay`, `grabpay`, `id_bank_transfer`, `ideal`, `interac`, `kakao_pay`, `klarna`, `klarna_pay_now`, `konbini`, `kr_card`, `kr_market`, `kriya`, `kueski`, `link`, `mb_way`, `m_pesa`, `mercado_pago`, `mercado_pago_ar`, `mercado_pago_mx`, `mobilepay`, `modo`, `mondu`, `multibanco`, `naver_pay`, `nequi`, `netbanking`, `ng_bank`, `ng_bank_transfer`, `ng_card`, `ng_market`, `ng_ussd`, `ng_wallet`, `nupay`, `nz_bank_account`, `oney`, `oney_3x`, `oney_4x`, `opay`, `oxxo`, `p24`, `pago_efectivo`, `pse`, `pay_by_bank`, `payco`, `paynow`, `paypal`, `paypay`, `payto`, `pix`, `platform_balance`, `promptpay`, `qris`, `rapipago`, `rechnung`, `revolut_pay`, `samsung_pay`, `satispay`, `scalapay`, `sencillito`, `sepa_debit`, `sequra`, `servipag`, `sezzle`, `shop_pay`, `shopeepay`, `sofort`, `south_korea_market`, `spei`, `splitit`, `sunbit`, `swish`, `tabby`, `tamara`, `touch_n_go`, `twint`, `upi`, `us_bank_account`, `us_bank_transfer`, `venmo`, `verve`, `vipps`, `webpay`, `wechat_pay`, `yape`, `zip`, `coinflow`, `unknown`
     </ResponseField>
   </Expandable>
 </ResponseField>

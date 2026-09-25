@@ -6,13 +6,19 @@
 
 > One-press Apple Pay and Google Pay buttons for a checkout — the OS payment sheet collects whatever the session still needs (the buyer's email, a phone number where the seller collects one, a shipping address for physical goods, and in Apple Pay a promo code where the seller offers entry) and one press finishes the purchase. It shares the checkout's entry slot with the full checkout element, so a handle mounts exactly one of the two: this button alone where the purchase is simple enough for a sheet to finish, or the full checkout surface for everything else. Renders only the wallets the buyer's device can actually pay with — and the checkout's own payment method configuration allows — using the served button art, and renders nothing where no wallet is available. Both wallets require the page's domain to be a verified payment method domain: first-party whop.com pages are pre-approved, and any other site must register its domain through the Payment Method Domains API before either button renders there. Offering Google Pay on your own site is subject to the Google Pay API Terms of Service. A checkout the sheet cannot honestly finish — a waitlist join, a transfer, a form question only a page can ask — refuses loudly instead of rendering a doomed button.
 
-<Info>This page documents `@whop/elements@1.0.0` and `@whop/elements-react@1.0.0`.</Info>
+<Info>This page documents `@whop/elements@1.1.0` and `@whop/elements-react@1.1.0`.</Info>
 
 *Since `v1.0.0`.*
 
-Mounts inside [`Checkout`](/elements/beta/checkout/overview). Pass props and callbacks through the create options or React props.
+<div data-whop-platform="web">
+  Mounts inside [`Checkout`](/elements/beta/checkout/overview). Pass props and callbacks through the create options or React props.
 
-<Note>**Exclusive.** `ExpressCheckoutElement` is an alternative to `CheckoutElement` in this Checkout handle. Mount one at a time. Destroy it before mounting another.</Note>
+  <Note>**Exclusive.** `ExpressCheckoutElement` is an alternative to `CheckoutElement` in this Checkout handle. Mount one at a time. Destroy it before mounting another.</Note>
+</div>
+
+<div data-whop-platform="react-native" style={{ display: "none" }}>
+  Mount inside `<Checkout>`, which opens the checkout session from your `plan`, `items` or `checkoutConfiguration` and keeps its credential to itself. `<Checkout>` itself mounts inside `<WhopElements>`. One press on the button is the whole purchase: there is no confirmation token to hand to your server.
+</div>
 
 <div data-whop-split style={{ display: "flex", gap: "1.5rem", alignItems: "flex-start", flexWrap: "wrap" }}>
   <div style={{ flex: "1 1 26rem", minWidth: 0 }}>
@@ -33,6 +39,22 @@ Mounts inside [`Checkout`](/elements/beta/checkout/overview). Pass props and cal
         }
         ```
 
+        ```tsx React Native theme={null}
+        import { Checkout, ExpressCheckoutElement } from '@whop/elements-react-native';
+
+        export function BuyNow({ onPurchased }: { onPurchased: (receiptId: string) => void }) {
+          return (
+            <Checkout
+              plan="plan_xxxxxxxx"
+              returnUrl="https://example.com/checkout/return"
+              onComplete={({ receiptId }) => onPurchased(receiptId)}
+            >
+              <ExpressCheckoutElement onError={(e) => console.log(e.code, e.message)} />
+            </Checkout>
+          );
+        }
+        ```
+
         ```html JavaScript theme={null}
         <script src="https://cdn.whop.com/elements/amber/elements.js" data-whop-elements></script>
         <script type="module">
@@ -45,249 +67,302 @@ Mounts inside [`Checkout`](/elements/beta/checkout/overview). Pass props and cal
   </div>
 
   <div style={{ flex: "1 1 20rem", minWidth: 0 }}>
-    <div data-whop-demo-shell style={{ position: "relative", minHeight: "320px", transition: "min-height 200ms ease" }}>
-      <div data-whop-demo-skeleton style={{ position: "absolute", inset: "0", borderRadius: "12px", background: "rgba(140, 140, 140, 0.12)", pointerEvents: "none", transition: "opacity 200ms ease" }} />
+    <div data-whop-platform="web">
+      <div data-whop-demo-shell style={{ position: "relative", minHeight: "320px", transition: "min-height 200ms ease" }}>
+        <div data-whop-demo-skeleton style={{ position: "absolute", inset: "0", borderRadius: "12px", background: "rgba(140, 140, 140, 0.12)", pointerEvents: "none", transition: "opacity 200ms ease" }} />
 
-      <div data-whop-demo-native="element:checkout/expressCheckout" data-whop-elements-version="1.0.0" style={{ position: "relative" }} />
+        <div data-whop-demo-native="element:checkout/expressCheckout" data-whop-elements-version="1.1.0" style={{ position: "relative" }} />
+      </div>
+
+      <p style={{ fontSize: "0.8125rem", opacity: 0.7 }}>Example data. [Open the Playground](/elements/beta/checkout/overview#playground).</p>
     </div>
 
-    <p style={{ fontSize: "0.8125rem", opacity: 0.7 }}>Example data. [Open the Playground](/elements/beta/checkout/overview#playground).</p>
+    <div data-whop-platform="react-native" style={{ display: "none" }}>
+      <div style={{ width: "22rem", maxWidth: "100%" }}>
+        <div data-whop-simulator-shell className="whop-ios-simulator" style={{ position: "relative", aspectRatio: "390 / 800", overflow: "hidden" }}>
+          <iframe src={"https://app.revyl.ai/embed/e16407ed-1c20-4475-ad16-f78b4669374f?controls=0"} title="ExpressCheckoutElement running on Android, in the React Native example app" loading="lazy" allow="fullscreen; clipboard-read; clipboard-write" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", border: 0, background: "transparent", display: "block" }} />
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
-## Props
+<div data-whop-platform="web">
+  ## Props
 
-<ResponseField name="wallets" type="(&#x22;apple_pay&#x22; | &#x22;google_pay&#x22;)[]">
-  Which wallets may render — a filter over what the buyer’s device actually offers. The element never shows a wallet the device, the served matrix, or the checkout’s payment method configuration cannot back, and the render order stays best-native-first whatever order this lists. An empty list renders nothing (warned in dev builds). Both wallets need the page’s domain verified as a [payment method domain](/api-reference/beta/payment-method-domains/payment-method-domain) — first-party whop.com pages are pre-approved; on any other site, register and verify the domain or the buttons stay hidden. Offering Google Pay on your own site is subject to the [Google Pay API Terms of Service](https://payments.developers.google.com/terms/sellertos). Defaults to `["apple_pay","google_pay"]`.
-</ResponseField>
+  <ResponseField name="wallets" type="(&#x22;apple_pay&#x22; | &#x22;google_pay&#x22;)[]">
+    Which wallets may render — a filter over what the buyer’s device actually offers. The element never shows a wallet the device, the served matrix, or the checkout’s payment method configuration cannot back, and the render order stays best-native-first whatever order this lists. An empty list renders nothing (warned in dev builds). Both wallets need the page’s domain verified as a [payment method domain](/api-reference/beta/payment-method-domains/payment-method-domain) — first-party whop.com pages are pre-approved; on any other site, register and verify the domain or the buttons stay hidden. Offering Google Pay on your own site is subject to the [Google Pay API Terms of Service](https://payments.developers.google.com/terms/sellertos). Defaults to `["apple_pay","google_pay"]`.
+  </ResponseField>
 
-<ResponseField name="layout" type="&#x22;auto&#x22; | &#x22;horizontal&#x22; | &#x22;vertical&#x22;">
-  How the buttons stack. `auto` follows the element’s own container — stacked in narrow containers, side by side in wide ones; `horizontal` and `vertical` force one arrangement. Defaults to `"auto"`.
-</ResponseField>
+  <ResponseField name="layout" type="&#x22;auto&#x22; | &#x22;horizontal&#x22; | &#x22;vertical&#x22;">
+    How the buttons stack. `auto` follows the element’s own container — stacked in narrow containers, side by side in wide ones; `horizontal` and `vertical` force one arrangement. Defaults to `"auto"`.
+  </ResponseField>
 
-## Events
+  ## Events
 
-Pass callbacks in the create options or React props.
+  Pass callbacks in the create options or React props.
 
-### `onLoaderStart`
+  ### `onLoaderStart`
 
-Runs after the loading skeleton first paints and before `onReady`.
+  Runs after the loading skeleton first paints and before `onReady`.
 
-**Signature:** `(() => void)`
+  **Signature:** `(() => void)`
 
-### `onReady`
+  ### `onReady`
 
-Runs after the element's first complete paint.
+  Runs after the element's first complete paint.
 
-**Signature:** `(() => void)`
+  **Signature:** `(() => void)`
 
-### `onError`
+  ### `onError`
 
-Runs when the element fails to load or crashes. The fallback remains visible. Use `code` for programmatic handling. `sourceKey` identifies a failed host-state source.
+  Runs when the element fails to load or crashes. The fallback remains visible. Use `code` for programmatic handling. `sourceKey` identifies a failed host-state source.
 
-**Signature:** `((e: { message: string; code?: string | undefined; sourceKey?: string | undefined; }) => void)`
+  **Signature:** `((e: { message: string; code?: string | undefined; sourceKey?: string | undefined; }) => void)`
 
-## Methods
+  ## Methods
 
-Call these on the handle returned by `create`, or through a React `ref`.
+  Call these on the handle returned by `create`, or through a React `ref`.
 
-### `mount`
+  ### `mount`
 
-Mounts the element in `target` and starts loading. React components mount themselves.
+  Mounts the element in `target` and starts loading. React components mount themselves.
 
-**Signature:** `(target: string | HTMLElement) => void`
+  **Signature:** `(target: string | HTMLElement) => void`
 
-### `destroy`
+  ### `destroy`
 
-Removes the element and releases its frame and subscriptions. You can call it more than once. React removes the element automatically.
+  Removes the element and releases its frame and subscriptions. You can call it more than once. React removes the element automatically.
 
-**Signature:** `() => void`
+  **Signature:** `() => void`
 
-### `update`
+  ### `update`
 
-Merges new props into the mounted element. In React, change the component props instead.
+  Merges new props into the mounted element. In React, change the component props instead.
 
-**Signature:** `(options: Partial<ExpressCheckoutElementProps>) => void`
+  **Signature:** `(options: Partial<ExpressCheckoutElementProps>) => void`
 
-## Styling
+  ## Styling
 
-Style these parts through `appearance.classes`. Use camel case or kebab case for property names and include units. Page stylesheets can't reach the element's frame. The framework validates each declaration before injecting it.
+  Style these parts through `appearance.classes`. Use camel case or kebab case for property names and include units. Page stylesheets can't reach the element's frame. The framework validates each declaration before injecting it.
 
-| Class                                      | Targets                                                                                                                                                                         |
-| ------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `.whop-Address`                            | The address form root                                                                                                                                                           |
-| `.whop-AddressErrorSummary`                | The summary line shown when validation reveals missing or invalid fields                                                                                                        |
-| `.whop-AddressField`                       | One field cell in the address form                                                                                                                                              |
-| `.whop-AddressFieldError`                  | The error line under an address field (full layout)                                                                                                                             |
-| `.whop-AddressFieldInput`                  | A text input in the address form                                                                                                                                                |
-| `.whop-AddressFieldInputInvalid`           | Added to an address input while it fails validation                                                                                                                             |
-| `.whop-AddressFieldInvalid`                | Added to a compact field cell while it fails validation                                                                                                                         |
-| `.whop-AddressFieldLabel`                  | Address field label in full layout                                                                                                                                              |
-| `.whop-AddressFieldSelect`                 | A select (country, state, organization type) in the address form                                                                                                                |
-| `.whop-AddressLine2Toggle`                 | Collapsed address line 2 toggle                                                                                                                                                 |
-| `.whop-AddressManualEntry`                 | The "Enter address manually" text button below the collapsed form — expands the full country format                                                                             |
-| `.whop-AddressSuggestion`                  | One suggestion row in the autocomplete overlay                                                                                                                                  |
-| `.whop-AddressSuggestionActive`            | Added to the keyboard/pointer-active suggestion row                                                                                                                             |
-| `.whop-AddressSuggestionManual`            | The "Enter address manually" row closing the suggestions list                                                                                                                   |
-| `.whop-AddressSuggestions`                 | The autocomplete suggestions overlay anchored to the address line 1 field                                                                                                       |
-| `.whop-AddressSuggestionsEmpty`            | The quiet line shown when the query settled with no address matches                                                                                                             |
-| `.whop-Card`                               | Card element root                                                                                                                                                               |
-| `.whop-CardError`                          | Card configuration error pane                                                                                                                                                   |
-| `.whop-CardField`                          | Card number, expiration, or security code field                                                                                                                                 |
-| `.whop-CardFieldError`                     | Card validation message                                                                                                                                                         |
-| `.whop-CardFieldGroup`                     | The grouped card fields — number on top, expiration and security code below                                                                                                     |
-| `.whop-CardFieldInput`                     | Bordered PCI input container                                                                                                                                                    |
-| `.whop-CardFieldInputFocused`              | Focused PCI input container                                                                                                                                                     |
-| `.whop-CardFieldInputInvalid`              | Invalid or incomplete PCI input container                                                                                                                                       |
-| `.whop-CardFieldRow`                       | Compact card number, expiration, and security code row                                                                                                                          |
-| `.whop-CardLabel`                          | Card information label                                                                                                                                                          |
-| `.whop-CheckoutExpress`                    | The express checkout row — one-press wallet payments above the form                                                                                                             |
-| `.whop-CheckoutExpressApplePay`            | The Apple Pay express button                                                                                                                                                    |
-| `.whop-CheckoutExpressButtons`             | The wallet button stack — vertical in a narrow container, side by side in a wide one                                                                                            |
-| `.whop-CheckoutExpressComplete`            | The standalone express button’s settled outcome line                                                                                                                            |
-| `.whop-CheckoutExpressContinue`            | The blocked-navigation press on the express row — finishes the trip to the payment’s off-site step                                                                              |
-| `.whop-CheckoutExpressDivider`             | The divider between express checkout and the form                                                                                                                               |
-| `.whop-CheckoutExpressError`               | The retryable error line under the express button                                                                                                                               |
-| `.whop-CheckoutExpressFinishPayment`       | The finish-payment line shown while the payment still needs a step the buyer dismissed                                                                                          |
-| `.whop-CheckoutExpressFinishPaymentButton` | The re-entry button that re-runs the payment’s pending step                                                                                                                     |
-| `.whop-CheckoutExpressGooglePay`           | The Google Pay express button                                                                                                                                                   |
-| `.whop-CheckoutExpressPhoneError`          | The refusal line for a wallet-collected phone number the server could not text                                                                                                  |
-| `.whop-CheckoutExpressRetry`               | The failed rest’s button — re-reads the reopened session so the buyer can pay again                                                                                             |
-| `.whop-CheckoutExpressUnavailable`         | The face shown when an express button cannot serve this checkout                                                                                                                |
-| `.whop-CompletePayment`                    | Completion surface root                                                                                                                                                         |
-| `.whop-CompletePaymentAmount`              | The amount the buyer must pay                                                                                                                                                   |
-| `.whop-CompletePaymentBarcode`             | The scannable barcode card                                                                                                                                                      |
-| `.whop-CompletePaymentDocumentLink`        | The hosted-instructions button                                                                                                                                                  |
-| `.whop-CompletePaymentError`               | Error pane                                                                                                                                                                      |
-| `.whop-CompletePaymentFrame`               | Framed PSP step                                                                                                                                                                 |
-| `.whop-CompletePaymentHint`                | Automatic-update hint                                                                                                                                                           |
-| `.whop-CompletePaymentInstructions`        | Payment-instructions pane                                                                                                                                                       |
-| `.whop-CompletePaymentProviderMark`        | The voucher network logo                                                                                                                                                        |
-| `.whop-CompletePaymentQr`                  | The scannable QR card                                                                                                                                                           |
-| `.whop-CompletePaymentReference`           | A copyable code block (reference, payment key)                                                                                                                                  |
-| `.whop-CompletePaymentSettled`             | Resting-state pane shown before closing                                                                                                                                         |
-| `.whop-CompletePaymentSettledFailed`       | Failed resting-state pane shown before closing                                                                                                                                  |
-| `.whop-CompletePaymentSpinner`             | Waiting spinner                                                                                                                                                                 |
-| `.whop-CompletePaymentTitle`               | Dialog title                                                                                                                                                                    |
-| `.whop-CompletePaymentTransferDetails`     | The bank-transfer detail rows                                                                                                                                                   |
-| `.whop-Email`                              | Email element root                                                                                                                                                              |
-| `.whop-EmailError`                         | Invalid email message                                                                                                                                                           |
-| `.whop-EmailInput`                         | The email input                                                                                                                                                                 |
-| `.whop-EmailInputInvalid`                  | Email input with an implausible value                                                                                                                                           |
-| `.whop-EmailLabel`                         | Email field label                                                                                                                                                               |
-| `.whop-EmailSignedIn`                      | Signed-in buyer row                                                                                                                                                             |
-| `.whop-EmailSignIn`                        | Welcome back sign-in control                                                                                                                                                    |
-| `.whop-EmailSignInError`                   | Sign-in error message                                                                                                                                                           |
-| `.whop-EmailSignOut`                       | Choose a different email control                                                                                                                                                |
-| `.whop-Payment`                            | The payment element root                                                                                                                                                        |
-| `.whop-PaymentBalance`                     | One wallet in the balance tile                                                                                                                                                  |
-| `.whop-PaymentBalanceHint`                 | The wallet's available amount in the charge currency                                                                                                                            |
-| `.whop-PaymentBalanceList`                 | The balance tile's scrollable list of the buyer's wallets                                                                                                                       |
-| `.whop-PaymentBalanceMore`                 | The sentinel row that pages in more balances as it scrolls into view                                                                                                            |
-| `.whop-PaymentBalanceRow`                  | The clickable balance row                                                                                                                                                       |
-| `.whop-PaymentBalanceRowSelected`          | Selected balance row                                                                                                                                                            |
-| `.whop-PaymentBalanceRowUnavailable`       | A wallet that cannot pay right now — blocked or empty — greyed and disabled                                                                                                     |
-| `.whop-PaymentBillingBlock`                | The payment element's internal billing address block                                                                                                                            |
-| `.whop-PaymentCardFields`                  | The inline card fields panel                                                                                                                                                    |
-| `.whop-PaymentCompactBalance`              | The selected balance on a compact direct checkout                                                                                                                               |
-| `.whop-PaymentCompactSavedMethod`          | The selected saved method on a compact direct checkout                                                                                                                          |
-| `.whop-PaymentCurrencyFallback`            | The switch to the fallback currency when nothing is offered                                                                                                                     |
-| `.whop-PaymentDetailIcon`                  | The template icon beside the detail region's explainer                                                                                                                          |
-| `.whop-PaymentDetailRegion`                | The expanded detail region for a selected method — collection surfaces first (inline card fields, declared inputs), then the explainer and disclosure lines as the bottom block |
-| `.whop-PaymentDetailSubtext`               | The consent subtext under the explainer on wallet methods                                                                                                                       |
-| `.whop-PaymentDetailText`                  | The detail region's explainer line                                                                                                                                              |
-| `.whop-PaymentError`                       | Unavailable payment methods error pane                                                                                                                                          |
-| `.whop-PaymentFieldError`                  | The Invalid message under a declared input                                                                                                                                      |
-| `.whop-PaymentFieldInput`                  | A declared method input in the detail region                                                                                                                                    |
-| `.whop-PaymentFieldInputInvalid`           | Added to a declared input while its value fails the declared format                                                                                                             |
-| `.whop-PaymentFieldLabel`                  | Declared payment field label                                                                                                                                                    |
-| `.whop-PaymentInstallmentDetail`           | An installment option row's per-installment amount                                                                                                                              |
-| `.whop-PaymentInstallmentLabel`            | An installment option row's label                                                                                                                                               |
-| `.whop-PaymentInstallmentList`             | The installment picker's option list                                                                                                                                            |
-| `.whop-PaymentInstallmentRadio`            | The radio indicator on an installment option row                                                                                                                                |
-| `.whop-PaymentInstallmentRow`              | One installment option row                                                                                                                                                      |
-| `.whop-PaymentInstallmentRowSelected`      | The selected installment option row                                                                                                                                             |
-| `.whop-PaymentInstallments`                | The payment method installment picker                                                                                                                                           |
-| `.whop-PaymentInstallmentsLabel`           | The installment picker's heading                                                                                                                                                |
-| `.whop-PaymentInstallmentsNotice`          | The issuer-fee disclaimer under a selected tier with no declared fee                                                                                                            |
-| `.whop-PaymentMandateLink`                 | The mandate terms link inside the mandate notice                                                                                                                                |
-| `.whop-PaymentMandateNotice`               | The mandate authorization notice on methods whose matrix configuration declares a mandate                                                                                       |
-| `.whop-PaymentMethod`                      | One payment method — the row plus its expanding detail region                                                                                                                   |
-| `.whop-PaymentMethodDetail`                | The expanding region that reveals the selected method's detail — inline card fields, explainer, or declared inputs                                                              |
-| `.whop-PaymentMethodIcon`                  | The method icon on a row                                                                                                                                                        |
-| `.whop-PaymentMethodLabel`                 | The method display name on a row                                                                                                                                                |
-| `.whop-PaymentMethodMoreSelect`            | The invisible native select stretched over the More tile                                                                                                                        |
-| `.whop-PaymentMethodMoreTile`              | Overflow tile with method icons and a native selector                                                                                                                           |
-| `.whop-PaymentMethodPanel`                 | The selected method's detail panel below the tile row (horizontal layout)                                                                                                       |
-| `.whop-PaymentMethodRadio`                 | The radio indicator on a method row                                                                                                                                             |
-| `.whop-PaymentMethodRadioSelected`         | Selected payment method radio                                                                                                                                                   |
-| `.whop-PaymentMethodRow`                   | The clickable payment method row                                                                                                                                                |
-| `.whop-PaymentMethodRowSelected`           | Selected payment method row                                                                                                                                                     |
-| `.whop-PaymentMethods`                     | The payment method list                                                                                                                                                         |
-| `.whop-PaymentMethodSeparated`             | Added to a method item while it renders as its own separated card                                                                                                               |
-| `.whop-PaymentMethodsSeparated`            | Separated accordion method list                                                                                                                                                 |
-| `.whop-PaymentMethodTile`                  | One method tile in the horizontal tile row                                                                                                                                      |
-| `.whop-PaymentMethodTileRow`               | Horizontal method tile row with overflow methods in the final More tile                                                                                                         |
-| `.whop-PaymentMethodTileSelected`          | Selected payment method tile                                                                                                                                                    |
-| `.whop-PaymentMoreRow`                     | The "N more payment methods" expander row                                                                                                                                       |
-| `.whop-PaymentPayerDocument`               | Currency-specific buyer identity document fields                                                                                                                                |
-| `.whop-PaymentPayerDocumentError`          | Buyer identity document error                                                                                                                                                   |
-| `.whop-PaymentPayerDocumentLabel`          | Buyer identity document label                                                                                                                                                   |
-| `.whop-PaymentPayerDocumentType`           | Buyer identity document type selector                                                                                                                                           |
-| `.whop-PaymentSavedMethod`                 | One saved payment method specifically — carries PaymentMethod too                                                                                                               |
-| `.whop-PaymentSavedMethodHint`             | The saved method's trailing detail — a card's expiration                                                                                                                        |
-| `.whop-PaymentSavedMethodRow`              | The clickable saved method row specifically — carries PaymentMethodRow too                                                                                                      |
-| `.whop-PaymentSavedMethodRowSelected`      | Selected saved payment method row                                                                                                                                               |
-| `.whop-PaymentSavedMethods`                | The saved-methods list specifically — carries PaymentMethods too, so one rule styles both lists                                                                                 |
-| `.whop-PaymentSavedMethodSeparated`        | The separated marker on a saved method specifically                                                                                                                             |
-| `.whop-PaymentSavedMore`                   | The control that fetches the next page of saved payment methods                                                                                                                 |
-| `.whop-PaymentSavedMoreSpinner`            | The spinner shown while the next page of saved payment methods loads                                                                                                            |
-| `.whop-PaymentSettlementNotice`            | The settlement-window hint on methods whose matrix configuration declares one                                                                                                   |
-| `.whop-PhoneVerificationChangeNumber`      | Return-to-number control                                                                                                                                                        |
-| `.whop-PhoneVerificationCode`              | Six-digit confirmation-code pane                                                                                                                                                |
-| `.whop-PhoneVerificationDone`              | Success pane shown before closing                                                                                                                                               |
-| `.whop-PhoneVerificationError`             | Number-pane failure message                                                                                                                                                     |
-| `.whop-PhoneVerificationInput`             | Phone-number input                                                                                                                                                              |
-| `.whop-PhoneVerificationNumber`            | Phone-number entry pane                                                                                                                                                         |
-| `.whop-PhoneVerificationResend`            | Resend-code control with countdown                                                                                                                                              |
-| `.whop-PhoneVerificationSend`              | Send-code button                                                                                                                                                                |
-| `.whop-PhoneVerificationTitle`             | Dialog header wordmark                                                                                                                                                          |
-| `.whop-TaxId`                              | Tax registration root                                                                                                                                                           |
-| `.whop-TaxIdError`                         | API validation error                                                                                                                                                            |
-| `.whop-TaxIdInput`                         | Registration value input                                                                                                                                                        |
-| `.whop-TaxIdLabel`                         | Registration value label                                                                                                                                                        |
-| `.whop-TaxIdTypeLabel`                     | Registration type label                                                                                                                                                         |
-| `.whop-TaxIdTypeSelect`                    | Registration type selector                                                                                                                                                      |
-| `.whop-Verification`                       | Verification-code dialog body                                                                                                                                                   |
-| `.whop-VerificationDismiss`                | Continue-as-guest control for unavailable sign-in                                                                                                                               |
-| `.whop-VerificationError`                  | Dialog failure message                                                                                                                                                          |
-| `.whop-VerificationExpired`                | Expired sign-in pane                                                                                                                                                            |
-| `.whop-VerificationHeading`                | Code dialog heading and explanation                                                                                                                                             |
-| `.whop-VerificationHint`                   | Code-delivery explanation                                                                                                                                                       |
-| `.whop-VerificationInput`                  | The one-time-code input                                                                                                                                                         |
-| `.whop-VerificationInputInvalid`           | Added to the code input after a failed attempt                                                                                                                                  |
-| `.whop-VerificationInputSlot`              | One digit box of the one-time-code input                                                                                                                                        |
-| `.whop-VerificationInputSlotActive`        | Added to the code slot the buyer is typing into                                                                                                                                 |
-| `.whop-VerificationPending`                | The verifying… line while a submit is in flight                                                                                                                                 |
-| `.whop-VerificationResend`                 | Resend-code control with countdown                                                                                                                                              |
-| `.whop-VerificationRestart`                | Expired-pane start-over control                                                                                                                                                 |
-| `.whop-VerificationTitle`                  | Dialog header wordmark                                                                                                                                                          |
+  | Class                                      | Targets                                                                                                                                                                         |
+  | ------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+  | `.whop-Address`                            | The address form root                                                                                                                                                           |
+  | `.whop-AddressErrorSummary`                | The summary line shown when validation reveals missing or invalid fields                                                                                                        |
+  | `.whop-AddressField`                       | One field cell in the address form                                                                                                                                              |
+  | `.whop-AddressFieldError`                  | The error line under an address field (full layout)                                                                                                                             |
+  | `.whop-AddressFieldInput`                  | A text input in the address form                                                                                                                                                |
+  | `.whop-AddressFieldInputInvalid`           | Added to an address input while it fails validation                                                                                                                             |
+  | `.whop-AddressFieldInvalid`                | Added to a compact field cell while it fails validation                                                                                                                         |
+  | `.whop-AddressFieldLabel`                  | Address field label in full layout                                                                                                                                              |
+  | `.whop-AddressFieldSelect`                 | A select (country, state, organization type) in the address form                                                                                                                |
+  | `.whop-AddressLine2Toggle`                 | Collapsed address line 2 toggle                                                                                                                                                 |
+  | `.whop-AddressManualEntry`                 | The "Enter address manually" text button below the collapsed form — expands the full country format                                                                             |
+  | `.whop-AddressSuggestion`                  | One suggestion row in the autocomplete overlay                                                                                                                                  |
+  | `.whop-AddressSuggestionActive`            | Added to the keyboard/pointer-active suggestion row                                                                                                                             |
+  | `.whop-AddressSuggestionManual`            | The "Enter address manually" row closing the suggestions list                                                                                                                   |
+  | `.whop-AddressSuggestions`                 | The autocomplete suggestions overlay anchored to the address line 1 field                                                                                                       |
+  | `.whop-AddressSuggestionsEmpty`            | The quiet line shown when the query settled with no address matches                                                                                                             |
+  | `.whop-Card`                               | Card element root                                                                                                                                                               |
+  | `.whop-CardError`                          | Card configuration error pane                                                                                                                                                   |
+  | `.whop-CardField`                          | Card number, expiration, or security code field                                                                                                                                 |
+  | `.whop-CardFieldError`                     | Card validation message                                                                                                                                                         |
+  | `.whop-CardFieldGroup`                     | The grouped card fields — number on top, expiration and security code below                                                                                                     |
+  | `.whop-CardFieldInput`                     | Bordered PCI input container                                                                                                                                                    |
+  | `.whop-CardFieldInputFocused`              | Focused PCI input container                                                                                                                                                     |
+  | `.whop-CardFieldInputInvalid`              | Invalid or incomplete PCI input container                                                                                                                                       |
+  | `.whop-CardFieldRow`                       | Compact card number, expiration, and security code row                                                                                                                          |
+  | `.whop-CardLabel`                          | Card information label                                                                                                                                                          |
+  | `.whop-CheckoutExpress`                    | The express checkout row — one-press wallet payments above the form                                                                                                             |
+  | `.whop-CheckoutExpressApplePay`            | The Apple Pay express button                                                                                                                                                    |
+  | `.whop-CheckoutExpressButtons`             | The wallet button stack — vertical in a narrow container, side by side in a wide one                                                                                            |
+  | `.whop-CheckoutExpressComplete`            | The standalone express button’s settled outcome line                                                                                                                            |
+  | `.whop-CheckoutExpressContinue`            | The blocked-navigation press on the express row — finishes the trip to the payment’s off-site step                                                                              |
+  | `.whop-CheckoutExpressDivider`             | The divider between express checkout and the form                                                                                                                               |
+  | `.whop-CheckoutExpressError`               | The retryable error line under the express button                                                                                                                               |
+  | `.whop-CheckoutExpressFinishPayment`       | The finish-payment line shown while the payment still needs a step the buyer dismissed                                                                                          |
+  | `.whop-CheckoutExpressFinishPaymentButton` | The re-entry button that re-runs the payment’s pending step                                                                                                                     |
+  | `.whop-CheckoutExpressGooglePay`           | The Google Pay express button                                                                                                                                                   |
+  | `.whop-CheckoutExpressPhoneError`          | The refusal line for a wallet-collected phone number the server could not text                                                                                                  |
+  | `.whop-CheckoutExpressRetry`               | The failed rest’s button — re-reads the reopened session so the buyer can pay again                                                                                             |
+  | `.whop-CheckoutExpressUnavailable`         | The face shown when an express button cannot serve this checkout                                                                                                                |
+  | `.whop-CompletePayment`                    | Completion surface root                                                                                                                                                         |
+  | `.whop-CompletePaymentAmount`              | The amount the buyer must pay                                                                                                                                                   |
+  | `.whop-CompletePaymentBarcode`             | The scannable barcode card                                                                                                                                                      |
+  | `.whop-CompletePaymentDocumentLink`        | The hosted-instructions button                                                                                                                                                  |
+  | `.whop-CompletePaymentError`               | Error pane                                                                                                                                                                      |
+  | `.whop-CompletePaymentFrame`               | Framed PSP step                                                                                                                                                                 |
+  | `.whop-CompletePaymentHint`                | Automatic-update hint                                                                                                                                                           |
+  | `.whop-CompletePaymentInstructions`        | Payment-instructions pane                                                                                                                                                       |
+  | `.whop-CompletePaymentProviderMark`        | The voucher network logo                                                                                                                                                        |
+  | `.whop-CompletePaymentQr`                  | The scannable QR card                                                                                                                                                           |
+  | `.whop-CompletePaymentReference`           | A copyable code block (reference, payment key)                                                                                                                                  |
+  | `.whop-CompletePaymentSettled`             | Resting-state pane shown before closing                                                                                                                                         |
+  | `.whop-CompletePaymentSettledFailed`       | Failed resting-state pane shown before closing                                                                                                                                  |
+  | `.whop-CompletePaymentSpinner`             | Waiting spinner                                                                                                                                                                 |
+  | `.whop-CompletePaymentTitle`               | Dialog title                                                                                                                                                                    |
+  | `.whop-CompletePaymentTransferDetails`     | The bank-transfer detail rows                                                                                                                                                   |
+  | `.whop-Email`                              | Email element root                                                                                                                                                              |
+  | `.whop-EmailError`                         | Invalid email message                                                                                                                                                           |
+  | `.whop-EmailInput`                         | The email input                                                                                                                                                                 |
+  | `.whop-EmailInputInvalid`                  | Email input with an implausible value                                                                                                                                           |
+  | `.whop-EmailLabel`                         | Email field label                                                                                                                                                               |
+  | `.whop-EmailSignedIn`                      | Signed-in buyer row                                                                                                                                                             |
+  | `.whop-EmailSignIn`                        | Welcome back sign-in control                                                                                                                                                    |
+  | `.whop-EmailSignInError`                   | Sign-in error message                                                                                                                                                           |
+  | `.whop-EmailSignOut`                       | Choose a different email control                                                                                                                                                |
+  | `.whop-Payment`                            | The payment element root                                                                                                                                                        |
+  | `.whop-PaymentBalance`                     | One wallet in the balance tile                                                                                                                                                  |
+  | `.whop-PaymentBalanceHint`                 | The wallet's available amount in the charge currency                                                                                                                            |
+  | `.whop-PaymentBalanceList`                 | The balance tile's scrollable list of the buyer's wallets                                                                                                                       |
+  | `.whop-PaymentBalanceMore`                 | The sentinel row that pages in more balances as it scrolls into view                                                                                                            |
+  | `.whop-PaymentBalanceRow`                  | The clickable balance row                                                                                                                                                       |
+  | `.whop-PaymentBalanceRowSelected`          | Selected balance row                                                                                                                                                            |
+  | `.whop-PaymentBalanceRowUnavailable`       | A wallet that cannot pay right now — blocked or empty — greyed and disabled                                                                                                     |
+  | `.whop-PaymentBillingBlock`                | The payment element's internal billing address block                                                                                                                            |
+  | `.whop-PaymentCardFields`                  | The inline card fields panel                                                                                                                                                    |
+  | `.whop-PaymentCompactBalance`              | The selected balance on a compact direct checkout                                                                                                                               |
+  | `.whop-PaymentCompactSavedMethod`          | The selected saved method on a compact direct checkout                                                                                                                          |
+  | `.whop-PaymentCurrencyFallback`            | The switch to the fallback currency when nothing is offered                                                                                                                     |
+  | `.whop-PaymentDetailIcon`                  | The template icon beside the detail region's explainer                                                                                                                          |
+  | `.whop-PaymentDetailRegion`                | The expanded detail region for a selected method — collection surfaces first (inline card fields, declared inputs), then the explainer and disclosure lines as the bottom block |
+  | `.whop-PaymentDetailSubtext`               | The consent subtext under the explainer on wallet methods                                                                                                                       |
+  | `.whop-PaymentDetailText`                  | The detail region's explainer line                                                                                                                                              |
+  | `.whop-PaymentError`                       | Unavailable payment methods error pane                                                                                                                                          |
+  | `.whop-PaymentFieldError`                  | The Invalid message under a declared input                                                                                                                                      |
+  | `.whop-PaymentFieldInput`                  | A declared method input in the detail region                                                                                                                                    |
+  | `.whop-PaymentFieldInputInvalid`           | Added to a declared input while its value fails the declared format                                                                                                             |
+  | `.whop-PaymentFieldLabel`                  | Declared payment field label                                                                                                                                                    |
+  | `.whop-PaymentInstallmentDetail`           | An installment option row's per-installment amount                                                                                                                              |
+  | `.whop-PaymentInstallmentLabel`            | An installment option row's label                                                                                                                                               |
+  | `.whop-PaymentInstallmentList`             | The installment picker's option list                                                                                                                                            |
+  | `.whop-PaymentInstallmentRadio`            | The radio indicator on an installment option row                                                                                                                                |
+  | `.whop-PaymentInstallmentRow`              | One installment option row                                                                                                                                                      |
+  | `.whop-PaymentInstallmentRowSelected`      | The selected installment option row                                                                                                                                             |
+  | `.whop-PaymentInstallments`                | The payment method installment picker                                                                                                                                           |
+  | `.whop-PaymentInstallmentsLabel`           | The installment picker's heading                                                                                                                                                |
+  | `.whop-PaymentInstallmentsNotice`          | The issuer-fee disclaimer under a selected tier with no declared fee                                                                                                            |
+  | `.whop-PaymentMandateLink`                 | The mandate terms link inside the mandate notice                                                                                                                                |
+  | `.whop-PaymentMandateNotice`               | The mandate authorization notice on methods whose matrix configuration declares a mandate                                                                                       |
+  | `.whop-PaymentMethod`                      | One payment method — the row plus its expanding detail region                                                                                                                   |
+  | `.whop-PaymentMethodDetail`                | The expanding region that reveals the selected method's detail — inline card fields, explainer, or declared inputs                                                              |
+  | `.whop-PaymentMethodIcon`                  | The method icon on a row                                                                                                                                                        |
+  | `.whop-PaymentMethodLabel`                 | The method display name on a row                                                                                                                                                |
+  | `.whop-PaymentMethodMoreSelect`            | The invisible native select stretched over the More tile                                                                                                                        |
+  | `.whop-PaymentMethodMoreTile`              | Overflow tile with method icons and a native selector                                                                                                                           |
+  | `.whop-PaymentMethodPanel`                 | The selected method's detail panel below the tile row (horizontal layout)                                                                                                       |
+  | `.whop-PaymentMethodRadio`                 | The radio indicator on a method row                                                                                                                                             |
+  | `.whop-PaymentMethodRadioSelected`         | Selected payment method radio                                                                                                                                                   |
+  | `.whop-PaymentMethodRow`                   | The clickable payment method row                                                                                                                                                |
+  | `.whop-PaymentMethodRowSelected`           | Selected payment method row                                                                                                                                                     |
+  | `.whop-PaymentMethods`                     | The payment method list                                                                                                                                                         |
+  | `.whop-PaymentMethodSeparated`             | Added to a method item while it renders as its own separated card                                                                                                               |
+  | `.whop-PaymentMethodsSeparated`            | Separated accordion method list                                                                                                                                                 |
+  | `.whop-PaymentMethodTile`                  | One method tile in the horizontal tile row                                                                                                                                      |
+  | `.whop-PaymentMethodTileRow`               | Horizontal method tile row with overflow methods in the final More tile                                                                                                         |
+  | `.whop-PaymentMethodTileSelected`          | Selected payment method tile                                                                                                                                                    |
+  | `.whop-PaymentMoreRow`                     | The "N more payment methods" expander row                                                                                                                                       |
+  | `.whop-PaymentPayerDocument`               | Currency-specific buyer identity document fields                                                                                                                                |
+  | `.whop-PaymentPayerDocumentError`          | Buyer identity document error                                                                                                                                                   |
+  | `.whop-PaymentPayerDocumentLabel`          | Buyer identity document label                                                                                                                                                   |
+  | `.whop-PaymentPayerDocumentType`           | Buyer identity document type selector                                                                                                                                           |
+  | `.whop-PaymentSavedMethod`                 | One saved payment method specifically — carries PaymentMethod too                                                                                                               |
+  | `.whop-PaymentSavedMethodHint`             | The saved method's trailing detail — a card's expiration                                                                                                                        |
+  | `.whop-PaymentSavedMethodRow`              | The clickable saved method row specifically — carries PaymentMethodRow too                                                                                                      |
+  | `.whop-PaymentSavedMethodRowSelected`      | Selected saved payment method row                                                                                                                                               |
+  | `.whop-PaymentSavedMethods`                | The saved-methods list specifically — carries PaymentMethods too, so one rule styles both lists                                                                                 |
+  | `.whop-PaymentSavedMethodSeparated`        | The separated marker on a saved method specifically                                                                                                                             |
+  | `.whop-PaymentSavedMore`                   | The control that fetches the next page of saved payment methods                                                                                                                 |
+  | `.whop-PaymentSavedMoreSpinner`            | The spinner shown while the next page of saved payment methods loads                                                                                                            |
+  | `.whop-PaymentSettlementNotice`            | The settlement-window hint on methods whose matrix configuration declares one                                                                                                   |
+  | `.whop-PhoneVerificationChangeNumber`      | Return-to-number control                                                                                                                                                        |
+  | `.whop-PhoneVerificationCode`              | Six-digit confirmation-code pane                                                                                                                                                |
+  | `.whop-PhoneVerificationDone`              | Success pane shown before closing                                                                                                                                               |
+  | `.whop-PhoneVerificationError`             | Number-pane failure message                                                                                                                                                     |
+  | `.whop-PhoneVerificationInput`             | Phone-number input                                                                                                                                                              |
+  | `.whop-PhoneVerificationNumber`            | Phone-number entry pane                                                                                                                                                         |
+  | `.whop-PhoneVerificationResend`            | Resend-code control with countdown                                                                                                                                              |
+  | `.whop-PhoneVerificationSend`              | Send-code button                                                                                                                                                                |
+  | `.whop-PhoneVerificationTitle`             | Dialog header wordmark                                                                                                                                                          |
+  | `.whop-TaxId`                              | Tax registration root                                                                                                                                                           |
+  | `.whop-TaxIdError`                         | API validation error                                                                                                                                                            |
+  | `.whop-TaxIdInput`                         | Registration value input                                                                                                                                                        |
+  | `.whop-TaxIdLabel`                         | Registration value label                                                                                                                                                        |
+  | `.whop-TaxIdTypeLabel`                     | Registration type label                                                                                                                                                         |
+  | `.whop-TaxIdTypeSelect`                    | Registration type selector                                                                                                                                                      |
+  | `.whop-Verification`                       | Verification-code dialog body                                                                                                                                                   |
+  | `.whop-VerificationDismiss`                | Continue-as-guest control for unavailable sign-in                                                                                                                               |
+  | `.whop-VerificationError`                  | Dialog failure message                                                                                                                                                          |
+  | `.whop-VerificationExpired`                | Expired sign-in pane                                                                                                                                                            |
+  | `.whop-VerificationHeading`                | Code dialog heading and explanation                                                                                                                                             |
+  | `.whop-VerificationHint`                   | Code-delivery explanation                                                                                                                                                       |
+  | `.whop-VerificationInput`                  | The one-time-code input                                                                                                                                                         |
+  | `.whop-VerificationInputInvalid`           | Added to the code input after a failed attempt                                                                                                                                  |
+  | `.whop-VerificationInputSlot`              | One digit box of the one-time-code input                                                                                                                                        |
+  | `.whop-VerificationInputSlotActive`        | Added to the code slot the buyer is typing into                                                                                                                                 |
+  | `.whop-VerificationPending`                | The verifying… line while a submit is in flight                                                                                                                                 |
+  | `.whop-VerificationResend`                 | Resend-code control with countdown                                                                                                                                              |
+  | `.whop-VerificationRestart`                | Expired-pane start-over control                                                                                                                                                 |
+  | `.whop-VerificationTitle`                  | Dialog header wordmark                                                                                                                                                          |
 
-```ts theme={null}
-const checkout = whop.checkout.create({
-  appearance: {
-    classes: {
-      'whop-Address': { borderRadius: '8px', fontWeight: '600' },
-      'whop-AddressErrorSummary': { borderRadius: '8px', fontWeight: '600' },
-      'whop-AddressField': { borderRadius: '8px', fontWeight: '600' }
+  ```ts theme={null}
+  const checkout = whop.checkout.create({
+    appearance: {
+      classes: {
+        'whop-Address': { borderRadius: '8px', fontWeight: '600' },
+        'whop-AddressErrorSummary': { borderRadius: '8px', fontWeight: '600' },
+        'whop-AddressField': { borderRadius: '8px', fontWeight: '600' }
+      }
     }
-  }
-});
+  });
 
-// 157 classes use this shape
-checkout.update({
-  appearance: { classes: { 'whop-Address': { fontWeight: '700' } } }
-});
-```
+  // 157 classes use this shape
+  checkout.update({
+    appearance: { classes: { 'whop-Address': { fontWeight: '700' } } }
+  });
+  ```
 
-In React, pass `appearance` to `<Checkout>`. Set it globally with `WhopElements({ appearance })`.
+  In React, pass `appearance` to `<Checkout>`. Set it globally with `WhopElements({ appearance })`.
+</div>
+
+<div data-whop-platform="react-native" style={{ display: "none" }}>
+  ## Props
+
+  <ResponseField name="wallets" type="('apple_pay' | 'google_pay')[]">
+    Which wallets may render, as a filter over what the device offers. The element never shows a wallet the device, the account or the checkout's payment method configuration cannot back. An empty list renders nothing. Defaults to both.
+  </ResponseField>
+
+  <ResponseField name="style" type="StyleProp<ViewStyle>">
+    Applied to the element's outer `View`. For theming, prefer `appearance.parts` on the provider, which covers every element on this surface. Note the React Native part names are their own set today, not the web's `whop-*` class names, so a web appearance object does not port across unchanged.
+  </ResponseField>
+
+  <ResponseField name="fallback" type="ReactNode">
+    Rendered instead of the built-in skeleton while the element loads.
+  </ResponseField>
+
+  <ResponseField name="onReady" type="() => void">
+    Fires once the element has settled: the button is up, or the element knows it renders nothing. `<Checkout>` waits for it, so its own `onLoadingChange` is usually the one you want.
+  </ResponseField>
+
+  <ResponseField name="onError" type="(error: { message: string; code?: string }) => void">
+    A load or configuration failure for this element. The element renders its own error face either way.
+  </ResponseField>
+
+  ## States
+
+  One skeleton pill while the session opens and the device is asked whether it can pay, then the platform's own Apple Pay or Google Pay button above the Powered by Whop notice. A device with no wallet, a wallet the checkout's payment method configuration disables, or a plan that is sold out or archived renders nothing. A checkout a sheet cannot honestly finish (a setup, a waitlist join, a transfer, a form question only a page can ask) renders an explanatory face and reports `EXPRESS_CHECKOUT_UNAVAILABLE` through `onError`. After the purchase the element shows its outcome: complete, processing, or a Finish payment or Try again press when the payment still needs the buyer.
+
+  ## Good to know
+
+  * A device offers one wallet: Apple Pay on iOS, Google Pay on Android. That is why there is no `layout` prop here: there is never a second button to arrange.
+  * The sheet collects what the session still needs: the email when the session has none, a phone number when the seller collects one, and a shipping address for physical goods. A seller who verifies phone numbers gets a code step in a native modal after the sheet closes.
+  * On iOS the sheet reprices as the buyer changes card, so tax follows the billing address, and offers a promo code field when the seller allows codes. Google's Android sheet shows the checkout's total and has no code field.
+  * Your app is never navigated. `onComplete` on `<Checkout>` fires once when the purchase stands, with `sessionId` and `receiptId`, which is where you move the buyer on. Fulfill from webhooks, not from this callback.
+  * 3D Secure and other off-site steps open `ASWebAuthenticationSession` on iOS and Custom Tabs on Android, and the element polls the payment to rest. `returnUrl` on `<Checkout>` must be an **https** URL you host.
+  * Every `<Checkout>` option is create-time. Changing one after mount reports `CHECKOUT_OPTIONS_FROZEN` and keeps the original order; give `<Checkout>` a new `key` to sell something else.
+
+  <Note>
+    Wrap your app in `<WhopElements getToken={…}>` once, then mount `<Checkout>` around the element. `<Checkout>` takes `plan`, `items`, `checkoutConfiguration`, `quantity`, `promoCode`, `affiliateCode`, `attribution`, `metadata` and `returnUrl`, plus `onComplete`, `onError`, `onLoadingChange` and `fallback`. See [Getting started](/elements/beta/getting-started) and [Appearance](/elements/beta/appearance).
+  </Note>
+</div>

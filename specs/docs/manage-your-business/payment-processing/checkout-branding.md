@@ -118,7 +118,7 @@ https://whop.com/checkout/plan_XXXXXXXXX?email=customer@example.com&email.hidden
   both options, checkout hides the field.
 </Note>
 
-These parameters also work with [embedded checkout](/payments/checkout-embed). In the embedded checkout, use the `prefill`, `disableEmail`, and `hideEmail` props instead.
+When you mount the [Checkout element](/elements/latest/checkout/checkout) on your own site, pass `buyerEmail` to prefill the address and `lockBuyerEmail` to keep the buyer from editing it.
 
 ## Add a known phone number and address
 

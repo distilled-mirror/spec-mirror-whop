@@ -6,7 +6,7 @@
 
 > The holdings behind an account's balance. Every currency and token gets its own row, showing its name and its value in dollars, largest first. Rows can report which one the viewer tapped, so you can open your own screen for it. When `openHoldingOnSelect` is on, a row click shows that holding's balance page in place of this unit's chart and list.
 
-<Info>This page documents `@whop/elements@1.0.0` and `@whop/elements-react@1.0.0`.</Info>
+<Info>This page documents `@whop/elements@1.1.0` and `@whop/elements-react@1.1.0`.</Info>
 
 *Since `v1.0.0`.*
 
@@ -75,7 +75,7 @@
       <div data-whop-demo-shell style={{ position: "relative", minHeight: "320px", transition: "min-height 200ms ease" }}>
         <div data-whop-demo-skeleton style={{ position: "absolute", inset: "0", borderRadius: "12px", background: "rgba(140, 140, 140, 0.12)", pointerEvents: "none", transition: "opacity 200ms ease" }} />
 
-        <div data-whop-demo-native="element:balances/list" data-whop-elements-version="1.0.0" style={{ position: "relative" }} />
+        <div data-whop-demo-native="element:balances/list" data-whop-elements-version="1.1.0" style={{ position: "relative" }} />
       </div>
 
       <p style={{ fontSize: "0.8125rem", opacity: 0.7 }}>Example data. [Open the Playground](/elements/latest/wallet/overview#playground).</p>

@@ -60,9 +60,7 @@ export const ExamplesLink = ({href}) => <a href={href} className="examples-link"
 
 <ExamplesLink href="https://whop.com/network/examples?filter=checkouts" />
 
-<iframe src="https://www.youtube.com/embed/AJeghHHvKfw?rel=0" title="Accept payments directly in your web app with Whop" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen style={{ aspectRatio: "16 / 9", width: "100%", border: 0 }} />
-
-Accept one-time and recurring payments using checkout links or an embedded checkout component. Whop supports **100+ payment methods** across **195 countries**, and the right ones appear automatically based on the buyer's location. [See all payment methods](/payments-and-billing/local-payment-methods).
+Accept one-time and recurring payments with a checkout link, or on your own site with Whop Elements. The Checkout element drops in Whop's whole checkout, and the payment elements let you build your own. Whop supports **100+ payment methods** across **195 countries**, and the right ones appear automatically based on the buyer's location. [See all payment methods](/payments-and-billing/local-payment-methods).
 
 <Tip>
   For an iOS app, the [Whop iOS Checkout SDK](/developer/guides/ios/overview) handles checkout natively with lower fees (2.7% + \$0.30 vs Apple's 15–30%). The SDK uses a scoped `iap:read` API key that's [safe to embed in your app](/developer/guides/ios/installation#step-3-create-an-api-key).
@@ -70,12 +68,12 @@ Accept one-time and recurring payments using checkout links or an embedded check
 
 ## Choose your integration
 
-|                          | Checkout link              | Embedded checkout          |
-| ------------------------ | -------------------------- | -------------------------- |
-| **Effort**               | Low                        | Medium                     |
-| **Customization**        | Limited                    | Full control               |
-| **Best for**             | Sharing links, quick setup | Custom UX, dynamic pricing |
-| **Server code required** | No (Dashboard) / Yes (API) | Yes                        |
+|                          | Checkout link              | Checkout element             | Payment element                  |
+| ------------------------ | -------------------------- | ---------------------------- | -------------------------------- |
+| **Effort**               | Low                        | Medium                       | High                             |
+| **Customization**        | Limited                    | Theme and layout             | Your own form and pay button     |
+| **Best for**             | Sharing links, quick setup | Whop's checkout on your page | A checkout you design end to end |
+| **Server code required** | No (Dashboard) / Yes (API) | Optional                     | Yes                              |
 
 ## Option 1: Create a checkout link
 
@@ -167,9 +165,9 @@ Checkout links are the simplest way to accept payments. Create a plan to get a s
           "fmt"
           "log"
 
-          whopsdk "github.com/whopio/whopsdk-go"
-          "github.com/whopio/whopsdk-go/client"
-          "github.com/whopio/whopsdk-go/option"
+          whopsdk "github.com/whopio/whopsdk-go/v2"
+          "github.com/whopio/whopsdk-go/v2/client"
+          "github.com/whopio/whopsdk-go/v2/option"
       )
 
       client := client.NewWhop(option.WithToken("Account API Key"))
@@ -194,184 +192,420 @@ Checkout links are the simplest way to accept payments. Create a plan to get a s
   </Tab>
 </Tabs>
 
-## Option 2: Embedded checkout
+## Option 2: Take payments on your own site
 
-For a custom checkout experience, use the embedded checkout component with a checkout configuration.
+Both paths run on [Whop Elements](/elements/latest/getting-started). The Checkout element drops Whop's whole checkout into your page. The payment elements give you PCI-isolated payment fields for a checkout you design yourself, where you own the pay button and confirm the payment from your server.
 
-### Step 1: Create a checkout configuration
-
-Create a checkout configuration on your server with an inline plan:
+Install the packages for React, or load the script for plain JavaScript:
 
 <CodeGroup>
-  ```typescript TypeScript theme={null}
-  import { WhopClient } from "@whop/sdk";
-
-  const client = new WhopClient({
-    token: "Account API Key",
-  });
-
-  const checkoutConfig = await client.checkoutConfigurations.create({
-    account_id: "biz_xxxxxxxxxxxxx",
-    plan: {
-      initial_price: 10.0,
-      plan_type: "one_time",
-    },
-    metadata: {
-      order_id: "order_12345",
-    },
-  });
-
-  console.log(checkoutConfig.id); // ch_xxxxxxxxxxxxx (session ID)
-  console.log(checkoutConfig.plan?.id); // plan_xxxxxxxxxxxxx (plan ID)
+  ```bash React theme={null}
+  npm install @whop/elements-react @whop/elements
   ```
 
-  ```python Python theme={null}
-  from whop_sdk import Whop
-
-  client = Whop(
-      token="Account API Key",
-  )
-
-  checkout_config = client.checkout_configurations.create(
-      account_id="biz_xxxxxxxxxxxxx",
-      plan={
-          "initial_price": 10.0,
-          "plan_type": "one_time",
-      },
-      metadata={
-          "order_id": "order_12345",
-      },
-  )
-
-  print(checkout_config.id)  # ch_xxxxxxxxxxxxx (session ID)
-  print(checkout_config.plan.id)  # plan_xxxxxxxxxxxxx (plan ID)
-  ```
-
-  ```rust Rust theme={null}
-  use whop_sdk::prelude::*;
-
-  let config = ClientConfig {
-      token: Some("Account API Key".to_string()),
-      ..Default::default()
-  };
-  let client = Whop::new(config).expect("Failed to build client");
-
-  let checkout_config = client
-      .checkout_configurations
-      .create(
-          &CreateCheckoutConfigurationsRequest {
-              account_id: Some("biz_xxxxxxxxxxxxx".to_string()),
-              plan: Some(CreateCheckoutConfigurationsRequestPlan {
-                  initial_price: Some(10.0),
-                  plan_type: Some(CreateCheckoutConfigurationsRequestPlanPlanType::OneTime),
-                  ..Default::default()
-              }),
-              metadata: Some(HashMap::from([("order_id".to_string(), json!("order_12345"))])),
-              ..Default::default()
-          },
-          None,
-      )
-      .await?;
-
-  println!("{}", checkout_config.id); // ch_xxxxxxxxxxxxx (session ID)
-  println!("{}", checkout_config.plan.unwrap().id); // plan_xxxxxxxxxxxxx (plan ID)
-  ```
-
-  ```go Go theme={null}
-  import (
-      "context"
-      "fmt"
-      "log"
-
-      whopsdk "github.com/whopio/whopsdk-go"
-      "github.com/whopio/whopsdk-go/client"
-      "github.com/whopio/whopsdk-go/option"
-  )
-
-  client := client.NewWhop(option.WithToken("Account API Key"))
-
-  checkoutConfig, err := client.CheckoutConfigurations.Create(context.TODO(), &whopsdk.CreateCheckoutConfigurationsRequest{
-      AccountID: whopsdk.String("biz_xxxxxxxxxxxxx"),
-      Plan: &whopsdk.CreateCheckoutConfigurationsRequestPlan{
-          InitialPrice: whopsdk.Float64(10.0),
-          PlanType:     whopsdk.CreateCheckoutConfigurationsRequestPlanPlanTypeOneTime.Ptr(),
-      },
-      Metadata: map[string]any{"order_id": "order_12345"},
-  })
-  if err != nil {
-      log.Fatal(err)
-  }
-
-  fmt.Println(checkoutConfig.ID)      // ch_xxxxxxxxxxxxx (session ID)
-  fmt.Println(checkoutConfig.Plan.ID) // plan_xxxxxxxxxxxxx (plan ID)
+  ```html JavaScript theme={null}
+  <script src="https://cdn.whop.com/elements/amber/elements.js" data-whop-elements></script>
   ```
 </CodeGroup>
 
-In this example:
-
-* `account_id` is your account ID
-* `plan.initial_price` is the payment amount
-* `plan.plan_type` is either `one_time` or `renewal` for subscriptions
-* `metadata` stores custom data for your reference
-
-### Step 2: Render the checkout
-
 <Tabs>
-  <Tab title="React">
-    ```tsx theme={null}
-    import { WhopCheckoutEmbed } from "@whop/checkout/react";
+  <Tab title="Payment element">
+    Mount three elements inside a `Payments` handle. [`PaymentElement`](/elements/latest/payments/payment) shows the payment methods available for the plan and the buyer's country and collects each method's fields. [`EmailElement`](/elements/latest/payments/email) collects the buyer's email and offers a recognized Whop buyer a sign-in that unlocks their saved payment methods. [`BrandingElement`](/elements/latest/payments/branding) shows Whop's merchant-of-record notice, which every payment form must carry. Card numbers stay in hosted fields and never reach your page.
 
-    export function Checkout({ sessionId }: { sessionId: string }) {
-      return (
-        <WhopCheckoutEmbed
-          sessionId={sessionId}
-          returnUrl="https://yoursite.com/checkout/complete"
-          onComplete={(paymentId) => {
-            console.log("Payment complete:", paymentId);
-          }}
-        />
-      );
-    }
-    ```
+    ### Step 1: Mount the form
 
-    Pass the `checkoutConfig.id` from step 1 as the `sessionId` prop.
+    Pass the plan to charge. The elements resolve its currency, amount, and payment methods on their own. Set `returnUrl` to a page you host over `https`. Bank redirects and some 3D Secure flows bring the buyer back there.
+
+    <CodeGroup>
+      ```tsx React theme={null}
+      import { useState } from "react";
+      import {
+        WhopElements,
+        Payments,
+        EmailElement,
+        PaymentElement,
+        BrandingElement,
+        usePayments,
+        useWhop,
+      } from "@whop/elements-react";
+      import { loadWhop } from "@whop/elements";
+
+      export function CheckoutPage() {
+        return (
+          <WhopElements elements={loadWhop()}>
+            <Payments
+              accountId="biz_xxxxxxxxxxxxx"
+              plan="plan_xxxxxxxxxxxxx"
+              returnUrl="https://yoursite.com/checkout/complete"
+            >
+              <PaymentForm />
+            </Payments>
+          </WhopElements>
+        );
+      }
+
+      function PaymentForm() {
+        const payments = usePayments();
+        const whop = useWhop();
+        const [ready, setReady] = useState(false);
+        const [error, setError] = useState<string | null>(null);
+
+        async function pay() {
+          if (!payments || !whop) return;
+          setError(null);
+
+          const { confirmationToken } = await payments.createConfirmationToken({});
+
+          const response = await fetch("/api/pay", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ confirmationToken }),
+          });
+          const payment = await response.json();
+          if (payment.status === "paid") {
+            window.location.assign("/checkout/complete");
+            return;
+          }
+
+          const result = await whop.payments.handleNextAction({
+            clientSecret: payment.client_secret,
+          });
+          if (result.redirected) return;
+          if (result.status === "succeeded") {
+            window.location.assign("/checkout/complete");
+            return;
+          }
+          if (result.status === "processing") {
+            window.location.assign("/checkout/pending");
+            return;
+          }
+          setError(result.lastPaymentError?.message ?? "The payment step wasn't completed. Try again.");
+        }
+
+        return (
+          <>
+            <EmailElement />
+            <PaymentElement onChange={(event) => setReady(event.complete)} />
+            <BrandingElement />
+            <button disabled={!ready} onClick={pay}>
+              Pay
+            </button>
+            {error && <p role="alert">{error}</p>}
+          </>
+        );
+      }
+      ```
+
+      ```html JavaScript theme={null}
+      <div id="email"></div>
+      <div id="payment"></div>
+      <div id="branding"></div>
+      <button id="pay" disabled>Pay</button>
+      <p id="error" role="alert"></p>
+
+      <script type="module">
+        const whop = window.WhopElements();
+        const payments = whop.payments.create({
+          accountId: "biz_xxxxxxxxxxxxx",
+          plan: "plan_xxxxxxxxxxxxx",
+          returnUrl: "https://yoursite.com/checkout/complete",
+        });
+
+        const payButton = document.querySelector("#pay");
+        const errorLine = document.querySelector("#error");
+
+        payments.create("email").mount("#email");
+        payments
+          .create("payment", { onChange: (event) => (payButton.disabled = !event.complete) })
+          .mount("#payment");
+        payments.create("branding").mount("#branding");
+
+        payButton.addEventListener("click", async () => {
+          errorLine.textContent = "";
+
+          const { confirmationToken } = await payments.createConfirmationToken({});
+
+          const response = await fetch("/api/pay", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ confirmationToken }),
+          });
+          const payment = await response.json();
+          if (payment.status === "paid") {
+            window.location.assign("/checkout/complete");
+            return;
+          }
+
+          const result = await whop.payments.handleNextAction({
+            clientSecret: payment.client_secret,
+          });
+          if (result.redirected) return;
+          if (result.status === "succeeded") {
+            window.location.assign("/checkout/complete");
+            return;
+          }
+          if (result.status === "processing") {
+            window.location.assign("/checkout/pending");
+            return;
+          }
+          errorLine.textContent = result.lastPaymentError?.message ?? "The payment step wasn't completed. Try again.";
+        });
+      </script>
+      ```
+    </CodeGroup>
+
+    `onChange` reports `complete: true` once the buyer has picked a method and filled in what it needs, so enable your pay button from it. `createConfirmationToken` returns a single-use `ctok_` token that stands in for the payment method. The elements attach the email and billing details they collected, so pass `billingDetails` only for fields your own form collects instead. A wallet selection opens Apple Pay or Google Pay during the button press, and the call refuses while no `BrandingElement` is mounted.
+
+    ### Step 2: Confirm the payment on your server
+
+    Create the payment with the confirmation token. Whop resolves the buyer from the token's email, charges the plan, and returns the payment with a `client_secret` the browser uses to finish any pending step. The `client_secret` is safe to return to the browser. Your API key never is.
+
+    <CodeGroup>
+      ```typescript TypeScript theme={null}
+      import { WhopClient } from "@whop/sdk";
+
+      const client = new WhopClient({ token: process.env.WHOP_API_KEY });
+
+      export async function POST(request: Request) {
+        const { confirmationToken } = await request.json();
+
+        const payment = await client.payments.create({
+          account_id: "biz_xxxxxxxxxxxxx",
+          plan_id: "plan_xxxxxxxxxxxxx",
+          confirmation_token: confirmationToken,
+          return_url: "https://yoursite.com/checkout/complete",
+          metadata: { order_id: "order_12345" },
+        });
+
+        return Response.json({
+          id: payment.id,
+          status: payment.status,
+          client_secret: payment.client_secret,
+        });
+      }
+      ```
+
+      ```python Python theme={null}
+      import os
+      from flask import Flask, jsonify, request
+      from whop_sdk import Whop
+
+      app = Flask(__name__)
+      client = Whop(token=os.environ["WHOP_API_KEY"])
+
+      @app.post("/api/pay")
+      def pay():
+          payment = client.payments.create(
+              request={
+                  "account_id": "biz_xxxxxxxxxxxxx",
+                  "plan_id": "plan_xxxxxxxxxxxxx",
+                  "confirmation_token": request.get_json()["confirmationToken"],
+                  "return_url": "https://yoursite.com/checkout/complete",
+                  "metadata": {"order_id": "order_12345"},
+              },
+          )
+          return jsonify(id=payment.id, status=payment.status, client_secret=payment.client_secret)
+      ```
+
+      ```ruby Ruby theme={null}
+      require "whop_sdk"
+
+      client = Whop_sdk::Client.new(token: ENV.fetch("WHOP_API_KEY"))
+
+      post "/api/pay" do
+        confirmation_token = JSON.parse(request.body.read)["confirmationToken"]
+
+        payment = client.payments.create(
+          account_id: "biz_xxxxxxxxxxxxx",
+          plan_id: "plan_xxxxxxxxxxxxx",
+          confirmation_token: confirmation_token,
+          return_url: "https://yoursite.com/checkout/complete",
+          metadata: { order_id: "order_12345" },
+        )
+
+        { id: payment.id, status: payment.status, client_secret: payment.client_secret }.to_json
+      end
+      ```
+    </CodeGroup>
+
+    Pass `plan_id` for a plan you already created, or an inline `plan` to find or create one for this payment. To charge an amount that isn't a plan yet, mount the elements with `currency` and `amount` in minor units instead of `plan`. Then create the payment with the matching inline `plan`. `metadata` comes back on the payment and its webhook, which is how you tie the charge to your own order.
+
+    ### Step 3: Finish the payment
+
+    A payment that comes back `paid` is done. Any other status means the buyer still has a step, such as 3D Secure or a bank redirect, or the charge is still being decided. Pass the payment's `client_secret` to `handleNextAction`. It runs an inline step in a dialog and resolves with `redirected: false`, or sends the buyer to your `returnUrl` and resolves with `redirected: true`. Branch on the `status` it returns: `succeeded` is paid, `processing` is still being decided, and anything else needs another try. A dismissed dialog leaves the payment at `requires_action` with no error, so a missing `lastPaymentError` never means success. When the attempt fails, `lastPaymentError` carries the reason.
+
+    Whether the buyer pays inline or comes back through `returnUrl`, fulfill from the `payment.succeeded` webhook below, never from the browser.
   </Tab>
 
-  <Tab title="HTML / JavaScript">
-    Add the loader script to your page:
+  <Tab title="Checkout element">
+    [`CheckoutElement`](/elements/latest/checkout/checkout) renders Whop's whole checkout: the order summary with the live quote, promo codes, the buyer's currency, and every field the seller configured. It also composes the payment methods, runs the pay flow, and handles 3D Secure and bank redirects for you. Mount it with a `plan` and there is no server code at all. Create a checkout configuration first when you want to attach metadata, a redirect, or an affiliate to the order.
 
-    ```html theme={null}
-    <script async defer src="https://js.whop.com/static/checkout/loader.js"></script>
-    ```
+    ### Step 1: Create a checkout configuration
 
-    Then add a checkout element with your plan ID and the `checkoutConfig.id` from step 1:
+    Create a checkout configuration on your server with an inline plan:
 
-    ```html theme={null}
-    <div
-      data-whop-checkout-plan-id="plan_XXXXXXXXX"
-      data-whop-checkout-session="ch_XXXXXXXXX"
-      data-whop-checkout-return-url="https://yoursite.com/checkout/complete"
-    ></div>
-    ```
+    <CodeGroup>
+      ```typescript TypeScript theme={null}
+      import { WhopClient } from "@whop/sdk";
+
+      const client = new WhopClient({
+        token: "Account API Key",
+      });
+
+      const checkoutConfig = await client.checkoutConfigurations.create({
+        account_id: "biz_xxxxxxxxxxxxx",
+        plan: {
+          initial_price: 10.0,
+          plan_type: "one_time",
+        },
+        metadata: {
+          order_id: "order_12345",
+        },
+      });
+
+      console.log(checkoutConfig.id); // ch_xxxxxxxxxxxxx (session ID)
+      console.log(checkoutConfig.plan?.id); // plan_xxxxxxxxxxxxx (plan ID)
+      ```
+
+      ```python Python theme={null}
+      from whop_sdk import Whop
+
+      client = Whop(
+          token="Account API Key",
+      )
+
+      checkout_config = client.checkout_configurations.create(
+          account_id="biz_xxxxxxxxxxxxx",
+          plan={
+              "initial_price": 10.0,
+              "plan_type": "one_time",
+          },
+          metadata={
+              "order_id": "order_12345",
+          },
+      )
+
+      print(checkout_config.id)  # ch_xxxxxxxxxxxxx (session ID)
+      print(checkout_config.plan.id)  # plan_xxxxxxxxxxxxx (plan ID)
+      ```
+
+      ```rust Rust theme={null}
+      use whop_sdk::prelude::*;
+
+      let config = ClientConfig {
+          token: Some("Account API Key".to_string()),
+          ..Default::default()
+      };
+      let client = Whop::new(config).expect("Failed to build client");
+
+      let checkout_config = client
+          .checkout_configurations
+          .create(
+              &CreateCheckoutConfigurationsRequest {
+                  account_id: Some("biz_xxxxxxxxxxxxx".to_string()),
+                  plan: Some(CreateCheckoutConfigurationsRequestPlan {
+                      initial_price: Some(10.0),
+                      plan_type: Some(CreateCheckoutConfigurationsRequestPlanPlanType::OneTime),
+                      ..Default::default()
+                  }),
+                  metadata: Some(HashMap::from([("order_id".to_string(), json!("order_12345"))])),
+                  ..Default::default()
+              },
+              None,
+          )
+          .await?;
+
+      println!("{}", checkout_config.id); // ch_xxxxxxxxxxxxx (session ID)
+      println!("{}", checkout_config.plan.unwrap().id); // plan_xxxxxxxxxxxxx (plan ID)
+      ```
+
+      ```go Go theme={null}
+      import (
+          "context"
+          "fmt"
+          "log"
+
+          whopsdk "github.com/whopio/whopsdk-go/v2"
+          "github.com/whopio/whopsdk-go/v2/client"
+          "github.com/whopio/whopsdk-go/v2/option"
+      )
+
+      client := client.NewWhop(option.WithToken("Account API Key"))
+
+      checkoutConfig, err := client.CheckoutConfigurations.Create(context.TODO(), &whopsdk.CreateCheckoutConfigurationsRequest{
+          AccountID: whopsdk.String("biz_xxxxxxxxxxxxx"),
+          Plan: &whopsdk.CreateCheckoutConfigurationsRequestPlan{
+              InitialPrice: whopsdk.Float64(10.0),
+              PlanType:     whopsdk.CreateCheckoutConfigurationsRequestPlanPlanTypeOneTime.Ptr(),
+          },
+          Metadata: map[string]any{"order_id": "order_12345"},
+      })
+      if err != nil {
+          log.Fatal(err)
+      }
+
+      fmt.Println(checkoutConfig.ID)      // ch_xxxxxxxxxxxxx (session ID)
+      fmt.Println(checkoutConfig.Plan.ID) // plan_xxxxxxxxxxxxx (plan ID)
+      ```
+    </CodeGroup>
+
+    In this example:
+
+    * `account_id` is your account ID
+    * `plan.initial_price` is the payment amount
+    * `plan.plan_type` is either `one_time` or `renewal` for subscriptions
+    * `metadata` stores custom data for your reference
+
+    ### Step 2: Render the checkout
+
+    Mount the checkout with the `checkoutConfig.id` from step 1, or with `plan` alone when you skipped it:
+
+    <CodeGroup>
+      ```tsx React theme={null}
+      import { WhopElements, Checkout, CheckoutElement } from "@whop/elements-react";
+      import { loadWhop } from "@whop/elements";
+
+      export function CheckoutPage({ sessionId }: { sessionId: string }) {
+        return (
+          <WhopElements elements={loadWhop()}>
+            <Checkout
+              checkoutConfiguration={sessionId}
+              returnUrl="https://yoursite.com/checkout/complete"
+            >
+              <CheckoutElement />
+            </Checkout>
+          </WhopElements>
+        );
+      }
+      ```
+
+      ```html JavaScript theme={null}
+      <div id="checkout"></div>
+
+      <script type="module">
+        const checkout = window.WhopElements().checkout.create({
+          checkoutConfiguration: "ch_XXXXXXXXX",
+          returnUrl: "https://yoursite.com/checkout/complete",
+        });
+        checkout.create("checkout").mount("#checkout");
+      </script>
+      ```
+    </CodeGroup>
+
+    The element opens the checkout session itself, and the session credential never leaves it. Every option is set at creation, so mount a new checkout to change the order.
+
+    A finished checkout redirects the current tab to `returnUrl`, and an off-site payment step such as 3D Secure or a bank page returns the buyer there too. Fulfill from the `payment.succeeded` webhook rather than from the redirect. Without a `returnUrl`, the buyer stays on the element's own success screen.
+
+    ### Step 3: Customize the checkout
+
+    Attribute and theme the checkout through the `Checkout` handle:
+
+    * `promoCode`, `affiliateCode`, `attribution`, and `metadata` record where the sale came from and your own reference data on the order.
+    * `appearance` sets the theme, design tokens, and per-part styles for every element under the handle. See [Appearance](/elements/latest/appearance).
+
+    For every option, event, and method, see the [Checkout reference](/elements/latest/checkout/overview).
   </Tab>
 </Tabs>
-
-You must provide `returnUrl` to handle redirects from external payment providers. After a redirect, check the `status` query parameter:
-
-* **success**: The payment succeeded. Use the receipt information to render a success page.
-* **error**: The payment failed or the customer canceled it. Remount the checkout so your customer can try again.
-
-### Step 3: Customize the checkout
-
-You can customize the checkout appearance and behavior:
-
-| Prop (React)               | Attribute (HTML)                        | Description                                  |
-| -------------------------- | --------------------------------------- | -------------------------------------------- |
-| `theme`                    | `data-whop-checkout-theme`              | `"light"`, `"dark"`, or `"system"` (default) |
-| `hidePrice`                | `data-whop-checkout-hide-price`         | Hide the price display                       |
-| `themeOptions.accentColor` | `data-whop-checkout-theme-accent-color` | Custom accent color                          |
-
-For the full list of customization options, see the [Embedded checkout reference](/payments/checkout-embed).
 
 ## Handle payment webhooks
 
@@ -428,14 +662,14 @@ When the test charge settles, your webhook handler receives a `payment.succeeded
   "account_id": "biz_xxxxxxxxxxxxx",
   "data": {
     "id": "pay_xxxxxxxxxxxxx",
-    "status": "succeeded",
+    "status": "paid",
     "amount_after_fees": 9.71,
     "currency": "usd",
     "paid_at": "2026-05-12T18:42:10Z",
     "payment_method_type": "card",
     "card_brand": "visa",
     "card_last4": "4242",
-    "member": { "id": "mem_xxxxxxxxxxxxx" },
+    "member": { "id": "mber_xxxxxxxxxxxxx" },
     "metadata": {
       "order_id": "order_12345"
     }
@@ -462,6 +696,10 @@ If you see both the dashboard row and the `payment.succeeded` event on your serv
 
   <Card title="Save payment methods" icon="credit-card" href="/developer/guides/save-payment-methods">
     Save and charge payment methods
+  </Card>
+
+  <Card title="Express checkout" icon="apple" href="/developer/guides/express-checkout">
+    One-press Apple Pay and Google Pay on your own site
   </Card>
 
   <Card title="iOS payments" icon="apple" href="/developer/guides/ios/overview">

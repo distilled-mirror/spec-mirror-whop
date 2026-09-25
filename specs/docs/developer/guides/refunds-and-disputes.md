@@ -101,9 +101,9 @@ Create refunds for a payment, not directly on the refunds resource. Call `paymen
       "log"
       "os"
 
-      whopsdk "github.com/whopio/whopsdk-go"
-      "github.com/whopio/whopsdk-go/client"
-      "github.com/whopio/whopsdk-go/option"
+      whopsdk "github.com/whopio/whopsdk-go/v2"
+      "github.com/whopio/whopsdk-go/v2/client"
+      "github.com/whopio/whopsdk-go/v2/option"
   )
 
   client := client.NewWhop(option.WithToken(os.Getenv("WHOP_API_KEY")))

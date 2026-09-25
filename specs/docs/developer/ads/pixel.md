@@ -28,6 +28,14 @@ The Whop Pixel is a JavaScript snippet that you add to your website. It measures
     </script>
     ```
 
+    **If you run ads from more than one Whop account**, add every account ID to `setScope`. The pixel sends each event to every account listed, so each dashboard gets the page views it needs to attribute conversions to its campaigns.
+
+    ```javascript Send events to multiple accounts theme={null}
+    whop.setScope("biz_xxxxxxxxxxxxx", "biz_yyyyyyyyyyyyy", "biz_zzzzzzzzzzzzz");
+    ```
+
+    Whop keeps data separate per account. An account missing from `setScope` gets no events from this page. If you also [send events from your server](/developer/ads/events-api), send each one once per account, with that account's ID.
+
     Building your funnel on a platform instead of raw HTML? Use the dedicated install guide instead of pasting the snippet into a page builder text block.
 
     | If you use   | Follow                                                                          |

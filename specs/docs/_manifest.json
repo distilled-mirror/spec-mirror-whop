@@ -3,7 +3,7 @@
     "https://docs.whop.com/llms.txt",
     "https://docs.whop.com/sitemap.xml"
   ],
-  "count": 1143,
+  "count": 1124,
   "pages": [
     {
       "page": "https://docs.whop.com/account-settings/account-security/delete-your-account",
@@ -1598,6 +1598,15 @@
       ]
     },
     {
+      "page": "https://docs.whop.com/api-reference/beta/cashback-rules/pay-out-cashback",
+      "markdown": "https://docs.whop.com/api-reference/beta/cashback-rules/pay-out-cashback.md",
+      "file": "api-reference/beta/cashback-rules/pay-out-cashback.md",
+      "indexes": [
+        "llms.txt",
+        "sitemap"
+      ]
+    },
+    {
       "page": "https://docs.whop.com/api-reference/beta/cashback-rules/update-cashback-rule",
       "markdown": "https://docs.whop.com/api-reference/beta/cashback-rules/update-cashback-rule.md",
       "file": "api-reference/beta/cashback-rules/update-cashback-rule.md",
@@ -2310,6 +2319,15 @@
       "page": "https://docs.whop.com/api-reference/beta/memberships/pause-membership",
       "markdown": "https://docs.whop.com/api-reference/beta/memberships/pause-membership.md",
       "file": "api-reference/beta/memberships/pause-membership.md",
+      "indexes": [
+        "llms.txt",
+        "sitemap"
+      ]
+    },
+    {
+      "page": "https://docs.whop.com/api-reference/beta/memberships/reactivate-membership",
+      "markdown": "https://docs.whop.com/api-reference/beta/memberships/reactivate-membership.md",
+      "file": "api-reference/beta/memberships/reactivate-membership.md",
       "indexes": [
         "llms.txt",
         "sitemap"
@@ -3628,6 +3646,15 @@
       "page": "https://docs.whop.com/api-reference/beta/social-accounts/list-social-accounts",
       "markdown": "https://docs.whop.com/api-reference/beta/social-accounts/list-social-accounts.md",
       "file": "api-reference/beta/social-accounts/list-social-accounts.md",
+      "indexes": [
+        "llms.txt",
+        "sitemap"
+      ]
+    },
+    {
+      "page": "https://docs.whop.com/api-reference/beta/social-accounts/refresh",
+      "markdown": "https://docs.whop.com/api-reference/beta/social-accounts/refresh.md",
+      "file": "api-reference/beta/social-accounts/refresh.md",
       "indexes": [
         "llms.txt",
         "sitemap"
@@ -6975,6 +7002,15 @@
       ]
     },
     {
+      "page": "https://docs.whop.com/developer/guides/express-checkout",
+      "markdown": "https://docs.whop.com/developer/guides/express-checkout.md",
+      "file": "developer/guides/express-checkout.md",
+      "indexes": [
+        "llms.txt",
+        "sitemap"
+      ]
+    },
+    {
       "page": "https://docs.whop.com/developer/guides/forums",
       "markdown": "https://docs.whop.com/developer/guides/forums.md",
       "file": "developer/guides/forums.md",
@@ -7257,15 +7293,6 @@
       "page": "https://docs.whop.com/developer/platforms/manual-payouts",
       "markdown": "https://docs.whop.com/developer/platforms/manual-payouts.md",
       "file": "developer/platforms/manual-payouts.md",
-      "indexes": [
-        "llms.txt",
-        "sitemap"
-      ]
-    },
-    {
-      "page": "https://docs.whop.com/developer/platforms/playground",
-      "markdown": "https://docs.whop.com/developer/platforms/playground.md",
-      "file": "developer/platforms/playground.md",
       "indexes": [
         "llms.txt",
         "sitemap"
@@ -9262,15 +9289,6 @@
       ]
     },
     {
-      "page": "https://docs.whop.com/manage-your-business/payment-processing/embed-checkout",
-      "markdown": "https://docs.whop.com/manage-your-business/payment-processing/embed-checkout.md",
-      "file": "manage-your-business/payment-processing/embed-checkout.md",
-      "indexes": [
-        "llms.txt",
-        "sitemap"
-      ]
-    },
-    {
       "page": "https://docs.whop.com/manage-your-business/payment-processing/set-up-pricing",
       "markdown": "https://docs.whop.com/manage-your-business/payment-processing/set-up-pricing.md",
       "file": "manage-your-business/payment-processing/set-up-pricing.md",
@@ -9567,15 +9585,6 @@
       ]
     },
     {
-      "page": "https://docs.whop.com/payments/checkout-embed",
-      "markdown": "https://docs.whop.com/payments/checkout-embed.md",
-      "file": "payments/checkout-embed.md",
-      "indexes": [
-        "llms.txt",
-        "sitemap"
-      ]
-    },
-    {
       "page": "https://docs.whop.com/payments/create-a-product",
       "markdown": "https://docs.whop.com/payments/create-a-product.md",
       "file": "payments/create-a-product.md",
@@ -9630,15 +9639,6 @@
       ]
     },
     {
-      "page": "https://docs.whop.com/payments/one-click-checkout-button",
-      "markdown": "https://docs.whop.com/payments/one-click-checkout-button.md",
-      "file": "payments/one-click-checkout-button.md",
-      "indexes": [
-        "llms.txt",
-        "sitemap"
-      ]
-    },
-    {
       "page": "https://docs.whop.com/payments/payment-declines",
       "markdown": "https://docs.whop.com/payments/payment-declines.md",
       "file": "payments/payment-declines.md",
@@ -9684,60 +9684,6 @@
       ]
     },
     {
-      "page": "https://docs.whop.com/sdk/elements/add-payout-method-element",
-      "markdown": "https://docs.whop.com/sdk/elements/add-payout-method-element.md",
-      "file": "sdk/elements/add-payout-method-element.md",
-      "indexes": [
-        "llms.txt",
-        "sitemap"
-      ]
-    },
-    {
-      "page": "https://docs.whop.com/sdk/elements/automatic-withdraw-element",
-      "markdown": "https://docs.whop.com/sdk/elements/automatic-withdraw-element.md",
-      "file": "sdk/elements/automatic-withdraw-element.md",
-      "indexes": [
-        "llms.txt",
-        "sitemap"
-      ]
-    },
-    {
-      "page": "https://docs.whop.com/sdk/elements/available-cash-breakdown-element",
-      "markdown": "https://docs.whop.com/sdk/elements/available-cash-breakdown-element.md",
-      "file": "sdk/elements/available-cash-breakdown-element.md",
-      "indexes": [
-        "llms.txt",
-        "sitemap"
-      ]
-    },
-    {
-      "page": "https://docs.whop.com/sdk/elements/balance-element",
-      "markdown": "https://docs.whop.com/sdk/elements/balance-element.md",
-      "file": "sdk/elements/balance-element.md",
-      "indexes": [
-        "llms.txt",
-        "sitemap"
-      ]
-    },
-    {
-      "page": "https://docs.whop.com/sdk/elements/balances-element",
-      "markdown": "https://docs.whop.com/sdk/elements/balances-element.md",
-      "file": "sdk/elements/balances-element.md",
-      "indexes": [
-        "llms.txt",
-        "sitemap"
-      ]
-    },
-    {
-      "page": "https://docs.whop.com/sdk/elements/change-account-country-element",
-      "markdown": "https://docs.whop.com/sdk/elements/change-account-country-element.md",
-      "file": "sdk/elements/change-account-country-element.md",
-      "indexes": [
-        "llms.txt",
-        "sitemap"
-      ]
-    },
-    {
       "page": "https://docs.whop.com/sdk/elements/chat-element",
       "markdown": "https://docs.whop.com/sdk/elements/chat-element.md",
       "file": "sdk/elements/chat-element.md",
@@ -9765,54 +9711,9 @@
       ]
     },
     {
-      "page": "https://docs.whop.com/sdk/elements/generate-withdrawal-receipt-element",
-      "markdown": "https://docs.whop.com/sdk/elements/generate-withdrawal-receipt-element.md",
-      "file": "sdk/elements/generate-withdrawal-receipt-element.md",
-      "indexes": [
-        "llms.txt",
-        "sitemap"
-      ]
-    },
-    {
       "page": "https://docs.whop.com/sdk/elements/overview",
       "markdown": "https://docs.whop.com/sdk/elements/overview.md",
       "file": "sdk/elements/overview.md",
-      "indexes": [
-        "llms.txt",
-        "sitemap"
-      ]
-    },
-    {
-      "page": "https://docs.whop.com/sdk/elements/payouts-session",
-      "markdown": "https://docs.whop.com/sdk/elements/payouts-session.md",
-      "file": "sdk/elements/payouts-session.md",
-      "indexes": [
-        "llms.txt",
-        "sitemap"
-      ]
-    },
-    {
-      "page": "https://docs.whop.com/sdk/elements/pending-breakdown-element",
-      "markdown": "https://docs.whop.com/sdk/elements/pending-breakdown-element.md",
-      "file": "sdk/elements/pending-breakdown-element.md",
-      "indexes": [
-        "llms.txt",
-        "sitemap"
-      ]
-    },
-    {
-      "page": "https://docs.whop.com/sdk/elements/reserve-breakdown-element",
-      "markdown": "https://docs.whop.com/sdk/elements/reserve-breakdown-element.md",
-      "file": "sdk/elements/reserve-breakdown-element.md",
-      "indexes": [
-        "llms.txt",
-        "sitemap"
-      ]
-    },
-    {
-      "page": "https://docs.whop.com/sdk/elements/reset-account-element",
-      "markdown": "https://docs.whop.com/sdk/elements/reset-account-element.md",
-      "file": "sdk/elements/reset-account-element.md",
       "indexes": [
         "llms.txt",
         "sitemap"
@@ -9828,27 +9729,9 @@
       ]
     },
     {
-      "page": "https://docs.whop.com/sdk/elements/status-banner-element",
-      "markdown": "https://docs.whop.com/sdk/elements/status-banner-element.md",
-      "file": "sdk/elements/status-banner-element.md",
-      "indexes": [
-        "llms.txt",
-        "sitemap"
-      ]
-    },
-    {
       "page": "https://docs.whop.com/sdk/elements/styling-reference",
       "markdown": "https://docs.whop.com/sdk/elements/styling-reference.md",
       "file": "sdk/elements/styling-reference.md",
-      "indexes": [
-        "llms.txt",
-        "sitemap"
-      ]
-    },
-    {
-      "page": "https://docs.whop.com/sdk/elements/treasury-breakdown-element",
-      "markdown": "https://docs.whop.com/sdk/elements/treasury-breakdown-element.md",
-      "file": "sdk/elements/treasury-breakdown-element.md",
       "indexes": [
         "llms.txt",
         "sitemap"
@@ -9864,63 +9747,9 @@
       ]
     },
     {
-      "page": "https://docs.whop.com/sdk/elements/verify-element",
-      "markdown": "https://docs.whop.com/sdk/elements/verify-element.md",
-      "file": "sdk/elements/verify-element.md",
-      "indexes": [
-        "llms.txt",
-        "sitemap"
-      ]
-    },
-    {
-      "page": "https://docs.whop.com/sdk/elements/wallet-session",
-      "markdown": "https://docs.whop.com/sdk/elements/wallet-session.md",
-      "file": "sdk/elements/wallet-session.md",
-      "indexes": [
-        "llms.txt",
-        "sitemap"
-      ]
-    },
-    {
       "page": "https://docs.whop.com/sdk/elements/whop-elements",
       "markdown": "https://docs.whop.com/sdk/elements/whop-elements.md",
       "file": "sdk/elements/whop-elements.md",
-      "indexes": [
-        "llms.txt",
-        "sitemap"
-      ]
-    },
-    {
-      "page": "https://docs.whop.com/sdk/elements/withdraw-button-element",
-      "markdown": "https://docs.whop.com/sdk/elements/withdraw-button-element.md",
-      "file": "sdk/elements/withdraw-button-element.md",
-      "indexes": [
-        "llms.txt",
-        "sitemap"
-      ]
-    },
-    {
-      "page": "https://docs.whop.com/sdk/elements/withdraw-element",
-      "markdown": "https://docs.whop.com/sdk/elements/withdraw-element.md",
-      "file": "sdk/elements/withdraw-element.md",
-      "indexes": [
-        "llms.txt",
-        "sitemap"
-      ]
-    },
-    {
-      "page": "https://docs.whop.com/sdk/elements/withdrawal-breakdown-element",
-      "markdown": "https://docs.whop.com/sdk/elements/withdrawal-breakdown-element.md",
-      "file": "sdk/elements/withdrawal-breakdown-element.md",
-      "indexes": [
-        "llms.txt",
-        "sitemap"
-      ]
-    },
-    {
-      "page": "https://docs.whop.com/sdk/elements/withdrawals-element",
-      "markdown": "https://docs.whop.com/sdk/elements/withdrawals-element.md",
-      "file": "sdk/elements/withdrawals-element.md",
       "indexes": [
         "llms.txt",
         "sitemap"

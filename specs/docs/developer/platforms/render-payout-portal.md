@@ -4,15 +4,15 @@
 
 # Enable Connected Account Payouts
 
-> Let your connected accounts manage their own payouts through an embedded or hosted portal
+> Let your connected accounts manage their own payouts with Whop Elements or a hosted portal
 
-Let your connected accounts complete Know Your Customer (KYC) verification, add payout methods, and withdraw their funds on their own. You can embed the payout portal directly in your app or redirect users to a Whop-hosted portal.
+Let your connected accounts complete Know Your Customer (KYC) verification, add payout methods, and withdraw their funds on their own. You can mount the [Whop Elements](/elements/latest/getting-started) wallet surfaces directly in your app or redirect users to a Whop-hosted portal.
 
 ## Embedded payout portal
 
 ### Server side implementation
 
-To use the embedded component, you need to generate an access token for the connected account. This token grants temporary access to the payout portal for that specific account. See [Auth & API keys](/developer/guides/auth-scoping) for how to scope that token and how it compares to Whop's other credential types.
+To mount the wallet elements, generate an access token for the connected account on your server. The elements read that account's balance and payouts with it. See [Auth & API keys](/developer/guides/auth-scoping) for how to scope that token and how it compares to Whop's other credential types.
 
 <CodeGroup>
   ```tsx Next.JS theme={null}
@@ -103,175 +103,143 @@ To use the embedded component, you need to generate an access token for the conn
 
 <CodeGroup>
   ```bash npm theme={null}
-  npm install @whop/embedded-components-react-js @whop/embedded-components-vanilla-js
+  npm install @whop/elements-react @whop/elements
   ```
 
   ```bash pnpm theme={null}
-  pnpm add @whop/embedded-components-react-js @whop/embedded-components-vanilla-js
+  pnpm add @whop/elements-react @whop/elements
   ```
 
   ```html HTML theme={null}
-  <script src="https://latest.elements.whop.com/release/elements.js"></script>
-  ```
-
-  ```swift Swift theme={null}
-  // Add to your Package.swift dependencies
-
-  dependencies: [
-      .package(url: "https://github.com/whopio/whopsdk-payments-swift.git", exact: "0.0.6")
-  ]
-
-
-  // Info.plist - Add these usage descriptions to Info.plist for KYC functionality
-
-  <key>NSCameraUsageDescription</key>
-  <string>We use your camera to let you take photos, record videos, and ID verification.</string>
-
-  <key>NSMicrophoneUsageDescription</key>
-  <string>We use your microphone so you can record and share audio, and ID verification.</string>
-
-  <key>NSPhotoLibraryUsageDescription</key>
-  <string>We use your photo library so you can select and share photos or videos from your library.</string>
+  <script src="https://cdn.whop.com/elements/amber/elements.js" data-whop-elements></script>
   ```
 </CodeGroup>
 
 ## Client side implementation
 
+Create one `Wallet` handle for the connected account and mount the surfaces you need under it. The handle sends its access token to every element beneath it, so mint one token that carries every scope those elements read.
+
 <CodeGroup>
   ```tsx React theme={null}
-  import type { WhopElementsOptions } from "@whop/embedded-components-vanilla-js/types";
+  "use client";
 
+  import { useEffect, useState } from "react";
   import {
+  	ActivityElement,
   	BalanceElement,
-  	Elements,
-  	PayoutsSession,
-  	WithdrawButtonElement,
-  	WithdrawalsElement,
-  } from "@whop/embedded-components-react-js";
-  import { loadWhopElements } from "@whop/embedded-components-vanilla-js";
+  	Balances,
+  	Wallet,
+  	WhopElements,
+  	WithdrawElement,
+  } from "@whop/elements-react";
+  import { loadWhop } from "@whop/elements";
 
-  const elements = loadWhopElements();
+  export function PayoutPortal({ accountId }: { accountId: string }) {
+  	const [accessToken, setAccessToken] = useState<string | null>(null);
 
-  const appearance: WhopElementsOptions["appearance"] = {
-  	classes: {
-  		".Button": { height: "40px", "border-radius": "8px" },
-  		".Button:disabled": { "background-color": "gray" },
-  		".Container": { "border-radius": "12px" },
-  	},
-  };
+  	useEffect(() => {
+  		fetch(`/api/token?accountId=${accountId}`)
+  			.then((res) => res.json())
+  			.then((data) => setAccessToken(data.token));
+  	}, [accountId]);
 
-  export function BalancePage({ accountId }: { accountId: string }) {
+  	if (!accessToken) return null;
+
   	return (
-  		<Elements appearance={appearance} elements={elements}>
-  			<PayoutsSession
-  				token={() =>
-  					fetch(`/api/token?accountId=${accountId}`)
-  						.then((res) => res.json())
-  						.then((data) => data.token)
-  				}
-  				companyId={accountId}
-  				redirectUrl="https://yourapp.com/verification-complete"
-  			>
-  				<section
-  					style={{ display: "flex", flexDirection: "column", gap: "8px" }}
-  				>
-  					<div
-  						style={{ height: "95.5px", width: "100%", position: "relative" }}
-  					>
-  						<BalanceElement fallback={<div>Loading...</div>} />
-  					</div>
-  					<div style={{ height: "40px", width: "100%", position: "relative" }}>
-  						<WithdrawButtonElement fallback={<div>Loading...</div>} />
-  					</div>
-  					<WithdrawalsElement fallback={<div>Loading...</div>} />
-  				</section>
-  			</PayoutsSession>
-  		</Elements>
+  		<WhopElements elements={loadWhop()}>
+  			<Wallet accountId={accountId} accessToken={accessToken}>
+  				<Balances>
+  					<BalanceElement />
+  				</Balances>
+  				<WithdrawElement />
+  				<ActivityElement />
+  			</Wallet>
+  		</WhopElements>
   	);
   }
   ```
 
-  ```swift Swift theme={null}
-  import SwiftUI
-  import WhopPayments
+  ```html JavaScript theme={null}
+  <div id="balance"></div>
+  <div id="withdraw"></div>
+  <div id="activity"></div>
 
-  class MyTokenProvider: WhopTokenProvider {
-      /// return an access token fetched from your
-      /// backend.
-      ///
-      /// called when `WhopPayoutsView` appears and
-      /// before expiration (within 60 seconds).
-      func getToken() async -> WhopTokenResponse {
-          let token = await fetchAccessToken()
-          return WhopTokenResponse(accessToken: token)
-      }
-  }
+  <script type="module">
+    const accountId = "biz_xxxxxxxxxxxxx";
+    const { token } = await (await fetch(`/api/token?accountId=${accountId}`)).json();
 
-  @main
-  struct MyApp: App {
-      let tokenProvider = MyTokenProvider()
-
-      var body: some Scene {
-          WindowGroup {
-              WhopPayoutsView(
-                  tokenProvider,
-                  companyId: "account_id",
-                  ledgerAccountId: "ledger_account_id"
-              )
-          }
-      }
-  }
+    const wallet = window.WhopElements().wallet.create({ accountId, accessToken: token });
+    wallet.create("balances").create("balance").mount("#balance");
+    wallet.create("withdraw").mount("#withdraw");
+    wallet.create("activity").mount("#activity");
+  </script>
   ```
 </CodeGroup>
 
-## `PayoutsSession` Props
-
-The `PayoutsSession` component requires the following props:
-
-| Prop          | Type                            | Required | Description                                                                                                                         |
-| ------------- | ------------------------------- | -------- | ----------------------------------------------------------------------------------------------------------------------------------- |
-| `token`       | `string \| Promise \| Function` | Yes      | Access token for the session. Can be a string, promise, or function that returns a token.                                           |
-| `companyId`   | `string`                        | Yes      | The account ID for the connected account.                                                                                           |
-| `redirectUrl` | `string`                        | Yes      | Absolute URL (e.g., `https://yourapp.com/verification-complete`) to redirect the user to after they complete identity verification. |
-| `currency`    | `string`                        | No       | Currency code, such as `USD`. Defaults to `USD`.                                                                                    |
-
 <Note>
-  The `redirectUrl` must be a publicly accessible URL. Localhost URLs (e.g.,
-  `http://localhost:3000`) won't work. For local development, use a tunneling
-  service like [ngrok](https://ngrok.com) to expose your local server.
+  On iOS, the wallet SDK ships `BalanceElement`, `ListElement`, and `ActivityElement`. See [Getting Started with Elements](/elements/latest/getting-started) and pick the Swift tab.
 </Note>
 
-## Modal methods
+### Identity verification
 
-You can programmatically open modals using the `usePayoutsSessionRef` hook:
+A connected account must verify its identity before it can withdraw. Mount the [KYC element](/elements/latest/verifications/kyc) for the full in-page flow, which collects the details, runs the hosted provider session, and reports the result. Or mount the [RequiredActions element](/elements/latest/dashboard/required-actions) to show every outstanding action, verification included, and let the user start each one.
 
-```tsx theme={null}
-import { usePayoutsSessionRef } from "@whop/embedded-components-react-js";
+```tsx React theme={null}
+import { WhopElements, Verifications, KycElement } from "@whop/elements-react";
+import { loadWhop } from "@whop/elements";
 
-const sessionRef = usePayoutsSessionRef();
-
-<button
-	onClick={() =>
-		sessionRef.current?.payoutsSession?.showChangeAccountCountryModal(
-			(modal) => ({
-				onClose: (ev) => {
-					ev.preventDefault();
-					modal.close();
-				},
-			}),
-		)
-	}
->
-	Change Account Country
-</button>;
+export function VerifyIdentity({ accountId }: { accountId: string }) {
+	return (
+		<WhopElements elements={loadWhop()}>
+			<Verifications
+				accountId={accountId}
+				getToken={() =>
+					fetch(`/api/token?accountId=${accountId}`)
+						.then((res) => res.json())
+						.then((data) => data.token)
+				}
+			>
+				<KycElement onCompleted={() => console.log("Verified")} />
+			</Verifications>
+		</WhopElements>
+	);
+}
 ```
 
-### Available modals
+## `Wallet` options
 
-| Method                          | Description                                   |
-| ------------------------------- | --------------------------------------------- |
-| `showChangeAccountCountryModal` | Let users change their payout account country |
-| `showResetAccountModal`         | Let users reset their payout account          |
+| Option        | Type         | Required                | Description                                                                                                    |
+| ------------- | ------------ | ----------------------- | -------------------------------------------------------------------------------------------------------------- |
+| `accountId`   | `string`     | Yes                     | The connected account's ID, prefixed `biz_`.                                                                   |
+| `accessToken` | `string`     | Yes, on your own domain | The token from your server. Without it, reads use the viewer's whop.com session, which only works on whop.com. |
+| `currency`    | `string`     | No                      | ISO 4217 code for amount fields. Defaults to `usd`.                                                            |
+| `appearance`  | `Appearance` | No                      | Theme and per-part styling for every element under the handle. See [Appearance](/elements/latest/appearance).  |
+
+Every option, event, and method is listed on the [Wallet reference](/elements/latest/wallet/overview).
+
+### Scopes
+
+The elements read with the token you mint, so grant every scope they need on that one token:
+
+* [Balances](/elements/latest/wallet/balances) and [Activity](/elements/latest/wallet/activity) read `company:balance:read`.
+* [Withdraw](/elements/latest/wallet/withdraw) needs `payout:withdraw_funds`, `payout:destination:read`, and `payout:create_destination` to add a bank.
+* [KYC](/elements/latest/verifications/kyc) needs `identity:read` and `identity:write`.
+
+A token created without `scoped_actions` inherits every permission of your API key.
+
+### Refreshing the token
+
+Access tokens expire after one hour by default and three hours at most. Set a fresh one on the handle before it expires:
+
+```ts theme={null}
+wallet.update({ accessToken: await fetchToken(accountId) });
+```
+
+In React, pass the new value as the `accessToken` prop.
+
+<Note>
+  `accessToken` is a value you set, not a callback the SDK calls. `Verifications` is the exception: it takes a `getToken` callback and calls it before the element mounts.
+</Note>
 
 ## Hosted payout portal
 
@@ -348,9 +316,9 @@ Create an account link and redirect the user to the returned URL:
       "fmt"
       "log"
 
-      whopsdk "github.com/whopio/whopsdk-go"
-      "github.com/whopio/whopsdk-go/client"
-      "github.com/whopio/whopsdk-go/option"
+      whopsdk "github.com/whopio/whopsdk-go/v2"
+      "github.com/whopio/whopsdk-go/v2/client"
+      "github.com/whopio/whopsdk-go/v2/option"
   )
 
   client := client.NewWhop(option.WithToken("Account API Key"))
@@ -389,6 +357,10 @@ After creating the account link, redirect the user to the `url` returned in the 
 ## Related resources
 
 <CardGroup cols={2}>
+  <Card title="Wallet elements" icon="wallet" href="/elements/latest/wallet/overview">
+    Every wallet surface with its options, events, and scopes
+  </Card>
+
   <Card title="Pay connected accounts" icon="arrow-right-arrow-left" href="/developer/platforms/collect-payments-for-connected-accounts">
     Transfer funds to connected accounts
   </Card>

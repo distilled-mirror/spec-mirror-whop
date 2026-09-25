@@ -6,7 +6,7 @@
 
 > Build a marketplace on top of Whop's global payment and payout rails.
 
-This guide shows how to recreate the core of the Mercor Clone demo using Whop Rails. You'll build the key pages, wire up payments through embedded Whop checkout, and pay connected accounts at scale.
+This guide shows how to recreate the core of the Mercor Clone demo using Whop Rails. You'll build the key pages, wire up payments with the Checkout element, and pay connected accounts at scale.
 
 To see the example repository, visit the [Mercor clone repository](https://github.com/whopio/mercor-clone). Otherwise, follow the tutorial below to get started:
 
@@ -33,7 +33,7 @@ NEXTAUTH_SECRET="$(openssl rand -base64 32)"
 Install dependencies
 
 ```bash theme={null}
-pnpm add @whop/checkout @whop/checkout-react
+pnpm add @whop/elements @whop/elements-react
 # plus your web framework deps (e.g., Next.js, Prisma, etc.)
 ```
 
@@ -48,7 +48,7 @@ app/
   layout.tsx
   page.tsx
   recruiter/
-    balance/page.tsx            # Add funds UI (opens checkout embed)
+    balance/page.tsx            # Add funds UI (opens the Checkout element)
     my-listings/page.tsx
     submissions/page.tsx        # Approve/Complete gigs
 	 layout.tsx
@@ -92,9 +92,6 @@ export default function RecruiterBalancePage() {
 			<AddFundsModal
 				isOpen={open}
 				onClose={() => setOpen(false)}
-				onSuccess={() => {
-					/* refetch balance */
-				}}
 			/>
 		</main>
 	);
@@ -140,7 +137,7 @@ export default function EarnerPayoutsPage() {
 				</button>
 			) : (
 				<div className="mt-6">
-					{/* See section 3 for the payout portal embed pseudo-code */}
+					{/* See section 3 for the payout portal */}
 					<p className="text-gray-600">Your payout account is ready.</p>
 				</div>
 			)}
@@ -149,7 +146,7 @@ export default function EarnerPayoutsPage() {
 }
 ```
 
-## 2) Payment flow with `Whop Checkout Embed`
+## 2) Payment flow with the checkout element
 
 Server: create a Whop checkout configuration (one-time plan) that includes your own metadata to link payments back to the recruiter account.
 
@@ -208,26 +205,24 @@ export async function POST(request: Request) {
 }
 ```
 
-Client: open an "Add Funds" modal and embed the Whop checkout with `@whop/checkout-react`.
+Client: open an "Add Funds" modal and mount the Whop Elements checkout with `@whop/elements-react`.
 
 ```tsx theme={null}
 "use client";
 
 import { useState } from "react";
-import { WhopCheckoutEmbed } from "@whop/checkout/react";
+import { WhopElements, Checkout, CheckoutElement } from "@whop/elements-react";
+import { loadWhop } from "@whop/elements";
 
 export default function AddFundsModal({
 	isOpen,
 	onClose,
-	onSuccess,
 }: {
 	isOpen: boolean;
 	onClose: () => void;
-	onSuccess: () => void;
 }) {
 	const [amount, setAmount] = useState("");
 	const [isCreating, setIsCreating] = useState(false);
-	const [planId, setPlanId] = useState<string | null>(null);
 	const [checkoutConfigId, setCheckoutConfigId] = useState<string | null>(null);
 	const [error, setError] = useState("");
 
@@ -244,7 +239,6 @@ export default function AddFundsModal({
 				setError(data?.error ?? "Failed to create checkout");
 				return;
 			}
-			setPlanId(data.planId);
 			setCheckoutConfigId(data.checkoutConfigId);
 		} finally {
 			setIsCreating(false);
@@ -262,7 +256,7 @@ export default function AddFundsModal({
 				className="bg-white rounded-lg p-6 w-full max-w-xl"
 				onClick={(e) => e.stopPropagation()}
 			>
-				{!planId || !checkoutConfigId ? (
+				{!checkoutConfigId ? (
 					<div>
 						<h2 className="text-xl font-semibold">Add Funds</h2>
 						<input
@@ -289,22 +283,22 @@ export default function AddFundsModal({
 						</div>
 					</div>
 				) : (
-					<WhopCheckoutEmbed
-						planId={planId}
-						sessionId={checkoutConfigId}
-						returnUrl="https://yoursite.com/checkout/complete"
-						onComplete={() => {
-							onSuccess();
-							onClose();
-						}}
-						theme="system"
-					/>
+					<WhopElements elements={loadWhop()}>
+						<Checkout
+							checkoutConfiguration={checkoutConfigId}
+							returnUrl="https://yoursite.com/dashboard?funds=added"
+						>
+							<CheckoutElement />
+						</Checkout>
+					</WhopElements>
 				)}
 			</div>
 		</div>
 	);
 }
 ```
+
+A finished checkout redirects the tab to `returnUrl`, so the modal needs no completion callback. Credit the recruiter's balance from the webhook below and render it on the page `returnUrl` points to.
 
 Webhook: receive Whop payment events and credit recruiter balance on `payment.succeeded`.
 
@@ -434,21 +428,40 @@ export async function POST() {
 }
 ```
 
-Embed a payout portal (pseudo-code)
+Embed a payout portal with Whop Elements
 
-* This shows the intended composition. Wire your real UI or SDK accordingly.
+Mint an access token for the earner's account on your server (see [Enable Connected Account Payouts](/developer/platforms/render-payout-portal#server-side-implementation)), then mount the wallet surfaces with it:
 
 ```tsx theme={null}
-// Pseudo-code: conceptual payout portal composition
-function EarnerPayoutPortal({ whopAccountId }: { whopAccountId: string }) {
+"use client";
+
+import {
+	ActivityElement,
+	BalanceElement,
+	Balances,
+	Wallet,
+	WhopElements,
+	WithdrawElement,
+} from "@whop/elements-react";
+import { loadWhop } from "@whop/elements";
+
+function EarnerPayoutPortal({
+	whopAccountId,
+	accessToken,
+}: {
+	whopAccountId: string;
+	accessToken: string;
+}) {
 	return (
-		<PayoutSession companyId={whopAccountId}>
-			<PayoutPortal
-				onClose={() => {
-					/* close modal */
-				}}
-			/>
-		</PayoutSession>
+		<WhopElements elements={loadWhop()}>
+			<Wallet accountId={whopAccountId} accessToken={accessToken}>
+				<Balances>
+					<BalanceElement />
+				</Balances>
+				<WithdrawElement />
+				<ActivityElement />
+			</Wallet>
+		</WhopElements>
 	);
 }
 ```

@@ -4,7 +4,7 @@
 
 # Platform Quickstart
 
-> Embed payout components in your application in minutes
+> Embed a payout portal for your connected accounts with Whop Elements in minutes
 
 export const code = {
   backend: {
@@ -80,12 +80,11 @@ from flask import Flask, request, jsonify
 
 app = Flask(__name__)
 # [step:1.1]
-client = Whop(api_key="Account API Key")
+client = Whop(token="Account API Key")
 
-@app.route('/api/access-token', methods=['POST'])
+@app.route('/api/token', methods=['GET'])
 def create_access_token():
-    data = request.get_json()
-    account_id = data.get('accountId')
+    account_id = request.args.get('accountId')
 
     # [step:1.2:start]
     access_token = client.access_tokens.create(
@@ -102,40 +101,45 @@ def create_access_token():
   frontend: {
     react: [{
       code: `// [step:2.1:start]
+import { useEffect, useState } from "react";
 import {
+	ActivityElement,
 	BalanceElement,
-	Elements,
-	PayoutsSession,
-	WithdrawButtonElement,
-	WithdrawalsElement,
-} from "@whop/embedded-components-react-js";
-import { loadWhopElements } from "@whop/embedded-components-vanilla-js";
+	Balances,
+	Wallet,
+	WhopElements,
+	WithdrawElement,
+} from "@whop/elements-react";
+import { loadWhop } from "@whop/elements";
 // [step:2.1:end]
 
-const elements = loadWhopElements();
-
 export function PayoutPortal({ accountId }: { accountId: string }) {
+	const [accessToken, setAccessToken] = useState<string | null>(null);
+
+	useEffect(() => {
+		fetch(\`/api/token?accountId=\${accountId}\`)
+			.then((res) => res.json())
+			.then((data) => setAccessToken(data.token));
+	}, [accountId]);
+
+	if (!accessToken) return null;
+
 	return (
 		// [step:2.2:start]
-		<Elements elements={elements}>
-			<PayoutsSession
-				token={() =>
-					fetch(\`/api/token?accountId=\${accountId}\`)
-						.then((res) => res.json())
-						.then((data) => data.token)
-				}
-				companyId={accountId}
-				redirectUrl="https://yourapp.com/verification-complete"
-			>
+		<WhopElements elements={loadWhop()}>
+			<Wallet accountId={accountId} accessToken={accessToken}>
 				{/* [step:2.2:end] */}
-				{/* [step:2.3] */}
-				<BalanceElement fallback={<div>Loading...</div>} />
+				{/* [step:2.3:start] */}
+				<Balances>
+					<BalanceElement />
+				</Balances>
+				{/* [step:2.3:end] */}
 				{/* [step:2.4] */}
-				<WithdrawButtonElement fallback={<div>Loading...</div>} />
+				<WithdrawElement />
 				{/* [step:2.5] */}
-				<WithdrawalsElement fallback={<div>Loading...</div>} />
-			</PayoutsSession>
-		</Elements>
+				<ActivityElement />
+			</Wallet>
+		</WhopElements>
 	);
 }
 `,
@@ -146,36 +150,34 @@ export function PayoutPortal({ accountId }: { accountId: string }) {
       code: `<!DOCTYPE html>
 <html>
   <head>
-  <!-- [step:2.1] -->
-    <script src="https://latest.elements.whop.com/release/elements.js"></script>
+    <!-- [step:2.1] -->
+    <script src="https://cdn.whop.com/elements/amber/elements.js" data-whop-elements></script>
   </head>
   <body>
     <div id="balance"></div>
-    <div id="withdraw-button"></div>
-    <div id="withdrawals"></div>
+    <div id="withdraw"></div>
+    <div id="activity"></div>
 
-    <script>
-      // [step:2.1]
-      const elements = window.WhopElements.loadWhopElements();
+    <script type="module">
+      const accountId = 'YOUR_ACCOUNT_ID';
+      const res = await fetch(\`/api/token?accountId=\${accountId}\`);
+      const { token } = await res.json();
 
       // [step:2.2:start]
-      elements.createPayoutsSession({
-        token: async () => {
-          const res = await fetch('/api/token?accountId=YOUR_ACCOUNT_ID');
-          const data = await res.json();
-          return data.token;
-        },
-        companyId: 'YOUR_ACCOUNT_ID',
-        redirectUrl: 'https://yourapp.com/verification-complete'
+      const wallet = window.WhopElements().wallet.create({
+        accountId,
+        accessToken: token,
       });
       // [step:2.2:end]
 
-      // [step:2.3]
-      elements.create('balance').mount('#balance');
+      // [step:2.3:start]
+      const balances = wallet.create('balances');
+      balances.create('balance').mount('#balance');
+      // [step:2.3:end]
       // [step:2.4]
-      elements.create('withdrawButton').mount('#withdraw-button');
+      wallet.create('withdraw').mount('#withdraw');
       // [step:2.5]
-      elements.create('withdrawals').mount('#withdrawals');
+      wallet.create('activity').mount('#activity');
     </script>
   </body>
 </html>
@@ -706,7 +708,7 @@ subSteps: [[
 ], {
   title: "Create an access token endpoint",
   content: <>
-    <p>Create an API endpoint that generates access tokens for your connected accounts. This token grants temporary access to the payout portal.</p>
+    <p>Create an API endpoint that generates access tokens for your connected accounts. The wallet elements read the account's balance and payouts with this token.</p>
     <p>The endpoint should:</p>
     <ul>
       <li>Authenticate the user making the request</li>
@@ -721,16 +723,16 @@ title: "Build a payouts portal on the client",
 subSteps: [[
 {
 match: { frontend: "react" },
-title: "Install the embedded components",
+title: "Install Whop Elements",
 content: <>
-Install the Whop embedded components packages for React.
+Install the Whop Elements packages for React.
 
       <CodeGroup>
         <CodeBlock language="bash" filename="npm">
-          npm install @whop/embedded-components-react-js @whop/embedded-components-vanilla-js
+          npm install @whop/elements-react @whop/elements
         </CodeBlock>
         <CodeBlock language="bash" filename="pnpm">
-          pnpm add @whop/embedded-components-react-js @whop/embedded-components-vanilla-js
+          pnpm add @whop/elements-react @whop/elements
         </CodeBlock>
       </CodeGroup>
     </>
@@ -741,54 +743,52 @@ Install the Whop embedded components packages for React.
       Include the Whop Elements script in your HTML page.
 
       <CodeBlock language="html">
-        {`<script src="https://latest.elements.whop.com/release/elements.js"></script>`}
+        {`<script src="https://cdn.whop.com/elements/amber/elements.js" data-whop-elements></script>`}
       </CodeBlock>
     </>
   }
 ], [{
     match: { frontend: "react" },
-    title: "Create the PayoutsSession",
+    title: "Create the Wallet handle",
     content: <>
-      <p>Wrap your payout components with <code>Elements</code> and <code>PayoutsSession</code>. The session handles authentication using the token from your server endpoint.</p>
+      <p>Wrap the elements in <code>WhopElements</code> and a <code>Wallet</code> handle. The handle sends its access token to every element under it.</p>
       <ul>
-        <li><code>token</code> - Function that fetches the access token from your server</li>
-        <li><code>companyId</code> - The connected account's ID</li>
-        <li><code>redirectUrl</code> - Where to redirect after identity verification</li>
+        <li><code>accountId</code> - The connected account's ID</li>
+        <li><code>accessToken</code> - The token from your server endpoint. Pass a fresh one before it expires.</li>
       </ul>
     </>
   }, {
     match: { frontend: "html" },
-    title: "Create the PayoutsSession",
+    title: "Create the Wallet handle",
     content: <>
-      <p>Initialize the elements and create a payout session. The session authenticates using the token from your server endpoint.</p>
+      <p>Fetch the token from your server, then create a <code>wallet</code> handle for the connected account. Every element you create on it reads with that token.</p>
       <ul>
-        <li><code>token</code> - Async function that fetches the access token</li>
-        <li><code>companyId</code> - The connected account's ID</li>
-        <li><code>redirectUrl</code> - Where to redirect after identity verification</li>
+        <li><code>accountId</code> - The connected account's ID</li>
+        <li><code>accessToken</code> - The token from your server endpoint. Call <code>wallet.update</code> with a fresh one before it expires.</li>
       </ul>
     </>
   }
 ], {
   title: "Add the BalanceElement",
   content: <>
-    Display the connected account's current balance. This shows how much money is available to pay out.
+    Mount <code>Balances</code> and its <code>BalanceElement</code> to show how much the connected account has available to pay out.
   </>
 }, {
-  title: "Add the WithdrawButtonElement",
+  title: "Add the WithdrawElement",
   content: <>
-    Add a button that allows users to initiate payouts. This opens a modal where users can enter the amount and confirm the payout.
+    Lists the account's payout methods, collects a new one when none exists, and creates the payout when the user confirms.
   </>
 }, {
-  title: "Add the WithdrawalsElement",
+  title: "Add the ActivityElement",
   content: <>
-    Display a list of past payouts with their status. This helps users track their payout history.
+    Lists the account's ledger movements, payouts included, with their status.
   </>
 }]
 
 }]}
-  title="Embed payout components"
+  title="Embed a payout portal"
   description={<>
-Allow your connected accounts to manage their own payouts through an embedded portal. This guide shows you how to set up the server-side token generation and client-side components.
+Allow your connected accounts to manage their own payouts through Whop Elements. This guide shows you how to set up the server-side token generation and the client-side elements.
 
 <ExamplesLink href="https://whop.com/network/examples?filter=payouts" />
 
@@ -796,13 +796,13 @@ Allow your connected accounts to manage their own payouts through an embedded po
 >
   ### Congratulations!
 
-  You've successfully embedded the payout components in your application.
+  You've embedded a payout portal in your application.
 
   ## Next steps
 
   <CardGroup cols={1}>
-    <Card title="PayoutsSession Props" icon="gear" href="/developer/platforms/render-payout-portal#payoutssession-props">
-      Customize the payout portal with additional configuration options like custom styling and event callbacks.
+    <Card title="Wallet elements" icon="wallet" href="/elements/latest/wallet/overview">
+      Every wallet surface with its options, events, scopes, and styling.
     </Card>
 
     <Card title="Hosted Payout Portal" icon="arrow-up-right-from-square" href="/developer/platforms/render-payout-portal#hosted-payout-portal">

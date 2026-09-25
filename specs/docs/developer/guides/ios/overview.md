@@ -33,8 +33,8 @@ Whop also ships separate SDKs for embedded experiences:
     Add Whop chat channels directly in your app
   </Card>
 
-  <Card title="Embedded Payouts" icon="money-bill-transfer" href="/developer/platforms/render-payout-portal">
-    Render the connected-account payout portal
+  <Card title="Wallet Elements" icon="wallet" href="/elements/latest/getting-started">
+    Show an account's balances and activity with the Swift wallet elements
   </Card>
 </CardGroup>
 

@@ -33,6 +33,12 @@ Use the Dispute alerts API to list alerts for an account, filter them by type or
       reported, which can differ from the payment's own amount.
     </ResponseField>
 
+    <ResponseField name="auto_refunded" type="boolean" required>
+      Whether Whop automatically refunded the alerted payment. Reflects the payment,
+      so it can be `true` for a refund issued by another flow (RDR, resolution) on
+      the same payment.
+    </ResponseField>
+
     <ResponseField name="card_brand" type="string | null" required>
       The card network as reported by the issuer, lowercased, such as `visa` or
       `mastercard`. `unknown` when the report carries neither a network nor a
@@ -104,6 +110,7 @@ Use the Dispute alerts API to list alerts for an account, filter them by type or
       	"payment_id": "pay_xxxxxxxxxxxxxx",
       	"product_id": "prod_xxxxxxxxxxxxx",
       	"fee_charged": true,
+      	"auto_refunded": false,
       	"reported_at": "2026-08-10T17:37:09.000Z",
       	"transaction_at": "2026-08-02T00:00:00.000Z",
       	"created_at": "2026-08-10T21:39:26.668Z",

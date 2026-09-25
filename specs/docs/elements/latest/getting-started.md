@@ -6,7 +6,7 @@
 
 > Install Whop Elements and mount your first element in React, JavaScript, Swift, or React Native.
 
-<Info>This page documents `@whop/elements@1.0.0` and `@whop/elements-react@1.0.0`.</Info>
+<Info>This page documents `@whop/elements@1.1.0` and `@whop/elements-react@1.1.0`.</Info>
 
 <div data-whop-platform="web">
   Whop Elements are hosted, themeable UI components you embed in your own site. Each element renders in an isolated frame served from Whop's CDN. You install a thin, fully typed package and the element code stays up to date on its own.
@@ -327,7 +327,7 @@
   <div data-whop-demo-shell style={{ position: "relative", minHeight: "40px", transition: "min-height 200ms ease" }}>
     <div data-whop-demo-skeleton style={{ position: "absolute", inset: "0", borderRadius: "12px", background: "rgba(140, 140, 140, 0.12)", pointerEvents: "none", transition: "opacity 200ms ease" }} />
 
-    <div data-whop-demo-native="toast:button" data-whop-elements-version="1.0.0" style={{ position: "relative" }} />
+    <div data-whop-demo-native="toast:button" data-whop-elements-version="1.1.0" style={{ position: "relative" }} />
   </div>
 
   ## What the elements handle, and what you own
@@ -564,4 +564,8 @@
   * [`EmailElement`](/elements/latest/payments/email): the buyer's email
   * [`TaxIdElement`](/elements/latest/payments/taxId): a registration type and number
   * [`BrandingElement`](/elements/latest/payments/branding): the Powered by Whop mark, required on every form
+
+  The checkout elements:
+
+  * [`ExpressCheckoutElement`](/elements/latest/checkout/expressCheckout): one Apple Pay or Google Pay press that pays a whole checkout, under `<Checkout>`
 </div>

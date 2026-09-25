@@ -10,6 +10,8 @@
 
 <div data-whop-platform="web">
   Mounts inside [`Payments`](/elements/upcoming/payments/overview). Pass props and callbacks through the create options or React props. Keep the created handle, or React `ref`, to call `validate()` and `getValues()`.
+
+  <Note>**One per `mode`.** Mount one `<AddressElement />` for each `mode` value under one Payments handle. A second mount with the same `mode` is refused. An element's `mode` is set when you create it; to change it, destroy the element and create a new one.</Note>
 </div>
 
 <div data-whop-platform="swift" style={{ display: "none" }}>
@@ -119,7 +121,7 @@
   ## Props
 
   <ResponseField name="mode" type="&#x22;billing&#x22; | &#x22;shipping&#x22;">
-    Browser autocomplete purpose: `billing` (default) or `shipping`. Defaults to `"billing"`.
+    Which address this collects: `billing` (default) or `shipping`. Also sets the browser autocomplete purpose. You can mount one of each under one handle. Billing details come from the billing element, or from the shipping element when no billing element is mounted. Defaults to `"billing"`.
   </ResponseField>
 
   <ResponseField name="name" type="&#x22;split&#x22; | &#x22;combined&#x22; | &#x22;none&#x22;">

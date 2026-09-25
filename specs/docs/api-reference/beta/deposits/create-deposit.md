@@ -20,7 +20,7 @@ info:
   termsOfService: https://whop.com/tos-developer-api/
   title: Whop API
   version: 1.0.0
-  x-api-version-date: '2026-09-23'
+  x-api-version-date: 2026-09-24-1
 servers:
   - description: Production Whop API
     url: https://api.whop.com/api/v1
@@ -326,6 +326,13 @@ tags:
       by the authenticated platform, including expired and discarded rules.
       Discarded rules cannot be updated. Creating or updating a rule does not
       transfer funds.
+
+
+      Pay out cashback on demand from the platform's available USD balance with
+      optional rule, account, and transaction filters. Only completed, unpaid,
+      eligible transactions are paid. The response returns status `processing`
+      and echoes supplied filters; `failed` means the queue rejected the
+      request. These statuses describe scheduling, not payment completion.
     name: Cashback Rules
     x-whop-summary: Configure platform-sponsored card cashback.
   - description: >

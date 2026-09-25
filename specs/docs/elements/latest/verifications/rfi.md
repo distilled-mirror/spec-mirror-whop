@@ -6,7 +6,7 @@
 
 > Everything the account still owes compliance, and the forms to answer it. Each row is one group of requirements — grouped by the system that asked, because each relays to its provider once its own items are answered — and pressing it opens that group’s form in place. Rows already with a reviewer are shown but not answerable. Renders an all-clear once nothing is outstanding, so it can sit permanently in a settings page.
 
-<Info>This page documents `@whop/elements@1.0.0` and `@whop/elements-react@1.0.0`.</Info>
+<Info>This page documents `@whop/elements@1.1.0` and `@whop/elements-react@1.1.0`.</Info>
 
 *Since `v1.0.0`.*
 
@@ -50,7 +50,7 @@ Mounts inside [`Verifications`](/elements/latest/verifications/overview). Pass p
     <div data-whop-demo-shell style={{ position: "relative", minHeight: "320px", transition: "min-height 200ms ease" }}>
       <div data-whop-demo-skeleton style={{ position: "absolute", inset: "0", borderRadius: "12px", background: "rgba(140, 140, 140, 0.12)", pointerEvents: "none", transition: "opacity 200ms ease" }} />
 
-      <div data-whop-demo-native="element:verifications/rfi" data-whop-elements-version="1.0.0" style={{ position: "relative" }} />
+      <div data-whop-demo-native="element:verifications/rfi" data-whop-elements-version="1.1.0" style={{ position: "relative" }} />
     </div>
 
     <p style={{ fontSize: "0.8125rem", opacity: 0.7 }}>Example data. [Open the Playground](/elements/latest/verifications/overview#playground).</p>

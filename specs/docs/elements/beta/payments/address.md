@@ -6,12 +6,14 @@
 
 > Collects a billing or shipping address. Fields, order, and validation follow the selected country. Includes street autocomplete and methods to read or validate the address.
 
-<Info>This page documents `@whop/elements@1.0.0` and `@whop/elements-react@1.0.0`.</Info>
+<Info>This page documents `@whop/elements@1.1.0` and `@whop/elements-react@1.1.0`.</Info>
 
 *Since `v1.0.0`.*
 
 <div data-whop-platform="web">
   Mounts inside [`Payments`](/elements/beta/payments/overview). Pass props and callbacks through the create options or React props. Keep the created handle, or React `ref`, to call `validate()` and `getValues()`.
+
+  <Note>**One per `mode`.** Mount one `<AddressElement />` for each `mode` value under one Payments handle. A second mount with the same `mode` is refused. An element's `mode` is set when you create it; to change it, destroy the element and create a new one.</Note>
 </div>
 
 <div data-whop-platform="swift" style={{ display: "none" }}>
@@ -101,7 +103,7 @@
       <div data-whop-demo-shell style={{ position: "relative", minHeight: "320px", transition: "min-height 200ms ease" }}>
         <div data-whop-demo-skeleton style={{ position: "absolute", inset: "0", borderRadius: "12px", background: "rgba(140, 140, 140, 0.12)", pointerEvents: "none", transition: "opacity 200ms ease" }} />
 
-        <div data-whop-demo-native="element:payments/address" data-whop-elements-version="1.0.0" style={{ position: "relative" }} />
+        <div data-whop-demo-native="element:payments/address" data-whop-elements-version="1.1.0" style={{ position: "relative" }} />
       </div>
 
       <p style={{ fontSize: "0.8125rem", opacity: 0.7 }}>Example data. [Open the Playground](/elements/beta/payments/overview#playground).</p>
@@ -121,19 +123,23 @@
   ## Props
 
   <ResponseField name="mode" type="&#x22;billing&#x22; | &#x22;shipping&#x22;">
-    Browser autocomplete purpose: `billing` (default) or `shipping`. Defaults to `"billing"`.
+    Which address this collects: `billing` (default) or `shipping`. Also sets the browser autocomplete purpose. You can mount one of each under one handle. Billing details come from the billing element, or from the shipping element when no billing element is mounted. Defaults to `"billing"`.
   </ResponseField>
 
-  <ResponseField name="layout" type="&#x22;full&#x22; | &#x22;compact&#x22;">
-    `full` (default) stacks labeled fields. `compact` groups placeholder-labeled fields within one border. Defaults to `"full"`.
+  <ResponseField name="name" type="&#x22;split&#x22; | &#x22;combined&#x22; | &#x22;none&#x22;">
+    The name row: one full-name field (default), split first/last fields, or none. Defaults to `"combined"`.
   </ResponseField>
 
   <ResponseField name="line2" type="&#x22;never&#x22; | &#x22;toggle&#x22; | &#x22;always&#x22;">
     Address line 2: always visible (default), revealed by a text button (`toggle`), or never collected. Defaults to `"always"`.
   </ResponseField>
 
-  <ResponseField name="name" type="&#x22;split&#x22; | &#x22;combined&#x22; | &#x22;none&#x22;">
-    The name row: one full-name field (default), split first/last fields, or none. Defaults to `"combined"`.
+  <ResponseField name="defaultValues" type="{ name?: string | undefined; address?: { name?: string | undefined; first_name?: string | undefined; last_name?: string | undefined; organization?: string | undefined; organization_type?: &#x22;business&#x22; | &#x22;individual&#x22; | undefined; line1?: string | undefined; line2?: string | undefined; city?: string | undefined; state?: string | undefined; postal_code?: string | undefined; country?: string | undefined; } | undefined; }">
+    Seed values applied once before first paint (`address.country` is an ISO 3166-1 alpha-2 country code). Takes precedence over IP-country detection.
+  </ResponseField>
+
+  <ResponseField name="layout" type="&#x22;full&#x22; | &#x22;compact&#x22;">
+    `full` (default) stacks labeled fields. `compact` groups placeholder-labeled fields within one border. Defaults to `"full"`.
   </ResponseField>
 
   <ResponseField name="scope" type="&#x22;full&#x22; | &#x22;minimal&#x22;">
@@ -142,10 +148,6 @@
 
   <ResponseField name="organization" type="&#x22;name&#x22; | &#x22;none&#x22; | &#x22;name_with_type&#x22;">
     Organization fields: none (default), name only, or name with a business/individual selector. Defaults to `"none"`.
-  </ResponseField>
-
-  <ResponseField name="defaultValues" type="{ name?: string | undefined; address?: { name?: string | undefined; first_name?: string | undefined; last_name?: string | undefined; organization?: string | undefined; organization_type?: &#x22;business&#x22; | &#x22;individual&#x22; | undefined; line1?: string | undefined; line2?: string | undefined; city?: string | undefined; state?: string | undefined; postal_code?: string | undefined; country?: string | undefined; } | undefined; }">
-    Seed values applied once before first paint (`address.country` is an ISO 3166-1 alpha-2 country code). Takes precedence over IP-country detection.
   </ResponseField>
 
   <ResponseField name="detectCountry" type="boolean">

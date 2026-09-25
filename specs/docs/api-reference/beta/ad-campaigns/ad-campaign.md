@@ -187,6 +187,16 @@ Ads billing combines eligible spend across the account's campaigns. A failed pay
       Available options: `payment_failed`, `in_appeal`, `all_ads_rejected`, `draft`, `no_ad_groups`, `no_ads`, `paused`, `processing`, `issues`, `scheduled`, `completed`, `ad_groups_off`, `active`
     </ResponseField>
 
+    <ResponseField name="desired_cost_per_result" type="number | null">
+      Google only: the target cost per conversion in USD when `bid_type` is
+      `average_target`. `null` otherwise.
+    </ResponseField>
+
+    <ResponseField name="ends_at" type="string | null">
+      Google only: when the campaign stops delivering, as an ISO 8601 timestamp.
+      `null` runs it until paused.
+    </ResponseField>
+
     <ResponseField name="frequency" type="number | null" required>
       Platform-reported impressions divided by reach.
     </ResponseField>
@@ -307,6 +317,11 @@ Ads billing combines eligible spend across the account's campaigns. A failed pay
 
     <ResponseField name="spend_currency" type="string | null" required>
       The ISO 4217 currency code of all monetary metrics.
+    </ResponseField>
+
+    <ResponseField name="starts_at" type="string | null">
+      Google only: when the campaign starts delivering, as an ISO 8601 timestamp.
+      `null` starts it as soon as it launches.
     </ResponseField>
 
     <ResponseField name="status" type="string" required>

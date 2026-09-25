@@ -6,7 +6,7 @@
 
 > Drives an account's money surfaces. `actions` renders the Deposit, Accept, Send, and Convert controls: Deposit, Send, and Convert open their Wallet overlays, while Accept opens Whop's checkout-link creator for a business account or company creation for a personal account. `deposit` returns live funding rails; `convert` swaps USD with Gold or Bitcoin and exposes FX currencies when the host enables `fxEnabled`; `send` moves money to a recipient or creates a public claim link; `withdraw` lists payout methods and creates the payout when the host does not already drive that API; `balances` holds two faces — the holdings list, and the balance block drawing value over a window; `cards` is the compact issued-card list; `cardsTable` renders the full sortable card roster; `cardsChart` plots card spend; `whopCard` renders one revealable card; `activity` lists ledger movements; `activityDetail` renders a prefetched movement, or retrieves one by activity ID or card transaction ID, in a standalone drawer. The outstanding-action bar and the identity nudge live on the `dashboard` controller. Every data-backed surface can use the viewer's session when no token is provided.
 
-<Info>This page documents `@whop/elements@1.0.0` and `@whop/elements-react@1.0.0`.</Info>
+<Info>This page documents `@whop/elements@1.1.0` and `@whop/elements-react@1.1.0`.</Info>
 
 *Since `v1.0.0`.*
 
@@ -17,7 +17,7 @@ Assemble the elements with example data. Drive the controls, add and arrange ele
 <div data-whop-demo-shell style={{ position: "relative", minHeight: "480px", transition: "min-height 200ms ease" }}>
   <div data-whop-demo-skeleton style={{ position: "absolute", inset: "0", borderRadius: "12px", background: "rgba(140, 140, 140, 0.12)", pointerEvents: "none", transition: "opacity 200ms ease" }} />
 
-  <div data-whop-demo-native="playground:wallet" data-whop-elements-version="1.0.0" style={{ position: "relative" }} />
+  <div data-whop-demo-native="playground:wallet" data-whop-elements-version="1.1.0" style={{ position: "relative" }} />
 </div>
 
 <div data-whop-usage="wallet/playground">
@@ -210,7 +210,7 @@ When the activity posted to the ledger.
 
 ### `available_at`
 
-ISO 8601 timestamp these funds became (or are scheduled to become) withdrawable: the posted time for already-settled funds, or 00:00:00 UTC on the scheduled release date for pending funds. Present only on inflows entering the balance (payments, top-ups, incoming transfers/affiliate); null on payouts, refunds, disputes and on-chain rows. The available\_after/before filters window on its UTC settlement date.
+ISO 8601 timestamp when this activity affects available funds: 00:00:00 UTC on the scheduled release date for credits and debits in a pending good-funds release bucket; the posted time for credits and debits to settled available funds, including refunds, disputes and payouts. Null for activity outside these paths, including on-chain rows. The available\_after/before filters use its UTC date; default activity excludes some movements, including opt-in reserves.
 
 **Signature:** `string | null`
 

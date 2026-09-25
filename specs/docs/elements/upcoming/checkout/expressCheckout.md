@@ -74,6 +74,14 @@
 
       <p style={{ fontSize: "0.8125rem", opacity: 0.7 }}>Example data. [Open the Playground](/elements/upcoming/checkout/overview#playground).</p>
     </div>
+
+    <div data-whop-platform="react-native" style={{ display: "none" }}>
+      <div style={{ width: "22rem", maxWidth: "100%" }}>
+        <div data-whop-simulator-shell className="whop-ios-simulator" style={{ position: "relative", aspectRatio: "390 / 800", overflow: "hidden" }}>
+          <iframe src={"https://app.revyl.ai/embed/e16407ed-1c20-4475-ad16-f78b4669374f?controls=0"} title="ExpressCheckoutElement running on Android, in the React Native example app" loading="lazy" allow="fullscreen; clipboard-read; clipboard-write" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", border: 0, background: "transparent", display: "block" }} />
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 

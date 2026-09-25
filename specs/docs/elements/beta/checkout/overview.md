@@ -6,7 +6,7 @@
 
 > Drives a full hosted checkout for one or more plans — itemized price summary, promo codes, the currency the buyer pays in, and the whole payment collection surface (the payments elements, composed inside) — against the Whop checkout sessions API. Mount it with `items`, a single `plan`, or a `checkoutConfiguration` you authored and the element opens the checkout session itself; the session credential never leaves the element. A setup-mode checkout configuration mounts the same element as a payment-method save: nothing is charged, the buyer’s method is stored for you to charge later, and the finished checkout redirects with `setup_intent_id`. The buyer pays inside the element, and a finished checkout redirects the current tab to `returnUrl`, including the page that contains the element. Fulfill from webhooks rather than a browser callback. Without a `returnUrl`, the buyer rests on the element’s own success face. The element automatically drives an off-site payment step, such as 3DS or a bank page. On whop.com, it brings the buyer back into the restored checkout; in an embed, the buyer returns to the same `returnUrl`. A failed payment reopens the same checkout with the reason shown, so the buyer can pay again. Every option is set at creation: the element mints a checkout session from these values when it mounts. Changing one later with `update()` or new React props fails instead of changing the existing order. Mount a new checkout to change what is being purchased.
 
-<Info>This page documents `@whop/elements@1.0.0` and `@whop/elements-react@1.0.0`.</Info>
+<Info>This page documents `@whop/elements@1.1.0` and `@whop/elements-react@1.1.0`.</Info>
 
 *Since `v1.0.0`.*
 
@@ -17,7 +17,7 @@ Assemble the elements with example data. Drive the controls, add and arrange ele
 <div data-whop-demo-shell style={{ position: "relative", minHeight: "480px", transition: "min-height 200ms ease" }}>
   <div data-whop-demo-skeleton style={{ position: "absolute", inset: "0", borderRadius: "12px", background: "rgba(140, 140, 140, 0.12)", pointerEvents: "none", transition: "opacity 200ms ease" }} />
 
-  <div data-whop-demo-native="playground:checkout" data-whop-elements-version="1.0.0" style={{ position: "relative" }} />
+  <div data-whop-demo-native="playground:checkout" data-whop-elements-version="1.1.0" style={{ position: "relative" }} />
 </div>
 
 <div data-whop-usage="checkout/playground">
@@ -98,6 +98,12 @@ Pass these to `whop.checkout.create({ … })`, or as props on `<Checkout>` in Re
 
 Pass callbacks in the create options or React props.
 
+### `onComplete`
+
+Fires once per mount when the checkout completes and its result stands. `result` says what stands: `payment` (the buyer paid — `paymentId`), `waitlist_entry` (the buyer joined a waitlist — `entryId`) or `setup` (a setup-mode checkout saved the payment method — `setupIntentId`); `sessionId` is the checkout session either way. Fires before any `returnUrl` navigation, so this is where your own analytics or ad pixels record the purchase. Fulfill from webhooks, not from this callback: a checkout restored on a later page load fires it again for the same result.
+
+**Signature:** `((payload: CheckoutPaymentCompletion | CheckoutWaitlistCompletion | CheckoutSetupCompletion) => void)`
+
 ### `onLoadingChange`
 
 Runs when the grouped loading state changes. The value is `true` while any mounted element is still loading.
@@ -175,6 +181,66 @@ Checkout attribution recorded with the session. The element maps these fields to
 ### `source`
 
 **Signature:** `string | undefined`
+
+## `CheckoutPaymentCompletion`
+
+The buyer paid.
+
+### `sessionId`
+
+The checkout session, prefixed `chs_`.
+
+**Signature:** `string`
+
+### `result`
+
+**Signature:** `"payment"`
+
+### `paymentId`
+
+The payment, prefixed `pay_` — the id to record the purchase under.
+
+**Signature:** `string`
+
+## `CheckoutWaitlistCompletion`
+
+The buyer joined a waitlist; nothing was charged.
+
+### `sessionId`
+
+The checkout session, prefixed `chs_`.
+
+**Signature:** `string`
+
+### `result`
+
+**Signature:** `"waitlist_entry"`
+
+### `entryId`
+
+The waitlist entry, prefixed `ent_`.
+
+**Signature:** `string`
+
+## `CheckoutSetupCompletion`
+
+A setup-mode checkout saved the buyer's payment method; nothing was charged.
+
+### `sessionId`
+
+The checkout session, prefixed `chs_`.
+
+**Signature:** `string`
+
+### `result`
+
+**Signature:** `"setup"`
+
+### `setupIntentId`
+
+The saved setup, prefixed `sint_`.
+
+**Signature:** `string`
 
 ## Elements
 

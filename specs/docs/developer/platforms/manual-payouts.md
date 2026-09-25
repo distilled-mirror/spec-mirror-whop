@@ -81,9 +81,9 @@ Send payouts directly to your connected accounts from your platform balance. Con
           "fmt"
           "log"
 
-          whopsdk "github.com/whopio/whopsdk-go"
-          "github.com/whopio/whopsdk-go/client"
-          "github.com/whopio/whopsdk-go/option"
+          whopsdk "github.com/whopio/whopsdk-go/v2"
+          "github.com/whopio/whopsdk-go/v2/client"
+          "github.com/whopio/whopsdk-go/v2/option"
       )
 
       client := client.NewWhop(option.WithToken("Account API Key"))
@@ -107,40 +107,34 @@ Send payouts directly to your connected accounts from your platform balance. Con
   </Step>
 
   <Step title="Add a payout method">
-    Before creating a payout, the account needs a payout method. Use the embedded component to let users add a payout method:
+    Before creating a payout, the account needs a payout method. Mount the [Withdraw element](/elements/latest/wallet/withdraw) with an access token for the connected account. It lists the account's payout methods and collects a new one when none exists:
 
     <CodeGroup>
       ```tsx React theme={null}
       "use client";
 
-      import {
-        Elements,
-        PayoutsSession,
-        PayoutMethodElement,
-      } from "@whop/embedded-components-react-js";
-      import { loadWhopElements } from "@whop/embedded-components-vanilla-js";
+      import { WhopElements, Wallet, WithdrawElement } from "@whop/elements-react";
+      import { loadWhop } from "@whop/elements";
 
-      const elements = loadWhopElements();
-
-      export function AddPayoutMethod({ accountId }: { accountId: string }) {
+      export function AddPayoutMethod({
+        accountId,
+        accessToken,
+      }: {
+        accountId: string;
+        accessToken: string;
+      }) {
         return (
-          <Elements elements={elements}>
-            <PayoutsSession
-              token={() =>
-                fetch(`/api/token?accountId=${accountId}`)
-                  .then((res) => res.json())
-                  .then((data) => data.token)
-              }
-              companyId={accountId}
-              redirectUrl="https://yourapp.com/verification-complete"
-            >
-              <PayoutMethodElement fallback={<div>Loading...</div>} />
-            </PayoutsSession>
-          </Elements>
+          <WhopElements elements={loadWhop()}>
+            <Wallet accountId={accountId} accessToken={accessToken}>
+              <WithdrawElement />
+            </Wallet>
+          </WhopElements>
         );
       }
       ```
     </CodeGroup>
+
+    Mint the `accessToken` on your server for the connected account, as shown in [Enable Connected Account Payouts](/developer/platforms/render-payout-portal). You can also send the user to the [hosted payout portal](/developer/platforms/render-payout-portal#hosted-payout-portal) instead.
   </Step>
 
   <Step title="Get the default payout method">
@@ -207,9 +201,9 @@ Send payouts directly to your connected accounts from your platform balance. Con
           "fmt"
           "log"
 
-          whopsdk "github.com/whopio/whopsdk-go"
-          "github.com/whopio/whopsdk-go/client"
-          "github.com/whopio/whopsdk-go/option"
+          whopsdk "github.com/whopio/whopsdk-go/v2"
+          "github.com/whopio/whopsdk-go/v2/client"
+          "github.com/whopio/whopsdk-go/v2/option"
       )
 
       client := client.NewWhop(option.WithToken("Account API Key"))
@@ -304,9 +298,9 @@ Send payouts directly to your connected accounts from your platform balance. Con
           "fmt"
           "log"
 
-          whopsdk "github.com/whopio/whopsdk-go"
-          "github.com/whopio/whopsdk-go/client"
-          "github.com/whopio/whopsdk-go/option"
+          whopsdk "github.com/whopio/whopsdk-go/v2"
+          "github.com/whopio/whopsdk-go/v2/client"
+          "github.com/whopio/whopsdk-go/v2/option"
       )
 
       client := client.NewWhop(option.WithToken("Account API Key"))

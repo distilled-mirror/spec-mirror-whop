@@ -6,7 +6,7 @@
 
 > One card and what has been spent on it: the card itself, what it has spent against its limit, and its latest transactions. Opens as a drawer. The card face, its reveal and its lock come from the `whopCard` element composed inside, so a host gets one surface rather than assembling three. Pressing a transaction, or asking for the full list, reports the request — the drawer never navigates.
 
-<Info>This page documents `@whop/elements@1.0.0` and `@whop/elements-react@1.0.0`.</Info>
+<Info>This page documents `@whop/elements@1.1.0` and `@whop/elements-react@1.1.0`.</Info>
 
 *Since `v1.0.0`.*
 
@@ -54,7 +54,7 @@ Opens as a modal from [`Wallet`](/elements/latest/wallet/overview): `wallet.crea
     <div data-whop-demo-shell style={{ position: "relative", minHeight: "320px", transition: "min-height 200ms ease" }}>
       <div data-whop-demo-skeleton style={{ position: "absolute", inset: "0", borderRadius: "12px", background: "rgba(140, 140, 140, 0.12)", pointerEvents: "none", transition: "opacity 200ms ease" }} />
 
-      <div data-whop-demo-native="element:wallet/cardDetails" data-whop-elements-version="1.0.0" style={{ position: "relative" }} />
+      <div data-whop-demo-native="element:wallet/cardDetails" data-whop-elements-version="1.1.0" style={{ position: "relative" }} />
     </div>
 
     <p style={{ fontSize: "0.8125rem", opacity: 0.7 }}>Example data. [Open the Playground](/elements/latest/wallet/overview#playground).</p>
@@ -67,7 +67,7 @@ Opens as a modal from [`Wallet`](/elements/latest/wallet/overview): `wallet.crea
   A scoped token for the card and its transactions — needs `payout:account:read`. Omitted, calls carry the viewer's own session, which only answers same-origin.
 </ResponseField>
 
-<ResponseField name="card" type="{ name: string | null; id: string; status: &#x22;active&#x22; | &#x22;frozen&#x22; | &#x22;canceled&#x22; | &#x22;invited&#x22; | &#x22;denied&#x22; | null; last4: string | null; billing: Billing | null; expiration_month: string | null; expiration_year: string | null; }">
+<ResponseField name="card" type="{ id: string; name: string | null; status: &#x22;active&#x22; | &#x22;frozen&#x22; | &#x22;canceled&#x22; | &#x22;invited&#x22; | &#x22;denied&#x22; | null; last4: string | null; billing: Billing | null; expiration_month: string | null; expiration_year: string | null; }">
   Non-sensitive card metadata a host has already loaded. Supplying it saves the card face a list request; its authorized secrets are still fetched so the reveal stays instant.
 </ResponseField>
 

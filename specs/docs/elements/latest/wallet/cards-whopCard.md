@@ -6,7 +6,7 @@
 
 > Renders one issued Whop Card. The element prefetches authorized secrets immediately after it mounts with a card ID, but keeps them masked until the viewer clicks it or selects `View details`. The API remains the permission authority. Includes lock and unlock controls by default.
 
-<Info>This page documents `@whop/elements@1.0.0` and `@whop/elements-react@1.0.0`.</Info>
+<Info>This page documents `@whop/elements@1.1.0` and `@whop/elements-react@1.1.0`.</Info>
 
 *Since `v1.0.0`.*
 
@@ -54,7 +54,7 @@ Mounts inside [`Cards`](/elements/latest/wallet/cards), in [`Wallet`](/elements/
     <div data-whop-demo-shell style={{ position: "relative", minHeight: "320px", transition: "min-height 200ms ease" }}>
       <div data-whop-demo-skeleton style={{ position: "absolute", inset: "0", borderRadius: "12px", background: "rgba(140, 140, 140, 0.12)", pointerEvents: "none", transition: "opacity 200ms ease" }} />
 
-      <div data-whop-demo-native="element:cards/whopCard" data-whop-elements-version="1.0.0" style={{ position: "relative" }} />
+      <div data-whop-demo-native="element:cards/whopCard" data-whop-elements-version="1.1.0" style={{ position: "relative" }} />
     </div>
 
     <p style={{ fontSize: "0.8125rem", opacity: 0.7 }}>Example data. [Open the Playground](/elements/latest/wallet/overview#playground).</p>

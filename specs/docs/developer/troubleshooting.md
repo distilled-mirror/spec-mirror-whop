@@ -4,21 +4,21 @@
 
 # Troubleshooting
 
-> Fix common Whop API, OAuth, checkout, webhook, and embedded element errors.
+> Fix common Whop API, OAuth, checkout, webhook, and Whop Elements errors.
 
 When something breaks, figure out what's failing, check you're hitting the right environment, and look at the error response. Most issues come down to: wrong credential, sandbox/production mismatch, missing permission, or a webhook handler that isn't responding correctly.
 
 ## Quick triage
 
-| Symptom                                                  | First check                                                                                                                              | Go deeper                                           |
-| -------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------- |
-| API calls return `4xx` or `5xx`                          | Check the status code, response body, endpoint, and environment.                                                                         | [API request errors](#api-request-errors)           |
-| API calls return `401`                                   | Confirm the API key is present on the server and belongs to the same environment as the API base URL.                                    | [API authentication](#api-authentication)           |
-| API calls return `403`                                   | Check that the app, user, or account has the required permission for the resource.                                                       | [Permissions and scopes](#permissions-and-scopes)   |
-| OAuth redirects back with `error`                        | Read `error` and `error_description` from the callback URL.                                                                              | [OAuth errors](#oauth-errors)                       |
-| Embedded checkout fails or redirects with `status=error` | Remount checkout and inspect the plan or checkout configuration you passed in.                                                           | [Checkout errors](#checkout-errors)                 |
-| Webhooks don't arrive or keep retrying                   | Verify the endpoint is public, returns `2xx` quickly before long-running work, and uses the raw request body for signature verification. | [Webhook delivery](#webhook-delivery)               |
-| Embedded elements emit `error`                           | Attach `onError`, log the value, and confirm the session token and element options.                                                      | [Embedded element errors](#embedded-element-errors) |
+| Symptom                                                 | First check                                                                                                                              | Go deeper                                         |
+| ------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------- |
+| API calls return `4xx` or `5xx`                         | Check the status code, response body, endpoint, and environment.                                                                         | [API request errors](#api-request-errors)         |
+| API calls return `401`                                  | Confirm the API key is present on the server and belongs to the same environment as the API base URL.                                    | [API authentication](#api-authentication)         |
+| API calls return `403`                                  | Check that the app, user, or account has the required permission for the resource.                                                       | [Permissions and scopes](#permissions-and-scopes) |
+| OAuth redirects back with `error`                       | Read `error` and `error_description` from the callback URL.                                                                              | [OAuth errors](#oauth-errors)                     |
+| The Checkout element fails to load or the payment fails | Attach `onError`, inspect the plan or checkout configuration you passed in, and let the buyer retry inside the element.                  | [Checkout errors](#checkout-errors)               |
+| Webhooks don't arrive or keep retrying                  | Verify the endpoint is public, returns `2xx` quickly before long-running work, and uses the raw request body for signature verification. | [Webhook delivery](#webhook-delivery)             |
+| A Whop Element reports `onError`                        | Log `message` and `code`, then confirm the access token and the options you passed.                                                      | [Element errors](#element-errors)                 |
 
 ## API request errors
 
@@ -78,7 +78,7 @@ Use the credential that matches where the code runs.
 
 If an API request fails:
 
-1. Confirm the base URL matches the key: use `https://api.whop.com/api/v1` for production keys and `https://sandbox-api.whop.com/api/v1` for sandbox keys.
+1. Confirm the environment matches the key: the SDK's `Production` environment (the default) for production keys and `Sandbox` for sandbox keys, or `https://api.whop.com/api/v1` and `https://sandbox-api.whop.com/api/v1` when you call the API directly.
 2. Confirm IDs use Whop tag prefixes like `biz_`, `user_`, `mem_`, `plan_`, `prod_`, `app_`, `pay_`, or `ch_`, not internal numeric IDs.
 3. Log the HTTP status, response body, endpoint, and request ID if Whop returns one.
 4. Retry only when the error is transient or rate-limited. Don't retry `401`, `403`, or validation errors without changing the request.
@@ -125,15 +125,17 @@ OAuth errors return a standard payload or redirect query string with `error` and
 
 ## Checkout errors
 
-Embedded checkout and iOS checkout can fail for different reasons. Debug them the same way: check the plan or checkout configuration, inspect the callback, and confirm fulfillment on your server.
+The Checkout element and iOS checkout can fail for different reasons. Debug them the same way: check the plan or checkout configuration, inspect the error callback, and confirm fulfillment on your server.
 
-### Embedded checkout
+### Checkout element
 
-* If checkout redirects to `returnUrl` with `status=error`, show a retry state and remount checkout.
-* If you pass `planId`, confirm the plan exists, is active, and belongs to the account you expect.
-* If you pass `sessionId`, confirm your server created the checkout configuration and the session hasn't expired.
-* If external payment methods redirect away from your page, provide a `returnUrl` that points to a route capable of rendering success and retry states.
-* Use webhooks for fulfillment. Client-side `onComplete` or redirect status is useful for UI, but your server should rely on `payment.succeeded`.
+* Attach `onError`. It runs when the element fails to load or crashes, with a `message` and a `code` for programmatic handling.
+* If you pass `plan`, confirm the plan exists, is active, and belongs to the account you expect.
+* If you pass `checkoutConfiguration`, confirm your server created it and that you passed its `ch_` ID.
+* Every option is set at creation. To change the order, mount a new checkout instead of calling `update()`.
+* A failed payment reopens the same checkout with the reason shown, so the buyer can pay again without a remount.
+* Provide a `returnUrl` on a route that can render success and retry states. An off-site step such as 3DS or a bank page returns the buyer there.
+* Use webhooks for fulfillment. The redirect is useful for UI, but your server should rely on `payment.succeeded`.
 
 ### `iOS` checkout
 
@@ -170,29 +172,29 @@ Common webhook issues:
 
 For local development, forward a public URL to your machine with a tunnel and use that URL in the dashboard webhook settings.
 
-## Embedded element errors
+## Element errors
 
-SDK elements such as [`VerifyElement`](/sdk/elements/verify-element) and [`ResetAccountElement`](/sdk/elements/reset-account-element) emit `error` when initialization or operation fails.
+Every [Whop Element](/elements/latest/getting-started) accepts an `onError` callback. It runs when the element fails to load or crashes, and the value carries a `message`, an optional `code` for programmatic handling, and a `sourceKey` when a host-state source failed.
 
-Always attach an error handler while developing:
+Always attach it while developing:
 
-```typescript theme={null}
-const element = session.createElement("verify-element", {
-	onError: (error) => {
-		console.error("VerifyElement failed", error);
-	},
-});
-
-element.mount("#verify-container");
+```tsx theme={null}
+<CheckoutElement
+	onError={(error) => {
+		console.error("CheckoutElement failed", error.code, error.message);
+	}}
+/>
 ```
 
 If an element fails to load:
 
-1. Confirm you created the session token for the account and user you expect.
-2. Confirm the container exists and is empty before calling `mount`.
-3. Listen for `ready` so you know whether the element initialized.
-4. If the element enters an unrecoverable state, call `unmount()` and create a new element instance.
-5. For payout and verification elements, confirm the user is eligible for that flow in the current environment.
+1. Confirm the access token was minted for the account you expect and carries the scopes the element's reference page lists.
+2. On your own domain, always pass an `accessToken`. The viewer's session only works on whop.com.
+3. Confirm the container exists before calling `mount`. React components mount themselves.
+4. Listen for `onReady` so you know whether the element initialized.
+5. If the element enters an unrecoverable state, call `destroy()` and create a new one.
+
+The [Elements troubleshooting table](/elements/latest/getting-started#troubleshooting) lists the common symptoms and their causes.
 
 ## Sandbox and production
 
@@ -206,7 +208,7 @@ Sandbox data and production data are separate.
 When switching from sandbox to production:
 
 * Create new production API keys.
-* Remove the SDK `baseUrl` / `base_url` sandbox override.
+* Switch the SDK environment from `Sandbox` to `Production`, or remove a 1.x `baseUrl` / `base_url` / `WithBaseURL` sandbox override.
 * Recreate sandbox-only products, checkout links, webhooks, and connected-account records in production.
 * Confirm webhook URLs point to production infrastructure, not a local tunnel.
 

@@ -187,6 +187,12 @@ Use the Ads API to list ads for an account, create ads inside ad groups, retriev
           Available options: `square`, `vertical`, `horizontal`
         </ResponseField>
 
+        <ResponseField name="language" type="string | null" required>
+          ISO 639 code of the language this image or video is shown for, such as `es`.
+          On an ad with translations, the ad's own creative carries
+          `translations.source_language`. It's `null` on an ad without translations.
+        </ResponseField>
+
         <ResponseField name="media_type" type="string | null" required>
           The kind of asset, image or video.
         </ResponseField>
@@ -222,8 +228,20 @@ Use the Ads API to list ads for an account, create ads inside ad groups, retriev
       Available options: `in_appeal`, `rejected`, `in_review`, `draft`, `campaign_paused`, `ad_group_paused`, `paused`, `processing`, `issues`, `scheduled`, `learning_limited`, `learning`, `active`
     </ResponseField>
 
-    <ResponseField name="descriptions" type="string[]" required>
-      The description variants shown on the ad.
+    <ResponseField name="descriptions" type="object[]" required>
+      The description shown on the ad. Entries with a null language are the ad's own copy; a Meta ad with translations also carries one entry per other language.
+
+      <Accordion title="Properties" defaultOpen={true}>
+        <ResponseField name="language" type="string | null" required>
+          ISO 639 code of the language this text is in, such as `es`. On an ad with
+          translations, the ad's own copy carries `translations.source_language`. It's
+          `null` on an ad without translations.
+        </ResponseField>
+
+        <ResponseField name="text" type="string" required>
+          The text shown to viewers.
+        </ResponseField>
+      </Accordion>
     </ResponseField>
 
     <ResponseField name="existing_post_id" type="string | null" required>
@@ -236,8 +254,20 @@ Use the Ads API to list ads for an account, create ads inside ad groups, retriev
       Platform-reported impressions divided by reach.
     </ResponseField>
 
-    <ResponseField name="headlines" type="string[]" required>
-      The headline variants shown on the ad.
+    <ResponseField name="headlines" type="object[]" required>
+      The headline shown on the ad. Entries with a null language are the ad's own copy; a Meta ad with translations also carries one entry per other language.
+
+      <Accordion title="Properties" defaultOpen={true}>
+        <ResponseField name="language" type="string | null" required>
+          ISO 639 code of the language this text is in, such as `es`. On an ad with
+          translations, the ad's own copy carries `translations.source_language`. It's
+          `null` on an ad without translations.
+        </ResponseField>
+
+        <ResponseField name="text" type="string" required>
+          The text shown to viewers.
+        </ResponseField>
+      </Accordion>
     </ResponseField>
 
     <ResponseField name="impressions" type="number" required>
@@ -525,8 +555,20 @@ Use the Ads API to list ads for an account, create ads inside ad groups, retriev
       network.
     </ResponseField>
 
-    <ResponseField name="primary_texts" type="string[]" required>
-      The primary text variants shown in the ad body.
+    <ResponseField name="primary_texts" type="object[]" required>
+      The primary text shown in the ad body. Entries with a null language are the ad's own copy (several make text variations); a Meta ad with translations also carries one entry per other language.
+
+      <Accordion title="Properties" defaultOpen={true}>
+        <ResponseField name="language" type="string | null" required>
+          ISO 639 code of the language this text is in, such as `es`. On an ad with
+          translations, the ad's own copy carries `translations.source_language`. It's
+          `null` on an ad without translations.
+        </ResponseField>
+
+        <ResponseField name="text" type="string" required>
+          The text shown to viewers.
+        </ResponseField>
+      </Accordion>
     </ResponseField>
 
     <ResponseField name="purchase_value" type="number" required>
@@ -608,6 +650,21 @@ Use the Ads API to list ads for an account, create ads inside ad groups, retriev
 
     <ResponseField name="title" type="string | null" required>
       Display title of the ad.
+    </ResponseField>
+
+    <ResponseField name="translations" type="object | null">
+      The languages a Meta ad runs in besides its own. Each viewer sees the version for their language, or the ad's own copy. `null` when the ad runs in one language.
+
+      <Accordion title="Properties" defaultOpen={true}>
+        <ResponseField name="automatic_languages" type="string[]" required>
+          ISO 639 codes Meta translates the ad's own copy into automatically, such as
+          `fr`.
+        </ResponseField>
+
+        <ResponseField name="source_language" type="string" required>
+          ISO 639 code of the language the ad's own copy is written in, such as `en`. Viewers whose language has no version of its own see the ad's own copy.
+        </ResponseField>
+      </Accordion>
     </ResponseField>
 
     <ResponseField name="unique_click_through_rate" type="number | null" required>
@@ -692,7 +749,8 @@ Use the Ads API to list ads for an account, create ads inside ad groups, retriev
       			},
       			"format": "square",
       			"media_type": "image",
-      			"url": "https://img.whop.com/file_xxxxxxxxxxxx.jpg"
+      			"url": "https://img.whop.com/file_xxxxxxxxxxxx.jpg",
+      			"language": null
       		}
       	],
       	"custom_conversions": 4,
@@ -705,9 +763,19 @@ Use the Ads API to list ads for an account, create ads inside ad groups, retriev
       		"BookedDemo": 0
       	},
       	"delivery_status": "issues",
-      	"descriptions": ["Limited spots available this week."],
+      	"descriptions": [
+      		{
+      			"language": null,
+      			"text": "Limited spots available this week."
+      		}
+      	],
       	"frequency": 1.8,
-      	"headlines": ["Join Pickaxe Pro"],
+      	"headlines": [
+      		{
+      			"language": null,
+      			"text": "Join Pickaxe Pro"
+      		}
+      	],
       	"impressions": 9000,
       	"issues": [
       		{
@@ -729,7 +797,12 @@ Use the Ads API to list ads for an account, create ads inside ad groups, retriev
       	"existing_post_id": null,
       	"post_source": null,
       	"post_thumbnail_url": null,
-      	"primary_texts": ["Build sharper trading habits with daily lessons."],
+      	"primary_texts": [
+      		{
+      			"language": null,
+      			"text": "Build sharper trading habits with daily lessons."
+      		}
+      	],
       	"purchase_value": 1820,
       	"purchases": 6,
       	"reach": 5000,

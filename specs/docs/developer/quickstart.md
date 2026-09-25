@@ -274,7 +274,7 @@ See [API versioning](/developer/api/versioning) for how dated versions work.
 
 <CardGroup cols={2}>
   <Card title="You sell a subscription or a one-time product" icon="credit-card" href="/developer/guides/accept-payments">
-    Checkout links, embedded checkout, plans, and trials.
+    Checkout links, the Checkout element, plans, and trials.
   </Card>
 
   <Card title="You owe money to people who aren't you" icon="money-bill-transfer" href="/developer/platforms/manual-payouts">

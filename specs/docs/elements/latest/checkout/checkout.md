@@ -6,7 +6,7 @@
 
 > The full checkout surface — order summary with the live quote, promo code entry, the currency the buyer pays in, everything this checkout has to collect from the buyer, the composed payment methods surface, and the pay flow. What it collects is whatever the seller set up (email, their own questions, a phone number, a shipping address for physical goods, an explicit agreement to their terms), rendered together on one screen in the order they chose — so a seller who starts asking for something new needs no change here. Renders the whole purchase; the checkout controller owns the session and the credential. After a payment that needs an off-site step, this same surface renders the outcome the server reports when the buyer comes back.
 
-<Info>This page documents `@whop/elements@1.0.0` and `@whop/elements-react@1.0.0`.</Info>
+<Info>This page documents `@whop/elements@1.1.0` and `@whop/elements-react@1.1.0`.</Info>
 
 *Since `v1.0.0`.*
 
@@ -48,7 +48,7 @@ Mounts inside [`Checkout`](/elements/latest/checkout/overview). Pass props and c
     <div data-whop-demo-shell style={{ position: "relative", minHeight: "320px", transition: "min-height 200ms ease" }}>
       <div data-whop-demo-skeleton style={{ position: "absolute", inset: "0", borderRadius: "12px", background: "rgba(140, 140, 140, 0.12)", pointerEvents: "none", transition: "opacity 200ms ease" }} />
 
-      <div data-whop-demo-native="element:checkout/checkout" data-whop-elements-version="1.0.0" style={{ position: "relative" }} />
+      <div data-whop-demo-native="element:checkout/checkout" data-whop-elements-version="1.1.0" style={{ position: "relative" }} />
     </div>
 
     <p style={{ fontSize: "0.8125rem", opacity: 0.7 }}>Example data. [Open the Playground](/elements/latest/checkout/overview#playground).</p>
@@ -63,6 +63,10 @@ Mounts inside [`Checkout`](/elements/latest/checkout/overview). Pass props and c
 
 <ResponseField name="lockBuyerEmail" type="boolean">
   Keeps the buyer from editing the prefilled `buyerEmail` — an invoice link names who it was issued to. Only holds while the field still shows that email; a session email that already differs is never locked to it, and without a `buyerEmail` there is nothing to lock. Defaults to `false`.
+</ResponseField>
+
+<ResponseField name="defaultValues" type="{ phone?: string | undefined; shippingAddress?: { name?: string | undefined; line1?: string | undefined; line2?: string | undefined; city?: string | undefined; state?: string | undefined; postal_code?: string | undefined; country?: string | undefined; } | undefined; billingDetails?: { name?: string | undefined; phone?: string | undefined; address?: { line1?: string | undefined; line2?: string | undefined; city?: string | undefined; state?: string | undefined; postal_code?: string | undefined; country?: string | undefined; } | undefined; } | undefined; }">
+  Prefills what the host page already knows about the buyer. The buyer can edit every prefilled field, and a phone number or complete shipping address the session already holds wins over it. `phone` fills the checkout's phone number field when the seller collects one, in E.164 format such as `+14155552671`; when that field exists it also supplies the billing phone for methods that need one, so pass `phone` rather than `billingDetails.phone`. `shippingAddress` fills the shipping address when the checkout collects one (`country` is an ISO 3166-1 alpha-2 code; with a country the form cannot use, only the name is prefilled). `billingDetails` prefills the payment method's billing details like the payment element's `defaultValues.billingDetails`. Use `buyerEmail` for the email. Since `v1.1.0`.
 </ResponseField>
 
 ## Events

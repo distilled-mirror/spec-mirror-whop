@@ -6,7 +6,7 @@
 
 > An account's own dashboard surfaces, embedded on your site. Scope it to an account with `accountId`, then mount `paymentsTable` for the account's payments, `paymentDetail` for one payment, `required-actions` for the outstanding-action banners Whop's own dashboard shows above the balance — identity verification, deposits, tax, and the rest — and `verification` for the identity-only nudge. Every surface reads with the same credential, so two side by side always show the same account. The banners render nothing once the account has nothing outstanding, so they can sit permanently in a layout, and they report the presses they cannot answer themselves — Add money and Verify — so the host mounts its own deposit or verification flow, such as the `wallet` controller's `deposit` element or the `verifications` controller's `kyc` element.
 
-<Info>This page documents `@whop/elements@1.0.0` and `@whop/elements-react@1.0.0`.</Info>
+<Info>This page documents `@whop/elements@1.1.0` and `@whop/elements-react@1.1.0`.</Info>
 
 *Since `v1.0.0`.*
 
@@ -17,7 +17,7 @@ Assemble the elements with example data. Drive the controls, add and arrange ele
 <div data-whop-demo-shell style={{ position: "relative", minHeight: "480px", transition: "min-height 200ms ease" }}>
   <div data-whop-demo-skeleton style={{ position: "absolute", inset: "0", borderRadius: "12px", background: "rgba(140, 140, 140, 0.12)", pointerEvents: "none", transition: "opacity 200ms ease" }} />
 
-  <div data-whop-demo-native="playground:dashboard" data-whop-elements-version="1.0.0" style={{ position: "relative" }} />
+  <div data-whop-demo-native="playground:dashboard" data-whop-elements-version="1.1.0" style={{ position: "relative" }} />
 </div>
 
 <div data-whop-usage="dashboard/playground">

@@ -10,9 +10,9 @@
 
 The main entry point for Whop embedded components.
 
-WhopElements is the root object that manages configuration and creates sessions
-for different element types. Initialize it once and use it to create sessions
-for payouts, payments, and other embedded experiences.
+WhopElements is the root object that manages configuration and creates the chat
+session. Initialize it once and use it to create the session that mounts chat,
+DMs, and search elements.
 
 ## Installation
 
@@ -41,23 +41,22 @@ const whopElements = new WhopElements({
 });
 ```
 
-### Creating a payouts session
+### Creating a chat session
 
 ```typescript theme={null}
-const session = whopElements.createPayoutsSession({
+const session = whopElements.createChatSession({
   token: async () => {
     // Fetch token from your backend
-    const response = await fetch("/api/payouts-token");
+    const response = await fetch("/api/token");
     const data = await response.json();
     return data.token;
   },
-  companyId: "your-company-id",
-  redirectUrl: "https://yourapp.com/callback",
 });
 
-// Create and mount an element
-const element = session.createElement("balance-element", {});
-element.mount("#balance-container");
+const element = session.createElement("chat-element", {
+  channelId: "feed_XXXXXXXXXXXXXX",
+});
+element.mount("#chat-container");
 ```
 
 ### Updating options after initialization
@@ -101,19 +100,6 @@ Emitted when the WhopElements options are updated via `updateOptions()`.
 
 ## Methods
 
-### `createPayoutsSession(options)`
-
-Create a new payouts session for managing payout elements.
-
-The session handles authentication and provides methods to create
-payout-related elements like balance displays, withdrawal forms, and more.
-
-| Parameter | Type                    | Description                                   |
-| --------- | ----------------------- | --------------------------------------------- |
-| `options` | `PayoutsSessionOptions` | Configuration options for the payouts session |
-
-**Returns:** [`PayoutsSession`](/sdk/elements/payouts-session)
-
 ### `createChatSession(options)`
 
 Create a new chat session for managing chat elements.
@@ -123,19 +109,6 @@ Create a new chat session for managing chat elements.
 | `options` | `ChatSessionOptions` | Configuration options for the chat session |
 
 **Returns:** [`ChatSession`](/sdk/elements/chat-session)
-
-### `createWalletSession(options)`
-
-Create a new wallet session for managing wallet elements.
-
-The session handles authentication and provides methods to create
-wallet-related elements like balance displays, send/receive flows, and conversions.
-
-| Parameter | Type                   | Description                                  |
-| --------- | ---------------------- | -------------------------------------------- |
-| `options` | `WalletSessionOptions` | Configuration options for the wallet session |
-
-**Returns:** [`WalletSession`](/sdk/elements/wallet-session)
 
 ### `updateOptions(options)`
 

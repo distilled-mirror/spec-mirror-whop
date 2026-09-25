@@ -143,7 +143,7 @@
   </ResponseField>
 
   <ResponseField name="defaultValues" type="{ billingDetails?: { name?: string | undefined; phone?: string | undefined; address?: { line1?: string | undefined; line2?: string | undefined; city?: string | undefined; state?: string | undefined; postal_code?: string | undefined; country?: string | undefined; } | undefined; } | undefined; }">
-    Prefills the billing details when each method's billing block first renders. The buyer can edit every prefilled field. `address.country` is an ISO 3166-1 alpha-2 code and applies only when the selected method accepts it. `phone` fills the billing phone input for methods that collect one, in E.164 format such as `+14155552671`; a number outside the method's supported phone countries is ignored. Only fields the block renders are prefilled and sent. Pass anything else to `createConfirmationToken` in `billingDetails`. Unreleased, in development.
+    Prefills the billing details when each method's billing block first renders. The buyer can edit every prefilled field. `address.country` is an ISO 3166-1 alpha-2 code and applies only when the selected method accepts it. `phone` fills the billing phone input for methods that collect one, in E.164 format such as `+14155552671`; a number outside the method's supported phone countries is ignored. Only fields the block renders are prefilled and sent. Pass anything else to `createConfirmationToken` in `billingDetails`. Since `v1.1.0`.
   </ResponseField>
 
   <ResponseField name="layout" type="&#x22;accordion&#x22; | &#x22;horizontal&#x22;">

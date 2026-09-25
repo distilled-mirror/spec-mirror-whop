@@ -19,25 +19,25 @@ Create your sandbox account and API keys at [sandbox.whop.com](https://sandbox.w
 
 ## Software development kit configuration
 
-To use the sandbox environment with the Whop SDK, configure the `baseUrl` parameter:
+To use the sandbox environment with the Whop SDK, pass the `Sandbox` environment. An environment names every host the SDK talks to, so every request moves to the sandbox at once.
 
 <CodeGroup>
-  ```typescript Typescript theme={null}
-  import { WhopClient } from "@whop/sdk";
+  ```typescript TypeScript theme={null}
+  import { WhopClient, WhopEnvironment } from "@whop/sdk";
 
   const client = new WhopClient({
   	token: process.env["WHOP_API_KEY"],
-  	baseUrl: "https://sandbox-api.whop.com/api/v1",
+  	environment: WhopEnvironment.Sandbox,
   });
   ```
 
   ```python Python theme={null}
   import os
-  from whop_sdk import Whop
+  from whop_sdk import Whop, WhopEnvironment
 
   client = Whop(
       token=os.environ.get("WHOP_API_KEY"),
-      base_url="https://sandbox-api.whop.com/api/v1",
+      environment=WhopEnvironment.SANDBOX,
   )
   ```
 
@@ -46,7 +46,7 @@ To use the sandbox environment with the Whop SDK, configure the `baseUrl` parame
 
   client = Whop_sdk::Client.new(
     token: ENV.fetch("WHOP_API_KEY"),
-    base_url: "https://sandbox-api.whop.com/api/v1",
+    environment: Whop_sdk::Environment::SANDBOX,
   )
   ```
 
@@ -65,65 +65,60 @@ To use the sandbox environment with the Whop SDK, configure the `baseUrl` parame
   import (
       "os"
 
-      "github.com/whopio/whopsdk-go/client"
-      "github.com/whopio/whopsdk-go/option"
+      whopsdk "github.com/whopio/whopsdk-go/v2"
+      "github.com/whopio/whopsdk-go/v2/client"
+      "github.com/whopio/whopsdk-go/v2/option"
   )
 
   client := client.NewWhop(
       option.WithToken(os.Getenv("WHOP_API_KEY")),
-      option.WithBaseURL("https://sandbox-api.whop.com/api/v1"),
+      option.WithEnvironment(whopsdk.Environments.Sandbox),
   )
   ```
 </CodeGroup>
 
-## Embedded components
+<Note>
+  The `Sandbox` environment arrived in SDK 2.0. On 1.x, point the client at `https://sandbox-api.whop.com/api/v1` instead: `baseUrl` in TypeScript, `base_url` in Python and Ruby, `option.WithBaseURL` in Go. TypeScript, Ruby and Go keep that override in 2.0, but it sends every request to one host. Operations that must reach a different host are then refused, so use `environment`. The 2.0 Python client has no `base_url` parameter. The Rust SDK is still 1.x and keeps `base_url`.
+</Note>
 
-<Info>
-  The `environment` option requires `@whop/embedded-components-vanilla-js`
-  version `0.0.6` or later.
-</Info>
+## Elements in the sandbox
 
-To use embedded components (like payout elements) in sandbox mode, configure the `environment` option when loading the SDK:
+To point [Whop Elements](/elements/latest/getting-started) at the sandbox, set `environment` when you create the SDK instance. This option is the only way to change where the elements send what a buyer types.
 
-```typescript theme={null}
-import { loadWhopElements } from "@whop/embedded-components-vanilla-js";
+<Note>
+  The sandbox environment isn't available for Whop Elements yet. The samples below run as written once it is.
+</Note>
 
-const elements = loadWhopElements({
-	environment: "sandbox", // Use "production" for live environment (default)
-});
+<CodeGroup>
+  ```tsx React theme={null}
+  import { WhopElements, Payments, PaymentElement, BrandingElement } from "@whop/elements-react";
+  import { loadWhop } from "@whop/elements";
 
-// Create a payouts session as usual
-const session = elements.createPayoutsSession({
-	token: yourAccessToken,
-	companyId: "your-account-id",
-	redirectUrl: "https://yourapp.com/callback",
-});
-```
+  function App() {
+  	return (
+  		<WhopElements elements={loadWhop()} environment="sandbox">
+  			<Payments accountId="biz_xxxxxxxxxxxxx" plan="plan_xxxxxxxxxxxxx">
+  				<PaymentElement />
+  				<BrandingElement />
+  			</Payments>
+  		</WhopElements>
+  	);
+  }
+  ```
 
-With React:
-
-```tsx theme={null}
-import { loadWhopElements } from "@whop/embedded-components-vanilla-js";
-import { Elements, PayoutsSession } from "@whop/embedded-components-react-js";
-
-const elements = loadWhopElements({
-	environment: "sandbox",
-});
-
-function App() {
-	return (
-		<Elements elements={elements}>
-			<PayoutsSession
-				token={yourAccessToken}
-				companyId="your-account-id"
-				redirectUrl="https://yourapp.com/callback"
-			>
-				{/* Your payout components */}
-			</PayoutsSession>
-		</Elements>
-	);
-}
-```
+  ```html JavaScript theme={null}
+  <script src="https://cdn.whop.com/elements/amber/elements.js" data-whop-elements></script>
+  <script type="module">
+    const whop = window.WhopElements({ environment: "sandbox" });
+    const payments = whop.payments.create({
+      accountId: "biz_xxxxxxxxxxxxx",
+      plan: "plan_xxxxxxxxxxxxx",
+    });
+    payments.create("payment").mount("#payment");
+    payments.create("branding").mount("#branding");
+  </script>
+  ```
+</CodeGroup>
 
 ## Application programming interface keys and webhooks
 

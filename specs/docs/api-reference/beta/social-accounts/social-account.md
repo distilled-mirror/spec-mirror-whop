@@ -16,6 +16,7 @@ Use the Social Accounts API to list connected accounts, create a Whop-managed Fa
 | [List Social Account Lead Forms](/api-reference/beta/social-accounts/list-social-account-lead-forms) | <Badge color="blue" size="sm" stroke>GET</Badge> `/social_accounts/{id}/lead_forms` |
 | [List Social Account Posts](/api-reference/beta/social-accounts/list-social-account-posts)           | <Badge color="blue" size="sm" stroke>GET</Badge> `/social_accounts/{id}/posts`      |
 | [Create a Social Account](/api-reference/beta/social-accounts/create-a-social-account)               | <Badge color="green" size="sm" stroke>POST</Badge> `/social_accounts`               |
+| [Refresh](/api-reference/beta/social-accounts/refresh)                                               | <Badge color="green" size="sm" stroke>POST</Badge> `/social_accounts/{id}/refresh`  |
 | [Connect a Social Account](/api-reference/beta/social-accounts/connect-a-social-account)             | <Badge color="green" size="sm" stroke>POST</Badge> `/social_accounts/connect`       |
 | [Delete a Social Account](/api-reference/beta/social-accounts/delete-a-social-account)               | <Badge color="red" size="sm" stroke>DELETE</Badge> `/social_accounts/{id}`          |
 
@@ -59,7 +60,7 @@ Use the Social Accounts API to list connected accounts, create a Whop-managed Fa
         <ResponseField name="platform" type="string" required>
           The platform the parent social account exists on.
 
-          Available options: `x`, `instagram`, `youtube`, `tiktok`, `facebook`, `discord`, `telegram`, `linkedin`
+          Available options: `x`, `instagram`, `youtube`, `tiktok`, `facebook`, `discord`, `telegram`, `linkedin`, `snapchat`
         </ResponseField>
 
         <ResponseField name="profile_picture_url" type="string | null" required>
@@ -80,7 +81,7 @@ Use the Social Accounts API to list connected accounts, create a Whop-managed Fa
     <ResponseField name="platform" type="string" required>
       The platform the social account exists on.
 
-      Available options: `x`, `instagram`, `youtube`, `tiktok`, `facebook`, `discord`, `telegram`, `linkedin`
+      Available options: `x`, `instagram`, `youtube`, `tiktok`, `facebook`, `discord`, `telegram`, `linkedin`, `snapchat`
     </ResponseField>
 
     <ResponseField name="profile_picture_url" type="string | null" required>
@@ -90,7 +91,8 @@ Use the Social Accounts API to list connected accounts, create a Whop-managed Fa
     <ResponseField name="scopes" type="string[]" required>
       Capabilities Whop retains specific to this social account. For example, Whop
       may request the ability to run advertisements that use this social account's
-      identity, reflected by the presence of `advertise` in this value.
+      identity, reflected by `advertise`. Personal profile connections have no
+      additional Whop scopes.
     </ResponseField>
 
     <ResponseField name="url" type="string | null" required>

@@ -11,7 +11,7 @@
 Use `Checkout.ApplePayButton` to accept one-time payments for physical goods or real-world services using Apple Pay. Whop processes payments at **2.7% + \$0.30** instead of Apple's 15–30% in-app purchase fees.
 
 <Tip>
-  For web sales, use [checkout links or embedded checkout](/developer/guides/accept-payments) for **100+ payment methods** across **195 countries**.
+  For web sales, use [checkout links or the Checkout element](/developer/guides/accept-payments) for **100+ payment methods** across **195 countries**.
 </Tip>
 
 <Warning>

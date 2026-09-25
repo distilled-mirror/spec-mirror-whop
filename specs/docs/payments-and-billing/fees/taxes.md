@@ -15,7 +15,7 @@ An important note before you start: choosing one of Whop's managed tax options d
 There are two kinds of sales on Whop, and they're handled differently:
 
 1. **Discover sales**: a buyer finds and buys your product on Whop's marketplace (Discover). On these sales, Whop automatically handles tax in jurisdictions covered by Whop's tax registrations.
-2. **Direct sales through Whop (checkout links or embedded checkout)**: you choose how to handle tax. The following sections explain three options.
+2. **Direct sales through Whop (checkout links or the Checkout element on your site)**: you choose how to handle tax. The following sections explain three options.
 
 ***
 
@@ -34,7 +34,7 @@ You usually don't need to hold, track, or file this tax yourself for these sales
 
 ***
 
-## Direct sales through a checkout link or embedded checkout
+## Direct sales through a checkout link or the checkout element
 
 ### Your three options
 

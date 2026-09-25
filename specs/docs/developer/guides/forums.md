@@ -42,8 +42,8 @@ Use the Forums API to publish posts, comment on existing threads, and react to p
   import (
       "os"
 
-      "github.com/whopio/whopsdk-go/client"
-      "github.com/whopio/whopsdk-go/option"
+      "github.com/whopio/whopsdk-go/v2/client"
+      "github.com/whopio/whopsdk-go/v2/option"
   )
 
   client := client.NewWhop(option.WithToken(os.Getenv("WHOP_API_KEY")))

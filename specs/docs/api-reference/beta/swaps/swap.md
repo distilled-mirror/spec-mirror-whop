@@ -26,7 +26,8 @@ Use the Swaps API to quote a conversion, create the swap, list recent swaps, and
     </ResponseField>
 
     <ResponseField name="account_id" type="string" required>
-      Account ID that owns the wallet used for the swap.
+      Account that owns the swap: a business ID prefixed `biz_`, or the user ID for
+      a personal account.
     </ResponseField>
 
     <ResponseField name="error" type="string | null">
@@ -44,6 +45,11 @@ Use the Swaps API to quote a conversion, create the swap, list recent swaps, and
     <ResponseField name="tx_hashes" type="string[]" required>
       On-chain transaction hashes produced by the swap.
     </ResponseField>
+
+    <ResponseField name="user_id" type="string | null" required>
+      User whose personal account owns the swap, prefixed `user_`. Null for a
+      business account.
+    </ResponseField>
   </Column>
 
   <Column>
@@ -55,7 +61,8 @@ Use the Swaps API to quote a conversion, create the swap, list recent swaps, and
       	"error": null,
       	"object": "swap",
       	"status": "complete",
-      	"tx_hashes": ["0x1234567890abcdef"]
+      	"tx_hashes": ["0x1234567890abcdef"],
+      	"user_id": null
       }
       ```
     </div>

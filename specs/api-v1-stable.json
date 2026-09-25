@@ -16044,6 +16044,7 @@
           "affirm",
           "afterpay_clearpay",
           "alipay",
+          "alipayhk",
           "alma",
           "amazon_pay",
           "apple",
@@ -20809,7 +20810,7 @@
     "termsOfService": "https://whop.com/tos-developer-api/",
     "title": "Whop API",
     "version": "1.0.0",
-    "x-api-version-date": "2026-09-23"
+    "x-api-version-date": "2026-09-24-1"
   },
   "openapi": "3.1.0",
   "paths": {
@@ -21235,13 +21236,7 @@
         "tags": [
           "Access tokens"
         ],
-        "x-group-title": "Developer",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.accessTokens.create();\n"
-          }
-        ]
+        "x-group-title": "Developer"
       }
     },
     "/account_links": {
@@ -21652,13 +21647,7 @@
         "tags": [
           "Account links"
         ],
-        "x-group-title": "Developer",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.accountLinks.create({\n    company_id: \"biz_xxxxxxxxxxxxxx\",\n    refresh_url: \"refresh_url\",\n    return_url: \"return_url\",\n    use_case: \"account_onboarding\"\n});\n"
-          }
-        ]
+        "x-group-title": "Developer"
       }
     },
     "/affiliates": {
@@ -22156,13 +22145,7 @@
         "tags": [
           "Affiliates"
         ],
-        "x-group-title": "CRM",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.affiliates.list({\n    first: 42,\n    last: 42,\n    company_id: \"biz_xxxxxxxxxxxxxx\"\n});\n"
-          }
-        ]
+        "x-group-title": "CRM"
       },
       "post": {
         "description": "Creates or finds an affiliate for a company and user.\n\nRequired permissions:\n - `affiliate:create`",
@@ -22563,13 +22546,7 @@
         "tags": [
           "Affiliates"
         ],
-        "x-group-title": "CRM",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.affiliates.create({\n    company_id: \"biz_xxxxxxxxxxxxxx\",\n    user_identifier: \"user_identifier\"\n});\n"
-          }
-        ]
+        "x-group-title": "CRM"
       }
     },
     "/affiliates/{id}": {
@@ -22957,13 +22934,7 @@
         "tags": [
           "Affiliates"
         ],
-        "x-group-title": "CRM",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.affiliates.retrieve({\n    id: \"aff_xxxxxxxxxxxxxx\"\n});\n"
-          }
-        ]
+        "x-group-title": "CRM"
       }
     },
     "/affiliates/{id}/archive": {
@@ -23352,13 +23323,7 @@
         "tags": [
           "Affiliates"
         ],
-        "x-group-title": "CRM",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.affiliates.archive({\n    id: \"aff_xxxxxxxxxxxxxx\"\n});\n"
-          }
-        ]
+        "x-group-title": "CRM"
       }
     },
     "/affiliates/{id}/overrides": {
@@ -23923,13 +23888,7 @@
         "tags": [
           "Affiliates"
         ],
-        "x-group-title": "CRM",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.affiliates.overrides.list({\n    id: \"aff_xxxxxxxxxxxxxx\",\n    first: 42,\n    last: 42\n});\n"
-          }
-        ]
+        "x-group-title": "CRM"
       },
       "post": {
         "description": "Creates a commission override for an affiliate.\n\nRequired permissions:\n - `affiliate:create`",
@@ -24538,13 +24497,7 @@
         "tags": [
           "Affiliates"
         ],
-        "x-group-title": "CRM",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.affiliates.overrides.create({\n    id: \"aff_xxxxxxxxxxxxxx\",\n    body: {\n        override_type: \"standard\",\n        commission_value: 6.9,\n        id: \"id\",\n        plan_id: \"plan_xxxxxxxxxxxxx\"\n    }\n});\n"
-          }
-        ]
+        "x-group-title": "CRM"
       }
     },
     "/affiliates/{id}/overrides/{override_id}": {
@@ -24942,13 +24895,7 @@
         "tags": [
           "Affiliates"
         ],
-        "x-group-title": "CRM",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.affiliates.overrides.delete({\n    id: \"aff_xxxxxxxxxxxxxx\",\n    override_id: \"override_id\"\n});\n"
-          }
-        ]
+        "x-group-title": "CRM"
       },
       "get": {
         "description": "Retrieves the details of a specific affiliate override.\n\nRequired permissions:\n - `affiliate:basic:read`",
@@ -25445,13 +25392,7 @@
         "tags": [
           "Affiliates"
         ],
-        "x-group-title": "CRM",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.affiliates.overrides.retrieve({\n    id: \"aff_xxxxxxxxxxxxxx\",\n    override_id: \"override_id\"\n});\n"
-          }
-        ]
+        "x-group-title": "CRM"
       },
       "patch": {
         "description": "Updates an existing affiliate override.\n\nRequired permissions:\n - `affiliate:update`",
@@ -26003,13 +25944,7 @@
         "tags": [
           "Affiliates"
         ],
-        "x-group-title": "CRM",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.affiliates.overrides.update({\n    id: \"aff_xxxxxxxxxxxxxx\",\n    override_id: \"override_id\"\n});\n"
-          }
-        ]
+        "x-group-title": "CRM"
       }
     },
     "/affiliates/{id}/unarchive": {
@@ -26398,13 +26333,7 @@
         "tags": [
           "Affiliates"
         ],
-        "x-group-title": "CRM",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.affiliates.unarchive({\n    id: \"aff_xxxxxxxxxxxxxx\"\n});\n"
-          }
-        ]
+        "x-group-title": "CRM"
       }
     },
     "/ai_chats": {
@@ -26866,13 +26795,7 @@
         "tags": [
           "Ai chats"
         ],
-        "x-group-title": "AI",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.aiChats.list({\n    first: 42,\n    last: 42\n});\n"
-          }
-        ]
+        "x-group-title": "AI"
       },
       "post": {
         "description": "Create a new AI chat thread and send the first message to the AI agent.\n\nRequired permissions:\n - `ai_chat:create`",
@@ -27331,13 +27254,7 @@
         "tags": [
           "Ai chats"
         ],
-        "x-group-title": "AI",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.aiChats.create({\n    message_text: \"message_text\"\n});\n"
-          }
-        ]
+        "x-group-title": "AI"
       }
     },
     "/ai_chats/{id}": {
@@ -27726,13 +27643,7 @@
         "tags": [
           "Ai chats"
         ],
-        "x-group-title": "AI",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.aiChats.delete({\n    id: \"aich_xxxxxxxxxxxxx\"\n});\n"
-          }
-        ]
+        "x-group-title": "AI"
       },
       "get": {
         "description": "Retrieves the details of an existing AI chat.",
@@ -28116,13 +28027,7 @@
         "tags": [
           "Ai chats"
         ],
-        "x-group-title": "AI",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.aiChats.retrieve({\n    id: \"aich_xxxxxxxxxxxxx\"\n});\n"
-          }
-        ]
+        "x-group-title": "AI"
       },
       "patch": {
         "description": "Update an AI chat's title, notification preferences, or associated account context.\n\nRequired permissions:\n - `ai_chat:update`",
@@ -28547,13 +28452,7 @@
         "tags": [
           "Ai chats"
         ],
-        "x-group-title": "AI",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.aiChats.update({\n    id: \"aich_xxxxxxxxxxxxx\"\n});\n"
-          }
-        ]
+        "x-group-title": "AI"
       }
     },
     "/app_builds": {
@@ -29055,13 +28954,7 @@
         "tags": [
           "App builds"
         ],
-        "x-group-title": "Developer",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.appBuilds.list({\n    app_id: \"app_id\"\n});\n"
-          }
-        ]
+        "x-group-title": "Developer"
       },
       "post": {
         "description": "Upload a new build artifact for an app. The build must include a compiled code bundle for the specified platform.\n\nRequired permissions:\n - `developer:manage_builds`",
@@ -29519,13 +29412,7 @@
         "tags": [
           "App builds"
         ],
-        "x-group-title": "Developer",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.appBuilds.create({\n    attachment: {},\n    checksum: \"xxxxxxxxxxxxxxx\",\n    platform: \"ios\"\n});\n"
-          }
-        ]
+        "x-group-title": "Developer"
       }
     },
     "/app_builds/{id}": {
@@ -29913,13 +29800,7 @@
         "tags": [
           "App builds"
         ],
-        "x-group-title": "Developer",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.appBuilds.retrieve({\n    id: \"id\"\n});\n"
-          }
-        ]
+        "x-group-title": "Developer"
       }
     },
     "/app_builds/{id}/promote": {
@@ -30307,13 +30188,7 @@
         "tags": [
           "App builds"
         ],
-        "x-group-title": "Developer",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.appBuilds.promote({\n    id: \"id\"\n});\n"
-          }
-        ]
+        "x-group-title": "Developer"
       }
     },
     "/apps": {
@@ -30831,13 +30706,7 @@
         "tags": [
           "Apps"
         ],
-        "x-group-title": "Developer",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.apps.list();\n"
-          }
-        ]
+        "x-group-title": "Developer"
       },
       "post": {
         "description": "Register a new app on the Whop developer platform. Apps provide custom experiences that can be added to products.\n\nRequired permissions:\n - `developer:create_app`\n - `developer:manage_api_key`\n - `developer:basic:read`\n - `developer:update_app`",
@@ -31283,13 +31152,7 @@
         "tags": [
           "Apps"
         ],
-        "x-group-title": "Developer",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.apps.create({\n    name: \"Shine Time Booking\"\n});\n"
-          }
-        ]
+        "x-group-title": "Developer"
       }
     },
     "/apps/{app_id}/permissions": {
@@ -31720,13 +31583,7 @@
         "tags": [
           "Apps"
         ],
-        "x-group-title": "Developer",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.apps.updatePermissionsApp({\n    app_id: \"app_id\",\n    requested_permissions: [{\n            action: \"action\",\n            is_required: true,\n            justification: \"justification\"\n        }]\n});\n"
-          }
-        ]
+        "x-group-title": "Developer"
       }
     },
     "/apps/{id}": {
@@ -32116,13 +31973,7 @@
         "tags": [
           "Apps"
         ],
-        "x-group-title": "Developer",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.apps.retrieve({\n    id: \"id\"\n});\n"
-          }
-        ]
+        "x-group-title": "Developer"
       },
       "patch": {
         "description": "Update the settings, metadata, or status of an existing app on the Whop developer platform.\n\nRequired permissions:\n - `developer:update_app`\n - `developer:manage_api_key`\n - `developer:basic:read`",
@@ -32674,13 +32525,7 @@
         "tags": [
           "Apps"
         ],
-        "x-group-title": "Developer",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.apps.update({\n    id: \"id\"\n});\n"
-          }
-        ]
+        "x-group-title": "Developer"
       }
     },
     "/authorized_users": {
@@ -33184,13 +33029,7 @@
         "tags": [
           "Authorized users"
         ],
-        "x-group-title": "Identity",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.authorizedUsers.list({\n    first: 42,\n    last: 42,\n    company_id: \"biz_xxxxxxxxxxxxxx\",\n    user_id: \"user_xxxxxxxxxxxxx\",\n    created_before: \"2023-12-01T05:00:00Z\",\n    created_after: \"2023-12-01T05:00:00Z\"\n});\n"
-          }
-        ]
+        "x-group-title": "Identity"
       },
       "post": {
         "description": "Add a new authorized user to a company.\n\nRequired permissions:\n - `authorized_user:create`\n - `member:email:read`",
@@ -33664,13 +33503,7 @@
         "tags": [
           "Authorized users"
         ],
-        "x-group-title": "Identity",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.authorizedUsers.create({\n    company_id: \"biz_xxxxxxxxxxxxxx\",\n    role: \"owner\",\n    user_id: \"user_xxxxxxxxxxxxx\"\n});\n"
-          }
-        ]
+        "x-group-title": "Identity"
       }
     },
     "/authorized_users/{id}": {
@@ -34071,13 +33904,7 @@
         "tags": [
           "Authorized users"
         ],
-        "x-group-title": "Identity",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.authorizedUsers.delete({\n    id: \"ausr_xxxxxxxxxxxxx\",\n    company_id: \"biz_xxxxxxxxxxxxxx\"\n});\n"
-          }
-        ]
+        "x-group-title": "Identity"
       },
       "get": {
         "description": "Retrieves the details of an existing authorized user.\n\nRequired permissions:\n - `company:authorized_user:read`\n - `member:email:read`",
@@ -34464,13 +34291,7 @@
         "tags": [
           "Authorized users"
         ],
-        "x-group-title": "Identity",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.authorizedUsers.retrieve({\n    id: \"ausr_xxxxxxxxxxxxx\"\n});\n"
-          }
-        ]
+        "x-group-title": "Identity"
       }
     },
     "/bounties": {
@@ -34944,13 +34765,7 @@
         "tags": [
           "Bounties"
         ],
-        "x-group-title": "Bounties",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.bounties.list();\n"
-          }
-        ]
+        "x-group-title": "Bounties"
       },
       "post": {
         "description": "Create a new workforce bounty by funding a dedicated bounty pool.\n\nRequired permissions:\n - `bounty:create`",
@@ -35455,13 +35270,7 @@
         "tags": [
           "Bounties"
         ],
-        "x-group-title": "Bounties",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.bounties.create({\n    description: \"Record one continuous pass of a full interior detail, dash to trunk, on a customer vehicle.\",\n    gross_reward_amount: 40,\n    title: \"Record interior detailing passes\"\n});\n"
-          }
-        ]
+        "x-group-title": "Bounties"
       }
     },
     "/bounties/{id}": {
@@ -35847,13 +35656,7 @@
         "tags": [
           "Bounties"
         ],
-        "x-group-title": "Bounties",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.bounties.retrieve({\n    id: \"id\"\n});\n"
-          }
-        ]
+        "x-group-title": "Bounties"
       }
     },
     "/card_transactions": {
@@ -36366,13 +36169,7 @@
         "tags": [
           "Card transactions"
         ],
-        "x-group-title": "Cards",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.cardTransactions.list({\n    transaction_ids: [\"citx_xxxxxxxxxxxxxx\"],\n    card_id: [\"icrd_xxxxxxxxxxxxxx\"],\n    cardholder_id: [\"user_xxxxxxxxxxxxxx\"]\n});\n"
-          }
-        ]
+        "x-group-title": "Cards"
       }
     },
     "/card_transactions/{id}": {
@@ -36759,13 +36556,7 @@
         "tags": [
           "Card transactions"
         ],
-        "x-group-title": "Cards",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.cardTransactions.retrieve({\n    id: \"id\"\n});\n"
-          }
-        ]
+        "x-group-title": "Cards"
       }
     },
     "/chat_channels": {
@@ -37231,13 +37022,7 @@
         "tags": [
           "Chat channels"
         ],
-        "x-group-title": "Engagement",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.chatChannels.list({\n    first: 42,\n    last: 42,\n    company_id: \"biz_xxxxxxxxxxxxxx\",\n    product_id: \"prod_xxxxxxxxxxxxx\"\n});\n"
-          }
-        ]
+        "x-group-title": "Engagement"
       }
     },
     "/chat_channels/{id}": {
@@ -37624,13 +37409,7 @@
         "tags": [
           "Chat channels"
         ],
-        "x-group-title": "Engagement",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.chatChannels.retrieve({\n    id: \"id\"\n});\n"
-          }
-        ]
+        "x-group-title": "Engagement"
       },
       "patch": {
         "description": "Update moderation settings for a chat channel, such as who can post, banned words, and media restrictions.\n\nRequired permissions:\n - `chat:moderate`",
@@ -38084,13 +37863,7 @@
         "tags": [
           "Chat channels"
         ],
-        "x-group-title": "Engagement",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.chatChannels.update({\n    id: \"id\"\n});\n"
-          }
-        ]
+        "x-group-title": "Engagement"
       }
     },
     "/checkout_configurations": {
@@ -38593,13 +38366,7 @@
         "tags": [
           "Checkout configurations"
         ],
-        "x-group-title": "Payins",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.checkoutConfigurations.list({\n    account_id: \"account_id\"\n});\n"
-          }
-        ]
+        "x-group-title": "Payins"
       },
       "post": {
         "description": "Creates a new checkout configuration\n\nRequired permissions:\n - `checkout_configuration:create`\n - `plan:create`\n - `access_pass:create`\n - `access_pass:update`\n - `checkout_configuration:basic:read`",
@@ -39762,13 +39529,7 @@
         "tags": [
           "Checkout configurations"
         ],
-        "x-group-title": "Payins",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.checkoutConfigurations.create({\n    account_id: \"biz_xxxxxxxxxxxxxx\",\n    plan_id: \"plan_xxxxxxxxxxxxx\"\n});\n"
-          }
-        ]
+        "x-group-title": "Payins"
       }
     },
     "/checkout_configurations/{id}": {
@@ -40156,13 +39917,7 @@
         "tags": [
           "Checkout configurations"
         ],
-        "x-group-title": "Payins",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.checkoutConfigurations.retrieve({\n    id: \"id\"\n});\n"
-          }
-        ]
+        "x-group-title": "Payins"
       }
     },
     "/company_token_transactions": {
@@ -40641,13 +40396,7 @@
         "tags": [
           "Company token transactions"
         ],
-        "x-group-title": "CRM",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.companyTokenTransactions.list({\n    first: 42,\n    last: 42,\n    company_id: \"biz_xxxxxxxxxxxxxx\",\n    user_id: \"user_xxxxxxxxxxxxx\"\n});\n"
-          }
-        ]
+        "x-group-title": "CRM"
       },
       "post": {
         "description": "Create a token transaction to add, subtract, or transfer tokens for a member within a company.\n\nRequired permissions:\n - `company_token_transaction:create`\n - `member:basic:read`\n - `company:basic:read`",
@@ -41180,13 +40929,7 @@
         "tags": [
           "Company token transactions"
         ],
-        "x-group-title": "CRM",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.companyTokenTransactions.create({\n    transaction_type: \"transfer\",\n    amount: 6.9,\n    company_id: \"biz_xxxxxxxxxxxxxx\",\n    destination_user_id: \"destination_user_id\",\n    user_id: \"user_xxxxxxxxxxxxx\"\n});\n"
-          }
-        ]
+        "x-group-title": "CRM"
       }
     },
     "/company_token_transactions/{id}": {
@@ -41575,13 +41318,7 @@
         "tags": [
           "Company token transactions"
         ],
-        "x-group-title": "CRM",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.companyTokenTransactions.retrieve({\n    id: \"id\"\n});\n"
-          }
-        ]
+        "x-group-title": "CRM"
       }
     },
     "/course_chapters": {
@@ -42035,13 +41772,7 @@
         "tags": [
           "Course chapters"
         ],
-        "x-group-title": "Courses",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.courseChapters.list({\n    first: 42,\n    last: 42,\n    course_id: \"cors_xxxxxxxxxxxxx\"\n});\n"
-          }
-        ]
+        "x-group-title": "Courses"
       },
       "post": {
         "description": "Create a new chapter within a course to organize lessons into sections.\n\nRequired permissions:\n - `courses:update`",
@@ -42444,13 +42175,7 @@
         "tags": [
           "Course chapters"
         ],
-        "x-group-title": "Courses",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.courseChapters.create({\n    course_id: \"cors_xxxxxxxxxxxxx\"\n});\n"
-          }
-        ]
+        "x-group-title": "Courses"
       }
     },
     "/course_chapters/{id}": {
@@ -42839,13 +42564,7 @@
         "tags": [
           "Course chapters"
         ],
-        "x-group-title": "Courses",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.courseChapters.delete({\n    id: \"chap_xxxxxxxxxxxxx\"\n});\n"
-          }
-        ]
+        "x-group-title": "Courses"
       },
       "get": {
         "description": "Retrieves the details of an existing course chapter.\n\nRequired permissions:\n - `courses:read`",
@@ -43231,13 +42950,7 @@
         "tags": [
           "Course chapters"
         ],
-        "x-group-title": "Courses",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.courseChapters.retrieve({\n    id: \"chap_xxxxxxxxxxxxx\"\n});\n"
-          }
-        ]
+        "x-group-title": "Courses"
       },
       "patch": {
         "description": "Update a chapter's title within a course.\n\nRequired permissions:\n - `courses:update`",
@@ -43643,13 +43356,7 @@
         "tags": [
           "Course chapters"
         ],
-        "x-group-title": "Courses",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.courseChapters.update({\n    id: \"chap_xxxxxxxxxxxxx\",\n    title: \"title\"\n});\n"
-          }
-        ]
+        "x-group-title": "Courses"
       }
     },
     "/course_lesson_interactions": {
@@ -44139,13 +43846,7 @@
         "tags": [
           "Course lesson interactions"
         ],
-        "x-group-title": "Courses",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.courseLessonInteractions.list({\n    first: 42,\n    last: 42,\n    user_id: \"user_xxxxxxxxxxxxx\",\n    lesson_id: \"lesn_xxxxxxxxxxxxx\",\n    course_id: \"cors_xxxxxxxxxxxxx\"\n});\n"
-          }
-        ]
+        "x-group-title": "Courses"
       }
     },
     "/course_lesson_interactions/{id}": {
@@ -44534,13 +44235,7 @@
         "tags": [
           "Course lesson interactions"
         ],
-        "x-group-title": "Courses",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.courseLessonInteractions.retrieve({\n    id: \"crsli_xxxxxxxxxxxx\"\n});\n"
-          }
-        ]
+        "x-group-title": "Courses"
       }
     },
     "/course_lessons": {
@@ -45006,13 +44701,7 @@
         "tags": [
           "Course lessons"
         ],
-        "x-group-title": "Courses",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.courseLessons.list({\n    first: 42,\n    last: 42,\n    course_id: \"cors_xxxxxxxxxxxxx\",\n    chapter_id: \"chap_xxxxxxxxxxxxx\"\n});\n"
-          }
-        ]
+        "x-group-title": "Courses"
       },
       "post": {
         "description": "Create a new lesson within a course chapter. Lessons can contain video, text, or assessment content.\n\nRequired permissions:\n - `courses:update`",
@@ -45470,13 +45159,7 @@
         "tags": [
           "Course lessons"
         ],
-        "x-group-title": "Courses",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.courseLessons.create({\n    chapter_id: \"chap_xxxxxxxxxxxxx\",\n    lesson_type: \"text\"\n});\n"
-          }
-        ]
+        "x-group-title": "Courses"
       }
     },
     "/course_lessons/{id}": {
@@ -45865,13 +45548,7 @@
         "tags": [
           "Course lessons"
         ],
-        "x-group-title": "Courses",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.courseLessons.delete({\n    id: \"lesn_xxxxxxxxxxxxx\"\n});\n"
-          }
-        ]
+        "x-group-title": "Courses"
       },
       "get": {
         "description": "Retrieves the details of an existing course lesson.\n\nRequired permissions:\n - `courses:read`",
@@ -46257,13 +45934,7 @@
         "tags": [
           "Course lessons"
         ],
-        "x-group-title": "Courses",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.courseLessons.retrieve({\n    id: \"lesn_xxxxxxxxxxxxx\"\n});\n"
-          }
-        ]
+        "x-group-title": "Courses"
       },
       "patch": {
         "description": "Update a lesson's content, type, visibility, assessment questions, or media attachments.\n\nRequired permissions:\n - `courses:update`",
@@ -46908,13 +46579,7 @@
         "tags": [
           "Course lessons"
         ],
-        "x-group-title": "Courses",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.courseLessons.update({\n    id: \"lesn_xxxxxxxxxxxxx\"\n});\n"
-          }
-        ]
+        "x-group-title": "Courses"
       }
     },
     "/course_lessons/{lesson_id}/mark_as_completed": {
@@ -47300,13 +46965,7 @@
         "tags": [
           "Course lessons"
         ],
-        "x-group-title": "Courses",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.courseLessons.markAsCompleted({\n    lesson_id: \"lesson_id\"\n});\n"
-          }
-        ]
+        "x-group-title": "Courses"
       }
     },
     "/course_lessons/{lesson_id}/start": {
@@ -47692,13 +47351,7 @@
         "tags": [
           "Course lessons"
         ],
-        "x-group-title": "Courses",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.courseLessons.start({\n    lesson_id: \"lesson_id\"\n});\n"
-          }
-        ]
+        "x-group-title": "Courses"
       }
     },
     "/course_lessons/{lesson_id}/submit_assessment": {
@@ -48245,13 +47898,7 @@
         "tags": [
           "Course lessons"
         ],
-        "x-group-title": "Courses",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.courseLessons.submitAssessment({\n    lesson_id: \"lesson_id\",\n    answers: [{\n            question_id: \"question_id\"\n        }]\n});\n"
-          }
-        ]
+        "x-group-title": "Courses"
       }
     },
     "/course_students": {
@@ -48717,13 +48364,7 @@
         "tags": [
           "Course students"
         ],
-        "x-group-title": "Courses",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.courseStudents.list({\n    first: 42,\n    last: 42,\n    course_id: \"cors_xxxxxxxxxxxxx\"\n});\n"
-          }
-        ]
+        "x-group-title": "Courses"
       }
     },
     "/course_students/{id}": {
@@ -49111,13 +48752,7 @@
         "tags": [
           "Course students"
         ],
-        "x-group-title": "Courses",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.courseStudents.retrieve({\n    id: \"id\"\n});\n"
-          }
-        ]
+        "x-group-title": "Courses"
       }
     },
     "/courses": {
@@ -49583,13 +49218,7 @@
         "tags": [
           "Courses"
         ],
-        "x-group-title": "Courses",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.courses.list({\n    first: 42,\n    last: 42,\n    experience_id: \"exp_xxxxxxxxxxxxxx\",\n    company_id: \"biz_xxxxxxxxxxxxxx\"\n});\n"
-          }
-        ]
+        "x-group-title": "Courses"
       },
       "post": {
         "description": "Create a new course within an experience, with optional chapters, lessons, and a certificate.\n\nRequired permissions:\n - `courses:update`",
@@ -50047,13 +49676,7 @@
         "tags": [
           "Courses"
         ],
-        "x-group-title": "Courses",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.courses.create({\n    experience_id: \"exp_xxxxxxxxxxxxxx\",\n    title: \"title\"\n});\n"
-          }
-        ]
+        "x-group-title": "Courses"
       }
     },
     "/courses/{id}": {
@@ -50442,13 +50065,7 @@
         "tags": [
           "Courses"
         ],
-        "x-group-title": "Courses",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.courses.delete({\n    id: \"cors_xxxxxxxxxxxxx\"\n});\n"
-          }
-        ]
+        "x-group-title": "Courses"
       },
       "get": {
         "description": "Retrieves the details of an existing course.\n\nRequired permissions:\n - `courses:read`",
@@ -50834,13 +50451,7 @@
         "tags": [
           "Courses"
         ],
-        "x-group-title": "Courses",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.courses.retrieve({\n    id: \"cors_xxxxxxxxxxxxx\"\n});\n"
-          }
-        ]
+        "x-group-title": "Courses"
       },
       "patch": {
         "description": "Update a course's title, description, visibility, thumbnail, or chapter ordering.\n\nRequired permissions:\n - `courses:update`",
@@ -51390,13 +51001,7 @@
         "tags": [
           "Courses"
         ],
-        "x-group-title": "Courses",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.courses.update({\n    id: \"cors_xxxxxxxxxxxxx\"\n});\n"
-          }
-        ]
+        "x-group-title": "Courses"
       }
     },
     "/dispute_alerts": {
@@ -51889,13 +51494,7 @@
         "tags": [
           "Dispute alerts"
         ],
-        "x-group-title": "Payins",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.disputeAlerts.list();\n"
-          }
-        ]
+        "x-group-title": "Payins"
       }
     },
     "/dispute_alerts/{id}": {
@@ -52288,13 +51887,7 @@
         "tags": [
           "Dispute alerts"
         ],
-        "x-group-title": "Payins",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.disputeAlerts.retrieve({\n    id: \"id\"\n});\n"
-          }
-        ]
+        "x-group-title": "Payins"
       }
     },
     "/disputes": {
@@ -52789,13 +52382,7 @@
         "tags": [
           "Disputes"
         ],
-        "x-group-title": "Payins",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.disputes.list();\n"
-          }
-        ]
+        "x-group-title": "Payins"
       }
     },
     "/disputes/{id}": {
@@ -53190,13 +52777,7 @@
         "tags": [
           "Disputes"
         ],
-        "x-group-title": "Payins",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.disputes.retrieve({\n    id: \"id\"\n});\n"
-          }
-        ]
+        "x-group-title": "Payins"
       }
     },
     "/disputes/{id}/submit_evidence": {
@@ -53591,13 +53172,7 @@
         "tags": [
           "Disputes"
         ],
-        "x-group-title": "Payins",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.disputes.submitEvidenceDispute({\n    id: \"dspt_xxxxxxxxxxxxx\"\n});\n"
-          }
-        ]
+        "x-group-title": "Payins"
       }
     },
     "/disputes/{id}/update_evidence": {
@@ -54144,13 +53719,7 @@
         "tags": [
           "Disputes"
         ],
-        "x-group-title": "Payins",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.disputes.updateEvidenceDispute({\n    id: \"dspt_xxxxxxxxxxxxx\"\n});\n"
-          }
-        ]
+        "x-group-title": "Payins"
       }
     },
     "/dm_channels": {
@@ -54604,13 +54173,7 @@
         "tags": [
           "Dm channels"
         ],
-        "x-group-title": "Engagement",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.dmChannels.list({\n    first: 42,\n    last: 42,\n    company_id: \"biz_xxxxxxxxxxxxxx\"\n});\n"
-          }
-        ]
+        "x-group-title": "Engagement"
       },
       "post": {
         "description": "Create a new DM channel between two or more users, optionally scoped to a specific company. Returns the existing channel if one already exists.\n\nRequired permissions:\n - `dms:channel:manage`",
@@ -55031,13 +54594,7 @@
         "tags": [
           "Dm channels"
         ],
-        "x-group-title": "Engagement",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.dmChannels.create({\n    with_user_ids: [\"with_user_ids\"]\n});\n"
-          }
-        ]
+        "x-group-title": "Engagement"
       }
     },
     "/dm_channels/{id}": {
@@ -55430,13 +54987,7 @@
         "tags": [
           "Dm channels"
         ],
-        "x-group-title": "Engagement",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.dmChannels.delete({\n    id: \"id\"\n});\n"
-          }
-        ]
+        "x-group-title": "Engagement"
       },
       "get": {
         "description": "Retrieves the details of an existing DM channel.\n\nRequired permissions (one of):\n - `dms:read`\n - `support_chat:read`",
@@ -55826,13 +55377,7 @@
         "tags": [
           "Dm channels"
         ],
-        "x-group-title": "Engagement",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.dmChannels.retrieve({\n    id: \"id\"\n});\n"
-          }
-        ]
+        "x-group-title": "Engagement"
       },
       "patch": {
         "description": "Update the settings of an existing DM channel, such as its display name. Only an admin of the channel can perform this action.\n\nRequired permissions (one of):\n - `dms:channel:manage`\n - `support_chat:create`",
@@ -56243,13 +55788,7 @@
         "tags": [
           "Dm channels"
         ],
-        "x-group-title": "Engagement",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.dmChannels.update({\n    id: \"id\"\n});\n"
-          }
-        ]
+        "x-group-title": "Engagement"
       }
     },
     "/dm_members": {
@@ -56707,13 +56246,7 @@
         "tags": [
           "Dm members"
         ],
-        "x-group-title": "Engagement",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.dmMembers.list({\n    first: 42,\n    last: 42,\n    channel_id: \"channel_id\"\n});\n"
-          }
-        ]
+        "x-group-title": "Engagement"
       },
       "post": {
         "description": "Add a new user to an existing DM channel. Only an admin of the channel can add members.\n\nRequired permissions (one of):\n - `dms:message:manage`\n - `support_chat:message:create`",
@@ -57119,13 +56652,7 @@
         "tags": [
           "Dm members"
         ],
-        "x-group-title": "Engagement",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.dmMembers.create({\n    channel_id: \"channel_id\",\n    user_id: \"user_xxxxxxxxxxxxx\"\n});\n"
-          }
-        ]
+        "x-group-title": "Engagement"
       }
     },
     "/dm_members/{id}": {
@@ -57518,13 +57045,7 @@
         "tags": [
           "Dm members"
         ],
-        "x-group-title": "Engagement",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.dmMembers.delete({\n    id: \"id\"\n});\n"
-          }
-        ]
+        "x-group-title": "Engagement"
       },
       "get": {
         "description": "Retrieves the details of an existing DM member.\n\nRequired permissions (one of):\n - `dms:read`\n - `support_chat:read`",
@@ -57914,13 +57435,7 @@
         "tags": [
           "Dm members"
         ],
-        "x-group-title": "Engagement",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.dmMembers.retrieve({\n    id: \"id\"\n});\n"
-          }
-        ]
+        "x-group-title": "Engagement"
       },
       "patch": {
         "description": "Update a DM channel member's settings, such as their notification preferences or membership status.\n\nRequired permissions (one of):\n - `dms:read`\n - `support_chat:read`",
@@ -58346,13 +57861,7 @@
         "tags": [
           "Dm members"
         ],
-        "x-group-title": "Engagement",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.dmMembers.update({\n    id: \"id\"\n});\n"
-          }
-        ]
+        "x-group-title": "Engagement"
       }
     },
     "/experiences": {
@@ -58854,13 +58363,7 @@
         "tags": [
           "Experiences"
         ],
-        "x-group-title": "Engagement",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.experiences.list({\n    first: 42,\n    last: 42,\n    company_id: \"biz_xxxxxxxxxxxxxx\",\n    product_id: \"prod_xxxxxxxxxxxxx\",\n    app_id: \"app_xxxxxxxxxxxxxx\",\n    created_before: \"2023-12-01T05:00:00Z\",\n    created_after: \"2023-12-01T05:00:00Z\"\n});\n"
-          }
-        ]
+        "x-group-title": "Engagement"
       },
       "post": {
         "description": "Required permissions:\n - `experience:create`",
@@ -59307,13 +58810,7 @@
         "tags": [
           "Experiences"
         ],
-        "x-group-title": "Engagement",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.experiences.create({\n    app_id: \"app_xxxxxxxxxxxxxx\",\n    company_id: \"biz_xxxxxxxxxxxxxx\"\n});\n"
-          }
-        ]
+        "x-group-title": "Engagement"
       }
     },
     "/experiences/{id}": {
@@ -59702,13 +59199,7 @@
         "tags": [
           "Experiences"
         ],
-        "x-group-title": "Engagement",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.experiences.delete({\n    id: \"exp_xxxxxxxxxxxxxx\"\n});\n"
-          }
-        ]
+        "x-group-title": "Engagement"
       },
       "get": {
         "description": "Retrieves the details of an existing experience.",
@@ -60092,13 +59583,7 @@
         "tags": [
           "Experiences"
         ],
-        "x-group-title": "Engagement",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.experiences.retrieve({\n    id: \"exp_xxxxxxxxxxxxxx\"\n});\n"
-          }
-        ]
+        "x-group-title": "Engagement"
       },
       "patch": {
         "description": "Required permissions:\n - `experience:update`",
@@ -60562,13 +60047,7 @@
         "tags": [
           "Experiences"
         ],
-        "x-group-title": "Engagement",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.experiences.update({\n    id: \"exp_xxxxxxxxxxxxxx\"\n});\n"
-          }
-        ]
+        "x-group-title": "Engagement"
       }
     },
     "/experiences/{id}/attach": {
@@ -60977,13 +60456,7 @@
         "tags": [
           "Experiences"
         ],
-        "x-group-title": "Engagement",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.experiences.attach({\n    id: \"exp_xxxxxxxxxxxxxx\",\n    product_id: \"prod_xxxxxxxxxxxxx\"\n});\n"
-          }
-        ]
+        "x-group-title": "Engagement"
       }
     },
     "/experiences/{id}/detach": {
@@ -61392,13 +60865,7 @@
         "tags": [
           "Experiences"
         ],
-        "x-group-title": "Engagement",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.experiences.detach({\n    id: \"exp_xxxxxxxxxxxxxx\",\n    product_id: \"prod_xxxxxxxxxxxxx\"\n});\n"
-          }
-        ]
+        "x-group-title": "Engagement"
       }
     },
     "/experiences/{id}/duplicate": {
@@ -61807,13 +61274,7 @@
         "tags": [
           "Experiences"
         ],
-        "x-group-title": "Engagement",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.experiences.duplicate({\n    id: \"exp_xxxxxxxxxxxxxx\"\n});\n"
-          }
-        ]
+        "x-group-title": "Engagement"
       }
     },
     "/fee_markups": {
@@ -62267,13 +61728,7 @@
         "tags": [
           "Fee markups"
         ],
-        "x-group-title": "Identity",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.feeMarkups.list({\n    first: 42,\n    last: 42,\n    company_id: \"biz_xxxxxxxxxxxxxx\"\n});\n"
-          }
-        ]
+        "x-group-title": "Identity"
       },
       "post": {
         "description": "Create or update a fee markup for a company. If a markup for the specified fee type already exists, it will be updated with the new values.\n\nRequired permissions:\n - `company:update_child_fees`",
@@ -62705,13 +62160,7 @@
         "tags": [
           "Fee markups"
         ],
-        "x-group-title": "Identity",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.feeMarkups.create({\n    company_id: \"biz_xxxxxxxxxxxxxx\",\n    fee_type: \"crypto_withdrawal_markup\"\n});\n"
-          }
-        ]
+        "x-group-title": "Identity"
       }
     },
     "/fee_markups/{id}": {
@@ -63099,13 +62548,7 @@
         "tags": [
           "Fee markups"
         ],
-        "x-group-title": "Identity",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.feeMarkups.delete({\n    id: \"id\"\n});\n"
-          }
-        ]
+        "x-group-title": "Identity"
       }
     },
     "/files": {
@@ -63585,13 +63028,7 @@
         "tags": [
           "Files"
         ],
-        "x-group-title": "Developer",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.files.create({\n    filename: \"terms.pdf\"\n});\n"
-          }
-        ]
+        "x-group-title": "Developer"
       }
     },
     "/files/{id}": {
@@ -63977,13 +63414,7 @@
         "tags": [
           "Files"
         ],
-        "x-group-title": "Developer",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.files.retrieve({\n    id: \"id\"\n});\n"
-          }
-        ]
+        "x-group-title": "Developer"
       }
     },
     "/forum_posts": {
@@ -64470,13 +63901,7 @@
         "tags": [
           "Forum posts"
         ],
-        "x-group-title": "Engagement",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.forumPosts.list({\n    first: 42,\n    last: 42,\n    experience_id: \"exp_xxxxxxxxxxxxxx\"\n});\n"
-          }
-        ]
+        "x-group-title": "Engagement"
       },
       "post": {
         "description": "Create a new forum post or comment within an experience. Supports text content, attachments, polls, paywalling, and pinning. Pass experience_id 'public' with an account_id to post to an account's public forum.\n\nRequired permissions:\n - `forum:post:create`",
@@ -65007,13 +64432,7 @@
         "tags": [
           "Forum posts"
         ],
-        "x-group-title": "Engagement",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.forumPosts.create({\n    experience_id: \"exp_xxxxxxxxxxxxxx\"\n});\n"
-          }
-        ]
+        "x-group-title": "Engagement"
       }
     },
     "/forum_posts/{id}": {
@@ -65400,13 +64819,7 @@
         "tags": [
           "Forum posts"
         ],
-        "x-group-title": "Engagement",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.forumPosts.retrieve({\n    id: \"id\"\n});\n"
-          }
-        ]
+        "x-group-title": "Engagement"
       },
       "patch": {
         "description": "Edit the content, attachments, pinned status, or visibility of an existing forum post or comment.",
@@ -65856,13 +65269,7 @@
         "tags": [
           "Forum posts"
         ],
-        "x-group-title": "Engagement",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.forumPosts.update({\n    id: \"id\"\n});\n"
-          }
-        ]
+        "x-group-title": "Engagement"
       }
     },
     "/forums": {
@@ -66328,13 +65735,7 @@
         "tags": [
           "Forums"
         ],
-        "x-group-title": "Engagement",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.forums.list({\n    first: 42,\n    last: 42,\n    company_id: \"biz_xxxxxxxxxxxxxx\",\n    product_id: \"prod_xxxxxxxxxxxxx\"\n});\n"
-          }
-        ]
+        "x-group-title": "Engagement"
       }
     },
     "/forums/{id}": {
@@ -66721,13 +66122,7 @@
         "tags": [
           "Forums"
         ],
-        "x-group-title": "Engagement",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.forums.retrieve({\n    id: \"id\"\n});\n"
-          }
-        ]
+        "x-group-title": "Engagement"
       },
       "patch": {
         "description": "Update moderation and notification settings for a forum, such as who can post, who can comment, and email notification preferences.\n\nRequired permissions:\n - `forum:moderate`",
@@ -67187,13 +66582,7 @@
         "tags": [
           "Forums"
         ],
-        "x-group-title": "Engagement",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.forums.update({\n    id: \"id\"\n});\n"
-          }
-        ]
+        "x-group-title": "Engagement"
       }
     },
     "/identity_profiles": {
@@ -67669,13 +67058,7 @@
         "tags": [
           "Identity profiles"
         ],
-        "x-group-title": "Payouts",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.identityProfiles.listIdentityProfile({\n    first: 42,\n    last: 42,\n    company_id: \"biz_xxxxxxxxxxxxxx\"\n});\n"
-          }
-        ]
+        "x-group-title": "Payouts"
       }
     },
     "/identity_profiles/{id}": {
@@ -68073,13 +67456,7 @@
         "tags": [
           "Identity profiles"
         ],
-        "x-group-title": "Payouts",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.identityProfiles.unlinkIdentityProfile({\n    id: \"idpf_xxxxxxxxxxxxx\",\n    ledger_account_id: \"ldgr_xxxxxxxxxxxxx\"\n});\n"
-          }
-        ]
+        "x-group-title": "Payouts"
       },
       "get": {
         "description": "Retrieves the details of an existing identity profile.\n\nRequired permissions:\n - `identity:read`",
@@ -68465,13 +67842,7 @@
         "tags": [
           "Identity profiles"
         ],
-        "x-group-title": "Payouts",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.identityProfiles.retrieveIdentityProfile({\n    id: \"idpf_xxxxxxxxxxxxx\"\n});\n"
-          }
-        ]
+        "x-group-title": "Payouts"
       }
     },
     "/identity_profiles/{id}/verifications": {
@@ -68976,13 +68347,7 @@
         "tags": [
           "Identity profiles"
         ],
-        "x-group-title": "Payouts",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.identityProfiles.listVerificationsIdentityProfile({\n    id: \"idpf_xxxxxxxxxxxxx\",\n    first: 42,\n    last: 42\n});\n"
-          }
-        ]
+        "x-group-title": "Payouts"
       }
     },
     "/invoices": {
@@ -69527,13 +68892,7 @@
         "tags": [
           "Invoices"
         ],
-        "x-group-title": "Payins",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.invoices.list({\n    first: 42,\n    last: 42,\n    company_id: \"biz_xxxxxxxxxxxxxx\",\n    created_before: \"2023-12-01T05:00:00Z\",\n    created_after: \"2023-12-01T05:00:00Z\"\n});\n"
-          }
-        ]
+        "x-group-title": "Payins"
       },
       "post": {
         "description": "Create an invoice for a customer. The invoice can be charged automatically using a stored payment method, or sent to the customer for manual payment.\n\nRequired permissions:\n - `invoice:create`\n - `member:email:read`\n - `member:basic:read`\n - `payment:basic:read`",
@@ -70846,13 +70205,7 @@
         "tags": [
           "Invoices"
         ],
-        "x-group-title": "Payins",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.invoices.create({\n    collection_method: \"send_invoice\",\n    company_id: \"biz_xxxxxxxxxxxxxx\",\n    plan: {},\n    product: {\n        title: \"title\"\n    }\n});\n"
-          }
-        ]
+        "x-group-title": "Payins"
       }
     },
     "/invoices/{id}": {
@@ -71241,13 +70594,7 @@
         "tags": [
           "Invoices"
         ],
-        "x-group-title": "Payins",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.invoices.delete({\n    id: \"inv_xxxxxxxxxxxxxx\"\n});\n"
-          }
-        ]
+        "x-group-title": "Payins"
       },
       "get": {
         "description": "Retrieves the details of an existing invoice.\n\nRequired permissions:\n - `invoice:basic:read`\n - `member:email:read`\n - `member:basic:read`\n - `payment:basic:read`",
@@ -71636,13 +70983,7 @@
         "tags": [
           "Invoices"
         ],
-        "x-group-title": "Payins",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.invoices.retrieve({\n    id: \"inv_xxxxxxxxxxxxxx\"\n});\n"
-          }
-        ]
+        "x-group-title": "Payins"
       },
       "patch": {
         "description": "Update a draft invoice's details.\n\nRequired permissions:\n - `invoice:update`\n - `member:email:read`\n - `member:basic:read`\n - `payment:basic:read`",
@@ -72478,13 +71819,7 @@
         "tags": [
           "Invoices"
         ],
-        "x-group-title": "Payins",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.invoices.update({\n    id: \"inv_xxxxxxxxxxxxxx\"\n});\n"
-          }
-        ]
+        "x-group-title": "Payins"
       }
     },
     "/invoices/{id}/mark_paid": {
@@ -72873,13 +72208,7 @@
         "tags": [
           "Invoices"
         ],
-        "x-group-title": "Payins",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.invoices.markPaid({\n    id: \"inv_xxxxxxxxxxxxxx\"\n});\n"
-          }
-        ]
+        "x-group-title": "Payins"
       }
     },
     "/invoices/{id}/mark_uncollectible": {
@@ -73268,13 +72597,7 @@
         "tags": [
           "Invoices"
         ],
-        "x-group-title": "Payins",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.invoices.markUncollectible({\n    id: \"inv_xxxxxxxxxxxxxx\"\n});\n"
-          }
-        ]
+        "x-group-title": "Payins"
       }
     },
     "/invoices/{id}/resend": {
@@ -73663,13 +72986,7 @@
         "tags": [
           "Invoices"
         ],
-        "x-group-title": "Payins",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.invoices.resend({\n    id: \"inv_xxxxxxxxxxxxxx\"\n});\n"
-          }
-        ]
+        "x-group-title": "Payins"
       }
     },
     "/invoices/{id}/void": {
@@ -74058,13 +73375,7 @@
         "tags": [
           "Invoices"
         ],
-        "x-group-title": "Payins",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.invoices.void({\n    id: \"inv_xxxxxxxxxxxxxx\"\n});\n"
-          }
-        ]
+        "x-group-title": "Payins"
       }
     },
     "/leads": {
@@ -74562,13 +73873,7 @@
         "tags": [
           "Leads"
         ],
-        "x-group-title": "CRM",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.leads.list({\n    first: 42,\n    last: 42,\n    company_id: \"biz_xxxxxxxxxxxxxx\",\n    created_after: \"2023-12-01T05:00:00Z\",\n    created_before: \"2023-12-01T05:00:00Z\"\n});\n"
-          }
-        ]
+        "x-group-title": "CRM"
       },
       "post": {
         "description": "Record a new lead for a company, capturing a potential customer's interest in a specific product.\n\nRequired permissions:\n - `lead:manage`\n - `member:email:read`\n - `access_pass:basic:read`\n - `member:basic:read`",
@@ -74998,13 +74303,7 @@
         "tags": [
           "Leads"
         ],
-        "x-group-title": "CRM",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.leads.create({\n    company_id: \"biz_xxxxxxxxxxxxxx\"\n});\n"
-          }
-        ]
+        "x-group-title": "CRM"
       }
     },
     "/leads/{id}": {
@@ -75395,13 +74694,7 @@
         "tags": [
           "Leads"
         ],
-        "x-group-title": "CRM",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.leads.retrieve({\n    id: \"lead_xxxxxxxxxxxxx\"\n});\n"
-          }
-        ]
+        "x-group-title": "CRM"
       },
       "patch": {
         "description": "Update the metadata or referrer information on an existing lead record.\n\nRequired permissions:\n - `lead:manage`\n - `member:email:read`\n - `access_pass:basic:read`\n - `member:basic:read`",
@@ -75819,13 +75112,7 @@
         "tags": [
           "Leads"
         ],
-        "x-group-title": "CRM",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.leads.update({\n    id: \"lead_xxxxxxxxxxxxx\"\n});\n"
-          }
-        ]
+        "x-group-title": "CRM"
       }
     },
     "/ledger_accounts/{id}": {
@@ -76214,13 +75501,7 @@
         "tags": [
           "Ledger accounts"
         ],
-        "x-group-title": "Payouts",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.ledgerAccounts.retrieve({\n    id: \"ldgr_xxxxxxxxxxxxx\"\n});\n"
-          }
-        ]
+        "x-group-title": "Payouts"
       }
     },
     "/members": {
@@ -76834,13 +76115,7 @@
         "tags": [
           "Members"
         ],
-        "x-group-title": "CRM",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.members.list();\n"
-          }
-        ]
+        "x-group-title": "CRM"
       }
     },
     "/members/{id}": {
@@ -77229,13 +76504,7 @@
         "tags": [
           "Members"
         ],
-        "x-group-title": "CRM",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.members.retrieve({\n    id: \"id\"\n});\n"
-          }
-        ]
+        "x-group-title": "CRM"
       }
     },
     "/memberships": {
@@ -77865,13 +77134,7 @@
         "tags": [
           "Memberships"
         ],
-        "x-group-title": "CRM",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.memberships.list();\n"
-          }
-        ]
+        "x-group-title": "CRM"
       }
     },
     "/memberships/{id}": {
@@ -78260,13 +77523,7 @@
         "tags": [
           "Memberships"
         ],
-        "x-group-title": "CRM",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.memberships.retrieve({\n    id: \"id\"\n});\n"
-          }
-        ]
+        "x-group-title": "CRM"
       },
       "patch": {
         "description": "Update a membership's metadata or other mutable properties.\n\nRequired permissions:\n - `member:manage`\n - `member:email:read`\n - `member:basic:read`",
@@ -78676,13 +77933,7 @@
         "tags": [
           "Memberships"
         ],
-        "x-group-title": "CRM",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.memberships.update({\n    id: \"id\"\n});\n"
-          }
-        ]
+        "x-group-title": "CRM"
       }
     },
     "/memberships/{id}/add_free_days": {
@@ -79093,13 +78344,7 @@
         "tags": [
           "Memberships"
         ],
-        "x-group-title": "CRM",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.memberships.addFreeDaysMembership({\n    id: \"mem_xxxxxxxxxxxxxx\",\n    free_days: 42\n});\n"
-          }
-        ]
+        "x-group-title": "CRM"
       }
     },
     "/memberships/{id}/cancel": {
@@ -79514,13 +78759,7 @@
         "tags": [
           "Memberships"
         ],
-        "x-group-title": "CRM",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.memberships.cancel({\n    id: \"id\"\n});\n"
-          }
-        ]
+        "x-group-title": "CRM"
       }
     },
     "/memberships/{id}/pause": {
@@ -79940,13 +79179,7 @@
         "tags": [
           "Memberships"
         ],
-        "x-group-title": "CRM",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.memberships.pause({\n    id: \"id\"\n});\n"
-          }
-        ]
+        "x-group-title": "CRM"
       }
     },
     "/memberships/{id}/resume": {
@@ -80336,13 +79569,7 @@
         "tags": [
           "Memberships"
         ],
-        "x-group-title": "CRM",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.memberships.resume({\n    id: \"id\"\n});\n"
-          }
-        ]
+        "x-group-title": "CRM"
       }
     },
     "/memberships/{id}/resync_access": {
@@ -80732,13 +79959,7 @@
         "tags": [
           "Memberships"
         ],
-        "x-group-title": "CRM",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.memberships.resyncAccessMembership({\n    id: \"mem_xxxxxxxxxxxxxx\"\n});\n"
-          }
-        ]
+        "x-group-title": "CRM"
       }
     },
     "/memberships/{id}/uncancel": {
@@ -81128,13 +80349,7 @@
         "tags": [
           "Memberships"
         ],
-        "x-group-title": "CRM",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.memberships.uncancelMembership({\n    id: \"mem_xxxxxxxxxxxxxx\"\n});\n"
-          }
-        ]
+        "x-group-title": "CRM"
       }
     },
     "/messages": {
@@ -81608,13 +80823,7 @@
         "tags": [
           "Messages"
         ],
-        "x-group-title": "Engagement",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.messages.list({\n    first: 42,\n    last: 42,\n    channel_id: \"channel_id\"\n});\n"
-          }
-        ]
+        "x-group-title": "Engagement"
       },
       "post": {
         "description": "Send a new message in an experience chat, DM, or group chat channel. Supports text content, attachments, polls, and replies.\n\nRequired permissions (one of):\n - `chat:message:create`\n - `dms:message:manage`\n - `livestream:chat:write`\n - `support_chat:message:create`",
@@ -82098,13 +81307,7 @@
         "tags": [
           "Messages"
         ],
-        "x-group-title": "Engagement",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.messages.create({\n    channel_id: \"channel_id\",\n    content: \"content\"\n});\n"
-          }
-        ]
+        "x-group-title": "Engagement"
       }
     },
     "/messages/{id}": {
@@ -82511,13 +81714,7 @@
         "tags": [
           "Messages"
         ],
-        "x-group-title": "Engagement",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.messages.delete({\n    id: \"id\"\n});\n"
-          }
-        ]
+        "x-group-title": "Engagement"
       },
       "get": {
         "description": "Retrieves the details of an existing message.\n\nRequired permissions (one of):\n - `chat:read`\n - `dms:read`\n - `livestream:chat:read`\n - `support_chat:read`",
@@ -82917,13 +82114,7 @@
         "tags": [
           "Messages"
         ],
-        "x-group-title": "Engagement",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.messages.retrieve({\n    id: \"id\"\n});\n"
-          }
-        ]
+        "x-group-title": "Engagement"
       },
       "patch": {
         "description": "Edit the content, attachments, or pinned status of an existing message in an experience chat, DM, or group chat channel.\n\nRequired permissions (one of):\n - `chat:message:create`\n - `dms:message:manage`\n - `livestream:chat:write`\n - `support_chat:message:create`",
@@ -83372,13 +82563,7 @@
         "tags": [
           "Messages"
         ],
-        "x-group-title": "Engagement",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.messages.update({\n    id: \"id\"\n});\n"
-          }
-        ]
+        "x-group-title": "Engagement"
       }
     },
     "/notifications": {
@@ -83892,13 +83077,7 @@
         "tags": [
           "Notifications"
         ],
-        "x-group-title": "Engagement",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.notifications.create({\n    content: \"Drop off at 4180 Burnet Rd. Plan on two days for the full coating.\",\n    title: \"Your ceramic coating is booked\"\n});\n"
-          }
-        ]
+        "x-group-title": "Engagement"
       }
     },
     "/payment_methods": {
@@ -84487,13 +83666,7 @@
         "tags": [
           "Payment methods"
         ],
-        "x-group-title": "Payins",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.paymentMethods.list({\n    first: 42,\n    last: 42,\n    member_id: \"mber_xxxxxxxxxxxxx\",\n    company_id: \"biz_xxxxxxxxxxxxxx\",\n    created_before: \"2023-12-01T05:00:00Z\",\n    created_after: \"2023-12-01T05:00:00Z\"\n});\n"
-          }
-        ]
+        "x-group-title": "Payins"
       }
     },
     "/payment_methods/{id}": {
@@ -84906,13 +84079,7 @@
         "tags": [
           "Payment methods"
         ],
-        "x-group-title": "Payins",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.paymentMethods.deletePaymentMethod({\n    id: \"payt_xxxxxxxxxxxxx\",\n    company_id: \"biz_xxxxxxxxxxxxxx\",\n    member_id: \"mber_xxxxxxxxxxxxx\"\n});\n"
-          }
-        ]
+        "x-group-title": "Payins"
       },
       "get": {
         "description": "Retrieves the details of an existing payment method. Addresses a member's wallet when member_id or account_id is given, otherwise your own.\n\nRequired permissions:\n - `member:payment_methods:read`",
@@ -85322,13 +84489,7 @@
         "tags": [
           "Payment methods"
         ],
-        "x-group-title": "Payins",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.paymentMethods.retrieve({\n    id: \"payt_xxxxxxxxxxxxx\",\n    company_id: \"biz_xxxxxxxxxxxxxx\",\n    member_id: \"mber_xxxxxxxxxxxxx\"\n});\n"
-          }
-        ]
+        "x-group-title": "Payins"
       }
     },
     "/payments": {
@@ -85986,13 +85147,7 @@
         "tags": [
           "Payments"
         ],
-        "x-group-title": "Payins",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.payments.list({\n    first: 42,\n    last: 42,\n    company_id: \"biz_xxxxxxxxxxxxxx\",\n    created_before: \"2023-12-01T05:00:00Z\",\n    created_after: \"2023-12-01T05:00:00Z\",\n    updated_before: \"2023-12-01T05:00:00Z\",\n    updated_after: \"2023-12-01T05:00:00Z\"\n});\n"
-          }
-        ]
+        "x-group-title": "Payins"
       },
       "post": {
         "description": "Charge a buyer on-session with a `confirmation_token` for the method they selected, or charge an existing member off-session using a stored payment method. You can provide an existing plan or create one inline. The endpoint returns a payment immediately, but processing continues asynchronously. Use webhooks to learn whether it succeeds or fails, and poll the payment's status endpoint for any step the buyer must complete.\n\nRequired permissions:\n - `payment:charge`\n - `plan:create`\n - `access_pass:create`\n - `access_pass:update`\n - `plan:basic:read`\n - `access_pass:basic:read`\n - `member:email:read`\n - `member:basic:read`\n - `member:phone:read`\n - `promo_code:basic:read`\n - `shipment:basic:read`\n - `payment:dispute:read`\n - `payment:resolution_center_case:read`",
@@ -87326,13 +86481,7 @@
         "tags": [
           "Payments"
         ],
-        "x-group-title": "Payins",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.payments.create({\n    company_id: \"biz_xxxxxxxxxxxxxx\",\n    confirmation_token: \"confirmation_token\",\n    plan: {\n        currency: \"usd\"\n    }\n});\n"
-          }
-        ]
+        "x-group-title": "Payins"
       }
     },
     "/payments/{id}": {
@@ -87750,13 +86899,7 @@
         "tags": [
           "Payments"
         ],
-        "x-group-title": "Payins",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.payments.retrieve({\n    id: \"pay_xxxxxxxxxxxxxx\"\n});\n"
-          }
-        ]
+        "x-group-title": "Payins"
       }
     },
     "/payments/{id}/fees": {
@@ -88235,13 +87378,7 @@
         "tags": [
           "Payments"
         ],
-        "x-group-title": "Payins",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.payments.listFees({\n    id: \"pay_xxxxxxxxxxxxxx\",\n    first: 42,\n    last: 42\n});\n"
-          }
-        ]
+        "x-group-title": "Payins"
       }
     },
     "/payments/{id}/refund": {
@@ -88660,13 +87797,7 @@
         "tags": [
           "Payments"
         ],
-        "x-group-title": "Payins",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.payments.refund({\n    id: \"pay_xxxxxxxxxxxxxx\"\n});\n"
-          }
-        ]
+        "x-group-title": "Payins"
       }
     },
     "/payments/{id}/retry": {
@@ -89063,13 +88194,7 @@
         "tags": [
           "Payments"
         ],
-        "x-group-title": "Payins",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.payments.retry({\n    id: \"pay_xxxxxxxxxxxxxx\"\n});\n"
-          }
-        ]
+        "x-group-title": "Payins"
       }
     },
     "/payments/{id}/void": {
@@ -89466,13 +88591,7 @@
         "tags": [
           "Payments"
         ],
-        "x-group-title": "Payins",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.payments.void({\n    id: \"pay_xxxxxxxxxxxxxx\"\n});\n"
-          }
-        ]
+        "x-group-title": "Payins"
       }
     },
     "/payout_accounts/{id}": {
@@ -89860,13 +88979,7 @@
         "tags": [
           "Payout accounts"
         ],
-        "x-group-title": "Payouts",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.payoutAccounts.retrieve({\n    id: \"poact_xxxxxxxxxxxx\"\n});\n"
-          }
-        ]
+        "x-group-title": "Payouts"
       }
     },
     "/payout_methods": {
@@ -90320,13 +89433,7 @@
         "tags": [
           "Payout methods"
         ],
-        "x-group-title": "Payouts",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.payoutMethods.listPayoutMethod({\n    first: 42,\n    last: 42,\n    company_id: \"biz_xxxxxxxxxxxxxx\"\n});\n"
-          }
-        ]
+        "x-group-title": "Payouts"
       }
     },
     "/payout_methods/{id}": {
@@ -90714,13 +89821,7 @@
         "tags": [
           "Payout methods"
         ],
-        "x-group-title": "Payouts",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.payoutMethods.retrievePayoutMethod({\n    id: \"potk_xxxxxxxxxxxxx\"\n});\n"
-          }
-        ]
+        "x-group-title": "Payouts"
       }
     },
     "/products": {
@@ -91250,13 +90351,7 @@
         "tags": [
           "Products"
         ],
-        "x-group-title": "Payins",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.products.list({\n    visibilities: [\"visible\"],\n    access_pass_types: [\"regular\"]\n});\n"
-          }
-        ]
+        "x-group-title": "Payins"
       },
       "post": {
         "description": "Create a new product for a company. The product serves as the top-level container for plans and experiences.\n\nRequired permissions:\n - `access_pass:create`\n - `access_pass:basic:read`",
@@ -91932,13 +91027,7 @@
         "tags": [
           "Products"
         ],
-        "x-group-title": "Payins",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.products.create({\n    title: \"Interior Deep Clean\"\n});\n"
-          }
-        ]
+        "x-group-title": "Payins"
       }
     },
     "/products/{id}": {
@@ -92327,13 +91416,7 @@
         "tags": [
           "Products"
         ],
-        "x-group-title": "Payins",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.products.delete({\n    id: \"id\"\n});\n"
-          }
-        ]
+        "x-group-title": "Payins"
       },
       "get": {
         "description": "Retrieves the details of an existing product.\n\nRequired permissions:\n - `access_pass:basic:read`",
@@ -92719,13 +91802,7 @@
         "tags": [
           "Products"
         ],
-        "x-group-title": "Payins",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.products.retrieve({\n    id: \"id\"\n});\n"
-          }
-        ]
+        "x-group-title": "Payins"
       },
       "patch": {
         "description": "Update a product's title, description, visibility, and other settings.\n\nRequired permissions:\n - `access_pass:update`\n - `access_pass:basic:read`",
@@ -93310,13 +92387,7 @@
         "tags": [
           "Products"
         ],
-        "x-group-title": "Payins",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.products.update({\n    id: \"id\"\n});\n"
-          }
-        ]
+        "x-group-title": "Payins"
       }
     },
     "/promo_codes": {
@@ -93838,13 +92909,7 @@
         "tags": [
           "Promo codes"
         ],
-        "x-group-title": "Payins",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.promoCodes.list({\n    account_id: \"account_id\",\n    product_ids: [\"prod_xxxxxxxxxxxxxx\"],\n    plan_ids: [\"plan_xxxxxxxxxxxxxx\"]\n});\n"
-          }
-        ]
+        "x-group-title": "Payins"
       },
       "post": {
         "description": "Create a new promo code that applies a discount at checkout. Can be scoped to specific products or plans.\n\nRequired permissions:\n - `promo_code:create`\n - `access_pass:basic:read`",
@@ -94337,13 +93402,7 @@
         "tags": [
           "Promo codes"
         ],
-        "x-group-title": "Payins",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.promoCodes.create({\n    account_id: \"biz_xxxxxxxxxxxxxx\",\n    amount_off: 25,\n    base_currency: \"usd\",\n    code: \"AFFILIATE25\",\n    new_users_only: true,\n    promo_duration_months: 3,\n    promo_type: \"percentage\"\n});\n"
-          }
-        ]
+        "x-group-title": "Payins"
       }
     },
     "/promo_codes/{id}": {
@@ -94732,13 +93791,7 @@
         "tags": [
           "Promo codes"
         ],
-        "x-group-title": "Payins",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.promoCodes.delete({\n    id: \"id\"\n});\n"
-          }
-        ]
+        "x-group-title": "Payins"
       },
       "get": {
         "description": "Retrieves the details of an existing promo code.\n\nRequired permissions:\n - `promo_code:basic:read`\n - `access_pass:basic:read`",
@@ -95125,13 +94178,7 @@
         "tags": [
           "Promo codes"
         ],
-        "x-group-title": "Payins",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.promoCodes.retrieve({\n    id: \"id\"\n});\n"
-          }
-        ]
+        "x-group-title": "Payins"
       },
       "patch": {
         "description": "Update whether a promo code can be used at checkout.\n\nRequired permissions:\n - `promo_code:update`\n - `access_pass:basic:read`",
@@ -96011,13 +95058,7 @@
         "tags": [
           "Reactions"
         ],
-        "x-group-title": "Engagement",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.reactions.list({\n    first: 42,\n    last: 42,\n    resource_id: \"resource_id\"\n});\n"
-          }
-        ]
+        "x-group-title": "Engagement"
       },
       "post": {
         "description": "Add an emoji reaction or poll vote to a message or forum post. In forums, the reaction is always a like.\n\nRequired permissions (one of):\n - `chat:read`\n - `dms:read`\n - `forum:read`\n - `livestream:chat:read`\n - `support_chat:read`",
@@ -96446,13 +95487,7 @@
         "tags": [
           "Reactions"
         ],
-        "x-group-title": "Engagement",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.reactions.create({\n    resource_id: \"resource_id\"\n});\n"
-          }
-        ]
+        "x-group-title": "Engagement"
       }
     },
     "/reactions/{id}": {
@@ -96872,13 +95907,7 @@
         "tags": [
           "Reactions"
         ],
-        "x-group-title": "Engagement",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.reactions.delete({\n    id: \"reac_xxxxxxxxxxxxxxxxxxxxxx\"\n});\n"
-          }
-        ]
+        "x-group-title": "Engagement"
       },
       "get": {
         "description": "Retrieves the details of an existing reaction.\n\nRequired permissions (one of):\n - `chat:read`\n - `dms:read`\n - `forum:read`\n - `livestream:chat:read`\n - `support_chat:read`",
@@ -97284,13 +96313,7 @@
         "tags": [
           "Reactions"
         ],
-        "x-group-title": "Engagement",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.reactions.retrieve({\n    id: \"reac_xxxxxxxxxxxxxxxxxxxxxx\"\n});\n"
-          }
-        ]
+        "x-group-title": "Engagement"
       }
     },
     "/refunds": {
@@ -97805,13 +96828,7 @@
         "tags": [
           "Refunds"
         ],
-        "x-group-title": "Payins",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.refunds.list({\n    first: 42,\n    last: 42,\n    payment_id: \"pay_xxxxxxxxxxxxxx\",\n    company_id: \"biz_xxxxxxxxxxxxxx\",\n    user_id: \"user_xxxxxxxxxxxxx\",\n    created_before: \"2023-12-01T05:00:00Z\",\n    created_after: \"2023-12-01T05:00:00Z\"\n});\n"
-          }
-        ]
+        "x-group-title": "Payins"
       }
     },
     "/refunds/{id}": {
@@ -98204,13 +97221,7 @@
         "tags": [
           "Refunds"
         ],
-        "x-group-title": "Payins",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.refunds.retrieve({\n    id: \"rf_xxxxxxxxxxxxxxx\"\n});\n"
-          }
-        ]
+        "x-group-title": "Payins"
       }
     },
     "/resolution_center_cases": {
@@ -98715,13 +97726,7 @@
         "tags": [
           "Resolution center cases"
         ],
-        "x-group-title": "Payins",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.resolutionCenterCases.list();\n"
-          }
-        ]
+        "x-group-title": "Payins"
       }
     },
     "/resolution_center_cases/{id}": {
@@ -99109,13 +98114,7 @@
         "tags": [
           "Resolution center cases"
         ],
-        "x-group-title": "Payins",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.resolutionCenterCases.retrieve({\n    id: \"id\"\n});\n"
-          }
-        ]
+        "x-group-title": "Payins"
       }
     },
     "/reviews": {
@@ -99617,13 +98616,7 @@
         "tags": [
           "Reviews"
         ],
-        "x-group-title": "CRM",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.reviews.list({\n    first: 42,\n    last: 42,\n    product_id: \"prod_xxxxxxxxxxxxx\",\n    min_stars: 42,\n    max_stars: 42,\n    created_before: \"2023-12-01T05:00:00Z\",\n    created_after: \"2023-12-01T05:00:00Z\"\n});\n"
-          }
-        ]
+        "x-group-title": "CRM"
       }
     },
     "/reviews/{id}": {
@@ -100009,13 +99002,7 @@
         "tags": [
           "Reviews"
         ],
-        "x-group-title": "CRM",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.reviews.retrieve({\n    id: \"rev_xxxxxxxxxxxxxx\"\n});\n"
-          }
-        ]
+        "x-group-title": "CRM"
       }
     },
     "/setup_intents": {
@@ -100508,13 +99495,7 @@
         "tags": [
           "Setup intents"
         ],
-        "x-group-title": "Payins",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.setupIntents.list({\n    first: 42,\n    last: 42,\n    company_id: \"biz_xxxxxxxxxxxxxx\",\n    created_before: \"2023-12-01T05:00:00Z\",\n    created_after: \"2023-12-01T05:00:00Z\"\n});\n"
-          }
-        ]
+        "x-group-title": "Payins"
       },
       "post": {
         "description": "Save a buyer's payment method for later without charging it. Provide a confirmation token for a method the buyer just supplied, or an existing payment method to re-verify. The buyer may still have a step to complete — 3D Secure, a hosted enrollment, linking a bank account — so poll the setup intent's status endpoint for what to do next.\n\nRequired permissions:\n - `payment:charge`\n - `member:basic:read`\n - `member:email:read`",
@@ -101311,13 +100292,7 @@
         "tags": [
           "Setup intents"
         ],
-        "x-group-title": "Payins",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.setupIntents.create({\n    company_id: \"biz_xxxxxxxxxxxxxx\",\n    confirmation_token: \"ctok_xxxxxxxxxxxxxx\"\n});\n"
-          }
-        ]
+        "x-group-title": "Payins"
       }
     },
     "/setup_intents/{id}": {
@@ -101707,13 +100682,7 @@
         "tags": [
           "Setup intents"
         ],
-        "x-group-title": "Payins",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.setupIntents.retrieve({\n    id: \"sint_xxxxxxxxxxxxx\"\n});\n"
-          }
-        ]
+        "x-group-title": "Payins"
       }
     },
     "/shipments": {
@@ -102192,13 +101161,7 @@
         "tags": [
           "Shipments"
         ],
-        "x-group-title": "CRM",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.shipments.list({\n    payment_id: [\"pay_xxxxxxxxxxxxxx\"]\n});\n"
-          }
-        ]
+        "x-group-title": "CRM"
       },
       "post": {
         "description": "Create a new shipment with a tracking code for a specific payment within a company.\n\nRequired permissions:\n - `shipment:create`\n - `payment:basic:read`",
@@ -102606,13 +101569,7 @@
         "tags": [
           "Shipments"
         ],
-        "x-group-title": "CRM",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.shipments.create({\n    payment_id: \"pay_xxxxxxxxxxxxxx\",\n    tracking_number: \"1Z999AA10123456784\"\n});\n"
-          }
-        ]
+        "x-group-title": "CRM"
       }
     },
     "/shipments/{id}": {
@@ -103001,13 +101958,7 @@
         "tags": [
           "Shipments"
         ],
-        "x-group-title": "CRM",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.shipments.retrieve({\n    id: \"id\"\n});\n"
-          }
-        ]
+        "x-group-title": "CRM"
       }
     },
     "/support_channels": {
@@ -103505,13 +102456,7 @@
         "tags": [
           "Support channels"
         ],
-        "x-group-title": "Engagement",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.supportChannels.list({\n    first: 42,\n    last: 42,\n    company_id: \"biz_xxxxxxxxxxxxxx\"\n});\n"
-          }
-        ]
+        "x-group-title": "Engagement"
       },
       "post": {
         "description": "Open a new support channel between a company team member and a customer. Returns the existing channel if one already exists for that user.\n\nRequired permissions:\n - `support_chat:create`",
@@ -103927,13 +102872,7 @@
         "tags": [
           "Support channels"
         ],
-        "x-group-title": "Engagement",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.supportChannels.create({\n    company_id: \"biz_xxxxxxxxxxxxxx\",\n    user_id: \"user_xxxxxxxxxxxxx\"\n});\n"
-          }
-        ]
+        "x-group-title": "Engagement"
       }
     },
     "/support_channels/{id}": {
@@ -104320,13 +103259,7 @@
         "tags": [
           "Support channels"
         ],
-        "x-group-title": "Engagement",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.supportChannels.retrieve({\n    id: \"id\"\n});\n"
-          }
-        ]
+        "x-group-title": "Engagement"
       }
     },
     "/topups": {
@@ -104741,13 +103674,7 @@
         "tags": [
           "Topups"
         ],
-        "x-group-title": "Payouts",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.topups.create({\n    amount: 6.9,\n    company_id: \"biz_xxxxxxxxxxxxxx\",\n    currency: \"usd\",\n    payment_method_id: \"pmt_xxxxxxxxxxxxxx\"\n});\n"
-          }
-        ]
+        "x-group-title": "Payouts"
       }
     },
     "/verifications": {
@@ -105201,13 +104128,7 @@
         "tags": [
           "Verifications"
         ],
-        "x-group-title": "Payouts",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.verifications.list({\n    account_id: \"account_id\"\n});\n"
-          }
-        ]
+        "x-group-title": "Payouts"
       }
     },
     "/verifications/{id}": {
@@ -105595,13 +104516,7 @@
         "tags": [
           "Verifications"
         ],
-        "x-group-title": "Payouts",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.verifications.retrieve({\n    id: \"id\"\n});\n"
-          }
-        ]
+        "x-group-title": "Payouts"
       }
     },
     "/webhooks": {
@@ -106067,13 +104982,7 @@
         "tags": [
           "Webhooks"
         ],
-        "x-group-title": "Developer",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.webhooks.list({\n    account_id: \"account_id\"\n});\n"
-          }
-        ]
+        "x-group-title": "Developer"
       },
       "post": {
         "description": "Creates a new webhook\n\nRequired permissions:\n - `developer:manage_webhook`",
@@ -106592,13 +105501,7 @@
         "tags": [
           "Webhooks"
         ],
-        "x-group-title": "Developer",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.webhooks.create({\n    url: \"https://example.com/hooks\"\n});\n"
-          }
-        ]
+        "x-group-title": "Developer"
       }
     },
     "/webhooks/{id}": {
@@ -106987,13 +105890,7 @@
         "tags": [
           "Webhooks"
         ],
-        "x-group-title": "Developer",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.webhooks.delete({\n    id: \"id\"\n});\n"
-          }
-        ]
+        "x-group-title": "Developer"
       },
       "get": {
         "description": "Retrieves the details of an existing webhook.\n\nRequired permissions:\n - `developer:manage_webhook`",
@@ -107379,13 +106276,7 @@
         "tags": [
           "Webhooks"
         ],
-        "x-group-title": "Developer",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.webhooks.retrieve({\n    id: \"id\"\n});\n"
-          }
-        ]
+        "x-group-title": "Developer"
       },
       "patch": {
         "description": "Updates a webhook\n\nRequired permissions:\n - `developer:manage_webhook`",
@@ -107835,13 +106726,7 @@
         "tags": [
           "Webhooks"
         ],
-        "x-group-title": "Developer",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.webhooks.update({\n    id: \"id\"\n});\n"
-          }
-        ]
+        "x-group-title": "Developer"
       }
     },
     "/webhooks/{id}/test": {
@@ -108271,13 +107156,7 @@
         "tags": [
           "Webhooks"
         ],
-        "x-group-title": "Developer",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.webhooks.test({\n    id: \"id\",\n    event: \"payment.succeeded\"\n});\n"
-          }
-        ]
+        "x-group-title": "Developer"
       }
     },
     "/webhooks/{webhook_id}/deliveries": {
@@ -108786,13 +107665,7 @@
         "tags": [
           "Webhooks"
         ],
-        "x-group-title": "Developer",
-        "x-codeSamples": [
-          {
-            "lang": "TypeScript",
-            "source": "import { WhopClient } from \"@whop/sdk\";\n\nconst client = new WhopClient({ token: \"YOUR_TOKEN\", apiVersionDate: \"2026-08-21-1\", idempotencyKey: \"YOUR_IDEMPOTENCY_KEY\" });\nawait client.webhooks.deliveriesWebhook({\n    webhook_id: \"webhook_id\",\n    first: 42,\n    last: 42\n});\n"
-          }
-        ]
+        "x-group-title": "Developer"
       }
     }
   },
@@ -115951,6 +114824,7 @@
                               },
                               "expiration_days": {
                                 "description": "Access duration in days for expiration-based plans. `null` for plans without an expiration.",
+                                "example": null,
                                 "type": [
                                   "number",
                                   "null"
@@ -116034,6 +114908,7 @@
                               },
                               "title": {
                                 "description": "Plan display name shown to customers. `null` if no title has been set.",
+                                "example": null,
                                 "type": [
                                   "string",
                                   "null"

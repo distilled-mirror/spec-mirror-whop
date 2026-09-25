@@ -353,9 +353,9 @@ What your credential can do on a resource.
 
 ### `files`
 
-Create file uploads and retrieve uploaded file details.
+Upload local files and retrieve uploaded file details.
 
-`create` · `get` · `list` · `complete` (finish a multipart upload)
+`create` (`--filepath` uploads a local file end to end) · `get` · `list` · `complete` (finish a multipart upload)
 
 ## Notifications
 

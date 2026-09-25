@@ -408,7 +408,7 @@ Use the Users API to search for users, retrieve or update profiles, and check wh
             <ResponseField name="platform" type="string" required>
               The platform the parent social account exists on.
 
-              Available options: `x`, `instagram`, `youtube`, `tiktok`, `facebook`, `discord`, `telegram`, `linkedin`
+              Available options: `x`, `instagram`, `youtube`, `tiktok`, `facebook`, `discord`, `telegram`, `linkedin`, `snapchat`
             </ResponseField>
 
             <ResponseField name="profile_picture_url" type="string | null" required>
@@ -429,7 +429,7 @@ Use the Users API to search for users, retrieve or update profiles, and check wh
         <ResponseField name="platform" type="string" required>
           The platform the social account exists on.
 
-          Available options: `x`, `instagram`, `youtube`, `tiktok`, `facebook`, `discord`, `telegram`, `linkedin`
+          Available options: `x`, `instagram`, `youtube`, `tiktok`, `facebook`, `discord`, `telegram`, `linkedin`, `snapchat`
         </ResponseField>
 
         <ResponseField name="profile_picture_url" type="string | null" required>
@@ -439,7 +439,8 @@ Use the Users API to search for users, retrieve or update profiles, and check wh
         <ResponseField name="scopes" type="string[]" required>
           Capabilities Whop retains specific to this social account. For example, Whop
           may request the ability to run advertisements that use this social account's
-          identity, reflected by the presence of `advertise` in this value.
+          identity, reflected by `advertise`. Personal profile connections have no
+          additional Whop scopes.
         </ResponseField>
 
         <ResponseField name="url" type="string | null" required>

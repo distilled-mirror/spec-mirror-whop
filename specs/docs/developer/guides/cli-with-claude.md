@@ -42,7 +42,7 @@ Now Claude can answer questions like how to accept payments on Whop from the cur
 whop apps init --name "My App" --app_type b2c_app
 ```
 
-Registers the app, scaffolds the latest template, wires it for Whop hosting, and installs dependencies. Then ask Claude: *"Using the Whop docs, add an embedded checkout and a webhook that grants access on payment."* Claude pulls the current API from the Docs MCP and writes against it.
+Registers the app, scaffolds the latest template, wires it for Whop hosting, and installs dependencies. Then ask Claude: *"Using the Whop docs, add a Whop Elements checkout and a webhook that grants access on payment."* Claude pulls the current API from the Docs MCP and writes against it.
 
 ## 4. Develop, then ship
 

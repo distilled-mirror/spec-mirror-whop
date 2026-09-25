@@ -6,7 +6,7 @@
 
 > Shows available payment methods and collects the selected method's required fields and disclosures. Use `change` to enable your pay button. In its activation handler, call `payments.createConfirmationToken()`. Confirm the token server-side, then pass any pending step to `payments.handleNextAction(…)`. Use `addressChange` for address-dependent updates.
 
-<Info>This page documents `@whop/elements@1.0.0` and `@whop/elements-react@1.0.0`.</Info>
+<Info>This page documents `@whop/elements@1.1.0` and `@whop/elements-react@1.1.0`.</Info>
 
 *Since `v1.0.0`.*
 
@@ -117,7 +117,7 @@
       <div data-whop-demo-shell style={{ position: "relative", minHeight: "320px", transition: "min-height 200ms ease" }}>
         <div data-whop-demo-skeleton style={{ position: "absolute", inset: "0", borderRadius: "12px", background: "rgba(140, 140, 140, 0.12)", pointerEvents: "none", transition: "opacity 200ms ease" }} />
 
-        <div data-whop-demo-native="element:payments/payment" data-whop-elements-version="1.0.0" style={{ position: "relative" }} />
+        <div data-whop-demo-native="element:payments/payment" data-whop-elements-version="1.1.0" style={{ position: "relative" }} />
       </div>
 
       <p style={{ fontSize: "0.8125rem", opacity: 0.7 }}>Example data. [Open the Playground](/elements/latest/payments/overview#playground).</p>
@@ -142,6 +142,10 @@
 
   <ResponseField name="fields" type="{ billingDetails?: &#x22;full&#x22; | &#x22;minimal&#x22; | &#x22;never&#x22; | undefined; phone?: &#x22;never&#x22; | &#x22;auto&#x22; | undefined; }">
     Controls billing-details collection. `billingDetails: 'minimal'` (default) follows each method's matrix. Methods collect name and the complete country format by default. An override may collect only the declared minimum or nothing. For cards, the minimum is name on card, country, and postal code. `'full'` requires name and the complete country format for every fresh method. `'never'` hides the block. `phone: 'never'` hides only the billing phone input when your form already collects it; pass `billingDetails.phone` to `createConfirmationToken` for methods that require it. Pass the address to `createConfirmationToken` instead. The country selector includes only countries supported by the method and payment currency. With an installment plan selected, it narrows to the countries the plan serves — the billing country is the transaction country the charge processes under. It locks when only one is available. Defaults to `{"billingDetails":"minimal"}`.
+  </ResponseField>
+
+  <ResponseField name="defaultValues" type="{ billingDetails?: { name?: string | undefined; phone?: string | undefined; address?: { line1?: string | undefined; line2?: string | undefined; city?: string | undefined; state?: string | undefined; postal_code?: string | undefined; country?: string | undefined; } | undefined; } | undefined; }">
+    Prefills the billing details when each method's billing block first renders. The buyer can edit every prefilled field. `address.country` is an ISO 3166-1 alpha-2 code and applies only when the selected method accepts it. `phone` fills the billing phone input for methods that collect one, in E.164 format such as `+14155552671`; a number outside the method's supported phone countries is ignored. Only fields the block renders are prefilled and sent. Pass anything else to `createConfirmationToken` in `billingDetails`. Since `v1.1.0`.
   </ResponseField>
 
   <ResponseField name="layout" type="&#x22;accordion&#x22; | &#x22;horizontal&#x22;">

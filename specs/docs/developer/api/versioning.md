@@ -37,7 +37,23 @@ Every version automatically gets new endpoints and optional fields. Breaking cha
 
 The TypeScript SDK releases listed below use the API version in that entry by default. Overriding `apiVersionDate` changes the response version, but not the SDK types.
 
-<Update label="2026-09-23" description="Trading access appears in permission checks" tags={["Latest"]}>
+<Update label="2026-09-24-1" description="Ads copy is language-tagged, and Meta ads can run in other languages" tags={["Latest"]}>
+  An ad's `primary_texts`, `headlines`, and `descriptions` are arrays of `{ language, text }` objects on requests and responses. On an ad without translations, leave `language` out. The API rejects plain strings, so send `[{ "text": "…" }]` instead.
+
+  A Meta ad can also run in other languages. Set `translations: { source_language, automatic_languages }` to the language of the ad's own copy and the languages Meta translates into automatically. Every copy and `creatives` entry on that ad then names its `language`. The ad's own copy and creative use `source_language`, and each language you write yourself gets a `primary_texts` and a `headlines` entry, plus optional `descriptions` and `creatives` entries. `translations: null` turns the other languages off.
+
+  Earlier API versions can't update an ad that has translations. They get a 400 that names this version.
+</Update>
+
+<Update label="2026-09-24" description="Economic Intelligence turns on for a chosen duration">
+  To turn on Economic Intelligence, send `economic_intelligence_duration_days` to `PATCH /accounts/{account_id}/preferences`. Pick a duration from `economic_intelligence_offers`, which lists each duration's fee. Economic Intelligence can't be changed or turned off until `economic_intelligence_ends_at`, and it turns off automatically then. It can't be turned on during a free trial, and `economic_intelligence_offers` is `null` until the trial ends.
+
+  `economic_intelligence` is read-only. Sending it returns a `400` error.
+</Update>
+
+<Update label="2026-09-23" description="Trading access appears in permission checks">
+  TypeScript SDK: [`@whop/sdk@2.0.0`](https://unpkg.com/@whop/sdk@2.0.0/dist/esm/BaseClient.mjs).
+
   `GET /permissions` includes `crypto_wallet:trade` and `crypto_wallet:trade:read` when listing or checking permission actions for an account.
 </Update>
 

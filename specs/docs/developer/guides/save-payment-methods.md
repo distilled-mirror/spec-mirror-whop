@@ -16,20 +16,296 @@ Use saved payment methods to charge customers automatically for subscriptions, r
 
 Two paths, depending on whether the user is also paying right now.
 
-|                           | Setup mode (collect-only)                                                                                                         | Save during checkout                                          |
-| ------------------------- | --------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------- |
-| **Charges the user now**  | No                                                                                                                                | Yes                                                           |
-| **Use case**              | Free trial signup, on-file card before usage-based billing                                                                        | Subscription that renews after the first paid checkout        |
-| **API**                   | [Create checkout configuration](/api-reference/beta/checkout-configurations/create-a-checkout-configuration) with `mode: "setup"` | Pass `setupFutureUsage: "off_session"` on `WhopCheckoutEmbed` |
-| **Webhook to listen for** | `setup_intent.succeeded`                                                                                                          | `payment.succeeded` (the `payment_method` is on the result)   |
+|                           | Setup mode (collect-only)                                                                                                                                                                                                                                                                                                                                                                                            | Save during checkout                                                                                                 |
+| ------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| **Charges the user now**  | No                                                                                                                                                                                                                                                                                                                                                                                                                   | Yes                                                                                                                  |
+| **Use case**              | Free trial signup, on-file card before usage-based billing                                                                                                                                                                                                                                                                                                                                                           | Subscription that renews after the first paid checkout                                                               |
+| **How**                   | Mount the [payment elements](/elements/latest/payments/overview) in `mode: "setup"` and [create a setup intent](/api-reference/beta/setup-intents/create-setup-intent) with the confirmation token, or open a setup-mode [checkout configuration](/api-reference/beta/checkout-configurations/create-a-checkout-configuration) as a hosted checkout or in the [Checkout element](/elements/latest/checkout/overview) | Mount the payment elements with `setupFutureUsage: "off_session"` and create the payment with the confirmation token |
+| **Webhook to listen for** | `setup_intent.succeeded`                                                                                                                                                                                                                                                                                                                                                                                             | `payment.succeeded` (its `payment_method_id` is the saved method)                                                    |
 
 The rest of this page covers setup mode end-to-end, then shows how to charge a saved method later.
 
-## Save a payment method
+## Save a payment method with the payment elements
 
-<Warning>
-  `webhooks.unwrap` is not available in the current `@whop/sdk`. The webhook handler shown under "Handle completion" is kept for reference and will not run as written.
-</Warning>
+Build the save form on the [payment elements](/elements/latest/payments/overview) in `mode: "setup"`. The element offers only methods that can be saved, shows the buyer the future-use consent the save requires, and hands you a confirmation token. You turn that token into a setup intent from your server, and the setup intent's `client_secret` finishes any step the buyer still owes.
+
+<Steps>
+  <Step title="Mount the form in setup mode">
+    Pass `mode="setup"` and the currency the saved method will be used with. There is no amount, so amount limits don't apply. Set `returnUrl` to a page you host over `https`. Bank enrollments and some 3D Secure flows bring the buyer back there.
+
+    <CodeGroup>
+      ```tsx React theme={null}
+      import { useState } from "react";
+      import {
+        WhopElements,
+        Payments,
+        EmailElement,
+        PaymentElement,
+        BrandingElement,
+        usePayments,
+        useWhop,
+      } from "@whop/elements-react";
+      import { loadWhop } from "@whop/elements";
+
+      export function SavePaymentMethodPage() {
+        return (
+          <WhopElements elements={loadWhop()}>
+            <Payments
+              accountId="biz_XXXXXXXX"
+              mode="setup"
+              currency="usd"
+              returnUrl="https://yoursite.com/billing/saved"
+            >
+              <SaveForm />
+            </Payments>
+          </WhopElements>
+        );
+      }
+
+      function SaveForm() {
+        const payments = usePayments();
+        const whop = useWhop();
+        const [ready, setReady] = useState(false);
+        const [error, setError] = useState<string | null>(null);
+
+        async function save() {
+          if (!payments || !whop) return;
+          setError(null);
+
+          const { confirmationToken } = await payments.createConfirmationToken({});
+
+          const response = await fetch("/api/save-payment-method", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ confirmationToken }),
+          });
+          const setupIntent = await response.json();
+          if (setupIntent.status === "succeeded") {
+            window.location.assign("/billing/saved");
+            return;
+          }
+          if (setupIntent.status === "canceled") {
+            setError("The payment method couldn't be saved. Try a different one.");
+            return;
+          }
+          if (setupIntent.status === "processing") {
+            window.location.assign("/billing/pending");
+            return;
+          }
+
+          const result = await whop.payments.handleNextAction({
+            clientSecret: setupIntent.client_secret,
+          });
+          if (result.redirected) return;
+          if (result.status === "succeeded") {
+            window.location.assign("/billing/saved");
+            return;
+          }
+          if (result.status === "processing") {
+            window.location.assign("/billing/pending");
+            return;
+          }
+          setError(result.lastPaymentError?.message ?? "The payment method wasn't saved. Try again.");
+        }
+
+        return (
+          <>
+            <EmailElement />
+            <PaymentElement onChange={(event) => setReady(event.complete)} />
+            <BrandingElement />
+            <button disabled={!ready} onClick={save}>
+              Save payment method
+            </button>
+            {error && <p role="alert">{error}</p>}
+          </>
+        );
+      }
+      ```
+
+      ```html JavaScript theme={null}
+      <script src="https://cdn.whop.com/elements/amber/elements.js" data-whop-elements></script>
+
+      <div id="email"></div>
+      <div id="payment"></div>
+      <div id="branding"></div>
+      <button id="save" disabled>Save payment method</button>
+      <p id="error" role="alert"></p>
+
+      <script type="module">
+        const whop = window.WhopElements();
+        const payments = whop.payments.create({
+          accountId: "biz_XXXXXXXX",
+          mode: "setup",
+          currency: "usd",
+          returnUrl: "https://yoursite.com/billing/saved",
+        });
+
+        const saveButton = document.querySelector("#save");
+        const errorLine = document.querySelector("#error");
+
+        payments.create("email").mount("#email");
+        payments
+          .create("payment", { onChange: (event) => (saveButton.disabled = !event.complete) })
+          .mount("#payment");
+        payments.create("branding").mount("#branding");
+
+        saveButton.addEventListener("click", async () => {
+          errorLine.textContent = "";
+
+          const { confirmationToken } = await payments.createConfirmationToken({});
+
+          const response = await fetch("/api/save-payment-method", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ confirmationToken }),
+          });
+          const setupIntent = await response.json();
+          if (setupIntent.status === "succeeded") {
+            window.location.assign("/billing/saved");
+            return;
+          }
+          if (setupIntent.status === "canceled") {
+            errorLine.textContent = "The payment method couldn't be saved. Try a different one.";
+            return;
+          }
+          if (setupIntent.status === "processing") {
+            window.location.assign("/billing/pending");
+            return;
+          }
+
+          const result = await whop.payments.handleNextAction({
+            clientSecret: setupIntent.client_secret,
+          });
+          if (result.redirected) return;
+          if (result.status === "succeeded") {
+            window.location.assign("/billing/saved");
+            return;
+          }
+          if (result.status === "processing") {
+            window.location.assign("/billing/pending");
+            return;
+          }
+          errorLine.textContent = result.lastPaymentError?.message ?? "The payment method wasn't saved. Try again.";
+        });
+      </script>
+      ```
+    </CodeGroup>
+
+    The token carries the consent the element displayed. A token collected from a payment-mode form is refused by the setup intent, so mount in `mode="setup"` when the buyer isn't paying.
+  </Step>
+
+  <Step title="Create the setup intent on your server">
+    [Create a setup intent](/api-reference/beta/setup-intents/create-setup-intent) with the confirmation token. Whop resolves the buyer from the token's email and answers `201 Created` with the setup intent. It carries the `status`, a `client_secret` for any step the buyer still owes, and once it has `succeeded`, the saved method as `payment_method_id`. Attach `metadata` to tie the saved method to a customer in your system. It comes back on the webhook. Send an [`Idempotency-Key`](/developer/api/idempotency) so a retried request never saves the method twice.
+
+    <CodeGroup>
+      ```typescript TypeScript theme={null}
+      import { WhopClient } from "@whop/sdk";
+
+      const client = new WhopClient({ token: process.env.WHOP_API_KEY });
+
+      export async function POST(request: Request) {
+        const { confirmationToken } = await request.json();
+
+        const setupIntent = await client.setupIntents.create({
+          account_id: "biz_XXXXXXXX",
+          confirmation_token: confirmationToken,
+          currency: "usd",
+          return_url: "https://yoursite.com/billing/saved",
+          metadata: { customer_id: "my_internal_user_id" },
+        });
+
+        return Response.json({
+          id: setupIntent.id,
+          status: setupIntent.status,
+          client_secret: setupIntent.client_secret,
+        });
+      }
+      ```
+
+      ```python Python theme={null}
+      import os
+      from flask import Flask, jsonify, request
+      from whop_sdk import Whop
+
+      app = Flask(__name__)
+      client = Whop(token=os.environ["WHOP_API_KEY"])
+
+      @app.post("/api/save-payment-method")
+      def save_payment_method():
+          setup_intent = client.setup_intents.create(
+              request={
+                  "account_id": "biz_XXXXXXXX",
+                  "confirmation_token": request.get_json()["confirmationToken"],
+                  "currency": "usd",
+                  "return_url": "https://yoursite.com/billing/saved",
+                  "metadata": {"customer_id": "my_internal_user_id"},
+              },
+          )
+          return jsonify(id=setup_intent.id, status=setup_intent.status, client_secret=setup_intent.client_secret)
+      ```
+
+      ```ruby Ruby theme={null}
+      require "whop_sdk"
+
+      client = Whop_sdk::Client.new(token: ENV.fetch("WHOP_API_KEY"))
+
+      post "/api/save-payment-method" do
+        confirmation_token = JSON.parse(request.body.read)["confirmationToken"]
+
+        setup_intent = client.setup_intents.create(
+          account_id: "biz_XXXXXXXX",
+          confirmation_token: confirmation_token,
+          currency: "usd",
+          return_url: "https://yoursite.com/billing/saved",
+          metadata: { customer_id: "my_internal_user_id" },
+        )
+
+        { id: setup_intent.id, status: setup_intent.status, client_secret: setup_intent.client_secret }.to_json
+      end
+      ```
+    </CodeGroup>
+  </Step>
+
+  <Step title="Finish any pending step">
+    A setup intent that comes back `succeeded` has the method on file. `requires_action` means the buyer still has a step like 3D Secure or a bank enrollment. Pass the `client_secret` to `handleNextAction`, the same call the payment flow uses. It runs an inline step in a dialog or sends the buyer to your `returnUrl`. Branch on the `status` it returns: `succeeded` saved the method, `processing` is still deciding, and anything else needs another try. A dismissed dialog leaves the setup at `requires_action` with no error, and `lastPaymentError` carries the reason when the attempt fails. `processing` means the processor is still deciding, so show a pending state and let the webhook below confirm the save. `canceled` means the buyer abandoned the step or the provider refused the method: `last_setup_error` carries the provider's reason, and stays `null` when the buyer walked away. To read the state from your server instead, [retrieve the setup intent](/api-reference/beta/setup-intents/retrieve-setup-intent) and branch on the same `status`, or poll the lighter [Retrieve setup status](/api-reference/beta/setup-intents/retrieve-setup-status) while a step is pending.
+  </Step>
+
+  <Step title="Handle completion">
+    Listen for the `setup_intent.succeeded` webhook to get the payment method ID and your `metadata` back. It's the only signal that survives a closed tab, and the same handler serves the hosted flow below. The setup intent also carries `payment_instrument` for display: a name, the standard icon set, and for a card its brand, last four, and expiry. You can show the saved method without another request. Webhooks pinned before API version 2026-09-22-1 carry the saved method as `payment_method.id` instead.
+
+    <Warning>
+      `webhooks.unwrap` isn't available in the current `@whop/sdk`. Both webhook handlers on this page are kept for reference and won't run as written. See [Verify and handle events](/developer/guides/webhooks#verify-and-handle-events) for the current verification path.
+    </Warning>
+
+    ```typescript theme={null}
+    import { waitUntil } from "@vercel/functions";
+    import type { NextRequest } from "next/server";
+    import { whopsdk } from "@/lib/whop-sdk";
+
+    export async function POST(request: NextRequest): Promise<Response> {
+      const requestBodyText = await request.text();
+      const headers = Object.fromEntries(request.headers);
+      const webhookData = whopsdk.webhooks.unwrap(requestBodyText, { headers });
+
+      if (webhookData.type === "setup_intent.succeeded") {
+        waitUntil(handleSetupSucceeded(webhookData.data));
+      }
+
+      return new Response("OK", { status: 200 });
+    }
+
+    async function handleSetupSucceeded(setupIntent) {
+      console.log("Payment method ID:", setupIntent.payment_method_id);
+      console.log("Saved method:", setupIntent.payment_instrument.display_name);
+      console.log("Metadata:", setupIntent.metadata);
+    }
+    ```
+
+    The payment method is now saved and authorized for this member. Charge it with the steps in [Charge a saved payment method](#charge-a-saved-payment-method).
+  </Step>
+</Steps>
+
+## Save a payment method with a hosted checkout
 
 <Steps>
   <Step title="Create a checkout configuration in setup mode">
@@ -98,31 +374,32 @@ The rest of this page covers setup mode end-to-end, then shows how to charge a s
   </Step>
 
   <Step title="Direct the user to checkout">
-    Use embedded checkout or redirect the user to save their payment method.
+    Mount the Checkout element or redirect the user to save their payment method.
 
     <Tabs>
       <Tab title="Embedded">
         ```tsx theme={null}
-        import { WhopCheckoutEmbed } from "@whop/checkout/react";
+        import { WhopElements, Checkout, CheckoutElement } from "@whop/elements-react";
+        import { loadWhop } from "@whop/elements";
 
-        export default function SavePayment() {
+        export default function SavePayment({ configurationId }: { configurationId: string }) {
           return (
-            <WhopCheckoutEmbed
-              sessionId={checkoutConfiguration.id}
-              returnUrl="https://yoursite.com/setup/complete"
-              onComplete={(sessionId, setupIntentId, result) => {
-                // payt_XXXXXXXXX — charge this any time
-                saveForLater(result.payment_method_id);
-              }}
-            />
+            <WhopElements elements={loadWhop()}>
+              <Checkout
+                checkoutConfiguration={configurationId}
+                returnUrl="https://yoursite.com/setup/complete"
+              >
+                <CheckoutElement />
+              </Checkout>
+            </WhopElements>
           );
         }
         ```
 
-        The saved payment method is on the `onComplete` result, so a virtual
-        terminal can charge it right away instead of waiting for a webhook. Whop
-        only completes the checkout once the method is stored, so
-        `payment_method_id` is always set here in setup mode.
+        A setup-mode configuration mounts the same element as a payment-method
+        save: nothing is charged, and the finished checkout redirects to
+        `returnUrl` with `setup_intent_id` in the query string. Confirm the save
+        from the `setup_intent.succeeded` webhook rather than from the redirect.
       </Tab>
 
       <Tab title="Redirect">
@@ -134,10 +411,10 @@ The rest of this page covers setup mode end-to-end, then shows how to charge a s
   </Step>
 
   <Step title="Handle completion">
-    Listen for the `setup_intent.succeeded` webhook to get the payment method ID. The CheckoutConfiguration and its metadata will be included on the SetupIntent, which you can use to link the member and payment method to a customer in your system.
+    Listen for the `setup_intent.succeeded` webhook to get the payment method ID. The setup intent carries `checkout_configuration_id` and the configuration's `metadata`, which you can use to link the member and payment method to a customer in your system.
 
     <Note>
-      Keep the webhook even if you read `payment_method_id` from `onComplete` — it's the only path that survives a closed tab, and the one that fires for the redirect flow.
+      Confirm the save from the webhook rather than from the buyer arriving at your `redirect_url`. It's the only signal that survives a closed tab.
     </Note>
 
     <Tip>
@@ -162,8 +439,9 @@ The rest of this page covers setup mode end-to-end, then shows how to charge a s
     }
 
     async function handleSetupSucceeded(setupIntent) {
-      console.log("Payment method ID:", setupIntent.payment_method.id);
-      console.log("Member ID:", setupIntent.member.id);
+      console.log("Payment method ID:", setupIntent.payment_method_id);
+      console.log("Member ID:", setupIntent.member_id);
+      console.log("Checkout configuration ID:", setupIntent.checkout_configuration_id);
       console.log("Metadata:", setupIntent.metadata);
     }
     ```
@@ -176,7 +454,7 @@ The rest of this page covers setup mode end-to-end, then shows how to charge a s
 
 <Steps>
   <Step title="Get the payment method">
-    [List saved payment methods](/api-reference/payment-methods/list-payment-methods) for a member or use the payment method ID from the setup intent in the previous step.
+    [List saved payment methods](/api-reference/payment-methods/list-payment-methods) for a member, or use the `payment_method_id` from the setup intent in the previous step.
 
     <CodeGroup>
       ```typescript TypeScript theme={null}
@@ -316,7 +594,7 @@ The rest of this page covers setup mode end-to-end, then shows how to charge a s
     }
 
     if (webhookData.type === "payment.failed") {
-      await notifyCustomer(webhookData.data.member.email, webhookData.data.failure_message);
+      await notifyCustomer(webhookData.data.customer_email, webhookData.data.failure_message);
     }
     ```
   </Step>
@@ -324,17 +602,73 @@ The rest of this page covers setup mode end-to-end, then shows how to charge a s
 
 ## Save during checkout
 
-To save a payment method while processing a payment, add `setupFutureUsage: "off_session"` to the embedded checkout.
+To save a payment method while charging the buyer, build the checkout on the [payment elements](/elements/latest/payments/overview) and pass `setupFutureUsage: "off_session"` on the `Payments` handle. The elements show the buyer the save consent and record it on the confirmation token, and the payment vaults the method only when that consent is attested.
 
-```tsx theme={null}
-<WhopCheckoutEmbed
-	planId="plan_XXXXXXXX"
-	returnUrl="https://yoursite.com/checkout/complete"
-	setupFutureUsage="off_session"
-/>
-```
+<Steps>
+  <Step title="Mount the form with save consent">
+    ```tsx theme={null}
+    <WhopElements elements={loadWhop()}>
+      <Payments
+        accountId="biz_XXXXXXXX"
+        plan="plan_XXXXXXXX"
+        setupFutureUsage="off_session"
+        returnUrl="https://yoursite.com/checkout/complete"
+      >
+        <EmailElement />
+        <PaymentElement onChange={(event) => setReady(event.complete)} />
+        <BrandingElement />
+      </Payments>
+    </WhopElements>
+    ```
 
-Whop saves the payment method after a successful payment.
+    [Accept Payments](/developer/guides/accept-payments#option-2-take-payments-on-your-own-site) walks through the pay button, `createConfirmationToken`, and `handleNextAction`.
+  </Step>
+
+  <Step title="Create the payment with the confirmation token">
+    The create response is the payment as opened, not its outcome. The saved method's `payment_method_id` arrives on the `payment.succeeded` webhook once the charge completes.
+
+    <CodeGroup>
+      ```typescript TypeScript theme={null}
+      const payment = await whopsdk.payments.create({
+        account_id: "biz_XXXXXXXX",
+        plan_id: "plan_XXXXXXXX",
+        confirmation_token: confirmationToken,
+        return_url: "https://yoursite.com/checkout/complete",
+      });
+
+      console.log("Payment:", payment.id, payment.status);
+      ```
+
+      ```python Python theme={null}
+      payment = whopsdk.payments.create(
+          request={
+              "account_id": "biz_XXXXXXXX",
+              "plan_id": "plan_XXXXXXXX",
+              "confirmation_token": confirmation_token,
+              "return_url": "https://yoursite.com/checkout/complete",
+          },
+      )
+
+      print("Payment:", payment.id, payment.status)
+      ```
+
+      ```ruby Ruby theme={null}
+      payment = whopsdk.payments.create(
+        account_id: "biz_XXXXXXXX",
+        plan_id: "plan_XXXXXXXX",
+        confirmation_token: confirmation_token,
+        return_url: "https://yoursite.com/checkout/complete",
+      )
+
+      puts "Payment: #{payment.id} #{payment.status}"
+      ```
+    </CodeGroup>
+  </Step>
+
+  <Step title="Charge it later">
+    `payment_method_id` is the `payt_` method to use in [Charge a saved payment method](#charge-a-saved-payment-method). It stays `null` when nothing was saved. The `payment.succeeded` webhook carries the same field, and it's the path that survives a closed tab.
+  </Step>
+</Steps>
 
 ## Next steps
 
@@ -343,8 +677,8 @@ Whop saves the payment method after a successful payment.
     One-time and subscription checkouts to pair with your save flow.
   </Card>
 
-  <Card title="Embedded checkout" href="/payments/checkout-embed">
-    Drop checkout into your own site without redirects.
+  <Card title="Checkout element" href="/elements/latest/checkout/overview">
+    Mount Whop checkout on your own site with Whop Elements.
   </Card>
 
   <Card title="Listen to webhooks" href="/developer/guides/webhooks">

@@ -85,7 +85,7 @@ struct YourApp: App {
 
 ***
 
-## WhopElements (embedded chat and payouts)
+## WhopElements (embedded chat and wallet)
 
 Use WhopElements to embed Whop chat channels in your app.
 
@@ -128,8 +128,8 @@ struct YourApp: App {
   Continue with the chat integration guide
 </Card>
 
-<Card title="Embedded Payouts" icon="money-bill-transfer" href="/developer/platforms/render-payout-portal">
-  Continue with the chat integration guide
+<Card title="Wallet Elements" icon="wallet" href="/elements/latest/getting-started">
+  Show an account's balances and activity with the Swift wallet elements
 </Card>
 
 ***
@@ -155,8 +155,8 @@ struct YourApp: App {
     Add Whop chat to your app
   </Card>
 
-  <Card title="Embedded Payouts" icon="money-bill-transfer" href="/developer/platforms/render-payout-portal">
-    Enable connected account payouts
+  <Card title="Wallet Elements" icon="wallet" href="/elements/latest/getting-started">
+    Show an account's balances and activity with the Swift wallet elements
   </Card>
 
   <Card title="API Reference" icon="book" href="/developer/guides/ios/checkout-reference">

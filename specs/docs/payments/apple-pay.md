@@ -2,29 +2,27 @@
 > Fetch the complete documentation index at: https://docs.whop.com/llms.txt
 > Use this file to discover all available pages before exploring further.
 
-# Enable Apple Pay
+# Enable Apple Pay and Google Pay
 
-> Enable Apple Pay and Google Pay for your embedded checkout by verifying your domain
+> Enable Apple Pay and Google Pay on your own domain by verifying it as a payment method domain
 
-Apple Pay lets customers pay using their Apple Wallet, providing a seamless checkout experience on Safari and iOS devices. To enable Apple Pay and Google Pay on your embedded checkout, you need to verify ownership of your domain. The same verified domain clears both wallets for a page.
+Apple Pay and Google Pay let customers pay from the wallet already on their device. When a [Whop Elements](/elements/latest/getting-started) checkout or payment element renders on your own site, both wallets require the page's domain to be a verified payment method domain. One verified domain clears both wallets for every element on that page.
 
 <Note>
-  Domain verification is only required for [embedded
-  checkout](/payments/checkout-embed). Whop-hosted checkout pages already
-  support Apple Pay without any additional setup.
+  Domain verification is only required for pages you host. Whop-hosted checkout
+  pages and whop.com are already approved.
 </Note>
 
 ## Prerequisites
 
 Before setting up Apple Pay, check that you have:
 
-* A domain where you're hosting the embedded checkout
+* A domain where you're mounting Whop Elements
 * The ability to host a file on that domain (to serve the Apple Pay verification file)
-* `@whop/checkout@0.0.43` or later if using the `hideSubmitButton` option in React
 
 ## Self-hosted verification
 
-To verify your domain, serve the Apple Pay merchant ID domain association file at a specific path on your domain, then register the domain in your checkout settings.
+To verify your domain, serve the Apple Pay merchant ID domain association file at a specific path on your domain, then register the domain with Whop.
 
 ### Step 1: Download the verification file
 
@@ -102,37 +100,76 @@ https://<your-domain>/.well-known/apple-developer-merchantid-domain-association
 
 The file should download or display its contents without any errors.
 
-### Step 4: Open payment domains settings
+### Step 4: Register your domain
 
-Navigate to your [checkout settings](https://whop.com/dashboard/settings/checkout/) and find the **Apple Pay and Google Pay for embedded checkout** section. Select **Configure** to open the domain management panel.
+Register the domain from the dashboard or through the API. Either way, Whop checks that the file is reachable before registering the domain with Apple.
 
-<Frame>
-  <img src="https://mintcdn.com/whop/qJMsh85qcrvhDnDi/images/apple-pay/payment-domains-settings.png?fit=max&auto=format&n=qJMsh85qcrvhDnDi&q=85&s=2797c1311a2bbd28cdef5e86929eb25f" alt="Payment domains settings showing the Configure button" width="2868" height="1654" data-path="images/apple-pay/payment-domains-settings.png" />
-</Frame>
+<Tabs>
+  <Tab title="Dashboard">
+    Navigate to your [checkout settings](https://whop.com/dashboard/settings/checkout/) and find the **Apple Pay and Google Pay for embedded checkout** section. Select **Configure** to open **Payment domains**.
 
-### Step 5: Register your domain
+    <Frame>
+      <img src="https://mintcdn.com/whop/qJMsh85qcrvhDnDi/images/apple-pay/payment-domains-settings.png?fit=max&auto=format&n=qJMsh85qcrvhDnDi&q=85&s=2797c1311a2bbd28cdef5e86929eb25f" alt="Payment domains settings showing the Configure button" width="2868" height="1654" data-path="images/apple-pay/payment-domains-settings.png" />
+    </Frame>
 
-Select the **+** button (or **Add payment domain** if no domains exist yet). From the dropdown menu, select **Self-hosted verification**.
+    Select **Add domain**, choose **Self-hosted verification**, and enter your domain.
 
-<Frame>
-  <img src="https://mintcdn.com/whop/qJMsh85qcrvhDnDi/images/apple-pay/dropdown-self-hosted-verification.png?fit=max&auto=format&n=qJMsh85qcrvhDnDi&q=85&s=e9f392d465afa3a683828dc386f7a3bc" alt="Add domain dropdown menu with self-hosted option" width="1262" height="902" data-path="images/apple-pay/dropdown-self-hosted-verification.png" />
-</Frame>
+    <Frame>
+      <img src="https://mintcdn.com/whop/qJMsh85qcrvhDnDi/images/apple-pay/add-domain-self-hosted.png?fit=max&auto=format&n=qJMsh85qcrvhDnDi&q=85&s=cbb7f1aa2b9d605470356ee4d058f7cd" alt="Add domain dialog for self-hosted verification" width="2608" height="1246" data-path="images/apple-pay/add-domain-self-hosted.png" />
+    </Frame>
 
-Enter your domain. Whop will verify access to the file before registering your domain with Apple.
+    A domain listed as **Needs verification** is still waiting on the file. Fix the hosting, then select **Verify domain**.
+  </Tab>
 
-<Frame>
-  <img src="https://mintcdn.com/whop/qJMsh85qcrvhDnDi/images/apple-pay/add-domain-self-hosted.png?fit=max&auto=format&n=qJMsh85qcrvhDnDi&q=85&s=cbb7f1aa2b9d605470356ee4d058f7cd" alt="Add domain dialog for self-hosted verification" width="2608" height="1246" data-path="images/apple-pay/add-domain-self-hosted.png" />
-</Frame>
+  <Tab title="API">
+    Register the hostname with the [Payment Method Domains API](/api-reference/beta/payment-method-domains/payment-method-domain). Whop attempts verification inline and returns `verified` when Apple fetched the file, or `pending` when it couldn't.
+
+    <CodeGroup>
+      ```typescript TypeScript theme={null}
+      import { WhopClient } from "@whop/sdk";
+
+      const client = new WhopClient({ token: process.env.WHOP_API_KEY });
+
+      const domain = await client.paymentMethodDomains.create({
+        hostname: "shop.example.com",
+      });
+
+      console.log(domain.status); // "verified", or "pending" until the file is reachable
+      ```
+
+      ```python Python theme={null}
+      import os
+      from whop_sdk import Whop
+
+      client = Whop(token=os.environ["WHOP_API_KEY"])
+
+      domain = client.payment_method_domains.create(hostname="shop.example.com")
+
+      print(domain.status)  # "verified", or "pending" until the file is reachable
+      ```
+    </CodeGroup>
+
+    Once you host the file, re-run verification for a `pending` domain with [Verify Payment Method Domain](/api-reference/beta/payment-method-domains/verify-payment-method-domain):
+
+    <CodeGroup>
+      ```typescript TypeScript theme={null}
+      await client.paymentMethodDomains.verify({ id: domain.id });
+      ```
+
+      ```python Python theme={null}
+      client.payment_method_domains.verify(id=domain.id)
+      ```
+    </CodeGroup>
+  </Tab>
+</Tabs>
 
 ## Troubleshooting
 
 <AccordionGroup>
-  <Accordion title="Apple Pay button doesn't appear">
-    * Make sure your domain is fully verified in the payment domains settings.
-    * Check that you're using `@whop/checkout@0.0.43` or later.
-    * Use a supported browser (Safari) and device (iOS or macOS).
-    * Test on an actual Apple device, not in a simulator.
-    * If using **Framer**, make sure you are loading the checkout SDK via Custom Code in your site headers, not via the Embed component. Framer's Embed component uses a `srcdoc` iframe which Safari treats as an insecure context, blocking Apple Pay. See the [Framer checkout guide](/payments/checkout-embed) for the correct setup.
+  <Accordion title="Apple Pay or Google Pay button doesn't appear">
+    * Make sure your domain shows as verified in **Payment domains** or returns `status: "verified"` from the API.
+    * The [ExpressCheckoutElement](/elements/latest/checkout/expressCheckout) renders only the wallets the buyer's device can pay with, and renders nothing where no wallet is available. Test Apple Pay in Safari on a real Apple device, not in a simulator.
+    * If using **Framer**, load the Elements script through Custom Code in your site headers, not through the Embed component. Framer's Embed component uses a `srcdoc` iframe, which Safari treats as an insecure context and blocks Apple Pay.
   </Accordion>
 
   <Accordion title="Self-hosted file returns 404">
@@ -146,8 +183,8 @@ Enter your domain. Whop will verify access to the file before registering your d
 ## Next steps
 
 <CardGroup cols={2}>
-  <Card title="Embedded Checkout" icon="code" href="/payments/checkout-embed">
-    Learn how to embed Whop checkout on your website
+  <Card title="Express Checkout" icon="apple" href="/developer/guides/express-checkout">
+    Add one-press Apple Pay and Google Pay buttons to your site
   </Card>
 
   <Card title="Checkout Links" icon="link" href="/payments/create-checkout-link">

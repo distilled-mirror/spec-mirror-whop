@@ -96,9 +96,9 @@ Create a checkout configuration with a connected account's ID to charge customer
       "fmt"
       "log"
 
-      whopsdk "github.com/whopio/whopsdk-go"
-      "github.com/whopio/whopsdk-go/client"
-      "github.com/whopio/whopsdk-go/option"
+      whopsdk "github.com/whopio/whopsdk-go/v2"
+      "github.com/whopio/whopsdk-go/v2/client"
+      "github.com/whopio/whopsdk-go/v2/option"
   )
 
   client := client.NewWhop(option.WithToken("Account API Key"))
@@ -223,9 +223,9 @@ Collect payment to your platform account, then transfer the connected account's 
       "fmt"
       "log"
 
-      whopsdk "github.com/whopio/whopsdk-go"
-      "github.com/whopio/whopsdk-go/client"
-      "github.com/whopio/whopsdk-go/option"
+      whopsdk "github.com/whopio/whopsdk-go/v2"
+      "github.com/whopio/whopsdk-go/v2/client"
+      "github.com/whopio/whopsdk-go/v2/option"
   )
 
   client := client.NewWhop(option.WithToken("Account API Key"))
@@ -290,7 +290,7 @@ Use transfers when your backend controls payout timing and amount. Use direct ch
 
 <CardGroup cols={2}>
   <Card title="Accept payments" icon="credit-card" href="/developer/guides/accept-payments">
-    Learn about checkout links and embedded checkout
+    Learn about checkout links and the Checkout element
   </Card>
 
   <Card title="Enroll connected accounts" icon="users" href="/developer/platforms/enroll-connected-accounts">

@@ -10,7 +10,7 @@ Payments is how you charge customers on Whop: one-time purchases, subscriptions,
 
 ## What you can build
 
-* **Take payments** with a shareable checkout link or an embedded checkout you control end to end.
+* **Take payments** with a shareable checkout link or the Checkout element on your own site.
 * **Sell subscriptions** and manage their lifecycle: pause, resume, cancel, restore, add free days.
 * **Save payment methods** to charge customers again later.
 * **Handle the edge cases**: issue refunds, respond to disputes with evidence, and react to chargebacks as they happen.
@@ -24,7 +24,7 @@ Checkout configuration, plan, product, membership, payment. Each is defined in [
 
 <Columns cols={2}>
   <Card title="Accept payments" icon="credit-card" href="/developer/guides/accept-payments">
-    Take your first payment with a link or embedded checkout.
+    Take your first payment with a link or the Checkout element.
   </Card>
 
   <Card title="Memberships" icon="repeat" href="/developer/guides/memberships">

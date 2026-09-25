@@ -175,8 +175,8 @@ If you need to update or change your pricing and settings, you can edit your che
 
 ## Embed Whop Payments on your website
 
-<Card title="Whop checkout embeds" icon="sparkles" href="/payments/checkout-embed">
-  Add a complete checkout form right into your website.
+<Card title="Checkout element" icon="sparkles" href="/elements/latest/checkout/overview">
+  Mount a complete checkout form right into your website with Whop Elements.
 </Card>
 
 ## Frequently asked questions

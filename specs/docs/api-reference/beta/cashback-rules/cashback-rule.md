@@ -8,13 +8,41 @@ Cashback rules designate a funding platform, optional merchant name and category
 
 Use the Cashback Rules API to create future-dated rules, update their merchant name, MCC, description, or expiration, and list every rule funded by the authenticated platform, including expired and discarded rules. Discarded rules cannot be updated. Creating or updating a rule does not transfer funds.
 
+Pay out cashback on demand from the platform's available USD balance with optional rule, account, and transaction filters. Only completed, unpaid, eligible transactions are paid. The response returns status `processing` and echoes supplied filters; `failed` means the queue rejected the request. These statuses describe scheduling, not payment completion.
+
 ## Endpoints
 
 | Endpoint                                                                        | Request                                                                     |
 | ------------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
 | [List Cashback Rules](/api-reference/beta/cashback-rules/list-cashback-rules)   | <Badge color="blue" size="sm" stroke>GET</Badge> `/cashback_rules`          |
 | [Create Cashback Rule](/api-reference/beta/cashback-rules/create-cashback-rule) | <Badge color="green" size="sm" stroke>POST</Badge> `/cashback_rule`         |
+| [Pay Out Cashback](/api-reference/beta/cashback-rules/pay-out-cashback)         | <Badge color="green" size="sm" stroke>POST</Badge> `/cashback_rules/payout` |
 | [Update Cashback Rule](/api-reference/beta/cashback-rules/update-cashback-rule) | <Badge color="orange" size="sm" stroke>PATCH</Badge> `/cashback_rules/{id}` |
+
+## Pay Out Cashback
+
+Send an empty object to `POST /cashback_rules/payout` to distribute all eligible cashback. Set `cashback_rule_id` to distribute one rule, `account_id` to pay one connected account, or `transaction_id` to pay one card transaction. Multiple filters must all match.
+
+```json theme={null}
+{
+	"cashback_rule_id": "cicbr_7kR2m9Qx4L",
+	"account_id": "biz_connectedDemo",
+	"transaction_id": "citx_8jF6w3Nv2B"
+}
+```
+
+Use an `Idempotency-Key` header when requesting a payout. A `202` response with `status: "processing"` confirms that processing was queued and echoes the supplied filters. A `200` response with `status: "failed"` means the queue rejected the request. These statuses describe scheduling, not payment completion. Transaction jobs retry failures automatically. Add USD to the funding wallet if it has insufficient funds. Repeated requests skip payments already recorded, and ledger idempotency prevents duplicate credits.
+
+Response:
+
+```json theme={null}
+{
+	"status": "processing",
+	"cashback_rule_id": "cicbr_7kR2m9Qx4L",
+	"account_id": "biz_connectedDemo",
+	"transaction_id": "citx_8jF6w3Nv2B"
+}
+```
 
 ## Attributes
 

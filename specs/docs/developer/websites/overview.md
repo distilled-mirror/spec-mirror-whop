@@ -29,7 +29,7 @@ This section covers everything except the AI path. For that one, open **Websites
 
 ## What you get
 
-* **Payments.** Use checkout links or embedded checkout — see [Accept payments](/developer/guides/accept-payments).
+* **Payments.** Use checkout links or the Checkout element — see [Accept payments](/developer/guides/accept-payments).
 * **A live address** at `<route>.whop.site`, as soon as the first build is promoted.
 * **Versioned deploys.** Promoting an older build is how you roll back, from the CLI or the **Versions** tab.
 * **API calls with no key handling.** The runtime signs server-side requests to the Whop API. Your code never sees the key — see [Hosting](/developer/websites/hosting#call-the-whop-api).

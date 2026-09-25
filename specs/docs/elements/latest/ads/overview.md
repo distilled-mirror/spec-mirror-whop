@@ -6,7 +6,7 @@
 
 > An advertising account. Scope it to a Whop account with `accountId` — the ad account underneath is assigned server-side and never surfaces here — then mount `reporting` for what the account spent and what came back, or `campaign-creator` to build a campaign.
 
-<Info>This page documents `@whop/elements@1.0.0` and `@whop/elements-react@1.0.0`.</Info>
+<Info>This page documents `@whop/elements@1.1.0` and `@whop/elements-react@1.1.0`.</Info>
 
 *Since `v1.0.0`.*
 
@@ -17,7 +17,7 @@ Assemble the elements with example data. Drive the controls, add and arrange ele
 <div data-whop-demo-shell style={{ position: "relative", minHeight: "480px", transition: "min-height 200ms ease" }}>
   <div data-whop-demo-skeleton style={{ position: "absolute", inset: "0", borderRadius: "12px", background: "rgba(140, 140, 140, 0.12)", pointerEvents: "none", transition: "opacity 200ms ease" }} />
 
-  <div data-whop-demo-native="playground:ads" data-whop-elements-version="1.0.0" style={{ position: "relative" }} />
+  <div data-whop-demo-native="playground:ads" data-whop-elements-version="1.1.0" style={{ position: "relative" }} />
 </div>
 
 <div data-whop-usage="ads/playground">
@@ -172,7 +172,7 @@ The elements this group mounts. Each has its own page:
   </Card>
 
   <Card title="CampaignCreatorElement" href="/elements/latest/ads/campaign-creator">
-    The advertising campaign builder: objective and budget, ad groups with their targeting and schedule, and the ads themselves with their creative — the whole flow through to launch. Opens empty to build a new campaign, or on an existing one when you pass `campaignId`. It runs the pixel checker too: a launch is gated on the ad group’s conversion event being live on the destination URL, and the `pixel-setup` wizard opens inside this element to fix an install that is missing. The one token you set on the `ads` handle must carry the pixel scopes alongside the campaign scopes — `ad_campaign:create` and `company:basic:read` — rather than using a separate token per element.
+    The advertising campaign builder: objective and budget, ad groups with their targeting and schedule, and the ads themselves with their creative — the whole flow through to launch. Opens empty to build a new campaign, or on an existing one when you pass `campaignId`. It runs the pixel checker too: a launch is gated on the ad group’s conversion event being live on the destination URL, and the `pixel-setup` wizard opens inside this element to fix an install that is missing. Budgets are entered and shown in the account’s `ads_reporting_currency` — the currency its reports already use — and converted to and billed in USD at the current exchange rate. The one token you set on the `ads` handle must carry the pixel scopes alongside the campaign scopes — `ad_campaign:create` and `company:basic:read` — rather than using a separate token per element.
   </Card>
 </CardGroup>
 

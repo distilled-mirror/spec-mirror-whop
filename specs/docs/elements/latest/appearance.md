@@ -6,7 +6,7 @@
 
 > Theme, tokens, and per-part styling for every element.
 
-<Info>This page documents `@whop/elements@1.0.0` and `@whop/elements-react@1.0.0`.</Info>
+<Info>This page documents `@whop/elements@1.1.0` and `@whop/elements-react@1.1.0`.</Info>
 
 <div data-whop-platform="web">
   One `appearance` object styles every element. Pass it globally at construction, per group at `create()` (or as React props), and change it live at any point with `update({ appearance })`. Mounted elements restyle in place.
