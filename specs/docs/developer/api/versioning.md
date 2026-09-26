@@ -33,11 +33,19 @@ An explicit `Api-Version-Date` header always takes precedence over the API key's
 
 Every version automatically gets new endpoints and optional fields. Breaking changes create a new dated version, which the changelog below lists.
 
+When upgrading, review every entry after your current pin through your target version, not just entries from the target month. In particular, upgrading from `2026-07-20` to September crosses the `2026-07-23` members and memberships migration.
+
 ## Changelog
 
 The TypeScript SDK releases listed below use the API version in that entry by default. Overriding `apiVersionDate` changes the response version, but not the SDK types.
 
-<Update label="2026-09-24-1" description="Ads copy is language-tagged, and Meta ads can run in other languages" tags={["Latest"]}>
+<Update label="2026-09-25" description="Economic Intelligence durations are chosen by key" tags={["Latest"]}>
+  To turn on Economic Intelligence, send `economic_intelligence_duration_key` to `PATCH /accounts/{account_id}/preferences` instead of `economic_intelligence_duration_days`. Use the `key` of an entry in `economic_intelligence_offers`.
+
+  Each entry in `economic_intelligence_offers` has `key`, `duration`, and `duration_unit` instead of `duration_days`. A duration can be counted in `hours` or `days`.
+</Update>
+
+<Update label="2026-09-24-1" description="Ads copy is language-tagged, and Meta ads can run in other languages">
   An ad's `primary_texts`, `headlines`, and `descriptions` are arrays of `{ language, text }` objects on requests and responses. On an ad without translations, leave `language` out. The API rejects plain strings, so send `[{ "text": "…" }]` instead.
 
   A Meta ad can also run in other languages. Set `translations: { source_language, automatic_languages }` to the language of the ad's own copy and the languages Meta translates into automatically. Every copy and `creatives` entry on that ad then names its `language`. The ad's own copy and creative use `source_language`, and each language you write yourself gets a `primary_texts` and a `headlines` entry, plus optional `descriptions` and `creatives` entries. `translations: null` turns the other languages off.

@@ -119,6 +119,7 @@ Balances and banking: every way funds move in or out.
 | [Transfers](/api-reference/beta/transfers/transfer)                | Move funds between Whop accounts and users.            |
 | [Deposits](/api-reference/beta/deposits/deposit)                   | Add funds to a balance.                                |
 | [Swaps](/api-reference/beta/swaps/swap)                            | Convert a balance between currencies.                  |
+| [Trades](/api-reference/beta/trades/trade)                         | Submit and track perpetual trades.                     |
 
 ### Commerce
 
@@ -141,7 +142,7 @@ Refer users and businesses to Whop and track what you earn.
 
 | Resource                                                                                                  | What it's for                                                                |
 | --------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
-| [Partner Referral Requests](/api-reference/beta/partner-referral-requests/list-partner-referral-requests) | Request business attribution and manage owner approval.                      |
+| [Partner Referral Requests](/api-reference/beta/partner-referral-requests/list-partner-referral-requests) | Request business or partner attribution and manage approval.                 |
 | [Partners](/api-reference/beta/partners/partner)                                                          | Your partner profile, referral links, payout rates, and referred businesses. |
 
 ### Workforce

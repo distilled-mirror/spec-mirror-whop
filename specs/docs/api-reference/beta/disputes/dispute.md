@@ -633,9 +633,9 @@ Use the Disputes API to list disputes, edit the evidence packet while a dispute 
     </ResponseField>
 
     <ResponseField name="status" type="string" required>
-      Where the dispute stands. `needs_response` is awaiting evidence, `under_review` is with the processor, `won` returned the funds to the seller, `lost` returned them to the customer, and `closed` ended without a ruling. A dispute past its `evidence_due_at` reports `under_review` — the window to respond has closed.
+      Where the dispute stands. `needs_response` is awaiting evidence, `under_review` is with the processor, `won` returned the funds to the seller, `lost` returned them to the customer, and `closed` ended without a ruling. The `warning_` statuses are the same stages for an inquiry, which moves no funds. A dispute past its `evidence_due_at` reports `under_review` — the window to respond has closed.
 
-      Available options: `needs_response`, `under_review`, `won`, `lost`, `closed`
+      Available options: `needs_response`, `warning_needs_response`, `under_review`, `warning_under_review`, `won`, `lost`, `closed`, `warning_closed`
     </ResponseField>
 
     <ResponseField name="updated_at" type="string" required>

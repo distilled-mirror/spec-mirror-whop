@@ -6,7 +6,7 @@
 
 An Account represents a person or business on Whop that can have its own profile, wallet, and account-scoped settings. Use accounts for customers, creators, merchants, sellers, or connected businesses your integration supports.
 
-Use the Accounts API to create accounts, list accounts visible to your credentials, retrieve or update an account, suspend a connected account managed by your platform, and retrieve the account associated with the current API key.
+Use the Accounts API to create accounts, list accounts visible to your credentials, retrieve or update an account, suspend or delete a connected account managed by your platform, and retrieve the account associated with the current API key.
 
 The `business_type`, `industry_group`, and `industry_type` fields classify accounts. See the [business types and industries glossary](#business-types-and-industries-glossary) for every valid value.
 
@@ -27,6 +27,7 @@ The `business_type`, `industry_group`, and `industry_type` fields classify accou
 | [Update Account](/api-reference/beta/accounts/update-account)                             | <Badge color="orange" size="sm" stroke>PATCH</Badge> `/accounts/{id}`                     |
 | [Update Account Fees](/api-reference/beta/accounts/update-account-fees)                   | <Badge color="orange" size="sm" stroke>PATCH</Badge> `/accounts/{account_id}/fees`        |
 | [Update Account Preferences](/api-reference/beta/accounts/update-account-preferences)     | <Badge color="orange" size="sm" stroke>PATCH</Badge> `/accounts/{account_id}/preferences` |
+| [Delete a Connected Account](/api-reference/beta/accounts/delete-a-connected-account)     | <Badge color="red" size="sm" stroke>DELETE</Badge> `/accounts/{id}`                       |
 
 ## Fee Markups
 

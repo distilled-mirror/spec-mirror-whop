@@ -4,7 +4,7 @@
 
 # Transfer created
 
-> Sent when a transfer is created
+> Sent to participating accounts when a transfer succeeds, alongside `transfer.completed`. This event does not indicate entry into `processing`.
 
 Required permissions:
  - `webhook_receive:transfers`

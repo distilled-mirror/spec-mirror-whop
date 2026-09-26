@@ -4,7 +4,7 @@
 
 # Decline a Partner Referral Request
 
-> Denies a pending manual request as a current business owner. Repeating denial returns the denied request. Use a Whop login session or an account API key with `partner:referral_request:decline`. The key must have been created by the account's current owner. Account API keys can respond only to requests for the key's account.
+> Declines a pending attribution request for you or a business you own, marking it as denied without assigning the requesting partner as a referrer.
 
 
 

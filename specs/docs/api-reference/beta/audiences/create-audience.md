@@ -47,7 +47,7 @@ info:
   termsOfService: https://whop.com/tos-developer-api/
   title: Whop API
   version: 1.0.0
-  x-api-version-date: 2026-09-24-1
+  x-api-version-date: '2026-09-25'
 servers:
   - description: Production Whop API
     url: https://api.whop.com/api/v1
@@ -63,9 +63,9 @@ tags:
 
 
       Use the Accounts API to create accounts, list accounts visible to your
-      credentials, retrieve or update an account, suspend a connected account
-      managed by your platform, and retrieve the account associated with the
-      current API key.
+      credentials, retrieve or update an account, suspend or delete a connected
+      account managed by your platform, and retrieve the account associated with
+      the current API key.
     name: Accounts
     x-whop-summary: 'A business on Whop: profile, wallet, capabilities, settings.'
   - description: >
@@ -218,9 +218,10 @@ tags:
     x-whop-summary: Money returned to a buyer from a payment.
   - description: >
       A Confirmation Token is a single-use, short-lived reference to a payment
-      method and billing details collected from a buyer. Its response contains
-      only a display-safe preview and never returns the underlying payment
-      credential.
+      method and billing details collected from a buyer. Its response never
+      returns the underlying payment credential. Public callers receive a
+      billing preview; bearer-authenticated callers with `payment:basic:read` on
+      the token’s account also receive the collected billing address.
 
 
       Whop Elements mint the token in your buyer-facing collection flow and hand
@@ -371,6 +372,20 @@ tags:
       Use the Transfers API to create a transfer, list previous transfers, and
       retrieve a transfer by ID when reconciling money movement between accounts
       or users.
+
+
+      Subscribe to `transfer.completed` and `transfer.failed` for outcomes
+      instead of polling. Each participating account can subscribe to these
+      events. `transfer.created` is also emitted on success, not when processing
+      starts. A failed transfer can be retried under the same ID and later
+      succeed; retrieve the transfer to reconcile its current status.
+
+
+      A successful balance transfer credits the recipient's available balance
+      unless a release date applies. Transfers funded from pending balance
+      retain a release date and credit pending balance; applicable recipient
+      reserves or fraud holds can keep funds unavailable. `succeeded` confirms
+      the transfer completed, not that all funds are withdrawable.
     name: Transfers
     x-whop-summary: Move funds between Whop accounts and users.
   - description: >
@@ -393,6 +408,21 @@ tags:
       swaps, and retrieve status until the transaction completes.
     name: Swaps
     x-whop-summary: Convert a balance between currencies.
+  - description: >
+      A Trade records an order batch, cancellation, or leverage change submitted
+      to a trading provider from an account or user's Whop-managed wallet. Its
+      `status` tracks the submission, not whether orders filled.
+
+
+      Use the Trades API to place limit or market orders with optional
+      take-profit and stop-loss protection, cancel a submitted batch, set
+      leverage, and list or retrieve past submissions. Read live margin,
+      positions, and open orders by passing `include_trading=true` to Retrieve
+      Account or Retrieve User with `id=me`. Whop's builder fee is added to each
+      order. Hyperliquid perpetuals are currently supported; email
+      support@whop.com to request access.
+    name: Trades
+    x-whop-summary: Submit and track perpetual trades.
   - description: >
       A Product is a digital good or service sold on Whop. Products may contain
       plans for pricing and/or experiences for content delivery.
@@ -493,27 +523,11 @@ tags:
     name: Shipments
     x-whop-summary: Track the delivery of an order by its carrier tracking number.
   - description: >
-      A Partner Referral Request records a partner's request for a business to
-      attribute them as its referring partner. Manual requests start pending and
-      require a business owner's acceptance before attribution takes effect.
-
-
-      Enrolled, verified Whop partners can create, view, and cancel their
-      requests. Business owners can accept or decline incoming requests. List
-      requests by business, partner, request type, or status.
-
-
-      Authenticate with your Whop login or an account API key created by that
-      account's current owner. Account API keys act as their account owner when
-      creating or cancelling requests; that owner must be enrolled, verified,
-      and not suspended. Keys can view their owner's sent requests and incoming
-      requests for the key's account, and can accept or decline requests only
-      for that account. API keys require the corresponding
-      `partner:referral_request:read`, `partner:referral_request:create`,
-      `partner:referral_request:accept`, `partner:referral_request:decline`, or
-      `partner:referral_request:cancel` permission.
+      Partner Referral Requests let partners create referral links and request
+      attribution for an existing business or enrolled partner, with manual
+      requests requiring recipient approval.
     name: Partner Referral Requests
-    x-whop-summary: Request business attribution and manage owner approval.
+    x-whop-summary: Request business or partner attribution and manage approval.
   - description: >
       Get started at [whop.com/network](https://whop.com/network). A Partner is
       a user who refers people and businesses to Whop. The partner profile
@@ -1079,7 +1093,7 @@ components:
       name: Api-Version-Date
       required: false
       schema:
-        example: 2026-09-24-1
+        example: '2026-09-25'
         type: string
     IdempotencyKey:
       description: >-

@@ -4,7 +4,7 @@
 
 # Cancel a Partner Referral Request
 
-> Cancels a pending manual request as its eligible requesting partner. Repeating cancellation returns the cancelled request. Use a Whop login session or an account API key with `partner:referral_request:cancel`. The key must have been created by the account's current owner. Account API keys cancel requests as their account owner.
+> Cancels a pending attribution request you sent so the recipient can no longer accept it, and returns the cancelled request.
 
 
 

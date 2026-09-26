@@ -4,7 +4,7 @@
 
 # Accept a Partner Referral Request
 
-> Accepts a pending manual request as a current business owner and attributes the business to the verified requesting partner. Existing active attribution blocks acceptance. Repeating acceptance returns the accepted request. Use a Whop login session or an account API key with `partner:referral_request:accept`. The key must have been created by the account's current owner. Account API keys can respond only to requests for the key's account.
+> Accepts a pending attribution request as the receiving user or business owner, assigning the requesting partner as that user's or business's referrer.
 
 
 

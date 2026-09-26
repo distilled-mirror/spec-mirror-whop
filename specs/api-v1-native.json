@@ -5,7 +5,7 @@
     "termsOfService": "https://whop.com/tos-developer-api/",
     "title": "Whop API",
     "version": "1.0.0",
-    "x-api-version-date": "2026-09-24-1"
+    "x-api-version-date": "2026-09-25"
   },
   "servers": [
     {
@@ -19,7 +19,7 @@
   ],
   "tags": [
     {
-      "description": "An Account represents a person or business on Whop that can have its own profile, wallet, and account-scoped settings. Use accounts for customers, creators, merchants, sellers, or connected businesses your integration supports.\n\nUse the Accounts API to create accounts, list accounts visible to your credentials, retrieve or update an account, suspend a connected account managed by your platform, and retrieve the account associated with the current API key.\n",
+      "description": "An Account represents a person or business on Whop that can have its own profile, wallet, and account-scoped settings. Use accounts for customers, creators, merchants, sellers, or connected businesses your integration supports.\n\nUse the Accounts API to create accounts, list accounts visible to your credentials, retrieve or update an account, suspend or delete a connected account managed by your platform, and retrieve the account associated with the current API key.\n",
       "name": "Accounts",
       "x-whop-summary": "A business on Whop: profile, wallet, capabilities, settings."
     },
@@ -78,7 +78,7 @@
       "x-whop-summary": "Money returned to a buyer from a payment."
     },
     {
-      "description": "A Confirmation Token is a single-use, short-lived reference to a payment method and billing details collected from a buyer. Its response contains only a display-safe preview and never returns the underlying payment credential.\n\nWhop Elements mint the token in your buyer-facing collection flow and hand you its `ctok_` ID to send to the Payments API from your server. Retrieve a token to display its payment method and billing preview or check whether it is still usable.\n",
+      "description": "A Confirmation Token is a single-use, short-lived reference to a payment method and billing details collected from a buyer. Its response never returns the underlying payment credential. Public callers receive a billing preview; bearer-authenticated callers with `payment:basic:read` on the token’s account also receive the collected billing address.\n\nWhop Elements mint the token in your buyer-facing collection flow and hand you its `ctok_` ID to send to the Payments API from your server. Retrieve a token to display its payment method and billing preview or check whether it is still usable.\n",
       "name": "Confirmation Tokens",
       "x-whop-summary": "A short-lived reference to payment details collected from a buyer."
     },
@@ -129,7 +129,7 @@
       "x-whop-summary": "Configure platform-sponsored card cashback."
     },
     {
-      "description": "Transfers move value between identities on Whop. They are used for account-to-account money movement, user payouts inside Whop, crypto transfers, and claim links depending on the destination type.\n\nUse the Transfers API to create a transfer, list previous transfers, and retrieve a transfer by ID when reconciling money movement between accounts or users.\n",
+      "description": "Transfers move value between identities on Whop. They are used for account-to-account money movement, user payouts inside Whop, crypto transfers, and claim links depending on the destination type.\n\nUse the Transfers API to create a transfer, list previous transfers, and retrieve a transfer by ID when reconciling money movement between accounts or users.\n\nSubscribe to `transfer.completed` and `transfer.failed` for outcomes instead of polling. Each participating account can subscribe to these events. `transfer.created` is also emitted on success, not when processing starts. A failed transfer can be retried under the same ID and later succeed; retrieve the transfer to reconcile its current status.\n\nA successful balance transfer credits the recipient's available balance unless a release date applies. Transfers funded from pending balance retain a release date and credit pending balance; applicable recipient reserves or fraud holds can keep funds unavailable. `succeeded` confirms the transfer completed, not that all funds are withdrawable.\n",
       "name": "Transfers",
       "x-whop-summary": "Move funds between Whop accounts and users."
     },
@@ -142,6 +142,11 @@
       "description": "Swaps convert value between supported tokens, chains, or wallet destinations for an account. A swap quote describes the expected output, fees, and approval requirements before you create the swap.\n\nUse the Swaps API to quote a conversion, create the swap, list recent swaps, and retrieve status until the transaction completes.\n",
       "name": "Swaps",
       "x-whop-summary": "Convert a balance between currencies."
+    },
+    {
+      "description": "A Trade records an order batch, cancellation, or leverage change submitted to a trading provider from an account or user's Whop-managed wallet. Its `status` tracks the submission, not whether orders filled.\n\nUse the Trades API to place limit or market orders with optional take-profit and stop-loss protection, cancel a submitted batch, set leverage, and list or retrieve past submissions. Read live margin, positions, and open orders by passing `include_trading=true` to Retrieve Account or Retrieve User with `id=me`. Whop's builder fee is added to each order. Hyperliquid perpetuals are currently supported; email support@whop.com to request access.\n",
+      "name": "Trades",
+      "x-whop-summary": "Submit and track perpetual trades."
     },
     {
       "description": "A Product is a digital good or service sold on Whop. Products may contain plans for pricing and/or experiences for content delivery.\n\nUse the Products API to search the public marketplace, list an account's products, retrieve a product, and create, update, or delete products.\n",
@@ -183,9 +188,9 @@
       "x-whop-summary": "Track the delivery of an order by its carrier tracking number."
     },
     {
-      "description": "A Partner Referral Request records a partner's request for a business to attribute them as its referring partner. Manual requests start pending and require a business owner's acceptance before attribution takes effect.\n\nEnrolled, verified Whop partners can create, view, and cancel their requests. Business owners can accept or decline incoming requests. List requests by business, partner, request type, or status.\n\nAuthenticate with your Whop login or an account API key created by that account's current owner. Account API keys act as their account owner when creating or cancelling requests; that owner must be enrolled, verified, and not suspended. Keys can view their owner's sent requests and incoming requests for the key's account, and can accept or decline requests only for that account. API keys require the corresponding `partner:referral_request:read`, `partner:referral_request:create`, `partner:referral_request:accept`, `partner:referral_request:decline`, or `partner:referral_request:cancel` permission.\n",
+      "description": "Partner Referral Requests let partners create referral links and request attribution for an existing business or enrolled partner, with manual requests requiring recipient approval.\n",
       "name": "Partner Referral Requests",
-      "x-whop-summary": "Request business attribution and manage owner approval."
+      "x-whop-summary": "Request business or partner attribution and manage approval."
     },
     {
       "description": "Get started at [whop.com/network](https://whop.com/network). A Partner is a user who refers people and businesses to Whop. The partner profile includes enrollment, active direct business referral counts, and default payout terms.\n\nRetrieve your profile with `/partners/{id}`. Use `/partner_referral_requests` to create and manage referral links and their rewards. You can also enroll in the partner program, review referred users and businesses, track earnings, and see the partner leaderboard.\n",
@@ -336,7 +341,7 @@
         "Transfers",
         "Deposits",
         "Swaps",
-        "Trading"
+        "Trades"
       ]
     },
     {
@@ -2879,19 +2884,46 @@
                         "null"
                       ]
                     },
+                    "economic_intelligence_fee_percentage": {
+                      "description": "Percentage of volume charged while Economic Intelligence is on, such as `1.5` for 1.5%. `null` when Economic Intelligence is off.",
+                      "example": null,
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
                     "economic_intelligence_offers": {
-                      "description": "Durations the account can choose from to turn on Economic Intelligence, each with its fee. `null` while Economic Intelligence is on or during a free trial.",
+                      "description": "Durations the account can choose from to turn on Economic Intelligence, each with its fee. `null` while Economic Intelligence is on or the account is still on the Economic Intelligence waitlist.",
                       "items": {
                         "properties": {
-                          "duration_days": {
-                            "description": "How many days Economic Intelligence stays on. Pass this value as `economic_intelligence_duration_days` to turn it on.",
-                            "example": 90,
+                          "duration": {
+                            "description": "What period of time Economic Intelligence stays on.",
+                            "example": 7,
                             "type": "integer"
+                          },
+                          "duration_unit": {
+                            "description": "The unit of time the duration is in (hours or days)",
+                            "enum": [
+                              "hours",
+                              "days"
+                            ],
+                            "example": "days",
+                            "type": "string"
                           },
                           "fee_percentage": {
                             "description": "Percentage of volume charged while Economic Intelligence is on, such as `1.5` for 1.5%.",
-                            "example": 1.25,
+                            "example": 1,
                             "type": "number"
+                          },
+                          "key": {
+                            "description": "The unique identifier for this duration. Pass this value as `economic_intelligence_duration_key` to turn it on.",
+                            "enum": [
+                              "7_days",
+                              "1_day",
+                              "1_hour"
+                            ],
+                            "example": "7_days",
+                            "type": "string"
                           },
                           "recommended": {
                             "description": "Whether Whop recommends this duration. Exactly one offer is recommended.",
@@ -2900,7 +2932,9 @@
                           }
                         },
                         "required": [
-                          "duration_days",
+                          "key",
+                          "duration",
+                          "duration_unit",
                           "fee_percentage",
                           "recommended"
                         ],
@@ -2933,6 +2967,7 @@
                     "dispute_fighter_enabled",
                     "economic_intelligence",
                     "economic_intelligence_ends_at",
+                    "economic_intelligence_fee_percentage",
                     "economic_intelligence_offers",
                     "subscription_failure_behavior"
                   ],
@@ -3001,7 +3036,7 @@
         }
       ],
       "patch": {
-        "description": "Updates the account's preferences. Each top-level key present in the body is replaced as a whole; omitted keys are left untouched.\n\nRequired scopes depend on the preferences being updated:\n\n| Preferences | Required scope |\n| --- | --- |\n| `ads_payment_methods`, `ads_reporting_currency`, `ads_scheduling_timezone`, `ads_triple_whale_integration`, `ads_certifications` | `ad_campaign:create` |\n| `cards_auto_top_up`, `cards_notifications` | `payout:account:update` |\n| `dispute_fighter_enabled` | `payment:dispute` |\n| `economic_intelligence_duration_days` | `company:update` |\n\nWhen updating preferences from multiple rows, all corresponding scopes are required for the account.\n",
+        "description": "Updates the account's preferences. Each top-level key present in the body is replaced as a whole; omitted keys are left untouched.\n\nRequired scopes depend on the preferences being updated:\n\n| Preferences | Required scope |\n| --- | --- |\n| `ads_payment_methods`, `ads_reporting_currency`, `ads_scheduling_timezone`, `ads_triple_whale_integration`, `ads_certifications` | `ad_campaign:create` |\n| `cards_auto_top_up`, `cards_notifications` | `payout:account:update` |\n| `dispute_fighter_enabled` | `payment:dispute` |\n| `economic_intelligence_duration_key` | `company:update` |\n\nWhen updating preferences from multiple rows, all corresponding scopes are required for the account.\n",
         "operationId": "updateAccountPreferences",
         "parameters": [
           {
@@ -3135,15 +3170,15 @@
                     "example": true,
                     "type": "boolean"
                   },
-                  "economic_intelligence_duration_days": {
-                    "description": "Turns on Economic Intelligence for this many days, at the fee listed for that duration in `economic_intelligence_offers`. It can't be changed or turned off until `economic_intelligence_ends_at`, and it can't be turned on during a free trial. Requires the `company:update` scope on your API key.",
+                  "economic_intelligence_duration_key": {
+                    "description": "Turns on Economic Intelligence for the duration with this `key` in `economic_intelligence_offers`, at that duration's fee. It can't be changed or turned off until `economic_intelligence_ends_at`, and it can only be turned on once the account is off the Economic Intelligence waitlist. Requires the `company:update` scope on your API key.",
                     "enum": [
-                      7,
-                      30,
-                      90
+                      "7_days",
+                      "1_day",
+                      "1_hour"
                     ],
-                    "example": 90,
-                    "type": "integer"
+                    "example": "7_days",
+                    "type": "string"
                   },
                   "subscription_failure_behavior": {
                     "description": "What happens to a subscription once every retry of a renewal payment has failed. `cancel` (the default) cancels it. `none` leaves it past due and keeps billing it each period; access follows the account's past-due access setting. Requires company:manage_checkout permission.",
@@ -3549,19 +3584,46 @@
                         "null"
                       ]
                     },
+                    "economic_intelligence_fee_percentage": {
+                      "description": "Percentage of volume charged while Economic Intelligence is on, such as `1.5` for 1.5%. `null` when Economic Intelligence is off.",
+                      "example": 1.5,
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
                     "economic_intelligence_offers": {
-                      "description": "Durations the account can choose from to turn on Economic Intelligence, each with its fee. `null` while Economic Intelligence is on or during a free trial.",
+                      "description": "Durations the account can choose from to turn on Economic Intelligence, each with its fee. `null` while Economic Intelligence is on or the account is still on the Economic Intelligence waitlist.",
                       "items": {
                         "properties": {
-                          "duration_days": {
-                            "description": "How many days Economic Intelligence stays on. Pass this value as `economic_intelligence_duration_days` to turn it on.",
-                            "example": 90,
+                          "duration": {
+                            "description": "What period of time Economic Intelligence stays on.",
+                            "example": 7,
                             "type": "integer"
+                          },
+                          "duration_unit": {
+                            "description": "The unit of time the duration is in (hours or days)",
+                            "enum": [
+                              "hours",
+                              "days"
+                            ],
+                            "example": "days",
+                            "type": "string"
                           },
                           "fee_percentage": {
                             "description": "Percentage of volume charged while Economic Intelligence is on, such as `1.5` for 1.5%.",
-                            "example": 1.25,
+                            "example": 1,
                             "type": "number"
+                          },
+                          "key": {
+                            "description": "The unique identifier for this duration. Pass this value as `economic_intelligence_duration_key` to turn it on.",
+                            "enum": [
+                              "7_days",
+                              "1_day",
+                              "1_hour"
+                            ],
+                            "example": "7_days",
+                            "type": "string"
                           },
                           "recommended": {
                             "description": "Whether Whop recommends this duration. Exactly one offer is recommended.",
@@ -3570,7 +3632,9 @@
                           }
                         },
                         "required": [
-                          "duration_days",
+                          "key",
+                          "duration",
+                          "duration_unit",
                           "fee_percentage",
                           "recommended"
                         ],
@@ -3603,6 +3667,7 @@
                     "dispute_fighter_enabled",
                     "economic_intelligence",
                     "economic_intelligence_ends_at",
+                    "economic_intelligence_fee_percentage",
                     "economic_intelligence_offers",
                     "subscription_failure_behavior"
                   ],
@@ -3756,6 +3821,80 @@
       }
     },
     "/accounts/{id}": {
+      "delete": {
+        "description": "Deletes a connected account directly owned by the authenticated platform account. The account must have no settled, pending, or reserved balance in any currency and no active, trialing, or past-due memberships. The account stops resolving immediately, and its products, plans, and team access are removed in the background; payment history is retained. Deletion cannot be undone through the API. This cannot delete the platform account itself or an account owned by another platform.",
+        "operationId": "deleteAccount",
+        "parameters": [
+          {
+            "description": "Connected account ID, prefixed `biz_`.",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "deleted": {
+                      "description": "Always true.",
+                      "example": true,
+                      "type": "boolean"
+                    },
+                    "id": {
+                      "description": "ID of the deleted connected account.",
+                      "example": "biz_xxxxxxxxxxxxxx",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "deleted"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Connected account deleted."
+          },
+          "400": {
+            "$ref": "#/components/responses/InvalidParameters",
+            "description": "Connected account still has active memberships or a balance."
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized",
+            "description": "Authentication required."
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden",
+            "description": "API key lacks the child-account deletion scope."
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound",
+            "description": "Connected account not found."
+          }
+        },
+        "security": [
+          {
+            "accountApiKeyOrAccountUserTokenAuth": [
+              "company:delete_child"
+            ]
+          }
+        ],
+        "summary": "Delete a Connected Account",
+        "tags": [
+          "Accounts"
+        ],
+        "x-whop-credentials": [
+          "account_api_key",
+          "account_user_token"
+        ]
+      },
       "get": {
         "description": "Retrieves a single account by ID or public route when it is visible to the credential, including its crypto wallet. The reserved id `me` retrieves the account associated with the current Account API key; user tokens have no single account, so they must address one by ID or route.",
         "operationId": "retrieveAccount",
@@ -10757,9 +10896,10 @@
                       "2026-09-22-4",
                       "2026-09-23",
                       "2026-09-24",
-                      "2026-09-24-1"
+                      "2026-09-24-1",
+                      "2026-09-25"
                     ],
-                    "example": "2026-09-24-1",
+                    "example": "2026-09-25",
                     "type": "string"
                   },
                   "expires_at": {
@@ -11205,9 +11345,10 @@
                       "2026-09-22-4",
                       "2026-09-23",
                       "2026-09-24",
-                      "2026-09-24-1"
+                      "2026-09-24-1",
+                      "2026-09-25"
                     ],
-                    "example": "2026-09-24-1",
+                    "example": "2026-09-25",
                     "type": "string"
                   },
                   "expires_at": {
@@ -19781,7 +19922,7 @@
     },
     "/confirmation_tokens/{id}": {
       "get": {
-        "description": "Retrieves a token's display-safe preview — never the underlying payment credential. Public and rate-limited: the account_id query param must match the account the token was minted for.",
+        "description": "Retrieves a token's payment method and billing details — never the underlying payment credential. Public and rate-limited: the account_id query param must match the account the token was minted for. A bearer credential with payment:basic:read on that account also receives the collected billing address.",
         "operationId": "retrieveConfirmationToken",
         "parameters": [
           {
@@ -19810,7 +19951,14 @@
             "description": "account mismatch"
           }
         },
-        "security": [],
+        "security": [
+          {},
+          {
+            "bearerAuth": [
+              "payment:basic:read"
+            ]
+          }
+        ],
         "summary": "Retrieve Confirmation Token",
         "tags": [
           "Confirmation Tokens"
@@ -20537,7 +20685,7 @@
             }
           },
           {
-            "description": "Only disputes in these statuses. Repeat the parameter to pass several — one paginated list covers all of them. Covers both chargebacks and inquiries at each stage. A `needs_response` dispute whose evidence deadline has passed reports and filters as `under_review` instead.",
+            "description": "Only disputes in these statuses. Repeat the parameter to pass several — one paginated list covers all of them. Inquiries match only the `warning_` statuses. A `needs_response` dispute whose evidence deadline has passed reports and filters as `under_review` instead.",
             "in": "query",
             "name": "status",
             "required": false,
@@ -20545,10 +20693,13 @@
               "items": {
                 "enum": [
                   "needs_response",
+                  "warning_needs_response",
                   "under_review",
+                  "warning_under_review",
                   "won",
                   "lost",
-                  "closed"
+                  "closed",
+                  "warning_closed"
                 ],
                 "example": "needs_response",
                 "type": "string"
@@ -20720,10 +20871,13 @@
               "items": {
                 "enum": [
                   "needs_response",
+                  "warning_needs_response",
                   "under_review",
+                  "warning_under_review",
                   "won",
                   "lost",
-                  "closed"
+                  "closed",
+                  "warning_closed"
                 ],
                 "example": "needs_response",
                 "type": "string"
@@ -20797,6 +20951,18 @@
                               "example": 0,
                               "type": "integer"
                             },
+                            "warning_closed": {
+                              "example": 0,
+                              "type": "integer"
+                            },
+                            "warning_needs_response": {
+                              "example": 0,
+                              "type": "integer"
+                            },
+                            "warning_under_review": {
+                              "example": 0,
+                              "type": "integer"
+                            },
                             "won": {
                               "example": 0,
                               "type": "integer"
@@ -20804,10 +20970,13 @@
                           },
                           "required": [
                             "needs_response",
+                            "warning_needs_response",
                             "under_review",
+                            "warning_under_review",
                             "won",
                             "lost",
-                            "closed"
+                            "closed",
+                            "warning_closed"
                           ],
                           "type": "object"
                         }
@@ -25712,7 +25881,7 @@
                     "type": "array"
                   },
                   "filters": {
-                    "description": "Resource-specific filters. For native REST resources (`payouts`, `transfers`, `products`) these are the resource's own list query params; for dashboard tables they mirror the dashboard table filters.\n\n<details>\n<summary>Filters by resource (25)</summary>\n\n<details>\n<summary>ad_campaigns (4)</summary>\n\nMirrors the filtering query params of `GET /api/v1/ad_campaigns`.\n\n- `created_after` `string` — Only return campaigns created after this timestamp.\n- `created_before` `string` — Only return campaigns created before this timestamp.\n- `query` `string` — Filter campaigns by a title or ID substring.\n- `status` `string` — Only return campaigns with this status. One of `draft`, `active`, `paused`, `payment_failed`.\n\n</details>\n<details>\n<summary>ad_groups (6)</summary>\n\nMirrors the filtering query params of `GET /api/v1/ad_groups`.\n\n- `ad_campaign_id` `string` — Filter to ad groups in this campaign.\n- `ad_campaign_ids` `string[]` — Filter to ad groups in these campaigns (max 100). Repeat the parameter for each id (ad_campaign_ids=a&ad_campaign_ids=b).\n- `created_after` `string` — Only return ad groups created after this timestamp.\n- `created_before` `string` — Only return ad groups created before this timestamp.\n- `query` `string` — Filter ad groups by a title or ID substring.\n- `status` `string` — Filter to ad groups with this status. One of `active`, `paused`, `rejected`, `duplicating`.\n\n</details>\n<details>\n<summary>ads (8)</summary>\n\nMirrors the filtering query params of `GET /api/v1/ads`.\n\n- `ad_campaign_id` `string` — Only return ads in this ad campaign.\n- `ad_campaign_ids` `string[]` — Only return ads in these ad campaigns (max 100). Repeat the parameter for each id (ad_campaign_ids=a&ad_campaign_ids=b).\n- `ad_group_id` `string` — Only return ads in this ad group.\n- `ad_group_ids` `string[]` — Only return ads in these ad groups (max 100). Repeat the parameter for each id (ad_group_ids=a&ad_group_ids=b).\n- `created_after` `string` — Only return ads created after this timestamp.\n- `created_before` `string` — Only return ads created before this timestamp.\n- `query` `string` — Filter ads by a title or ID substring.\n- `status` `string` — Only return ads with this status. One of `active`, `paused`, `in_review`, `rejected`.\n\n</details>\n<details>\n<summary>apps (6)</summary>\n\nMirrors the filtering query params of `GET /api/v1/apps`.\n\n- `app_type` `string` — Filter apps by the type of end-user they are built for. Apps of type `website` are left out unless you ask for them by name. One of `b2b_app`, `b2c_app`, `company_app`, `component`, `website`.\n- `query` `string` — A search string matched against app names.\n- `recommended` `boolean` — Only return apps Whop recommends (or, with `false`, only those it does not), independently of verification status.\n- `verified` `boolean` — Only return apps whose Whop verification status matches this value. Omit this filter to include every verification status the caller can see.\n- `verified_apps_only` `boolean` — Legacy compatibility filter. Use `verified` for field equality. `true` returns verified apps; clients pinned before `2026-08-25-2` retain the earlier public website discovery behavior.\n- `view_type` `string` — Only return apps supporting this view type, such as `dashboard` or `hub`. One of `hub`, `discover`, `dash`, `dashboard`, `analytics`, `skills`, `openapi`.\n\n</details>\n<details>\n<summary>audiences (3)</summary>\n\nMirrors the filtering query params of `GET /api/v1/audiences`.\n\n- `audience_id` `string` — Audience ID, prefixed `adaud_`, used to filter the response to one audience.\n- `audience_type` `string` — Filter by custom or lookalike audiences. One of `custom`, `lookalike`.\n- `source_type` `string` — Filter by uploaded customer lists, Whop People filters, or social engagement. One of `csv_upload`, `people_filter`, `engagement`.\n\n</details>\n<details>\n<summary>bounties (8)</summary>\n\nMirrors the filtering query params of `GET /api/v1/bounties`.\n\n- `business_goal_type` `string` — Filter by the poster's declared goal. Bounties created before the goal taxonomy carry no goal and never match this filter. One of `clipping`, `post_engagement`, `owned_account_growth`, `ugc_content`, `local_activation`, `data_capture`, `other`.\n- `country` `string` — Only bounties workable from this country, as an ISO 3166-1 alpha-2 code. Bounties with no country targeting are workable worldwide and always match.\n- `created_after` `string` — Only bounties created after this ISO 8601 timestamp.\n- `created_before` `string` — Only bounties created before this ISO 8601 timestamp.\n- `experience_id` `string` — Only bounties posted to this forum experience, prefixed `exp_`. An unknown experience, or one outside the caller's scope, matches nothing.\n- `query` `string` — Substring match on the bounty title or ID.\n- `status` `string` — Filter by lifecycle state. One of `scheduled`, `open`, `closed`, `completed`, `canceled`.\n- `user_id` `string` — List the bounties this user participated in (`user_` tag). Must be the authenticated user.\n\n</details>\n<details>\n<summary>bounty_submissions (4)</summary>\n\nMirrors the filtering query params of `GET /api/v1/bounty_submissions`.\n\n- `bounty_id` `string` — Only submissions on this bounty (`bnty_` tag).\n- `created_after` `string` — Only submissions created after this ISO 8601 timestamp.\n- `created_before` `string` — Only submissions created before this ISO 8601 timestamp.\n- `status` `string` — Filter by lifecycle state. One of `in_progress`, `submitted`, `approved`, `denied`.\n\n</details>\n<details>\n<summary>card_transactions (6)</summary>\n\nMirrors the filtering query params of `GET /api/v1/card_transactions`.\n\n- `card_id` `string[]` — Return only transactions charged to these cards, each prefixed `icrd_`.\n- `cardholder_id` `string[]` — Return only transactions on cards assigned to these users, each prefixed `user_`.\n- `created_after` `string` — Return only transactions authorized at or after this ISO 8601 timestamp.\n- `created_before` `string` — Return only transactions authorized at or before this ISO 8601 timestamp.\n- `status` `string` — Return only transactions with this status. One of `pending`, `completed`, `reversed`, `declined`.\n- `transaction_ids` `string[]` — Return only these card transactions, each prefixed `citx_`. Repeat the parameter, or pass one comma-separated value.\n\n</details>\n<details>\n<summary>checkout_configurations (3)</summary>\n\nMirrors the filtering query params of `GET /api/v1/checkout_configurations`.\n\n- `created_after` `string` — Only return checkout configurations created after this ISO 8601 timestamp.\n- `created_before` `string` — Only return checkout configurations created before this ISO 8601 timestamp.\n- `plan_id` `string` — Only return checkout configurations for this plan ID, prefixed `plan_`.\n\n</details>\n<details>\n<summary>disputes (4)</summary>\n\nMirrors the filtering query params of `GET /api/v1/disputes`.\n\n- `created_after` `string` — Only disputes opened after this ISO 8601 timestamp.\n- `created_before` `string` — Only disputes opened before this ISO 8601 timestamp.\n- `currency` `string` — Only disputes in this three-letter ISO currency.\n- `status` `string[]` — Only disputes in these statuses. Repeat the parameter to pass several — one paginated list covers all of them. Covers both chargebacks and inquiries at each stage. A `needs_response` dispute whose evidence deadline has passed reports and filters as `under_review` instead.\n\n</details>\n<details>\n<summary>events (14)</summary>\n\nMirrors the filtering query params of `GET /api/v1/events`.\n\n- `attribution_model` `string` — Attribution model for the source filter (defaults to last_touch). One of `last_touch`, `first_touch`.\n- `browser` `string` — Browser families to filter by, comma-separated (e.g. Chrome, Mobile Safari).\n- `city` `string` — Cities to filter by, comma-separated.\n- `country` `string` — Country codes to filter by, comma-separated.\n- `device` `string` — Device families to filter by, comma-separated (e.g. iPhone, Mac).\n- `event` `string` — Full event names to filter by, comma-separated (payment.completed, pixel.lead, pixel.page, pixel.custom:<name>) — the same vocabulary the events / people metrics use.\n- `from` `string` — Start of the time range as an ISO 8601 timestamp. Required when identifier is omitted.\n- `hostname` `string` — Page hostnames to filter by, comma-separated.\n- `identifier` `string` — Any hard identifier of the person: a person ID (prsn_*), user ID, email, phone number, or a tracking cookie value (wuid, anonymous ID, fbp/fbc/ttp/ga). Omit to list recent events for the account.\n- `os` `string` — Operating system families to filter by, comma-separated (e.g. iOS, Windows).\n- `page` `string` — Page paths to filter by, comma-separated.\n- `source` `string` — Canonical source path, exact or with a trailing :* prefix (whop:<campaign>:*, ext:meta:*, referrer:<domain>, direct, unknown). Selects conversions credited to this source.\n- `to` `string` — End of the time range as an ISO 8601 timestamp. Required when identifier is omitted; otherwise defaults to now.\n- `utm_source` `string` — utm_source values to filter by, comma-separated.\n\n</details>\n<details>\n<summary>financial-activity (12)</summary>\n\nMirrors the filtering query params of `GET /api/v1/financial_activity`.\n\n- `activity_id` `string` — Optional ledger activity ID (for example `line_3`). Returns at most that one activity.\n- `available_after` `string` — Only include balance credits and debits available on or after this `YYYY-MM-DD` date (UTC), distinct from posted_at. Requires currency.\n- `available_before` `string` — Only include balance credits and debits available on or before this `YYYY-MM-DD` date (UTC). Set equal to available_after for a single day. Requires currency.\n- `currency` `string` — Optional currency code filter, for example `usd`.\n- `exclude_internal_movements` `boolean` — Whether to exclude balance reservations and balanced movements between the account's own balances.\n- `include_owned_accounts` `boolean` — When true, aggregates the authenticated user's personal ledger with the businesses they own (owner role with balance read) into one feed. Requires user_id to be the authenticated user; cannot be combined with account_id or the settlement-date filters. Each returned row includes the owning `account`.\n- `include_resource` `boolean` — Whether to include the `resource` field in the response or not. Consider passing `false` if you need a fast response without as many rich details.\n- `line_types` `string[]` — Optional ledger line categories to include. Some categories (for example `onchain_deposit`, which covers inbound crypto deposits such as MoonPay onramps) are only returned when explicitly requested here.\n- `posted_after` `string` — Only include rows posted after this ISO 8601 timestamp.\n- `posted_before` `string` — Only include rows posted before this ISO 8601 timestamp.\n- `resource_id` `string` — Optional prefixed resource ID. Returns activity associated with that resource.\n- `user_id` `string` — The owning user ID (a user_ identifier). Provide this or account_id.\n\n</details>\n<details>\n<summary>members (6)</summary>\n\nMirrors the filtering query params of `GET /api/v1/members`.\n\n- `access_level` `string` — Filter by what the member can reach on the account. One of `no_access`, `admin`, `customer`.\n- `created_after` `string` — Only members who joined after this ISO 8601 timestamp.\n- `created_before` `string` — Only members who joined before this ISO 8601 timestamp.\n- `query` `string` — Search members by name or username. An exact email address also matches when the credential holds the member:email:read scope.\n- `status` `string` — Filter by whether the member is still part of the account. One of `joined`, `left`.\n- `user_ids` `string[]` — Only return members whose users match these `user_` identifiers.\n\n</details>\n<details>\n<summary>memberships (6)</summary>\n\nMirrors the filtering query params of `GET /api/v1/memberships`.\n\n- `created_after` `string` — Only memberships created after this ISO 8601 timestamp.\n- `created_before` `string` — Only memberships created before this ISO 8601 timestamp.\n- `plan_id` `string` — Filter to memberships of this plan (`plan_` tag). Repeat as plan_ids[] for several.\n- `product_id` `string` — Filter to memberships of this product (`prod_` tag). Repeat as product_ids[] for several.\n- `status` `string` — Filter by billing state. `canceling` matches active memberships set to cancel at period end; `paused` matches memberships with payment collection paused. One of `active`, `trialing`, `past_due`, `completed`, `canceled`, `expired`, `canceling`, `paused`.\n- `user_id` `string` — Narrow to one user's memberships (`user_` tag, or `me` for the caller). A user outside the caller's visible set returns an empty list.\n\n</details>\n<details>\n<summary>payouts (7)</summary>\n\nMirrors the filtering query params of `GET /api/v1/payouts`.\n\n- `created_after` `string` — Only payouts created at or after this ISO 8601 time (inclusive).\n- `created_before` `string` — Only payouts created before this ISO 8601 time (exclusive).\n- `currency` `string` — Optional currency code filter, for example `usd`.\n- `payout_method_id` `string` — Filter to payouts sent to one saved payout method (a pytk_ identifier). An unknown id matches nothing.\n- `source` `string` — Filter by how the payout was created. Payouts created before source tracking or through internal tooling carry no source and never match. One of `api`, `dashboard`, `automatic`.\n- `status` `string` — Filter to payouts whose `status` reads this word, matching exactly what this version displays — `reversed` finds settled payouts the bank later returned. Requires Api-Version-Date 2026-08-21 or later. One of `requested`, `in_review`, `processing`, `completed`, `reversed`, `canceled`, `failed`, `denied`.\n- `user_id` `string` — The owning user ID (a user_ identifier). Provide this or account_id.\n\n</details>\n<details>\n<summary>people (39)</summary>\n\nMirrors the filtering query params of `GET /api/v1/people`.\n\n- `aov_gt` `number` — Select people whose lifetime aov is greater than this value. LTV and AOV are in USD.\n- `aov_gte` `number` — Select people whose lifetime aov is at least this value. LTV and AOV are in USD.\n- `aov_lt` `number` — Select people whose lifetime aov is less than this value. LTV and AOV are in USD.\n- `aov_lte` `number` — Select people whose lifetime aov is at most this value. LTV and AOV are in USD.\n- `attribution_model` `string` — Attribution model the source filter matches against (defaults to last_touch). One of `last_touch`, `first_touch`.\n- `audience_id` `string` — Only include people in this audience. An audience that keeps itself up to date resolves to the People filters that define it, so this always reflects who matches now; uploaded lists and point-in-time snapshots match their recorded members.\n- `contactable` `boolean` — true for people who have an email address or phone number — the ones an ad platform can match.\n- `country` `string` — Only include people with activity from this ISO 3166-1 alpha-2 country code.\n- `custom_event` `string` — Only include people who fired this custom pixel event.\n- `email` `string` — Only include the person linked to this email address.\n- `event_count_gt` `number` — Select people whose lifetime event_count is greater than this value. LTV and AOV are in USD.\n- `event_count_gte` `number` — Select people whose lifetime event_count is at least this value. LTV and AOV are in USD.\n- `event_count_lt` `number` — Select people whose lifetime event_count is less than this value. LTV and AOV are in USD.\n- `event_count_lte` `number` — Select people whose lifetime event_count is at most this value. LTV and AOV are in USD.\n- `event_from` `string` — The inclusive start of the matching activity window.\n- `event_name` `string[]` — Only include people who fired any of these events, e.g. payment.completed or page.checkout.view.\n- `event_to` `string` — The inclusive end of the matching activity window, for both stats drilldowns and saved audiences.\n- `event_within_days` `integer` — Match activity within a rolling number of days. Cannot be combined with event_from/event_to.\n- `first_seen_after` `string` — Only include people first seen at or after this ISO 8601 timestamp.\n- `first_seen_before` `string` — Only include people first seen before this ISO 8601 timestamp.\n- `first_seen_within_days` `integer` — Only include people first seen within this many days, as a rolling window.\n- `from` `string` — Inclusive activity-window start. Alias for event_from.\n- `has_purchased` `boolean` — true for customers only, false for people who have never purchased.\n- `last_seen_after` `string` — Only include people last seen at or after this ISO 8601 timestamp.\n- `last_seen_before` `string` — Only include people last seen before this ISO 8601 timestamp.\n- `last_seen_within_days` `integer` — Only include people last seen within this many days, as a rolling window.\n- `ltv_gt` `number` — Select people whose lifetime ltv is greater than this value. LTV and AOV are in USD.\n- `ltv_gte` `number` — Select people whose lifetime ltv is at least this value. LTV and AOV are in USD.\n- `ltv_lt` `number` — Select people whose lifetime ltv is less than this value. LTV and AOV are in USD.\n- `ltv_lte` `number` — Select people whose lifetime ltv is at most this value. LTV and AOV are in USD.\n- `phone` `string` — Only include the person linked to this phone number.\n- `purchase_count_gt` `number` — Select people whose lifetime purchase_count is greater than this value. LTV and AOV are in USD.\n- `purchase_count_gte` `number` — Select people whose lifetime purchase_count is at least this value. LTV and AOV are in USD.\n- `purchase_count_lt` `number` — Select people whose lifetime purchase_count is less than this value. LTV and AOV are in USD.\n- `purchase_count_lte` `number` — Select people whose lifetime purchase_count is at most this value. LTV and AOV are in USD.\n- `query` `string` — Search people by name, email, phone, or whop user ID (case-insensitive substring match).\n- `source` `string[]` — Only include people acquired from any of these sources — canonical paths (whop:<campaign>:<group>:<ad>, ext:<platform>:..., referrer:<domain>, direct, other), exact or with a trailing :* prefix. The same vocabulary the events / people metrics use.\n- `to` `string` — Inclusive activity-window end. Alias for event_to.\n- `user_id` `string` — Only include the person linked to this whop user ID.\n\n</details>\n<details>\n<summary>plans (6)</summary>\n\nMirrors the filtering query params of `GET /api/v1/plans`.\n\n- `created_after` `string` — Only return plans created after this timestamp.\n- `created_before` `string` — Only return plans created before this timestamp.\n- `plan_types` `string[]` — Filter to only plans matching these billing types.\n- `product_ids` `string[]` — Filter to only plans belonging to these product identifiers. When `account_id` is omitted, this is required and the response is publicly readable: only visible, non-invoice plans are returned.\n- `release_methods` `string[]` — Filter to only plans matching these release methods.\n- `visibilities` `string[]` — Filter to only plans matching these visibility states.\n\n</details>\n<details>\n<summary>products (10)</summary>\n\nMirrors the filtering query params of `GET /api/v1/products`.\n\n- `access_pass_types` `string[]` — Filter to only products matching these types.\n- `created_after` `string` — Only return products created after this ISO 8601 timestamp.\n- `created_before` `string` — Only return products created before this ISO 8601 timestamp.\n- `labels` `string[]` — Filter to only products carrying all of these labels. Labels are matched lowercased.\n- `marketplace_category_route` `string` — Only return marketplace products assigned to this category route, such as `trading`.\n- `plan_types` `string[]` — Filter to products with a buyable plan of these billing models, such as `one_time` or `renewal`.\n- `price_maximum` `number` — Only return products whose advertised buyable plan has a displayed price of at most this amount. Recurring plans use renewal price.\n- `price_minimum` `number` — Only return products whose advertised buyable plan has a displayed price of at least this amount. Recurring plans use renewal price.\n- `query` `string` — Ranked search against product title and headline. Omit to browse by recency.\n- `visibilities` `string[]` — Filter to only products matching these visibility states. Ignored on the public marketplace list, which only returns visible products.\n\n</details>\n<details>\n<summary>promo_codes (5)</summary>\n\nMirrors the filtering query params of `GET /api/v1/promo_codes`.\n\n- `created_after` `string` — Only promo codes created after this ISO 8601 timestamp.\n- `created_before` `string` — Only promo codes created before this ISO 8601 timestamp.\n- `plan_ids` `string[]` — Only promo codes scoped to these plan IDs.\n- `product_ids` `string[]` — Only promo codes scoped to these product IDs.\n- `status` `string` — Promo-code status. `expired` groups inactive and archived codes. One of `active`, `inactive`, `archived`, `expired`.\n\n</details>\n<details>\n<summary>resolution_center_cases (6)</summary>\n\nMirrors the filtering query params of `GET /api/v1/resolution_center_cases`.\n\n- `created_after` `string` — Only cases created after this ISO 8601 timestamp.\n- `created_before` `string` — Only cases created before this ISO 8601 timestamp.\n- `outcome` `string[]` — Only closed cases that ended these ways. Repeat the parameter to pass several.\n- `reason` `string[]` — Only cases opened for these reasons. Repeat the parameter to pass several.\n- `status` `string[]` — Only cases in these statuses. Repeat the parameter to pass several — one paginated list covers all of them.\n- `user_id` `string` — Only cases opened by this customer — a `user_` tag, or `me` for the calling user. It narrows what you can already read, so `me` lists the cases you opened without the ones on accounts you are a team member of.\n\n</details>\n<details>\n<summary>shipments (4)</summary>\n\nMirrors the filtering query params of `GET /api/v1/shipments`.\n\n- `created_after` `string` — Return shipments created after this ISO 8601 timestamp.\n- `created_before` `string` — Return shipments created before this ISO 8601 timestamp.\n- `payment_id` `string[]` — Only shipments fulfilling these payments, each prefixed `pay_`. Repeat the parameter to pass several, up to 100 per request — one paginated list covers all of them.\n- `status` `string` — Filter to shipments with this delivery status. One of `unknown`, `pre_transit`, `in_transit`, `out_for_delivery`, `delivered`, `available_for_pickup`, `return_to_sender`, `failure`, `cancelled`, `error`.\n\n</details>\n<details>\n<summary>social_accounts (4)</summary>\n\nMirrors the filtering query params of `GET /api/v1/social_accounts`.\n\n- `platform` `string` — Only return social accounts for the platform that is specified. One of `x`, `instagram`, `youtube`, `tiktok`, `facebook`, `discord`, `telegram`, `linkedin`, `snapchat`.\n- `scopes` `string[]` — Only return social accounts that have these scopes.\n- `user_id` `string` — The User that the social accounts are connected to. Provide either this or account_id.\n- `verified` `boolean` — Only return social accounts that are verified on the platform.\n\n</details>\n<details>\n<summary>team_members (5)</summary>\n\nMirrors the filtering query params of `GET /api/v1/team_members`.\n\n- `created_after` `string` — Only return members added after this ISO 8601 timestamp.\n- `created_before` `string` — Only return members added before this ISO 8601 timestamp.\n- `role` `string` — Only return members with this role. `custom` matches members on a dashboard-managed custom role. One of `owner`, `admin`, `partner`, `sales_manager`, `moderator`, `advertiser`, `app_manager`, `support`, `manager`, `workforce`, `custom`.\n- `status` `string` — Only return members with this status: `joined` (accepted members) or `pending` (pending invites). Both are returned by default. One of `joined`, `pending`.\n- `user_id` `string` — Only return the membership for this user ID, prefixed `user_`.\n\n</details>\n<details>\n<summary>transfers (4)</summary>\n\nMirrors the filtering query params of `GET /api/v1/transfers`.\n\n- `created_after` `string` — Only transfers created strictly after this ISO 8601 timestamp.\n- `created_before` `string` — Only transfers created strictly before this ISO 8601 timestamp.\n- `destination_id` `string` — Filter to transfers received by this account. Provide this or origin_id.\n- `origin_id` `string` — Filter to transfers sent from this account. Provide this or destination_id.\n\n</details>\n<details>\n<summary>webhooks (3)</summary>\n\nMirrors the filtering query params of `GET /api/v1/webhooks`.\n\n- `app_id` `string` — Only return webhooks attached to this app. Omit to list the account's own webhooks.\n- `has_failures` `boolean` — Only return webhooks whose endpoint is currently failing — every delivery since the current failure streak began has been rejected. Clears as soon as a delivery succeeds.\n- `include_app_webhooks` `boolean` — Also return webhooks attached to the account's apps, not just the account's own. Cannot be combined with `app_id`.\n\n</details>\n</details>",
+                    "description": "Resource-specific filters. For native REST resources (`payouts`, `transfers`, `products`) these are the resource's own list query params; for dashboard tables they mirror the dashboard table filters.\n\n<details>\n<summary>Filters by resource (25)</summary>\n\n<details>\n<summary>ad_campaigns (4)</summary>\n\nMirrors the filtering query params of `GET /api/v1/ad_campaigns`.\n\n- `created_after` `string` — Only return campaigns created after this timestamp.\n- `created_before` `string` — Only return campaigns created before this timestamp.\n- `query` `string` — Filter campaigns by a title or ID substring.\n- `status` `string` — Only return campaigns with this status. One of `draft`, `active`, `paused`, `payment_failed`.\n\n</details>\n<details>\n<summary>ad_groups (6)</summary>\n\nMirrors the filtering query params of `GET /api/v1/ad_groups`.\n\n- `ad_campaign_id` `string` — Filter to ad groups in this campaign.\n- `ad_campaign_ids` `string[]` — Filter to ad groups in these campaigns (max 100). Repeat the parameter for each id (ad_campaign_ids=a&ad_campaign_ids=b).\n- `created_after` `string` — Only return ad groups created after this timestamp.\n- `created_before` `string` — Only return ad groups created before this timestamp.\n- `query` `string` — Filter ad groups by a title or ID substring.\n- `status` `string` — Filter to ad groups with this status. One of `active`, `paused`, `rejected`, `duplicating`.\n\n</details>\n<details>\n<summary>ads (8)</summary>\n\nMirrors the filtering query params of `GET /api/v1/ads`.\n\n- `ad_campaign_id` `string` — Only return ads in this ad campaign.\n- `ad_campaign_ids` `string[]` — Only return ads in these ad campaigns (max 100). Repeat the parameter for each id (ad_campaign_ids=a&ad_campaign_ids=b).\n- `ad_group_id` `string` — Only return ads in this ad group.\n- `ad_group_ids` `string[]` — Only return ads in these ad groups (max 100). Repeat the parameter for each id (ad_group_ids=a&ad_group_ids=b).\n- `created_after` `string` — Only return ads created after this timestamp.\n- `created_before` `string` — Only return ads created before this timestamp.\n- `query` `string` — Filter ads by a title or ID substring.\n- `status` `string` — Only return ads with this status. One of `active`, `paused`, `in_review`, `rejected`.\n\n</details>\n<details>\n<summary>apps (6)</summary>\n\nMirrors the filtering query params of `GET /api/v1/apps`.\n\n- `app_type` `string` — Filter apps by the type of end-user they are built for. Apps of type `website` are left out unless you ask for them by name. One of `b2b_app`, `b2c_app`, `company_app`, `component`, `website`.\n- `query` `string` — A search string matched against app names.\n- `recommended` `boolean` — Only return apps Whop recommends (or, with `false`, only those it does not), independently of verification status.\n- `verified` `boolean` — Only return apps whose Whop verification status matches this value. Omit this filter to include every verification status the caller can see.\n- `verified_apps_only` `boolean` — Legacy compatibility filter. Use `verified` for field equality. `true` returns verified apps; clients pinned before `2026-08-25-2` retain the earlier public website discovery behavior.\n- `view_type` `string` — Only return apps supporting this view type, such as `dashboard` or `hub`. One of `hub`, `discover`, `dash`, `dashboard`, `analytics`, `skills`, `openapi`.\n\n</details>\n<details>\n<summary>audiences (3)</summary>\n\nMirrors the filtering query params of `GET /api/v1/audiences`.\n\n- `audience_id` `string` — Audience ID, prefixed `adaud_`, used to filter the response to one audience.\n- `audience_type` `string` — Filter by custom or lookalike audiences. One of `custom`, `lookalike`.\n- `source_type` `string` — Filter by uploaded customer lists, Whop People filters, or social engagement. One of `csv_upload`, `people_filter`, `engagement`.\n\n</details>\n<details>\n<summary>bounties (8)</summary>\n\nMirrors the filtering query params of `GET /api/v1/bounties`.\n\n- `business_goal_type` `string` — Filter by the poster's declared goal. Bounties created before the goal taxonomy carry no goal and never match this filter. One of `clipping`, `post_engagement`, `owned_account_growth`, `ugc_content`, `local_activation`, `data_capture`, `other`.\n- `country` `string` — Only bounties workable from this country, as an ISO 3166-1 alpha-2 code. Bounties with no country targeting are workable worldwide and always match.\n- `created_after` `string` — Only bounties created after this ISO 8601 timestamp.\n- `created_before` `string` — Only bounties created before this ISO 8601 timestamp.\n- `experience_id` `string` — Only bounties posted to this forum experience, prefixed `exp_`. An unknown experience, or one outside the caller's scope, matches nothing.\n- `query` `string` — Substring match on the bounty title or ID.\n- `status` `string` — Filter by lifecycle state. One of `scheduled`, `open`, `closed`, `completed`, `canceled`.\n- `user_id` `string` — List the bounties this user participated in (`user_` tag). Must be the authenticated user.\n\n</details>\n<details>\n<summary>bounty_submissions (4)</summary>\n\nMirrors the filtering query params of `GET /api/v1/bounty_submissions`.\n\n- `bounty_id` `string` — Only submissions on this bounty (`bnty_` tag).\n- `created_after` `string` — Only submissions created after this ISO 8601 timestamp.\n- `created_before` `string` — Only submissions created before this ISO 8601 timestamp.\n- `status` `string` — Filter by lifecycle state. One of `in_progress`, `submitted`, `approved`, `denied`.\n\n</details>\n<details>\n<summary>card_transactions (6)</summary>\n\nMirrors the filtering query params of `GET /api/v1/card_transactions`.\n\n- `card_id` `string[]` — Return only transactions charged to these cards, each prefixed `icrd_`.\n- `cardholder_id` `string[]` — Return only transactions on cards assigned to these users, each prefixed `user_`.\n- `created_after` `string` — Return only transactions authorized at or after this ISO 8601 timestamp.\n- `created_before` `string` — Return only transactions authorized at or before this ISO 8601 timestamp.\n- `status` `string` — Return only transactions with this status. One of `pending`, `completed`, `reversed`, `declined`.\n- `transaction_ids` `string[]` — Return only these card transactions, each prefixed `citx_`. Repeat the parameter, or pass one comma-separated value.\n\n</details>\n<details>\n<summary>checkout_configurations (3)</summary>\n\nMirrors the filtering query params of `GET /api/v1/checkout_configurations`.\n\n- `created_after` `string` — Only return checkout configurations created after this ISO 8601 timestamp.\n- `created_before` `string` — Only return checkout configurations created before this ISO 8601 timestamp.\n- `plan_id` `string` — Only return checkout configurations for this plan ID, prefixed `plan_`.\n\n</details>\n<details>\n<summary>disputes (4)</summary>\n\nMirrors the filtering query params of `GET /api/v1/disputes`.\n\n- `created_after` `string` — Only disputes opened after this ISO 8601 timestamp.\n- `created_before` `string` — Only disputes opened before this ISO 8601 timestamp.\n- `currency` `string` — Only disputes in this three-letter ISO currency.\n- `status` `string[]` — Only disputes in these statuses. Repeat the parameter to pass several — one paginated list covers all of them. Inquiries match only the `warning_` statuses. A `needs_response` dispute whose evidence deadline has passed reports and filters as `under_review` instead.\n\n</details>\n<details>\n<summary>events (14)</summary>\n\nMirrors the filtering query params of `GET /api/v1/events`.\n\n- `attribution_model` `string` — Attribution model for the source filter (defaults to last_touch). One of `last_touch`, `first_touch`.\n- `browser` `string` — Browser families to filter by, comma-separated (e.g. Chrome, Mobile Safari).\n- `city` `string` — Cities to filter by, comma-separated.\n- `country` `string` — Country codes to filter by, comma-separated.\n- `device` `string` — Device families to filter by, comma-separated (e.g. iPhone, Mac).\n- `event` `string` — Full event names to filter by, comma-separated (payment.completed, pixel.lead, pixel.page, pixel.custom:<name>) — the same vocabulary the events / people metrics use.\n- `from` `string` — Start of the time range as an ISO 8601 timestamp. Required when identifier is omitted.\n- `hostname` `string` — Page hostnames to filter by, comma-separated.\n- `identifier` `string` — Any hard identifier of the person: a person ID (prsn_*), user ID, email, phone number, or a tracking cookie value (wuid, anonymous ID, fbp/fbc/ttp/ga). Omit to list recent events for the account.\n- `os` `string` — Operating system families to filter by, comma-separated (e.g. iOS, Windows).\n- `page` `string` — Page paths to filter by, comma-separated.\n- `source` `string` — Canonical source path, exact or with a trailing :* prefix (whop:<campaign>:*, ext:meta:*, referrer:<domain>, direct, unknown). Selects conversions credited to this source.\n- `to` `string` — End of the time range as an ISO 8601 timestamp. Required when identifier is omitted; otherwise defaults to now.\n- `utm_source` `string` — utm_source values to filter by, comma-separated.\n\n</details>\n<details>\n<summary>financial-activity (12)</summary>\n\nMirrors the filtering query params of `GET /api/v1/financial_activity`.\n\n- `activity_id` `string` — Optional ledger activity ID (for example `line_3`). Returns at most that one activity.\n- `available_after` `string` — Only include balance credits and debits available on or after this `YYYY-MM-DD` date (UTC), distinct from posted_at. Requires currency.\n- `available_before` `string` — Only include balance credits and debits available on or before this `YYYY-MM-DD` date (UTC). Set equal to available_after for a single day. Requires currency.\n- `currency` `string` — Optional currency code filter, for example `usd`.\n- `exclude_internal_movements` `boolean` — Whether to exclude balance reservations and balanced movements between the account's own balances.\n- `include_owned_accounts` `boolean` — When true, aggregates the authenticated user's personal ledger with the businesses they own (owner role with balance read) into one feed. Requires user_id to be the authenticated user; cannot be combined with account_id or the settlement-date filters. Each returned row includes the owning `account`.\n- `include_resource` `boolean` — Whether to include the `resource` field in the response or not. Consider passing `false` if you need a fast response without as many rich details.\n- `line_types` `string[]` — Optional ledger line categories to include. Some categories (for example `onchain_deposit`, which covers inbound crypto deposits such as MoonPay onramps) are only returned when explicitly requested here.\n- `posted_after` `string` — Only include rows posted after this ISO 8601 timestamp.\n- `posted_before` `string` — Only include rows posted before this ISO 8601 timestamp.\n- `resource_id` `string` — Optional prefixed resource ID. Returns activity associated with that resource.\n- `user_id` `string` — The owning user ID (a user_ identifier). Provide this or account_id.\n\n</details>\n<details>\n<summary>members (6)</summary>\n\nMirrors the filtering query params of `GET /api/v1/members`.\n\n- `access_level` `string` — Filter by what the member can reach on the account. One of `no_access`, `admin`, `customer`.\n- `created_after` `string` — Only members who joined after this ISO 8601 timestamp.\n- `created_before` `string` — Only members who joined before this ISO 8601 timestamp.\n- `query` `string` — Search members by name or username. An exact email address also matches when the credential holds the member:email:read scope.\n- `status` `string` — Filter by whether the member is still part of the account. One of `joined`, `left`.\n- `user_ids` `string[]` — Only return members whose users match these `user_` identifiers.\n\n</details>\n<details>\n<summary>memberships (6)</summary>\n\nMirrors the filtering query params of `GET /api/v1/memberships`.\n\n- `created_after` `string` — Only memberships created after this ISO 8601 timestamp.\n- `created_before` `string` — Only memberships created before this ISO 8601 timestamp.\n- `plan_id` `string` — Filter to memberships of this plan (`plan_` tag). Repeat as plan_ids[] for several.\n- `product_id` `string` — Filter to memberships of this product (`prod_` tag). Repeat as product_ids[] for several.\n- `status` `string` — Filter by billing state. `canceling` matches active memberships set to cancel at period end; `paused` matches memberships with payment collection paused. One of `active`, `trialing`, `past_due`, `completed`, `canceled`, `expired`, `canceling`, `paused`.\n- `user_id` `string` — Narrow to one user's memberships (`user_` tag, or `me` for the caller). A user outside the caller's visible set returns an empty list.\n\n</details>\n<details>\n<summary>payouts (7)</summary>\n\nMirrors the filtering query params of `GET /api/v1/payouts`.\n\n- `created_after` `string` — Only payouts created at or after this ISO 8601 time (inclusive).\n- `created_before` `string` — Only payouts created before this ISO 8601 time (exclusive).\n- `currency` `string` — Optional currency code filter, for example `usd`.\n- `payout_method_id` `string` — Filter to payouts sent to one saved payout method (a pytk_ identifier). An unknown id matches nothing.\n- `source` `string` — Filter by how the payout was created. Payouts created before source tracking or through internal tooling carry no source and never match. One of `api`, `dashboard`, `automatic`.\n- `status` `string` — Filter to payouts whose `status` reads this word, matching exactly what this version displays — `reversed` finds settled payouts the bank later returned. Requires Api-Version-Date 2026-08-21 or later. One of `requested`, `in_review`, `processing`, `completed`, `reversed`, `canceled`, `failed`, `denied`.\n- `user_id` `string` — The owning user ID (a user_ identifier). Provide this or account_id.\n\n</details>\n<details>\n<summary>people (39)</summary>\n\nMirrors the filtering query params of `GET /api/v1/people`.\n\n- `aov_gt` `number` — Select people whose lifetime aov is greater than this value. LTV and AOV are in USD.\n- `aov_gte` `number` — Select people whose lifetime aov is at least this value. LTV and AOV are in USD.\n- `aov_lt` `number` — Select people whose lifetime aov is less than this value. LTV and AOV are in USD.\n- `aov_lte` `number` — Select people whose lifetime aov is at most this value. LTV and AOV are in USD.\n- `attribution_model` `string` — Attribution model the source filter matches against (defaults to last_touch). One of `last_touch`, `first_touch`.\n- `audience_id` `string` — Only include people in this audience. An audience that keeps itself up to date resolves to the People filters that define it, so this always reflects who matches now; uploaded lists and point-in-time snapshots match their recorded members.\n- `contactable` `boolean` — true for people who have an email address or phone number — the ones an ad platform can match.\n- `country` `string` — Only include people with activity from this ISO 3166-1 alpha-2 country code.\n- `custom_event` `string` — Only include people who fired this custom pixel event.\n- `email` `string` — Only include the person linked to this email address.\n- `event_count_gt` `number` — Select people whose lifetime event_count is greater than this value. LTV and AOV are in USD.\n- `event_count_gte` `number` — Select people whose lifetime event_count is at least this value. LTV and AOV are in USD.\n- `event_count_lt` `number` — Select people whose lifetime event_count is less than this value. LTV and AOV are in USD.\n- `event_count_lte` `number` — Select people whose lifetime event_count is at most this value. LTV and AOV are in USD.\n- `event_from` `string` — The inclusive start of the matching activity window.\n- `event_name` `string[]` — Only include people who fired any of these events, e.g. payment.completed or page.checkout.view.\n- `event_to` `string` — The inclusive end of the matching activity window, for both stats drilldowns and saved audiences.\n- `event_within_days` `integer` — Match activity within a rolling number of days. Cannot be combined with event_from/event_to.\n- `first_seen_after` `string` — Only include people first seen at or after this ISO 8601 timestamp.\n- `first_seen_before` `string` — Only include people first seen before this ISO 8601 timestamp.\n- `first_seen_within_days` `integer` — Only include people first seen within this many days, as a rolling window.\n- `from` `string` — Inclusive activity-window start. Alias for event_from.\n- `has_purchased` `boolean` — true for customers only, false for people who have never purchased.\n- `last_seen_after` `string` — Only include people last seen at or after this ISO 8601 timestamp.\n- `last_seen_before` `string` — Only include people last seen before this ISO 8601 timestamp.\n- `last_seen_within_days` `integer` — Only include people last seen within this many days, as a rolling window.\n- `ltv_gt` `number` — Select people whose lifetime ltv is greater than this value. LTV and AOV are in USD.\n- `ltv_gte` `number` — Select people whose lifetime ltv is at least this value. LTV and AOV are in USD.\n- `ltv_lt` `number` — Select people whose lifetime ltv is less than this value. LTV and AOV are in USD.\n- `ltv_lte` `number` — Select people whose lifetime ltv is at most this value. LTV and AOV are in USD.\n- `phone` `string` — Only include the person linked to this phone number.\n- `purchase_count_gt` `number` — Select people whose lifetime purchase_count is greater than this value. LTV and AOV are in USD.\n- `purchase_count_gte` `number` — Select people whose lifetime purchase_count is at least this value. LTV and AOV are in USD.\n- `purchase_count_lt` `number` — Select people whose lifetime purchase_count is less than this value. LTV and AOV are in USD.\n- `purchase_count_lte` `number` — Select people whose lifetime purchase_count is at most this value. LTV and AOV are in USD.\n- `query` `string` — Search people by name, email, phone, or whop user ID (case-insensitive substring match).\n- `source` `string[]` — Only include people acquired from any of these sources — canonical paths (whop:<campaign>:<group>:<ad>, ext:<platform>:..., referrer:<domain>, direct, other), exact or with a trailing :* prefix. The same vocabulary the events / people metrics use.\n- `to` `string` — Inclusive activity-window end. Alias for event_to.\n- `user_id` `string` — Only include the person linked to this whop user ID.\n\n</details>\n<details>\n<summary>plans (6)</summary>\n\nMirrors the filtering query params of `GET /api/v1/plans`.\n\n- `created_after` `string` — Only return plans created after this timestamp.\n- `created_before` `string` — Only return plans created before this timestamp.\n- `plan_types` `string[]` — Filter to only plans matching these billing types.\n- `product_ids` `string[]` — Filter to only plans belonging to these product identifiers. When `account_id` is omitted, this is required and the response is publicly readable: only visible, non-invoice plans are returned.\n- `release_methods` `string[]` — Filter to only plans matching these release methods.\n- `visibilities` `string[]` — Filter to only plans matching these visibility states.\n\n</details>\n<details>\n<summary>products (10)</summary>\n\nMirrors the filtering query params of `GET /api/v1/products`.\n\n- `access_pass_types` `string[]` — Filter to only products matching these types.\n- `created_after` `string` — Only return products created after this ISO 8601 timestamp.\n- `created_before` `string` — Only return products created before this ISO 8601 timestamp.\n- `labels` `string[]` — Filter to only products carrying all of these labels. Labels are matched lowercased.\n- `marketplace_category_route` `string` — Only return marketplace products assigned to this category route, such as `trading`.\n- `plan_types` `string[]` — Filter to products with a buyable plan of these billing models, such as `one_time` or `renewal`.\n- `price_maximum` `number` — Only return products whose advertised buyable plan has a displayed price of at most this amount. Recurring plans use renewal price.\n- `price_minimum` `number` — Only return products whose advertised buyable plan has a displayed price of at least this amount. Recurring plans use renewal price.\n- `query` `string` — Ranked search against product title and headline. Omit to browse by recency.\n- `visibilities` `string[]` — Filter to only products matching these visibility states. Ignored on the public marketplace list, which only returns visible products.\n\n</details>\n<details>\n<summary>promo_codes (5)</summary>\n\nMirrors the filtering query params of `GET /api/v1/promo_codes`.\n\n- `created_after` `string` — Only promo codes created after this ISO 8601 timestamp.\n- `created_before` `string` — Only promo codes created before this ISO 8601 timestamp.\n- `plan_ids` `string[]` — Only promo codes scoped to these plan IDs.\n- `product_ids` `string[]` — Only promo codes scoped to these product IDs.\n- `status` `string` — Promo-code status. `expired` groups inactive and archived codes. One of `active`, `inactive`, `archived`, `expired`.\n\n</details>\n<details>\n<summary>resolution_center_cases (6)</summary>\n\nMirrors the filtering query params of `GET /api/v1/resolution_center_cases`.\n\n- `created_after` `string` — Only cases created after this ISO 8601 timestamp.\n- `created_before` `string` — Only cases created before this ISO 8601 timestamp.\n- `outcome` `string[]` — Only closed cases that ended these ways. Repeat the parameter to pass several.\n- `reason` `string[]` — Only cases opened for these reasons. Repeat the parameter to pass several.\n- `status` `string[]` — Only cases in these statuses. Repeat the parameter to pass several — one paginated list covers all of them.\n- `user_id` `string` — Only cases opened by this customer — a `user_` tag, or `me` for the calling user. It narrows what you can already read, so `me` lists the cases you opened without the ones on accounts you are a team member of.\n\n</details>\n<details>\n<summary>shipments (4)</summary>\n\nMirrors the filtering query params of `GET /api/v1/shipments`.\n\n- `created_after` `string` — Return shipments created after this ISO 8601 timestamp.\n- `created_before` `string` — Return shipments created before this ISO 8601 timestamp.\n- `payment_id` `string[]` — Only shipments fulfilling these payments, each prefixed `pay_`. Repeat the parameter to pass several, up to 100 per request — one paginated list covers all of them.\n- `status` `string` — Filter to shipments with this delivery status. One of `unknown`, `pre_transit`, `in_transit`, `out_for_delivery`, `delivered`, `available_for_pickup`, `return_to_sender`, `failure`, `cancelled`, `error`.\n\n</details>\n<details>\n<summary>social_accounts (4)</summary>\n\nMirrors the filtering query params of `GET /api/v1/social_accounts`.\n\n- `platform` `string` — Only return social accounts for the platform that is specified. One of `x`, `instagram`, `youtube`, `tiktok`, `facebook`, `discord`, `telegram`, `linkedin`, `snapchat`.\n- `scopes` `string[]` — Only return social accounts that have these scopes.\n- `user_id` `string` — The User that the social accounts are connected to. Provide either this or account_id.\n- `verified` `boolean` — Only return social accounts that are verified on the platform.\n\n</details>\n<details>\n<summary>team_members (5)</summary>\n\nMirrors the filtering query params of `GET /api/v1/team_members`.\n\n- `created_after` `string` — Only return members added after this ISO 8601 timestamp.\n- `created_before` `string` — Only return members added before this ISO 8601 timestamp.\n- `role` `string` — Only return members with this role. `custom` matches members on a dashboard-managed custom role. One of `owner`, `admin`, `partner`, `sales_manager`, `moderator`, `advertiser`, `app_manager`, `support`, `manager`, `workforce`, `custom`.\n- `status` `string` — Only return members with this status: `joined` (accepted members) or `pending` (pending invites). Both are returned by default. One of `joined`, `pending`.\n- `user_id` `string` — Only return the membership for this user ID, prefixed `user_`.\n\n</details>\n<details>\n<summary>transfers (4)</summary>\n\nMirrors the filtering query params of `GET /api/v1/transfers`.\n\n- `created_after` `string` — Only transfers created strictly after this ISO 8601 timestamp.\n- `created_before` `string` — Only transfers created strictly before this ISO 8601 timestamp.\n- `destination_id` `string` — Filter to transfers received by this account. Provide this or origin_id.\n- `origin_id` `string` — Filter to transfers sent from this account. Provide this or destination_id.\n\n</details>\n<details>\n<summary>webhooks (3)</summary>\n\nMirrors the filtering query params of `GET /api/v1/webhooks`.\n\n- `app_id` `string` — Only return webhooks attached to this app. Omit to list the account's own webhooks.\n- `has_failures` `boolean` — Only return webhooks whose endpoint is currently failing — every delivery since the current failure streak began has been rejected. Clears as soon as a delivery succeeds.\n- `include_app_webhooks` `boolean` — Also return webhooks attached to the account's apps, not just the account's own. Cannot be combined with `app_id`.\n\n</details>\n</details>",
                     "example": {
                       "include_resource": false,
                       "posted_after": "2026-01-01T12:00:00.000Z",
@@ -29407,7 +29576,7 @@
         }
       ],
       "patch": {
-        "description": "Updates a membership: merge metadata key-value pairs, or toggle `cancel_at_period_end` — `true` schedules the cancellation for the end of the current billing period, `false` reverses a pending one.",
+        "description": "Updates a membership: merge metadata key-value pairs, toggle `cancel_at_period_end` — `true` schedules the cancellation for the end of the current billing period, `false` reverses a pending one — or move future renewals to another of the customer's saved payment methods with `payment_method_id`.",
         "operationId": "updateMembership",
         "parameters": [],
         "requestBody": {
@@ -29426,6 +29595,11 @@
                       "seat": "42"
                     },
                     "type": "object"
+                  },
+                  "payment_method_id": {
+                    "description": "The ID of a payment method the customer has saved with your account. Future renewals charge it, and an open past-due payment is retried on it right away. Requires the `member:payment_methods:manage` permission.",
+                    "example": "payt_xxxxxxxxxxxxx",
+                    "type": "string"
                   }
                 },
                 "type": "object"
@@ -29462,6 +29636,11 @@
           {
             "bearerAuth": [
               "membership:cancel"
+            ]
+          },
+          {
+            "bearerAuth": [
+              "member:payment_methods:manage"
             ]
           }
         ],
@@ -30729,13 +30908,22 @@
     },
     "/partner_referral_requests": {
       "get": {
-        "description": "Lists requests sent by an eligible partner and requests for accounts where the authenticated user currently holds the owner role. Enrolled, non-suspended partners can read their links without verification; reading their sent manual requests requires verification. Filters narrow that combined view. Use a Whop login session or an account API key with `partner:referral_request:read`. The key must have been created by the account's current owner. Account API keys return their owner's sent requests and incoming requests for the key's account.",
+        "description": "Lists your referral links and attribution requests, including incoming requests for you or businesses you own, with filters for recipient, partner, type, and status.",
         "operationId": "listPartnerReferralRequests",
         "parameters": [
           {
             "description": "Only requests for this business ID, prefixed `biz_`.",
             "in": "query",
             "name": "account_id",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Only requests received by this user ID, prefixed `user_`.",
+            "in": "query",
+            "name": "target_user_id",
             "required": false,
             "schema": {
               "type": "string"
@@ -30943,7 +31131,7 @@
         }
       ],
       "post": {
-        "description": "Creates a pending manual request for an existing business as the authenticated, enrolled, verified Whop partner. Provide exactly one of account_id or account_url. Whop business and product links resolve to their business. A business owner must accept before attribution changes. An existing pending manual request from the same partner returns 200; a new request returns 201. Alternatively, send request_type=link without a code, business, or redemption limit to get your oldest saved referral link, or create one with a randomly generated code when none exists. Provide a custom code or redemption limit to create a new link; omitted codes are generated randomly. Only authorized staff may configure rewards or select another partner. Link creation requires partner enrollment and a non-suspended account, but not verification. Use a Whop login session or an account API key with `partner:referral_request:create`. The key must have been created by the account's current owner and acts as that owner.",
+        "description": "Creates a referral link or sends a verified partner's attribution request to an existing business or enrolled partner for approval.",
         "operationId": "createPartnerReferralRequest",
         "parameters": [
           {
@@ -30978,6 +31166,30 @@
                     },
                     "required": [
                       "account_url"
+                    ],
+                    "type": "object"
+                  },
+                  {
+                    "properties": {
+                      "target_user_id": {
+                        "description": "Enrolled partner to request attribution for, prefixed `user_`.",
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "target_user_id"
+                    ],
+                    "type": "object"
+                  },
+                  {
+                    "properties": {
+                      "target_username": {
+                        "description": "Username of the user to request attribution for, with or without a leading @.",
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "target_username"
                     ],
                     "type": "object"
                   },
@@ -31094,7 +31306,7 @@
     },
     "/partner_referral_requests/{id}": {
       "get": {
-        "description": "Retrieves a request visible to its eligible sender or a current owner of the receiving account. Enrolled, non-suspended partners can read their links without verification. Use a Whop login session or an account API key with `partner:referral_request:read`. The key must have been created by the account's current owner. Account API keys can retrieve their owner's sent requests and incoming requests for the key's account.",
+        "description": "Retrieves a referral link or attribution request by ID, including its partner, recipient, approval status, and referral code when present.",
         "operationId": "retrievePartnerReferralRequest",
         "responses": {
           "200": {
@@ -31173,7 +31385,7 @@
         }
       ],
       "post": {
-        "description": "Accepts a pending manual request as a current business owner and attributes the business to the verified requesting partner. Existing active attribution blocks acceptance. Repeating acceptance returns the accepted request. Use a Whop login session or an account API key with `partner:referral_request:accept`. The key must have been created by the account's current owner. Account API keys can respond only to requests for the key's account.",
+        "description": "Accepts a pending attribution request as the receiving user or business owner, assigning the requesting partner as that user's or business's referrer.",
         "operationId": "acceptPartnerReferralRequest",
         "parameters": [
           {
@@ -31247,7 +31459,7 @@
         }
       ],
       "post": {
-        "description": "Cancels a pending manual request as its eligible requesting partner. Repeating cancellation returns the cancelled request. Use a Whop login session or an account API key with `partner:referral_request:cancel`. The key must have been created by the account's current owner. Account API keys cancel requests as their account owner.",
+        "description": "Cancels a pending attribution request you sent so the recipient can no longer accept it, and returns the cancelled request.",
         "operationId": "cancelPartnerReferralRequest",
         "parameters": [
           {
@@ -31321,7 +31533,7 @@
         }
       ],
       "post": {
-        "description": "Denies a pending manual request as a current business owner. Repeating denial returns the denied request. Use a Whop login session or an account API key with `partner:referral_request:decline`. The key must have been created by the account's current owner. Account API keys can respond only to requests for the key's account.",
+        "description": "Declines a pending attribution request for you or a business you own, marking it as denied without assigning the requesting partner as a referrer.",
         "operationId": "declinePartnerReferralRequest",
         "parameters": [
           {
@@ -48086,6 +48298,17 @@
                       "null"
                     ]
                   },
+                  "purpose": {
+                    "description": "What the saved payment method will pay for. Set to `ads_billing` when saving a card to pay for Whop Ads on `account_id`: the card is verified by Whop Ads, the merchant that charges it, which helps minimize security declines on ad payments, and it requires `ad_campaign:create` on `account_id`. Omit it for any other payment method.",
+                    "enum": [
+                      "ads_billing"
+                    ],
+                    "example": "ads_billing",
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
                   "return_url": {
                     "description": "Where the buyer continues after completing an off-site step. An absolute https URL without credentials, at most 2,048 characters.",
                     "example": "https://shinetime.example/billing/saved",
@@ -52038,6 +52261,841 @@
         ]
       }
     },
+    "/trades": {
+      "get": {
+        "description": "Lists trades you can access, newest first. User credentials see their own trades and those of accounts they belong to, including connected accounts; account credentials see their account and its connected accounts. These are submission records, not fill or position history.",
+        "operationId": "listTrades",
+        "parameters": [
+          {
+            "description": "Only return trades for this account or user, prefixed `biz_` or `user_`.",
+            "in": "query",
+            "name": "account_id",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Only return trades with this submission status.",
+            "in": "query",
+            "name": "status",
+            "required": false,
+            "schema": {
+              "enum": [
+                "pending",
+                "submitted",
+                "completed",
+                "failed",
+                "submission_unknown"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "description": "Only return trades of this kind, such as `create_orders` for order submissions.",
+            "in": "query",
+            "name": "operation_type",
+            "required": false,
+            "schema": {
+              "enum": [
+                "create_orders",
+                "cancel_orders",
+                "update_leverage"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "description": "Field to sort by.",
+            "in": "query",
+            "name": "order",
+            "required": false,
+            "schema": {
+              "default": "created_at",
+              "enum": [
+                "created_at",
+                "updated_at"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "description": "Sort direction.",
+            "in": "query",
+            "name": "direction",
+            "required": false,
+            "schema": {
+              "default": "desc",
+              "enum": [
+                "asc",
+                "desc"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "description": "Number of results to return from the start of the range.",
+            "in": "query",
+            "name": "first",
+            "required": false,
+            "schema": {
+              "default": 20,
+              "maximum": 100,
+              "type": "integer"
+            }
+          },
+          {
+            "description": "Return results after this cursor. Use `page_info.end_cursor` from the previous response to fetch the next page.",
+            "in": "query",
+            "name": "after",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Number of results to return from the end of the range.",
+            "in": "query",
+            "name": "last",
+            "required": false,
+            "schema": {
+              "maximum": 100,
+              "type": "integer"
+            }
+          },
+          {
+            "description": "Return results before this cursor. Use `page_info.start_cursor` from the previous response to fetch the previous page.",
+            "in": "query",
+            "name": "before",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "data": {
+                      "items": {
+                        "$ref": "#/components/schemas/Trade"
+                      },
+                      "type": "array"
+                    },
+                    "page_info": {
+                      "properties": {
+                        "end_cursor": {
+                          "example": null,
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "has_next_page": {
+                          "example": false,
+                          "type": "boolean"
+                        },
+                        "has_previous_page": {
+                          "example": false,
+                          "type": "boolean"
+                        },
+                        "start_cursor": {
+                          "example": "WyJjdXJzb3IiLDFd",
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "start_cursor",
+                        "end_cursor",
+                        "has_next_page",
+                        "has_previous_page"
+                      ],
+                      "type": "object"
+                    }
+                  },
+                  "required": [
+                    "data",
+                    "page_info"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "trades listed"
+          },
+          "400": {
+            "$ref": "#/components/responses/InvalidParameters",
+            "description": "status is invalid"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized",
+            "description": "authentication is missing"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden",
+            "description": "selected account is not authorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": [
+              "crypto_wallet:trade:read"
+            ]
+          },
+          {
+            "bearerAuth": [
+              "crypto_wallet:trade"
+            ]
+          },
+          {
+            "bearerAuth": [
+              "crypto_wallet:manage"
+            ]
+          }
+        ],
+        "summary": "List Trades",
+        "tags": [
+          "Trades"
+        ],
+        "x-mint": {
+          "metadata": {
+            "sidebarTitle": "List"
+          }
+        }
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/ApiVersionDate"
+        }
+      ],
+      "post": {
+        "description": "Submits perpetual orders from a funded trading wallet. Send several limit orders for a ladder, or attach `take_profit` and `stop_loss` to a single entry order. Whop's builder fee is approved and attached automatically. The returned `trop_` ID identifies the submission, not a position, and `completed` doesn't mean filled: check each order acknowledgement, and read live orders and positions from the account's `trading` field. Requires an `Idempotency-Key`. Early beta: email support@whop.com for access.",
+        "operationId": "createTrade",
+        "parameters": [
+          {
+            "description": "Required. Reuse the same key when retrying, including after a `submission_unknown` outcome; a new key submits a new trade.",
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "account_id": {
+                    "description": "The account or user that owns the trading wallet, prefixed `biz_` or `user_`.",
+                    "example": "biz_xxxxxxxxxxxxxx",
+                    "type": "string"
+                  },
+                  "instrument_type": {
+                    "description": "The kind of instrument to trade.",
+                    "enum": [
+                      "perpetual"
+                    ],
+                    "example": "perpetual",
+                    "type": "string"
+                  },
+                  "metadata": {
+                    "additionalProperties": {
+                      "type": "string"
+                    },
+                    "description": "Free-form string-to-string annotations stored on the trade.",
+                    "type": [
+                      "object",
+                      "null"
+                    ]
+                  },
+                  "orders": {
+                    "description": "Orders to submit together. Attached take-profit and stop-loss are supported only with a single entry order.",
+                    "items": {
+                      "properties": {
+                        "market": {
+                          "description": "Perpetual market on the selected provider, such as `ETH`.",
+                          "example": "ETH",
+                          "type": "string"
+                        },
+                        "order_type": {
+                          "default": "limit",
+                          "enum": [
+                            "limit",
+                            "market",
+                            "take_profit",
+                            "stop_loss"
+                          ],
+                          "example": "limit",
+                          "type": "string"
+                        },
+                        "price": {
+                          "description": "Limit price as a decimal string. Required for a limit order; for a take-profit or stop-loss, omit it to trigger a market order.",
+                          "example": "3000",
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "reduce_only": {
+                          "default": false,
+                          "description": "Whether the order can only reduce an existing position. Take-profit and stop-loss orders are always reduce-only.",
+                          "type": "boolean"
+                        },
+                        "side": {
+                          "enum": [
+                            "buy",
+                            "sell"
+                          ],
+                          "example": "buy",
+                          "type": "string"
+                        },
+                        "size": {
+                          "description": "Order size as a decimal string.",
+                          "example": "0.02",
+                          "type": "string"
+                        },
+                        "slippage_bps": {
+                          "description": "Slippage cap for this order in basis points, overriding the request's `slippage_bps`.",
+                          "maximum": 1000,
+                          "minimum": 1,
+                          "type": [
+                            "integer",
+                            "null"
+                          ]
+                        },
+                        "stop_loss": {
+                          "description": "Stop-loss to attach to a single entry order.",
+                          "oneOf": [
+                            {
+                              "properties": {
+                                "limit_price": {
+                                  "description": "Limit price once triggered, as a decimal string. Omit or pass `null` for a market order with the request's slippage cap.",
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ]
+                                },
+                                "trigger_price": {
+                                  "description": "Price that triggers the order, as a decimal string.",
+                                  "example": "3300",
+                                  "type": "string"
+                                }
+                              },
+                              "required": [
+                                "trigger_price"
+                              ],
+                              "type": "object"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "take_profit": {
+                          "description": "Take-profit to attach to a single entry order.",
+                          "oneOf": [
+                            {
+                              "properties": {
+                                "limit_price": {
+                                  "description": "Limit price once triggered, as a decimal string. Omit or pass `null` for a market order with the request's slippage cap.",
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ]
+                                },
+                                "trigger_price": {
+                                  "description": "Price that triggers the order, as a decimal string.",
+                                  "example": "3300",
+                                  "type": "string"
+                                }
+                              },
+                              "required": [
+                                "trigger_price"
+                              ],
+                              "type": "object"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "time_in_force": {
+                          "default": "good_til_canceled",
+                          "description": "How long a limit order stays active. Ignored for other order types.",
+                          "enum": [
+                            "add_liquidity_only",
+                            "good_til_canceled",
+                            "immediate_or_cancel"
+                          ],
+                          "example": "add_liquidity_only",
+                          "type": "string"
+                        },
+                        "trigger_price": {
+                          "description": "Trigger price as a decimal string. Required for standalone take-profit and stop-loss orders.",
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "market",
+                        "side",
+                        "size"
+                      ],
+                      "type": "object"
+                    },
+                    "maxItems": 50,
+                    "minItems": 1,
+                    "type": "array"
+                  },
+                  "provider": {
+                    "enum": [
+                      "hyperliquid"
+                    ],
+                    "example": "hyperliquid",
+                    "type": "string"
+                  },
+                  "slippage_bps": {
+                    "default": 50,
+                    "description": "Default slippage cap in basis points for market orders and market-triggered take-profit and stop-loss.",
+                    "maximum": 1000,
+                    "minimum": 1,
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  }
+                },
+                "required": [
+                  "account_id",
+                  "provider",
+                  "instrument_type",
+                  "orders"
+                ],
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Trade"
+                }
+              }
+            },
+            "description": "submission recorded"
+          },
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Trade"
+                }
+              }
+            },
+            "description": "submission outcome is unknown"
+          },
+          "400": {
+            "$ref": "#/components/responses/InvalidParameters",
+            "description": "request is invalid"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized",
+            "description": "authentication is missing"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden",
+            "description": "trading permission is missing"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound",
+            "description": "account was not found"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          }
+        },
+        "security": [
+          {
+            "accountApiKeyOrAccountTokenOrAccountUserTokenOrOauthTokenAuth": [
+              "crypto_wallet:trade"
+            ]
+          },
+          {
+            "accountApiKeyOrAccountTokenOrAccountUserTokenOrOauthTokenAuth": [
+              "crypto_wallet:manage"
+            ]
+          }
+        ],
+        "summary": "Create Trade",
+        "tags": [
+          "Trades"
+        ],
+        "x-whop-credentials": [
+          "account_api_key",
+          "account_token",
+          "account_user_token",
+          "oauth_token"
+        ],
+        "x-mint": {
+          "metadata": {
+            "sidebarTitle": "Create"
+          }
+        }
+      }
+    },
+    "/trades/leverage": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/ApiVersionDate"
+        }
+      ],
+      "post": {
+        "description": "Sets cross or isolated leverage for a perpetual market, up to that market's maximum. Returns a trade recording the submission. Requires an `Idempotency-Key`.",
+        "operationId": "updateTradeLeverage",
+        "parameters": [
+          {
+            "description": "Required. Reuse the same key when retrying, including after a `submission_unknown` outcome; a new key submits a new trade.",
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "account_id": {
+                    "description": "The account or user that owns the trading wallet, prefixed `biz_` or `user_`.",
+                    "example": "biz_xxxxxxxxxxxxxx",
+                    "type": "string"
+                  },
+                  "leverage": {
+                    "description": "Leverage multiplier, such as `10` for 10x. Capped at the market's maximum.",
+                    "example": 5,
+                    "minimum": 1,
+                    "type": "integer"
+                  },
+                  "margin_mode": {
+                    "description": "`cross` shares margin across positions; `isolated` limits margin to this market's position.",
+                    "enum": [
+                      "cross",
+                      "isolated"
+                    ],
+                    "example": "isolated",
+                    "type": "string"
+                  },
+                  "market": {
+                    "description": "Perpetual market on the provider, such as `ETH`.",
+                    "example": "ETH",
+                    "type": "string"
+                  },
+                  "metadata": {
+                    "additionalProperties": {
+                      "type": "string"
+                    },
+                    "description": "Free-form string-to-string annotations stored on the trade.",
+                    "type": [
+                      "object",
+                      "null"
+                    ]
+                  },
+                  "provider": {
+                    "enum": [
+                      "hyperliquid"
+                    ],
+                    "example": "hyperliquid",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "account_id",
+                  "provider",
+                  "market",
+                  "leverage",
+                  "margin_mode"
+                ],
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Trade"
+                }
+              }
+            },
+            "description": "leverage submission recorded"
+          },
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Trade"
+                }
+              }
+            },
+            "description": "leverage outcome is unknown"
+          },
+          "400": {
+            "$ref": "#/components/responses/InvalidParameters",
+            "description": "provider is invalid"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized",
+            "description": "authentication is missing"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden",
+            "description": "trading permission is missing"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          }
+        },
+        "security": [
+          {
+            "accountApiKeyOrAccountTokenOrAccountUserTokenOrOauthTokenAuth": [
+              "crypto_wallet:trade"
+            ]
+          },
+          {
+            "accountApiKeyOrAccountTokenOrAccountUserTokenOrOauthTokenAuth": [
+              "crypto_wallet:manage"
+            ]
+          }
+        ],
+        "summary": "Update Trade Leverage",
+        "tags": [
+          "Trades"
+        ],
+        "x-whop-credentials": [
+          "account_api_key",
+          "account_token",
+          "account_user_token",
+          "oauth_token"
+        ],
+        "x-mint": {
+          "metadata": {
+            "sidebarTitle": "Update Leverage"
+          }
+        }
+      }
+    },
+    "/trades/{id}": {
+      "get": {
+        "description": "Retrieves a trade. Order acknowledgements don't update as orders fill; read live orders and positions from the account's `trading` field. Never resubmit a `submission_unknown` trade with a new idempotency key.",
+        "operationId": "retrieveTrade",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Trade"
+                }
+              }
+            },
+            "description": "trade retrieved"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized",
+            "description": "authentication is missing"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden",
+            "description": "trading permission is missing"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound",
+            "description": "trade was not found"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": [
+              "crypto_wallet:trade:read"
+            ]
+          },
+          {
+            "bearerAuth": [
+              "crypto_wallet:trade"
+            ]
+          },
+          {
+            "bearerAuth": [
+              "crypto_wallet:manage"
+            ]
+          }
+        ],
+        "summary": "Retrieve Trade",
+        "tags": [
+          "Trades"
+        ],
+        "x-mint": {
+          "metadata": {
+            "sidebarTitle": "Retrieve"
+          }
+        }
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/ApiVersionDate"
+        },
+        {
+          "description": "Trade ID, prefixed `trop_`.",
+          "in": "path",
+          "name": "id",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    "/trades/{id}/cancel": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/ApiVersionDate"
+        },
+        {
+          "description": "ID of the order trade to cancel, prefixed `trop_`.",
+          "in": "path",
+          "name": "id",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "post": {
+        "description": "Cancels every order in an order trade, including attached take-profit and stop-loss. This doesn't close filled positions. Returns a new cancellation trade whose `trade_id` points to the original, which is left unchanged. Cancellation works even while opening new positions is disabled. Requires an `Idempotency-Key`.",
+        "operationId": "cancelTrade",
+        "parameters": [
+          {
+            "description": "Required. Reuse the same key when retrying, including after a `submission_unknown` outcome; a new key submits a new trade.",
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "metadata": {
+                    "additionalProperties": {
+                      "type": "string"
+                    },
+                    "description": "Free-form string-to-string annotations stored on the trade.",
+                    "type": [
+                      "object",
+                      "null"
+                    ]
+                  }
+                },
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Trade"
+                }
+              }
+            },
+            "description": "cancellation recorded"
+          },
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Trade"
+                }
+              }
+            },
+            "description": "cancellation outcome is unknown"
+          },
+          "400": {
+            "$ref": "#/components/responses/InvalidParameters",
+            "description": "the trade failed, so it has no orders to cancel"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized",
+            "description": "authentication is missing"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden",
+            "description": "trading permission is missing"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound",
+            "description": "trade was not found"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict",
+            "description": "the trade has not been submitted yet"
+          }
+        },
+        "security": [
+          {
+            "accountApiKeyOrAccountTokenOrAccountUserTokenOrOauthTokenAuth": [
+              "crypto_wallet:trade"
+            ]
+          },
+          {
+            "accountApiKeyOrAccountTokenOrAccountUserTokenOrOauthTokenAuth": [
+              "crypto_wallet:manage"
+            ]
+          }
+        ],
+        "summary": "Cancel Trade",
+        "tags": [
+          "Trades"
+        ],
+        "x-whop-credentials": [
+          "account_api_key",
+          "account_token",
+          "account_user_token",
+          "oauth_token"
+        ]
+      }
+    },
     "/transfers": {
       "get": {
         "description": "Lists an account's transfers.",
@@ -52279,7 +53337,7 @@
                             "type": "string"
                           },
                           "status": {
-                            "description": "Transfer status. `processing` means the on-chain leg is still executing — poll the transfer until it resolves to `succeeded` or `failed`. A `failed` transfer may be retried under the same ID and later resolve to `succeeded`.",
+                            "description": "Transfer status. `processing` means the on-chain leg is still executing — subscribe to `transfer.completed` and `transfer.failed`, or retrieve the transfer to check its current status. A `failed` transfer may be retried under the same ID and later resolve to `succeeded`.",
                             "enum": [
                               "processing",
                               "succeeded",
@@ -52797,7 +53855,7 @@
                           "type": "string"
                         },
                         "status": {
-                          "description": "Transfer status. `processing` means the on-chain leg is still executing — poll the transfer until it resolves to `succeeded` or `failed`. A `failed` transfer may be retried under the same ID and later resolve to `succeeded`.",
+                          "description": "Transfer status. `processing` means the on-chain leg is still executing — subscribe to `transfer.completed` and `transfer.failed`, or retrieve the transfer to check its current status. A `failed` transfer may be retried under the same ID and later resolve to `succeeded`.",
                           "enum": [
                             "processing",
                             "succeeded",
@@ -53574,7 +54632,7 @@
                       "type": "string"
                     },
                     "status": {
-                      "description": "Transfer status. `processing` means the on-chain leg is still executing — poll the transfer until it resolves to `succeeded` or `failed`. A `failed` transfer may be retried under the same ID and later resolve to `succeeded`.",
+                      "description": "Transfer status. `processing` means the on-chain leg is still executing — subscribe to `transfer.completed` and `transfer.failed`, or retrieve the transfer to check its current status. A `failed` transfer may be retried under the same ID and later resolve to `succeeded`.",
                       "enum": [
                         "processing",
                         "succeeded",
@@ -59251,7 +60309,7 @@
                 "properties": {
                   "api_version_date": {
                     "description": "The dated API version (Api-Version-Date) to pin this webhook's payloads to. Omit to leave the webhook unpinned, tracking the current payload shape.",
-                    "example": "2026-09-24-1",
+                    "example": "2026-01-01",
                     "type": [
                       "string",
                       "null"
@@ -59599,7 +60657,7 @@
                 "properties": {
                   "api_version_date": {
                     "description": "The dated API version (Api-Version-Date) to pin this webhook's payloads to. Only valid for `v1` webhooks. Omit to leave the current pin unchanged, or pass `null` to unpin and track the current payload shape.",
-                    "example": "2026-09-24-1",
+                    "example": "2026-01-01",
                     "type": [
                       "string",
                       "null"
@@ -60340,7 +61398,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-24-1",
+                "api_version_date": "2026-09-25",
                 "data": {
                   "balances": [],
                   "banner_image_url": null,
@@ -60665,7 +61723,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-24-1",
+                "api_version_date": "2026-09-25",
                 "data": {
                   "balances": [],
                   "banner_image_url": null,
@@ -60990,7 +62048,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-24-1",
+                "api_version_date": "2026-09-25",
                 "data": {
                   "balances": [],
                   "banner_image_url": null,
@@ -61315,7 +62373,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-24-1",
+                "api_version_date": "2026-09-25",
                 "data": {
                   "ad_campaign": {
                     "id": "adcamp_xxxxxxxxxxxxxx"
@@ -61762,7 +62820,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-24-1",
+                "api_version_date": "2026-09-25",
                 "data": {
                   "bid_type": null,
                   "budget_amount": 50,
@@ -62122,7 +63180,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-24-1",
+                "api_version_date": "2026-09-25",
                 "data": {
                   "bid_type": null,
                   "budget_amount": 50,
@@ -62482,7 +63540,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-24-1",
+                "api_version_date": "2026-09-25",
                 "data": {
                   "billing": null,
                   "canceled_at": null,
@@ -62878,7 +63936,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-24-1",
+                "api_version_date": "2026-09-25",
                 "data": {
                   "billing": null,
                   "canceled_at": null,
@@ -63274,7 +64332,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-24-1",
+                "api_version_date": "2026-09-25",
                 "data": {
                   "billing": null,
                   "canceled_at": null,
@@ -63670,7 +64728,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-24-1",
+                "api_version_date": "2026-09-25",
                 "data": {
                   "billing": null,
                   "canceled_at": null,
@@ -64066,7 +65124,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-24-1",
+                "api_version_date": "2026-09-25",
                 "data": {
                   "hosted_url": null,
                   "id": "ciac_xxxxxxxxxxxxxx",
@@ -64234,7 +65292,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-24-1",
+                "api_version_date": "2026-09-25",
                 "data": {
                   "hosted_url": null,
                   "id": "ciac_xxxxxxxxxxxxxx",
@@ -64402,7 +65460,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-24-1",
+                "api_version_date": "2026-09-25",
                 "data": {
                   "hosted_url": null,
                   "id": "ciac_xxxxxxxxxxxxxx",
@@ -64570,7 +65628,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-24-1",
+                "api_version_date": "2026-09-25",
                 "data": {
                   "hosted_url": null,
                   "id": "ciac_xxxxxxxxxxxxxx",
@@ -64738,7 +65796,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-24-1",
+                "api_version_date": "2026-09-25",
                 "data": {
                   "card_id": "icrd_xxxxxxxxxxxxxx",
                   "cardholder_id": null,
@@ -64877,7 +65935,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-24-1",
+                "api_version_date": "2026-09-25",
                 "data": {
                   "card_id": "icrd_xxxxxxxxxxxxxx",
                   "cardholder_id": null,
@@ -65016,7 +66074,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-24-1",
+                "api_version_date": "2026-09-25",
                 "data": {
                   "card_id": "icrd_xxxxxxxxxxxxxx",
                   "cardholder_id": null,
@@ -65155,7 +66213,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-24-1",
+                "api_version_date": "2026-09-25",
                 "data": {
                   "card_id": "icrd_xxxxxxxxxxxxxx",
                   "cardholder_id": null,
@@ -65294,7 +66352,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-24-1",
+                "api_version_date": "2026-09-25",
                 "data": {
                   "card_id": "icrd_xxxxxxxxxxxxxx",
                   "cardholder_id": null,
@@ -65433,7 +66491,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-24-1",
+                "api_version_date": "2026-09-25",
                 "data": {
                   "amount": "75000000000",
                   "available_at": null,
@@ -65573,7 +66631,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-24-1",
+                "api_version_date": "2026-09-25",
                 "data": {
                   "account_id": "biz_xxxxxxxxxxxxxx",
                   "amount": 150,
@@ -65759,7 +66817,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-24-1",
+                "api_version_date": "2026-09-25",
                 "data": {
                   "account_id": "biz_xxxxxxxxxxxxxx",
                   "amount": 150,
@@ -65945,7 +67003,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-24-1",
+                "api_version_date": "2026-09-25",
                 "data": {
                   "account_id": null,
                   "amount": 25,
@@ -66082,7 +67140,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-24-1",
+                "api_version_date": "2026-09-25",
                 "data": {
                   "created_at": "2026-01-01T12:00:00.000Z",
                   "download_url": "https://s3.amazonaws.com/uploads/exports/members-export.csv",
@@ -66211,7 +67269,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-24-1",
+                "api_version_date": "2026-09-25",
                 "data": {
                   "created_at": "2026-01-01T12:00:00.000Z",
                   "download_url": null,
@@ -66340,7 +67398,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-24-1",
+                "api_version_date": "2026-09-25",
                 "data": {
                   "amount": "512345000000",
                   "available_at": "2026-01-01T12:00:00.000Z",
@@ -66485,7 +67543,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-24-1",
+                "api_version_date": "2026-09-25",
                 "data": {
                   "id": "idpf_xxxxxxxxxxxxxx"
                 },
@@ -66617,7 +67675,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-24-1",
+                "api_version_date": "2026-09-25",
                 "data": {
                   "access_level": "customer",
                   "account_id": "biz_xxxxxxxxxxxxxx",
@@ -66756,7 +67814,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-24-1",
+                "api_version_date": "2026-09-25",
                 "data": {
                   "access_level": "customer",
                   "account_id": "biz_xxxxxxxxxxxxxx",
@@ -66895,7 +67953,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-24-1",
+                "api_version_date": "2026-09-25",
                 "data": {
                   "account": {
                     "id": "biz_xxxxxxxxxxxxxx",
@@ -66904,10 +67962,14 @@
                     "title": "Shine Time Auto Detailing"
                   },
                   "cancel_at_period_end": false,
+                  "canceled_at": null,
+                  "cancellation_reason": null,
                   "created_at": "2026-01-01T12:00:00.000Z",
                   "current_period_end": "2026-01-01T12:00:00.000Z",
+                  "current_period_start": "2026-01-01T12:00:00.000Z",
                   "id": "mem_xxxxxxxxxxxxxx",
                   "license_key": null,
+                  "manage_url": null,
                   "member": null,
                   "metadata": {},
                   "phone_number": null,
@@ -67035,7 +68097,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-24-1",
+                "api_version_date": "2026-09-25",
                 "data": {
                   "account": {
                     "id": "biz_xxxxxxxxxxxxxx",
@@ -67044,10 +68106,14 @@
                     "title": "Shine Time Auto Detailing"
                   },
                   "cancel_at_period_end": true,
+                  "canceled_at": "2026-01-01T12:00:00.000Z",
+                  "cancellation_reason": "The monthly wash club is more than I can spend right now.",
                   "created_at": "2026-01-01T12:00:00.000Z",
                   "current_period_end": "2026-01-01T12:00:00.000Z",
+                  "current_period_start": "2026-01-01T12:00:00.000Z",
                   "id": "mem_xxxxxxxxxxxxxx",
                   "license_key": null,
+                  "manage_url": null,
                   "member": null,
                   "metadata": {},
                   "phone_number": null,
@@ -67181,7 +68247,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-24-1",
+                "api_version_date": "2026-09-25",
                 "data": {
                   "account": {
                     "id": "biz_xxxxxxxxxxxxxx",
@@ -67190,10 +68256,14 @@
                     "title": "Shine Time Auto Detailing"
                   },
                   "cancel_at_period_end": false,
+                  "canceled_at": "2026-01-01T12:00:00.000Z",
+                  "cancellation_reason": "Moving out of Austin — no mobile detailing at the new place.",
                   "created_at": "2026-01-01T12:00:00.000Z",
                   "current_period_end": "2026-01-01T12:00:00.000Z",
+                  "current_period_start": "2026-01-01T12:00:00.000Z",
                   "id": "mem_xxxxxxxxxxxxxx",
                   "license_key": null,
+                  "manage_url": null,
                   "member": null,
                   "metadata": {},
                   "phone_number": null,
@@ -67321,7 +68391,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-24-1",
+                "api_version_date": "2026-09-25",
                 "data": {
                   "account": {
                     "id": "biz_xxxxxxxxxxxxxx",
@@ -67330,10 +68400,14 @@
                     "title": "Shine Time Auto Detailing"
                   },
                   "cancel_at_period_end": false,
+                  "canceled_at": null,
+                  "cancellation_reason": null,
                   "created_at": "2026-01-01T12:00:00.000Z",
                   "current_period_end": "2026-01-01T12:00:00.000Z",
+                  "current_period_start": "2026-01-01T12:00:00.000Z",
                   "id": "mem_xxxxxxxxxxxxxx",
                   "license_key": null,
+                  "manage_url": null,
                   "member": null,
                   "metadata": {},
                   "phone_number": null,
@@ -67467,7 +68541,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-24-1",
+                "api_version_date": "2026-09-25",
                 "data": {
                   "account_id": "biz_xxxxxxxxxxxxxx",
                   "amount_after_fees": {
@@ -67745,7 +68819,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-24-1",
+                "api_version_date": "2026-09-25",
                 "data": {
                   "account_id": "biz_xxxxxxxxxxxxxx",
                   "amount_after_fees": {
@@ -68023,7 +69097,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-24-1",
+                "api_version_date": "2026-09-25",
                 "data": {
                   "account_id": "biz_xxxxxxxxxxxxxx",
                   "amount_after_fees": {
@@ -68301,7 +69375,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-24-1",
+                "api_version_date": "2026-09-25",
                 "data": {
                   "account_id": "biz_xxxxxxxxxxxxxx",
                   "amount_after_fees": {
@@ -68579,7 +69653,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-24-1",
+                "api_version_date": "2026-09-25",
                 "data": {
                   "account_id": "biz_xxxxxxxxxxxxxx",
                   "amount_after_fees": {
@@ -68851,7 +69925,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-24-1",
+                "api_version_date": "2026-09-25",
                 "data": {
                   "account_id": "biz_xxxxxxxxxxxxxx",
                   "amount_after_fees": {
@@ -69135,7 +70209,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-24-1",
+                "api_version_date": "2026-09-25",
                 "data": {
                   "account_id": "biz_xxxxxxxxxxxxxx",
                   "amount_after_fees": {
@@ -69413,7 +70487,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-24-1",
+                "api_version_date": "2026-09-25",
                 "data": {
                   "amount": "10.0",
                   "created_at": "2026-01-01T12:00:00.000Z",
@@ -69886,7 +70960,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-24-1",
+                "api_version_date": "2026-09-25",
                 "data": {
                   "amount": "10.0",
                   "created_at": "2026-01-01T12:00:00.000Z",
@@ -70356,7 +71430,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-24-1",
+                "api_version_date": "2026-09-25",
                 "data": {
                   "amount": "10.0",
                   "created_at": "2026-01-01T12:00:00.000Z",
@@ -70822,7 +71896,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-24-1",
+                "api_version_date": "2026-09-25",
                 "data": {
                   "account_reference": "4483",
                   "bank_verification_state": "no_data",
@@ -71374,7 +72448,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-24-1",
+                "api_version_date": "2026-09-25",
                 "data": {
                   "account": {
                     "id": "biz_xxxxxxxxxxxxxx",
@@ -71679,7 +72753,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-24-1",
+                "api_version_date": "2026-09-25",
                 "data": {
                   "account": {
                     "id": "biz_xxxxxxxxxxxxxx",
@@ -71984,7 +73058,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-24-1",
+                "api_version_date": "2026-09-25",
                 "data": {
                   "account": {
                     "id": "biz_xxxxxxxxxxxxxx",
@@ -72289,7 +73363,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-24-1",
+                "api_version_date": "2026-09-25",
                 "data": {
                   "account": {
                     "id": "biz_xxxxxxxxxxxxxx",
@@ -72449,7 +73523,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-24-1",
+                "api_version_date": "2026-09-25",
                 "data": {
                   "account": {
                     "id": "biz_xxxxxxxxxxxxxx",
@@ -72609,7 +73683,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-24-1",
+                "api_version_date": "2026-09-25",
                 "data": {
                   "account": {
                     "id": "biz_xxxxxxxxxxxxxx",
@@ -72769,7 +73843,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-24-1",
+                "api_version_date": "2026-09-25",
                 "data": {
                   "account": {
                     "id": "biz_xxxxxxxxxxxxxx",
@@ -72929,7 +74003,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-24-1",
+                "api_version_date": "2026-09-25",
                 "data": {
                   "account": {
                     "id": "biz_xxxxxxxxxxxxxx",
@@ -73089,7 +74163,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-24-1",
+                "api_version_date": "2026-09-25",
                 "data": {
                   "account": {
                     "id": "biz_xxxxxxxxxxxxxx",
@@ -73260,7 +74334,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-24-1",
+                "api_version_date": "2026-09-25",
                 "data": {
                   "account": {
                     "id": "biz_xxxxxxxxxxxxxx",
@@ -73427,7 +74501,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-24-1",
+                "api_version_date": "2026-09-25",
                 "data": {
                   "account": {
                     "id": "biz_xxxxxxxxxxxxxx",
@@ -73594,7 +74668,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-24-1",
+                "api_version_date": "2026-09-25",
                 "data": {
                   "account_id": "biz_xxxxxxxxxxxxxx",
                   "checkout_configuration_id": null,
@@ -73742,7 +74816,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-24-1",
+                "api_version_date": "2026-09-25",
                 "data": {
                   "account_id": "biz_xxxxxxxxxxxxxx",
                   "checkout_configuration_id": null,
@@ -73893,7 +74967,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-24-1",
+                "api_version_date": "2026-09-25",
                 "data": {
                   "account_id": "biz_xxxxxxxxxxxxxx",
                   "checkout_configuration_id": null,
@@ -74079,7 +75153,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-24-1",
+                "api_version_date": "2026-09-25",
                 "data": {
                   "account_id": "biz_xxxxxxxxxxxxxx",
                   "carrier": "ups",
@@ -74211,7 +75285,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-24-1",
+                "api_version_date": "2026-09-25",
                 "data": {
                   "account_id": "biz_xxxxxxxxxxxxxx",
                   "carrier": "ups",
@@ -74343,7 +75417,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-24-1",
+                "api_version_date": "2026-09-25",
                 "data": {
                   "account": {
                     "id": "biz_xxxxxxxxxxxxxx",
@@ -74522,7 +75596,7 @@
     },
     "transfer.completed": {
       "post": {
-        "description": "Sent when a transfer is completed\n\nRequired permissions:\n - `webhook_receive:transfers`",
+        "description": "Sent to participating accounts when a transfer succeeds, including when a previously failed transfer succeeds after a retry.\n\nRequired permissions:\n - `webhook_receive:transfers`",
         "parameters": [
           {
             "in": "header",
@@ -74561,7 +75635,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-24-1",
+                "api_version_date": "2026-09-25",
                 "data": {
                   "amount": 250,
                   "created_at": "2026-01-01T12:00:00.000Z",
@@ -74914,7 +75988,7 @@
                         "type": "string"
                       },
                       "status": {
-                        "description": "Transfer status. `processing` means the on-chain leg is still executing — poll the transfer until it resolves to `succeeded` or `failed`. A `failed` transfer may be retried under the same ID and later resolve to `succeeded`.",
+                        "description": "Transfer status. `processing` means the on-chain leg is still executing — subscribe to `transfer.completed` and `transfer.failed`, or retrieve the transfer to check its current status. A `failed` transfer may be retried under the same ID and later resolve to `succeeded`.",
                         "enum": [
                           "processing",
                           "succeeded",
@@ -74988,7 +76062,7 @@
     },
     "transfer.created": {
       "post": {
-        "description": "Sent when a transfer is created\n\nRequired permissions:\n - `webhook_receive:transfers`",
+        "description": "Sent to participating accounts when a transfer succeeds, alongside `transfer.completed`. This event does not indicate entry into `processing`.\n\nRequired permissions:\n - `webhook_receive:transfers`",
         "parameters": [
           {
             "in": "header",
@@ -75027,7 +76101,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-24-1",
+                "api_version_date": "2026-09-25",
                 "data": {
                   "amount": 250,
                   "created_at": "2026-01-01T12:00:00.000Z",
@@ -75380,7 +76454,7 @@
                         "type": "string"
                       },
                       "status": {
-                        "description": "Transfer status. `processing` means the on-chain leg is still executing — poll the transfer until it resolves to `succeeded` or `failed`. A `failed` transfer may be retried under the same ID and later resolve to `succeeded`.",
+                        "description": "Transfer status. `processing` means the on-chain leg is still executing — subscribe to `transfer.completed` and `transfer.failed`, or retrieve the transfer to check its current status. A `failed` transfer may be retried under the same ID and later resolve to `succeeded`.",
                         "enum": [
                           "processing",
                           "succeeded",
@@ -75454,7 +76528,7 @@
     },
     "transfer.failed": {
       "post": {
-        "description": "Sent when a transfer is failed\n\nRequired permissions:\n - `webhook_receive:transfers`",
+        "description": "Sent to participating accounts when an existing transfer enters `failed`. The payload includes `failure_code`, `failure_reason`, and `failed_at`; a retry may later succeed under the same transfer ID.\n\nRequired permissions:\n - `webhook_receive:transfers`",
         "parameters": [
           {
             "in": "header",
@@ -75493,7 +76567,7 @@
               "example": {
                 "account_id": "biz_xxxxxxxxxxxxxx",
                 "api_version": "v1",
-                "api_version_date": "2026-09-24-1",
+                "api_version_date": "2026-09-25",
                 "data": {
                   "amount": 10,
                   "created_at": "2026-01-01T12:00:00.000Z",
@@ -75844,7 +76918,7 @@
                         "type": "string"
                       },
                       "status": {
-                        "description": "Transfer status. `processing` means the on-chain leg is still executing — poll the transfer until it resolves to `succeeded` or `failed`. A `failed` transfer may be retried under the same ID and later resolve to `succeeded`.",
+                        "description": "Transfer status. `processing` means the on-chain leg is still executing — subscribe to `transfer.completed` and `transfer.failed`, or retrieve the transfer to check its current status. A `failed` transfer may be retried under the same ID and later resolve to `succeeded`.",
                         "enum": [
                           "processing",
                           "succeeded",
@@ -75925,7 +76999,7 @@
         "name": "Api-Version-Date",
         "required": false,
         "schema": {
-          "example": "2026-09-24-1",
+          "example": "2026-09-25",
           "type": "string"
         }
       },
@@ -84436,9 +85510,10 @@
               "2026-09-22-4",
               "2026-09-23",
               "2026-09-24",
-              "2026-09-24-1"
+              "2026-09-24-1",
+              "2026-09-25"
             ],
-            "example": "2026-09-24-1",
+            "example": "2026-09-25",
             "type": "string"
           },
           "created_at": {
@@ -87888,8 +88963,19 @@
       },
       "ConfirmationToken": {
         "properties": {
+          "billing_address": {
+            "description": "The collected billing address, including the name on the address. Null when not collected or without bearer authentication with payment:basic:read on the token’s account.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/PaymentAddress"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "billing_details": {
-            "description": "Enough of the billing details to raise a customer record and recognise the method — email, name, country and postal code. The street address is collected for the charge but never returned; this endpoint is a display-safe preview.",
+            "description": "Billing preview supplied at collection: email, name, country and postal code.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/PaymentBillingDetailsPreview"
@@ -87948,6 +89034,7 @@
           "payment_method_preview",
           "setup_future_usage",
           "billing_details",
+          "billing_address",
           "created_at",
           "expires_at"
         ],
@@ -88303,13 +89390,16 @@
             ]
           },
           "status": {
-            "description": "Where the dispute stands. `needs_response` is awaiting evidence, `under_review` is with the processor, `won` returned the funds to the seller, `lost` returned them to the customer, and `closed` ended without a ruling. A dispute past its `evidence_due_at` reports `under_review` — the window to respond has closed.",
+            "description": "Where the dispute stands. `needs_response` is awaiting evidence, `under_review` is with the processor, `won` returned the funds to the seller, `lost` returned them to the customer, and `closed` ended without a ruling. The `warning_` statuses are the same stages for an inquiry, which moves no funds. A dispute past its `evidence_due_at` reports `under_review` — the window to respond has closed.",
             "enum": [
               "needs_response",
+              "warning_needs_response",
               "under_review",
+              "warning_under_review",
               "won",
               "lost",
-              "closed"
+              "closed",
+              "warning_closed"
             ],
             "example": "under_review",
             "type": "string"
@@ -91914,8 +93004,24 @@
           },
           "cancel_at_period_end": {
             "description": "Whether the membership is set to cancel when the current billing period ends. Only meaningful for recurring plans.",
-            "example": false,
+            "example": true,
             "type": "boolean"
+          },
+          "canceled_at": {
+            "description": "When cancellation was requested, or when the membership was canceled if no request time is recorded, as an ISO 8601 timestamp. `null` when neither is recorded.",
+            "example": "2026-01-01T12:00:00.000Z",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "cancellation_reason": {
+            "description": "Free-text explanation provided when canceling. `null` when no reason was provided.",
+            "example": "Too expensive",
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "created_at": {
             "description": "When the membership was created, as an ISO 8601 timestamp.",
@@ -91930,6 +93036,14 @@
               "null"
             ]
           },
+          "current_period_start": {
+            "description": "When the current billing period started, as an ISO 8601 timestamp. `null` when no billing period is recorded.",
+            "example": "2026-01-01T12:00:00.000Z",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
           "id": {
             "description": "Membership ID, prefixed `mem_`.",
             "example": "mem_xxxxxxxxxxxxxx",
@@ -91938,6 +93052,14 @@
           "license_key": {
             "description": "The software license key for this membership. Only present when the product includes a software licensing experience.",
             "example": "WHOP-XXXX-XXXX-XXXX",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "manage_url": {
+            "description": "URL where the buyer can sign in to manage billing. `null` without a member record or unless the caller is the buyer or has `member:manage` on the account.",
+            "example": "https://whop.com/billing/manage/mber_xxxxxxxxxxxxxx",
             "type": [
               "string",
               "null"
@@ -92009,7 +93131,11 @@
           "license_key",
           "phone_number",
           "cancel_at_period_end",
+          "current_period_start",
           "current_period_end",
+          "canceled_at",
+          "cancellation_reason",
+          "manage_url",
           "metadata",
           "created_at",
           "member",
@@ -92829,6 +93955,17 @@
             "description": "When the request last changed, as an ISO 8601 timestamp.",
             "example": "2026-01-01T12:00:00.000Z",
             "type": "string"
+          },
+          "user": {
+            "description": "User receiving the attribution request, or null for a business request or referral link.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/UserSummary"
+              },
+              {
+                "type": "null"
+              }
+            ]
           }
         },
         "required": [
@@ -92840,6 +93977,7 @@
           "created_at",
           "updated_at",
           "account",
+          "user",
           "partner",
           "rewards"
         ],
@@ -99776,6 +100914,495 @@
         ],
         "type": "object"
       },
+      "Trade": {
+        "properties": {
+          "account_id": {
+            "description": "The account that owns the trading wallet, prefixed `biz_`. `null` when a user owns it.",
+            "example": "biz_xxxxxxxxxxxxxx",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "cancellations": {
+            "items": {
+              "$ref": "#/components/schemas/TradeCancellationResult",
+              "description": "Cancellation results for `cancel_orders` trades, or `null` for other trades or before completion."
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "completed_at": {
+            "description": "When the submission finished, as an ISO 8601 timestamp, or `null` while it is pending or its outcome is unknown.",
+            "example": "2026-01-01T12:00:00.000Z",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "created_at": {
+            "description": "When the trade was submitted, as an ISO 8601 timestamp.",
+            "example": "2026-01-01T12:00:00.000Z",
+            "type": "string"
+          },
+          "failure_code": {
+            "description": "Why the trade failed or has an unknown outcome, or `null` otherwise.",
+            "enum": [
+              "pre_submission_error",
+              "provider_rejected",
+              "provider_outcome_unknown",
+              null
+            ],
+            "example": "pre_submission_error",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "hyperliquid": {
+            "description": "Hyperliquid-specific submission details. Present when `provider` is `hyperliquid`, otherwise `null`.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/TradeHyperliquid"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "id": {
+            "description": "Trade ID, prefixed `trop_`.",
+            "example": "trop_xxxxxxxxxxxxxx",
+            "type": "string"
+          },
+          "instrument_type": {
+            "description": "The kind of instrument traded.",
+            "enum": [
+              "perpetual"
+            ],
+            "example": "perpetual",
+            "type": "string"
+          },
+          "leverage": {
+            "description": "The leverage requested by an `update_leverage` trade. `null` for other trades.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/TradeLeverage"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "metadata": {
+            "description": "String-to-string annotations you provided when submitting the trade.",
+            "example": {},
+            "type": "object"
+          },
+          "object": {
+            "enum": [
+              "trade"
+            ],
+            "example": "trade",
+            "type": "string"
+          },
+          "operation_type": {
+            "description": "`create_orders` places orders, `cancel_orders` cancels a submitted batch, and `update_leverage` sets a market's leverage.",
+            "enum": [
+              "create_orders",
+              "cancel_orders",
+              "update_leverage"
+            ],
+            "example": "cancel_orders",
+            "type": "string"
+          },
+          "orders": {
+            "example": null,
+            "items": {
+              "$ref": "#/components/schemas/TradeOrderResult",
+              "description": "Order acknowledgements recorded at submission for `create_orders` trades, or `null` for other trades or before completion. They don't update as orders fill; read live orders and positions from the account's `trading` field."
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "provider": {
+            "description": "Trading venue the trade was submitted to.",
+            "enum": [
+              "hyperliquid"
+            ],
+            "example": "hyperliquid",
+            "type": "string"
+          },
+          "requested_orders": {
+            "items": {
+              "$ref": "#/components/schemas/TradeRequestedOrder",
+              "description": "The orders submitted for a `create_orders` trade, including attached take-profit and stop-loss, with the client order IDs Whop assigned. Present in every status, so an unknown outcome can be reconciled by `client_order_id`. `null` for other trades."
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "status": {
+            "description": "Submission status, not fill status. `completed` means the provider response was recorded, even if individual orders were rejected. Never resubmit a `submission_unknown` trade with a new idempotency key.",
+            "enum": [
+              "pending",
+              "submitted",
+              "completed",
+              "failed",
+              "submission_unknown"
+            ],
+            "example": "completed",
+            "type": "string"
+          },
+          "trade_id": {
+            "description": "For a cancellation, the ID of the canceled trade, prefixed `trop_`. `null` otherwise.",
+            "example": "trop_xxxxxxxxxxxxxx",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "updated_at": {
+            "description": "When the trade last changed, as an ISO 8601 timestamp.",
+            "example": "2026-01-01T12:00:00.000Z",
+            "type": "string"
+          },
+          "user_id": {
+            "description": "The user who owns the trading wallet, prefixed `user_`. `null` when an account owns it.",
+            "example": null,
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "account_id",
+          "user_id",
+          "provider",
+          "operation_type",
+          "status",
+          "metadata",
+          "created_at",
+          "updated_at",
+          "completed_at",
+          "failure_code",
+          "instrument_type",
+          "requested_orders",
+          "orders",
+          "cancellations",
+          "leverage",
+          "trade_id",
+          "hyperliquid",
+          "object"
+        ],
+        "type": "object"
+      },
+      "TradeCancellationResult": {
+        "properties": {
+          "error": {
+            "description": "The provider's rejection reason, or `null` when the order was canceled.",
+            "example": null,
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "id": {
+            "description": "Client order ID of the order the cancellation targeted, prefixed `trdcloid_`.",
+            "example": "trdcloid_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+            "type": "string"
+          },
+          "status": {
+            "description": "`canceled` when the provider canceled the order; `rejected` when it refused, for example because the order had already filled.",
+            "enum": [
+              "canceled",
+              "rejected"
+            ],
+            "example": "canceled",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "status",
+          "error"
+        ],
+        "type": "object"
+      },
+      "TradeHyperliquid": {
+        "properties": {
+          "builder_fee_bps": {
+            "description": "Builder fee Whop charged on the submitted orders, in basis points as a decimal string, or `null` for trades that place no orders.",
+            "example": null,
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "builder_fee_bps"
+        ],
+        "type": "object"
+      },
+      "TradeLeverage": {
+        "properties": {
+          "leverage": {
+            "description": "Requested leverage multiplier, such as `10` for 10x, or `null` if the request didn't contain a whole number.",
+            "example": 5,
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "margin_mode": {
+            "description": "`cross` shares margin across positions; `isolated` limits margin to this market's position. `null` if the request didn't contain a supported mode.",
+            "enum": [
+              "cross",
+              "isolated",
+              null
+            ],
+            "example": "isolated",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "market": {
+            "description": "Market symbol, such as `ETH`.",
+            "example": "ETH",
+            "type": "string"
+          }
+        },
+        "required": [
+          "market",
+          "leverage",
+          "margin_mode"
+        ],
+        "type": "object"
+      },
+      "TradeOrderResult": {
+        "properties": {
+          "average_price": {
+            "description": "Average fill price in USD for an immediate fill, or `null` when nothing filled.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/Money"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "client_order_id": {
+            "description": "Client order ID Whop assigned to the order, prefixed `trdcloid_`.",
+            "type": "string"
+          },
+          "error": {
+            "description": "The provider's rejection reason, or `null` when the order was accepted.",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "filled_size": {
+            "description": "Size filled immediately at submission, as a decimal string, or `null` when nothing filled.",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "hyperliquid": {
+            "description": "Hyperliquid-specific order details. Present on Hyperliquid orders, otherwise `null`.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/TradingHyperliquidOrder"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "id": {
+            "description": "Trading order ID, prefixed `trdord_` once the provider assigns one, otherwise the client order ID prefixed `trdcloid_`.",
+            "type": "string"
+          },
+          "market": {
+            "description": "Market symbol on the provider, such as `ETH`.",
+            "type": "string"
+          },
+          "object": {
+            "enum": [
+              "trading_order"
+            ],
+            "example": "trading_order",
+            "type": "string"
+          },
+          "order_type": {
+            "enum": [
+              "limit",
+              "market",
+              "take_profit",
+              "stop_loss"
+            ],
+            "example": "limit",
+            "type": "string"
+          },
+          "parent_client_order_id": {
+            "description": "For an attached take-profit or stop-loss, the client order ID of its entry order, prefixed `trdcloid_`. `null` for other orders.",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "price": {
+            "$ref": "#/components/schemas/Money",
+            "description": "Submitted limit price in USD. For market and trigger orders, the worst price allowed after slippage."
+          },
+          "provider_order_id": {
+            "description": "The provider's own order ID, or `null` until the provider assigns one, such as for a rejected order or a take-profit or stop-loss that hasn't triggered yet.",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "side": {
+            "enum": [
+              "buy",
+              "sell"
+            ],
+            "example": "buy",
+            "type": "string"
+          },
+          "size": {
+            "description": "Submitted size as a decimal string.",
+            "type": "string"
+          },
+          "status": {
+            "description": "The provider's acknowledgement at submission time, not the current fill status.",
+            "enum": [
+              "open",
+              "filled",
+              "rejected"
+            ],
+            "example": "open",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "object",
+          "client_order_id",
+          "provider_order_id",
+          "parent_client_order_id",
+          "market",
+          "side",
+          "size",
+          "price",
+          "order_type",
+          "status",
+          "filled_size",
+          "average_price",
+          "error",
+          "hyperliquid"
+        ],
+        "type": "object"
+      },
+      "TradeRequestedOrder": {
+        "properties": {
+          "client_order_id": {
+            "description": "Client order ID Whop assigned to the order, prefixed `trdcloid_`. Matches the order in `orders` and on the provider.",
+            "example": "trdcloid_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+            "type": "string"
+          },
+          "market": {
+            "description": "Market symbol as submitted, such as `ETH`.",
+            "example": "ETH",
+            "type": "string"
+          },
+          "order_type": {
+            "description": "Submitted order type, or `null` if the request didn't contain a supported type.",
+            "enum": [
+              "limit",
+              "market",
+              "take_profit",
+              "stop_loss",
+              null
+            ],
+            "example": "stop_loss",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "parent_client_order_id": {
+            "description": "For an attached take-profit or stop-loss, the client order ID of its entry order, prefixed `trdcloid_`. `null` for other orders.",
+            "example": "trdcloid_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "price": {
+            "description": "Submitted limit price in USD, or `null` for orders submitted without one.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/Money"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "side": {
+            "description": "Submitted side, or `null` if the request didn't contain a supported side.",
+            "enum": [
+              "buy",
+              "sell",
+              null
+            ],
+            "example": "sell",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "size": {
+            "description": "Submitted size as a decimal string.",
+            "example": "0.02",
+            "type": "string"
+          },
+          "trigger_price": {
+            "description": "Submitted trigger price in USD, or `null` for orders without a trigger.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/Money"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "client_order_id",
+          "parent_client_order_id",
+          "market",
+          "side",
+          "size",
+          "order_type",
+          "price",
+          "trigger_price"
+        ],
+        "type": "object"
+      },
       "TradingAccount": {
         "properties": {
           "account_id": {
@@ -101252,7 +102879,7 @@
           },
           "api_version_date": {
             "description": "The dated API version (Api-Version-Date) that v1 payloads for this endpoint are pinned to: events serialize exactly like a REST read at this version (the native serializer where the resource has one). Null when unpinned — legacy (v2/v5) webhooks, and v1 webhooks on the legacy payload shape.",
-            "example": "2026-09-24-1",
+            "example": "2026-01-01",
             "type": [
               "string",
               "null"
@@ -101682,7 +103309,7 @@
           },
           "api_version_date": {
             "description": "The dated API version (Api-Version-Date) that v1 payloads for this endpoint are pinned to: events serialize exactly like a REST read at this version (the native serializer where the resource has one). Null when unpinned — legacy (v2/v5) webhooks, and v1 webhooks on the legacy payload shape.",
-            "example": "2026-09-24-1",
+            "example": "2026-01-01",
             "type": [
               "string",
               "null"
@@ -101932,15 +103559,15 @@
         "scheme": "bearer",
         "type": "http"
       },
-      "accountApiKeyOrAccountUserTokenOrOauthTokenAuth": {
-        "bearerFormat": "auth-scheme",
-        "description": "An Account API key, an account-scoped user token, or a user OAuth token. Prepend the key or token with `Bearer`, for example `Bearer ***************************`. See [Auth & API keys](/developer/guides/auth-scoping) for how to get each one.",
-        "scheme": "bearer",
-        "type": "http"
-      },
       "accountApiKeyOrAccountUserTokenAuth": {
         "bearerFormat": "auth-scheme",
         "description": "An Account API key or an account-scoped user token. Prepend the key or token with `Bearer`, for example `Bearer ***************************`. See [Auth & API keys](/developer/guides/auth-scoping) for how to get each one.",
+        "scheme": "bearer",
+        "type": "http"
+      },
+      "accountApiKeyOrAccountUserTokenOrOauthTokenAuth": {
+        "bearerFormat": "auth-scheme",
+        "description": "An Account API key, an account-scoped user token, or a user OAuth token. Prepend the key or token with `Bearer`, for example `Bearer ***************************`. See [Auth & API keys](/developer/guides/auth-scoping) for how to get each one.",
         "scheme": "bearer",
         "type": "http"
       },

@@ -65,6 +65,17 @@ Use the Memberships API to list an account's memberships or the caller's own, re
       Only meaningful for recurring plans.
     </ResponseField>
 
+    <ResponseField name="canceled_at" type="string | null" required>
+      When cancellation was requested, or when the membership was canceled if no
+      request time is recorded, as an ISO 8601 timestamp. `null` when neither is
+      recorded.
+    </ResponseField>
+
+    <ResponseField name="cancellation_reason" type="string | null" required>
+      Free-text explanation provided when canceling. `null` when no reason was
+      provided.
+    </ResponseField>
+
     <ResponseField name="created_at" type="string" required>
       When the membership was created, as an ISO 8601 timestamp.
     </ResponseField>
@@ -75,9 +86,20 @@ Use the Memberships API to list an account's memberships or the caller's own, re
       expiration.
     </ResponseField>
 
+    <ResponseField name="current_period_start" type="string | null" required>
+      When the current billing period started, as an ISO 8601 timestamp. `null` when
+      no billing period is recorded.
+    </ResponseField>
+
     <ResponseField name="license_key" type="string | null" required>
       The software license key for this membership. Only present when the product
       includes a software licensing experience.
+    </ResponseField>
+
+    <ResponseField name="manage_url" type="string | null" required>
+      URL where the buyer can sign in to manage billing. `null` without a member
+      record or unless the caller is the buyer or has `member:manage` on the
+      account.
     </ResponseField>
 
     <ResponseField name="member" type="object | null" required>
@@ -145,7 +167,11 @@ Use the Memberships API to list an account's memberships or the caller's own, re
       	"license_key": "A1B2C3-D4E5F6-G7H8I9",
       	"phone_number": "+12025550123",
       	"cancel_at_period_end": false,
+      	"current_period_start": "2026-07-01T00:00:00.000Z",
       	"current_period_end": "2026-08-01T00:00:00.000Z",
+      	"canceled_at": null,
+      	"cancellation_reason": null,
+      	"manage_url": "https://whop.com/billing/manage/mber_xxxxxxxxxxxxx",
       	"metadata": {
       		"external_customer_id": "cus_123"
       	},

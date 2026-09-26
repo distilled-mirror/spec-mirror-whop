@@ -4,7 +4,7 @@
 
 # Transfer failed
 
-> Sent when a transfer is failed
+> Sent to participating accounts when an existing transfer enters `failed`. The payload includes `failure_code`, `failure_reason`, and `failed_at`; a retry may later succeed under the same transfer ID.
 
 Required permissions:
  - `webhook_receive:transfers`

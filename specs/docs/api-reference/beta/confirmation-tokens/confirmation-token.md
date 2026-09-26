@@ -4,7 +4,7 @@
 
 # Confirmation Token
 
-A Confirmation Token is a single-use, short-lived reference to a payment method and billing details collected from a buyer. Its response contains only a display-safe preview and never returns the underlying payment credential.
+A Confirmation Token is a single-use, short-lived reference to a payment method and billing details collected from a buyer. Its response never returns the underlying payment credential. Public callers receive a billing preview; bearer-authenticated callers with `payment:basic:read` on the token’s account also receive the collected billing address.
 
 Whop Elements mint the token in your buyer-facing collection flow and hand you its `ctok_` ID to send to the Payments API from your server. Retrieve a token to display its payment method and billing preview or check whether it is still usable.
 
@@ -20,8 +20,42 @@ Whop Elements mint the token in your buyer-facing collection flow and hand you i
   <Column>
     <ResponseField name="id" type="string" required />
 
+    <ResponseField name="billing_address" type="object | null" required>
+      The collected billing address, including the name on the address. Null when not collected or without bearer authentication with payment:basic:read on the token’s account.
+
+      <Accordion title="Properties" defaultOpen={true}>
+        <ResponseField name="city" type="string | null" required>
+          The city.
+        </ResponseField>
+
+        <ResponseField name="country" type="string | null" required>
+          The ISO 3166-1 alpha-2 country code.
+        </ResponseField>
+
+        <ResponseField name="line1" type="string | null" required>
+          The first street address line.
+        </ResponseField>
+
+        <ResponseField name="line2" type="string | null" required>
+          The second street address line.
+        </ResponseField>
+
+        <ResponseField name="name" type="string | null" required>
+          The name on the address.
+        </ResponseField>
+
+        <ResponseField name="postal_code" type="string | null" required>
+          The postal or ZIP code.
+        </ResponseField>
+
+        <ResponseField name="state" type="string | null" required>
+          The state, province or region.
+        </ResponseField>
+      </Accordion>
+    </ResponseField>
+
     <ResponseField name="billing_details" type="object | null" required>
-      Enough of the billing details to raise a customer record and recognise the method — email, name, country and postal code. The street address is collected for the charge but never returned; this endpoint is a display-safe preview.
+      Billing preview supplied at collection: email, name, country and postal code.
 
       <Accordion title="Properties" defaultOpen={true}>
         <ResponseField name="country" type="string | null" required>
@@ -201,6 +235,7 @@ Whop Elements mint the token in your buyer-facing collection flow and hand you i
       		"country": "US",
       		"postal_code": "78701"
       	},
+      	"billing_address": null,
       	"created_at": "2026-08-28T12:00:00.000Z",
       	"expires_at": "2026-08-28T12:15:00.000Z"
       }

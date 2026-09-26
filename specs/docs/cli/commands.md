@@ -195,7 +195,13 @@ Read trading balances, positions and open orders from the supported provider. Th
 ```bash theme={null}
 whop accounts get biz_xxx --include_trading true --format json
 whop users get me --include_trading true --format json
+whop trades create --help
+whop trades cancel trop_xxx --help
+whop trades leverage --help
+whop trades get trop_xxx --format json
 ```
+
+Trade creation supports market, limit, ladder, and take-profit/stop-loss orders. Writes require an `Idempotency-Key`. After an ambiguous response, retry with the same key, never a new one. The returned ID tracks the submission, not live fills. Cancellation targets the entire original batch, including take-profit and stop-loss, and doesn't close filled positions. Opening positions and changing leverage are available by request. Cancellation and reduce-only exits keep working even when Whop pauses new positions.
 
 ### `cards`
 

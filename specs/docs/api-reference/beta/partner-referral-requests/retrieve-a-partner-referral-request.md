@@ -4,7 +4,7 @@
 
 # Retrieve a Partner Referral Request
 
-> Retrieves a request visible to its eligible sender or a current owner of the receiving account. Enrolled, non-suspended partners can read their links without verification. Use a Whop login session or an account API key with `partner:referral_request:read`. The key must have been created by the account's current owner. Account API keys can retrieve their owner's sent requests and incoming requests for the key's account.
+> Retrieves a referral link or attribution request by ID, including its partner, recipient, approval status, and referral code when present.
 
 
 

@@ -3,7 +3,7 @@
     "https://docs.whop.com/llms.txt",
     "https://docs.whop.com/sitemap.xml"
   ],
-  "count": 1124,
+  "count": 1131,
   "pages": [
     {
       "page": "https://docs.whop.com/account-settings/account-security/delete-your-account",
@@ -521,6 +521,15 @@
       "page": "https://docs.whop.com/api-reference/beta/accounts/create-account",
       "markdown": "https://docs.whop.com/api-reference/beta/accounts/create-account.md",
       "file": "api-reference/beta/accounts/create-account.md",
+      "indexes": [
+        "llms.txt",
+        "sitemap"
+      ]
+    },
+    {
+      "page": "https://docs.whop.com/api-reference/beta/accounts/delete-a-connected-account",
+      "markdown": "https://docs.whop.com/api-reference/beta/accounts/delete-a-connected-account.md",
+      "file": "api-reference/beta/accounts/delete-a-connected-account.md",
       "indexes": [
         "llms.txt",
         "sitemap"
@@ -3799,6 +3808,60 @@
       "page": "https://docs.whop.com/api-reference/beta/team-members/update-team-member",
       "markdown": "https://docs.whop.com/api-reference/beta/team-members/update-team-member.md",
       "file": "api-reference/beta/team-members/update-team-member.md",
+      "indexes": [
+        "llms.txt",
+        "sitemap"
+      ]
+    },
+    {
+      "page": "https://docs.whop.com/api-reference/beta/trades/cancel-trade",
+      "markdown": "https://docs.whop.com/api-reference/beta/trades/cancel-trade.md",
+      "file": "api-reference/beta/trades/cancel-trade.md",
+      "indexes": [
+        "llms.txt",
+        "sitemap"
+      ]
+    },
+    {
+      "page": "https://docs.whop.com/api-reference/beta/trades/create-trade",
+      "markdown": "https://docs.whop.com/api-reference/beta/trades/create-trade.md",
+      "file": "api-reference/beta/trades/create-trade.md",
+      "indexes": [
+        "llms.txt",
+        "sitemap"
+      ]
+    },
+    {
+      "page": "https://docs.whop.com/api-reference/beta/trades/list-trades",
+      "markdown": "https://docs.whop.com/api-reference/beta/trades/list-trades.md",
+      "file": "api-reference/beta/trades/list-trades.md",
+      "indexes": [
+        "llms.txt",
+        "sitemap"
+      ]
+    },
+    {
+      "page": "https://docs.whop.com/api-reference/beta/trades/retrieve-trade",
+      "markdown": "https://docs.whop.com/api-reference/beta/trades/retrieve-trade.md",
+      "file": "api-reference/beta/trades/retrieve-trade.md",
+      "indexes": [
+        "llms.txt",
+        "sitemap"
+      ]
+    },
+    {
+      "page": "https://docs.whop.com/api-reference/beta/trades/trade",
+      "markdown": "https://docs.whop.com/api-reference/beta/trades/trade.md",
+      "file": "api-reference/beta/trades/trade.md",
+      "indexes": [
+        "llms.txt",
+        "sitemap"
+      ]
+    },
+    {
+      "page": "https://docs.whop.com/api-reference/beta/trades/update-trade-leverage",
+      "markdown": "https://docs.whop.com/api-reference/beta/trades/update-trade-leverage.md",
+      "file": "api-reference/beta/trades/update-trade-leverage.md",
       "indexes": [
         "llms.txt",
         "sitemap"

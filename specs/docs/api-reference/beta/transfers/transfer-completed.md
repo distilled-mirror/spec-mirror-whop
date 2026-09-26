@@ -4,7 +4,7 @@
 
 # Transfer completed
 
-> Sent when a transfer is completed
+> Sent to participating accounts when a transfer succeeds, including when a previously failed transfer succeeds after a retry.
 
 Required permissions:
  - `webhook_receive:transfers`
