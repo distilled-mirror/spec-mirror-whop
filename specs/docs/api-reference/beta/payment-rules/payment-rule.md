@@ -63,13 +63,13 @@ For a walkthrough of blocking, reviewing, challenging, and allowing checkouts to
             <ResponseField name="field" type="string" required>
               The payment attribute this condition reads.
 
-              Available options: `risk_score`, `amount_in_usd`, `card_country`, `customer_email`, `ip_address`
+              Available options: `risk_score`, `amount_in_usd`, `card_country`, `card_bin`, `customer_email`, `ip_address`
             </ResponseField>
 
             <ResponseField name="operator" type="string" required>
               How the payment attribute is compared to the value.
 
-              Available options: `eq`, `neq`, `gt`, `gte`, `lt`, `lte`, `in`, `not_in`, `contains`, `starts_with`, `ends_with`, `in_cidr`
+              Available options: `eq`, `neq`, `gt`, `gte`, `lt`, `lte`, `in`, `not_in`, `starts_with`, `contains`, `ends_with`, `in_cidr`
             </ResponseField>
 
             <ResponseField name="value" type="integer or string or string[]" required>

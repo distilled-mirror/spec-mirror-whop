@@ -467,6 +467,40 @@ export const QuickStart = ({children, code, steps, title, description, platformG
   };
   const highlightLines = getHighlightLines();
   const focusLines = isCodeContentHovered ? null : highlightLines;
+  const INLINE_PATTERN = /(`[^`]+`|\*\*[^*]+\*\*|\[[^\]]+\]\([^)\s]+\))/g;
+  const renderInline = text => String(text).split(INLINE_PATTERN).filter(part => part !== "").map((part, index) => {
+    if (part.startsWith("`") && part.endsWith("`")) {
+      return <code key={index}>{part.slice(1, -1)}</code>;
+    }
+    if (part.startsWith("**") && part.endsWith("**")) {
+      return <strong key={index}>{part.slice(2, -2)}</strong>;
+    }
+    const link = part.match(/^\[([^\]]+)\]\(([^)\s]+)\)$/);
+    if (link) {
+      return <a key={index} href={link[2]}>
+							{link[1]}
+						</a>;
+    }
+    return part;
+  });
+  const renderSubStepBody = subStep => {
+    const paragraphs = (Array.isArray(subStep.body) ? subStep.body : [subStep.body]).filter(Boolean);
+    const install = subStep.install ? Object.entries(subStep.install) : [];
+    return <>
+				{paragraphs.map((paragraph, index) => <p key={index}>{renderInline(paragraph)}</p>)}
+				{subStep.bullets && <ul>
+						{subStep.bullets.map((bullet, index) => <li key={index}>{renderInline(bullet)}</li>)}
+					</ul>}
+				{install.length === 1 && <CodeBlock language="bash" filename={install[0][0]}>
+						{install[0][1]}
+					</CodeBlock>}
+				{install.length > 1 && <CodeGroup>
+						{install.map(([label, command]) => <CodeBlock key={label} language="bash" filename={label}>
+								{command}
+							</CodeBlock>)}
+					</CodeGroup>}
+			</>;
+  };
   return <div className="qs-container" id="quickstart-content">
 			<div className="qs-top-bar">
 				{platformGroups && <div className="qs-selector-group">
@@ -522,7 +556,7 @@ export const QuickStart = ({children, code, steps, title, description, platformG
 					<h1 className="m-0 text-2xl sm:text-3xl font-bold text-gray-900 tracking-tight dark:text-gray-200">
 						{title}
 					</h1>
-					{description}
+					{typeof description === "string" ? <p>{renderInline(description)}</p> : description}
 				</div>
 				{(() => {
     let stepNumber = 0;
@@ -567,7 +601,7 @@ export const QuickStart = ({children, code, steps, title, description, platformG
         }}>
 												<h4 className="mb-2">{resolvedSubStep.title}</h4>
 												<div className="qs-step-content">
-													{resolvedSubStep.content}
+													{resolvedSubStep.content ?? renderSubStepBody(resolvedSubStep)}
 												</div>
 											</div>;
       })}

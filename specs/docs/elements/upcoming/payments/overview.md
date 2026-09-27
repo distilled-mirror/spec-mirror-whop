@@ -65,7 +65,7 @@ Pass these to `whop.payments.create({ … })`, or as props on `<Payments>` in Re
 </ResponseField>
 
 <ResponseField name="returnUrl" type="string">
-  Return URL for off-site bank or 3DS steps. Defaults to the mounting page.
+  Return URL for off-site bank or 3DS steps. Defaults to the mounting page. The buyer lands there whatever the outcome, with `payment` (or `setup`), `status` (`succeeded`, `failed`, `canceled`, or a still-pending status such as `processing`), and `client_secret` appended, so branch on `status` before showing a success page.
 </ResponseField>
 
 <ResponseField name="setupFutureUsage" type="&#x22;off_session&#x22; | &#x22;on_session&#x22;">

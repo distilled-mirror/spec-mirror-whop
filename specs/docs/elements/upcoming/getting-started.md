@@ -334,7 +334,7 @@
 
   You handle **navigation and storage**. Elements report selections and results as events, and never write to your database.
 
-  The exception is a flow that leaves the page. Where an element takes a `returnUrl`, it navigates the tab there, so the buyer can end up off your page. Fulfill from webhooks rather than from a browser callback.
+  The exception is a flow that leaves the page. Where an element takes a `returnUrl`, it navigates the tab there, so the buyer can end up off your page. The buyer arrives there after a failed or abandoned off-site step as well as after a successful one, with `status` (`succeeded`, `failed`, or `canceled`) and the attempt's ID appended to the URL, so the page at `returnUrl` has to read `status` before it shows a success message. Fulfill from webhooks rather than from a browser callback.
 
   Elements run in frames, so only serializable values cross the boundary. There is no shared DOM, and object identity is not preserved.
 

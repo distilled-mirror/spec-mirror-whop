@@ -27,6 +27,14 @@ Checkout configuration, plan, product, membership, payment. Each is defined in [
     Take your first payment with a link or the Checkout element.
   </Card>
 
+  <Card title="Embed a checkout" icon="cart-shopping" href="/developer/guides/embed-checkout">
+    Walk through the Checkout element, the return page, and the webhook step by step.
+  </Card>
+
+  <Card title="Build with payment elements" icon="wand-magic-sparkles" href="/developer/guides/payment-elements">
+    Design your own checkout form and confirm the charge from your server.
+  </Card>
+
   <Card title="Memberships" icon="repeat" href="/developer/guides/memberships">
     Manage the subscription lifecycle.
   </Card>

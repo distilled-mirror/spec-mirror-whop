@@ -19,7 +19,7 @@ Rules run after Whop's controls and never loosen them. A payment Whop blocks sta
 | `enforce_3ds` | The buyer confirms the payment with their bank through 3D Secure.                                                                                                                                                                   | Lowest precedence                |
 | `allow`       | The payment skips your other rules. It never skips Whop's controls.                                                                                                                                                                 | Beats all three                  |
 
-A rule can read `risk_score`, `amount_in_usd`, `card_country`, `customer_email`, and `ip_address`. [List fields](/api-reference/beta/payment-rules/list-fields) returns the operators and values each one accepts.
+A rule can read `risk_score`, `amount_in_usd`, `card_country`, `card_bin`, `customer_email`, and `ip_address`. `card_bin` is the Bank Identification Number of the card used to make the payment: the first six digits of the card number. [List fields](/api-reference/beta/payment-rules/list-fields) returns the operators and values each one accepts.
 
 Where you're unsure, challenge rather than block. A block also turns away real buyers who match, while a challenge lets them prove they're the cardholder.
 

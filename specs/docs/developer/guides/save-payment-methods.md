@@ -621,7 +621,7 @@ To save a payment method while charging the buyer, build the checkout on the [pa
     </WhopElements>
     ```
 
-    [Accept Payments](/developer/guides/accept-payments#option-2-take-payments-on-your-own-site) walks through the pay button, `createConfirmationToken`, and `handleNextAction`.
+    [Build a checkout with payment elements](/developer/guides/payment-elements) walks through the pay button, `createConfirmationToken`, and `handleNextAction`.
   </Step>
 
   <Step title="Create the payment with the confirmation token">

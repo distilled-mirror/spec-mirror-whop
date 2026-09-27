@@ -3,7 +3,7 @@
     "https://docs.whop.com/llms.txt",
     "https://docs.whop.com/sitemap.xml"
   ],
-  "count": 1131,
+  "count": 1134,
   "pages": [
     {
       "page": "https://docs.whop.com/account-settings/account-security/delete-your-account",
@@ -7056,6 +7056,15 @@
       ]
     },
     {
+      "page": "https://docs.whop.com/developer/guides/embed-checkout",
+      "markdown": "https://docs.whop.com/developer/guides/embed-checkout.md",
+      "file": "developer/guides/embed-checkout.md",
+      "indexes": [
+        "llms.txt",
+        "sitemap"
+      ]
+    },
+    {
       "page": "https://docs.whop.com/developer/guides/example-integration",
       "markdown": "https://docs.whop.com/developer/guides/example-integration.md",
       "file": "developer/guides/example-integration.md",
@@ -7194,6 +7203,24 @@
       "page": "https://docs.whop.com/developer/guides/oauth",
       "markdown": "https://docs.whop.com/developer/guides/oauth.md",
       "file": "developer/guides/oauth.md",
+      "indexes": [
+        "llms.txt",
+        "sitemap"
+      ]
+    },
+    {
+      "page": "https://docs.whop.com/developer/guides/payment-elements",
+      "markdown": "https://docs.whop.com/developer/guides/payment-elements.md",
+      "file": "developer/guides/payment-elements.md",
+      "indexes": [
+        "llms.txt",
+        "sitemap"
+      ]
+    },
+    {
+      "page": "https://docs.whop.com/developer/guides/payment-request",
+      "markdown": "https://docs.whop.com/developer/guides/payment-request.md",
+      "file": "developer/guides/payment-request.md",
       "indexes": [
         "llms.txt",
         "sitemap"

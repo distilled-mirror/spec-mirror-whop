@@ -34939,6 +34939,7 @@
                                 "risk_score",
                                 "amount_in_usd",
                                 "card_country",
+                                "card_bin",
                                 "customer_email",
                                 "ip_address"
                               ],
@@ -34956,8 +34957,8 @@
                                 "lte",
                                 "in",
                                 "not_in",
-                                "contains",
                                 "starts_with",
+                                "contains",
                                 "ends_with",
                                 "in_cidr"
                               ],
@@ -35444,6 +35445,7 @@
                                 "risk_score",
                                 "amount_in_usd",
                                 "card_country",
+                                "card_bin",
                                 "customer_email",
                                 "ip_address"
                               ],
@@ -35461,8 +35463,8 @@
                                 "lte",
                                 "in",
                                 "not_in",
-                                "contains",
                                 "starts_with",
+                                "contains",
                                 "ends_with",
                                 "in_cidr"
                               ],
@@ -95970,6 +95972,7 @@
               "risk_score",
               "amount_in_usd",
               "card_country",
+              "card_bin",
               "customer_email",
               "ip_address"
             ],
@@ -95987,8 +95990,8 @@
               "lte",
               "in",
               "not_in",
-              "contains",
               "starts_with",
+              "contains",
               "ends_with",
               "in_cidr"
             ],
@@ -96049,6 +96052,7 @@
               "risk_score",
               "amount_in_usd",
               "card_country",
+              "card_bin",
               "customer_email",
               "ip_address"
             ],
@@ -96083,8 +96087,8 @@
                 "lte",
                 "in",
                 "not_in",
-                "contains",
                 "starts_with",
+                "contains",
                 "ends_with",
                 "in_cidr"
               ],
