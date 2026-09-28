@@ -759,6 +759,10 @@ Send `null` for a document to remove it. Only PDF files are accepted.
         <ResponseField name="username" type="string" required>
           Public username.
         </ResponseField>
+
+        <ResponseField name="whop_partner_verified_at" type="string | null" required>
+          When the user became a verified Whop Partner, as an ISO 8601 timestamp. Null if not verified.
+        </ResponseField>
       </Accordion>
     </ResponseField>
 

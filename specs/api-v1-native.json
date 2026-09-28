@@ -51952,7 +51952,7 @@
                     "type": "string"
                   },
                   "role": {
-                    "description": "The system role to grant. Partners must pass all certification quizzes.",
+                    "description": "The system role to grant. The Partner role can only be granted to the account's attached, verified partner.",
                     "enum": [
                       "owner",
                       "admin",
@@ -52195,7 +52195,7 @@
               "schema": {
                 "properties": {
                   "role": {
-                    "description": "The system role to grant. Partners must pass all certification quizzes.",
+                    "description": "The system role to grant. The Partner role can only be granted to the account's attached, verified partner.",
                     "enum": [
                       "owner",
                       "admin",
@@ -81218,6 +81218,13 @@
           "username": {
             "description": "Public username.",
             "type": "string"
+          },
+          "whop_partner_verified_at": {
+            "description": "When the user became a verified Whop Partner, as an ISO 8601 timestamp. Null if not verified.",
+            "type": [
+              "string",
+              "null"
+            ]
           }
         },
         "required": [
@@ -81225,7 +81232,8 @@
           "username",
           "name",
           "profile_picture",
-          "email"
+          "email",
+          "whop_partner_verified_at"
         ],
         "type": "object"
       },
