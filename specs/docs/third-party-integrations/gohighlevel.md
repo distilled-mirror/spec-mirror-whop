@@ -2,108 +2,86 @@
 > Fetch the complete documentation index at: https://docs.whop.com/llms.txt
 > Use this file to discover all available pages before exploring further.
 
+> ## Agent Instructions
+> Treat these docs and the Whop MCP server as the source of truth for Whop API behavior. Don't infer endpoint behavior from marketing pages.
+> MCP server: connect https://mcp.whop.com/mcp (streamable HTTP, browser sign-in, no API key in the client config) to search these docs and read or change live Whop data. Setup: https://docs.whop.com/developer/guides/ai_and_mcp.md
+> Whop CLI: install with `curl -fsSL https://whop.com/install.sh | sh` to scaffold, run, and deploy Whop apps and websites. It acts on production, not the sandbox. Overview: https://docs.whop.com/cli/overview.md Agent mode: https://docs.whop.com/cli/agent-mode.md
+> Hosting: Whop serves a site or app from the build `whop apps deploy` uploads, with rollbacks, secrets, and server logs. Guide: https://docs.whop.com/developer/websites/hosting.md
+> Plugins: in Claude Code, run `/plugin marketplace add whopio/plugins`, then `/plugin install whop@whop`. Guide: https://docs.whop.com/developer/guides/plugins/claude-code.md Every agent tool: https://docs.whop.com/developer/ai/overview.md
+> Environments: build and test in the sandbox (API `https://sandbox-api.whop.com/api/v1`, keys at https://sandbox.whop.com/dashboard/developer, SDK environment `Sandbox`; no real money). Production (API `https://api.whop.com/api/v1`, keys at https://whop.com/dashboard/developer, SDK environment `Production`, the SDK default) moves real money, so use it only at launch. The two share no accounts, keys, products, or webhooks, and their keys look identical: never mix them. Sandbox guide: https://docs.whop.com/developer/guides/sandbox.md Comparison: https://docs.whop.com/developer/quickstart.md
+> API: send `Authorization: Bearer <API_KEY>` from your server only, and pin a dated version with the `Api-Version-Date` header. OpenAPI spec: https://api.whop.com/api/v1/openapi.json
+> Which API: build on the Current API, whose pages live under https://docs.whop.com/api-reference/ (start at https://docs.whop.com/api-reference/overview.md). Pages under /api-reference/legacy/ are the Legacy API. Use one only when https://docs.whop.com/api-reference/stability.md lists the resource as Legacy-only.
+
 # GoHighLevel
 
-> Connect Whop payments to your GoHighLevel account. Install the payment connector, set Whop as your default provider, and start accepting payments.
+> Use Whop as a native payment provider in GoHighLevel for payment links, checkout pages, invoices, and subscriptions.
 
-<Card title="Connect Whop to GoHighLevel" icon="link" href="https://connectv2.whopintegration.com/">
-  One-click integration setup
-</Card>
+> [card] [Connect Whop to GoHighLevel](https://connectv2.whopintegration.com/)
+>
+> Open the setup wizard
 
-## Overview
+The Whop Payment Integration makes Whop a payment provider inside GoHighLevel. Customers pay on your GoHighLevel payment links, checkout pages, and invoices, and the payments run through your Whop business.
 
-The Whop × GoHighLevel integration installs Whop as a payment provider inside your account. Once connected, all payments in your GoHighLevel sub-account process through Whop — including invoices, order forms, memberships, and courses. No webhooks or manual wiring required.
+You need access to the GoHighLevel agency or sub-accounts you want to connect, and admin access to your Whop business. Sign in to both before you start.
 
-## What this integration does
+## What it does
 
-| Feature                     | Description                                                                                                                      |
-| --------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
-| **Native Payment Provider** | Whop appears as a payment provider inside GoHighLevel — no external webhook setup needed.                                        |
-| **Multi-Payment Method**    | Supports all payment methods enabled in your Whop account. The right methods appear automatically based on the buyer's location. |
-| **Automatic Routing**       | Once set as default, all GoHighLevel payments process through Whop automatically.                                                |
-| **Sub-Account Scoped**      | Install per sub-account for precise control over which accounts use Whop.                                                        |
+| Feature | What it means |
+| - | - |
+| **Native checkout** | Whop is a GoHighLevel payment provider. Customers pay without leaving your funnel or invoice. |
+| **One-time payments** | Payment links, checkout pages, and invoices |
+| **Subscriptions** | Renewals, cancellations, and status changes stay in sync between Whop and GoHighLevel |
+| **Saved cards** | Charge a saved card for one-click upsells and lower-priced offers |
+| **Refunds** | Full and partial refunds |
+| **Real-time updates** | Captured, failed, and refunded payments post to GoHighLevel as they happen |
 
-## Before you begin
+## Set up the integration
 
-* Admin or agency-level access to your GoHighLevel account
-* Access to the GoHighLevel sub-account you want to connect
-* An active Whop business account
-* Sign in to both GoHighLevel and Whop before starting
+The setup wizard has five steps.
 
-<Warning>
-  Always double-check that you are selecting the correct agency, sub-account,
-  and Whop business before approving anything.
-</Warning>
+**1. Connect GoHighLevel**
 
-## Step 1: Open the onboarding page
+Open the wizard with the button at the top of this page and select **Onboard GHL account**. GoHighLevel asks you to sign in and authorize the app on a sub-account or your agency. Check that you've picked the right agency and sub-account before you approve.
 
-Select the **Connect Whop to GoHighLevel** button at the top of this page to open the onboarding page. Select **Onboard GHL Account**, and then select **Install** when prompted.
+**2. Connect Whop**
 
-## Step 2: Select your GoHighLevel agency and sub-account
+Sign in to Whop and choose the Whop business that should receive payments. Then select which GoHighLevel sub-accounts to connect.
 
-1. When prompted, select the correct GoHighLevel login email.
-2. Choose the correct GoHighLevel agency account.
-3. Select the sub-account you want to onboard.
-4. Select **Continue**.
+**3. Choose payment methods**
 
-<Tip>
-  If you have access to multiple agencies, take your time and confirm you're in
-  the right one before continuing.
-</Tip>
+Pick the payment methods customers can use.
 
-## Step 3: Authorize and install
+**4. Join support**
 
-1. Select **Allow and Install**.
-2. Select the correct sub-account again if prompted.
-3. Select **Approve**, and then select **Install**.
-4. When prompted for the connector, select **Add**, and then select **Approve**.
+Get access to the integration's support community.
 
-You should see the confirmation **GHL connector is now installed**.
+**5. Set Whop as the default provider**
 
-## Step 4: Verify the installation
-
-1. Return to the onboarding page.
-2. Select **I've installed it**.
-3. Select **Verify**. The system checks whether you installed the connector correctly.
-
-## Step 5: Set up payment methods
-
-Review and enable the payment methods you want to accept. Whop supports 100+ payment methods across 195 countries — the available options depend on your Whop account configuration and your customers' locations. Enable the methods you want and select **Save and Finish Setup**.
-
-<Note>
-  Some payment methods may require additional setup in your Whop account before
-  they appear here. See [Pricing and fees](/fees) for the full list of supported
-  methods.
-</Note>
-
-## Step 6: Set Whop as the default provider in GoHighLevel
-
-Set Whop as the default provider so payments route through Whop.
-
-1. In GoHighLevel, open the correct sub-account.
-2. Go to **Payments** → **Integrations**.
-3. Locate the Whop payment provider.
-4. Set Whop as the **Default** payment provider.
-
-<Warning>
-  If Whop isn't set as default, payments may not route correctly. Make sure to
-  complete this step.
-</Warning>
+In each connected GoHighLevel sub-account, go to **Payments** → **Integrations** and make Whop the default provider. GoHighLevel uses one default provider at a time, so payments don't route through Whop until you do this.
 
 ## Troubleshooting
 
-**Wrong agency during setup**
+**Connected the wrong agency or sub-account**
 
-Log out of GoHighLevel, log back in with the correct email, and restart the onboarding.
+Sign out of GoHighLevel, sign back in with the right account, and restart the wizard.
 
-**Wrong sub-account**
+**Payments aren't reaching Whop**
 
-Stop the setup and restart with the correct sub-account.
+In the sub-account, go to **Payments** → **Integrations** and check that Whop is the default provider.
 
-**Connector verification failure**
+## Next steps
 
-Confirm that you installed the app in the correct agency and sub-account, and then select **Verify** again.
+> [card] [HubSpot](https://docs.whop.com/third-party-integrations/hubspot.md)
+>
+> Sync Whop payments into HubSpot.
 
-**Whop missing as the default provider**
+> [card] [Pricing and fees](https://docs.whop.com/fees.md)
+>
+> See which payment methods Whop supports.
 
-Go to **Payments** → **Integrations** in your GoHighLevel sub-account and manually set Whop as the default provider.
+
+## Related topics
+
+- [Install the Whop Pixel on GoHighLevel](https://docs.whop.com/developer/ads/platforms/gohighlevel.md)
+- [HubSpot](https://docs.whop.com/third-party-integrations/hubspot.md)
+- [Install the Whop Pixel](https://docs.whop.com/developer/ads/pixel.md)

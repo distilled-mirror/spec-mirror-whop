@@ -2,298 +2,372 @@
 > Fetch the complete documentation index at: https://docs.whop.com/llms.txt
 > Use this file to discover all available pages before exploring further.
 
-# Quickstart
+> ## Agent Instructions
+> Treat these docs and the Whop MCP server as the source of truth for Whop API behavior. Don't infer endpoint behavior from marketing pages.
+> MCP server: connect https://mcp.whop.com/mcp (streamable HTTP, browser sign-in, no API key in the client config) to search these docs and read or change live Whop data. Setup: https://docs.whop.com/developer/guides/ai_and_mcp.md
+> Whop CLI: install with `curl -fsSL https://whop.com/install.sh | sh` to scaffold, run, and deploy Whop apps and websites. It acts on production, not the sandbox. Overview: https://docs.whop.com/cli/overview.md Agent mode: https://docs.whop.com/cli/agent-mode.md
+> Hosting: Whop serves a site or app from the build `whop apps deploy` uploads, with rollbacks, secrets, and server logs. Guide: https://docs.whop.com/developer/websites/hosting.md
+> Plugins: in Claude Code, run `/plugin marketplace add whopio/plugins`, then `/plugin install whop@whop`. Guide: https://docs.whop.com/developer/guides/plugins/claude-code.md Every agent tool: https://docs.whop.com/developer/ai/overview.md
+> Environments: build and test in the sandbox (API `https://sandbox-api.whop.com/api/v1`, keys at https://sandbox.whop.com/dashboard/developer, SDK environment `Sandbox`; no real money). Production (API `https://api.whop.com/api/v1`, keys at https://whop.com/dashboard/developer, SDK environment `Production`, the SDK default) moves real money, so use it only at launch. The two share no accounts, keys, products, or webhooks, and their keys look identical: never mix them. Sandbox guide: https://docs.whop.com/developer/guides/sandbox.md Comparison: https://docs.whop.com/developer/quickstart.md
+> API: send `Authorization: Bearer <API_KEY>` from your server only, and pin a dated version with the `Api-Version-Date` header. OpenAPI spec: https://api.whop.com/api/v1/openapi.json
+> Which API: build on the Current API, whose pages live under https://docs.whop.com/api-reference/ (start at https://docs.whop.com/api-reference/overview.md). Pages under /api-reference/legacy/ are the Legacy API. Use one only when https://docs.whop.com/api-reference/stability.md lists the resource as Legacy-only.
 
-> Create your Whop account, get an API key, make your first call, take a payment, and test a webhook.
+# Whop API Quickstart
 
-Use this page the first time you connect Whop to your app or backend. You'll sign up, create an API key, and make your first call. By the end you have a live checkout link and a webhook landing on your server.
+> Make your first Whop API call, create a checkout, pay it with a test card, and receive the webhook, all in the sandbox. Then switch to production.
 
-<Note>
-  Keep `WHOP_API_KEY` on your server. Don't put Account API keys in browser code, mobile apps, or public repositories.
-</Note>
+This quickstart runs in the sandbox, a separate Whop environment where money never moves. You'll get a sandbox API key, make your first call, create a checkout, pay it with a test card, and receive the `payment.succeeded` webhook on your server. Going live is the last step, and it's mostly swapping keys.
 
-## Set up your account
+> [!TIP]
+>
+> If you use a coding agent, give it this page as Markdown, `https://docs.whop.com/developer/quickstart.md`, or paste the prompt from the [Overview](https://docs.whop.com/developer/start.md#build-with-your-coding-agent).
 
-<Steps>
-  <Step title="Sign up for Whop">
-    Go to [whop.com/start](https://whop.com/start) and create your Whop account. The onboarding flow creates your first business, which is the Account that owns API keys, products, webhooks, and payments.
-  </Step>
+## Sandbox and production
 
-  <Step title="Open the dashboard">
-    After onboarding, open [whop.com/dashboard](https://whop.com/dashboard). If you have more than one business, choose the one you want to build against from the business switcher.
-  </Step>
+Whop runs two environments that share nothing: not accounts, not keys, not products, not webhooks. You build in the sandbox and launch in production. Every value below changes between them.
 
-  <Step title="Open Developer">
-    Select **Dashboard ↗** in the top-right corner of these docs to open your developer dashboard directly.
-  </Step>
-</Steps>
+| | Sandbox: build and test | Production: launch |
+| - | - | - |
+| Money | Never moves | Real |
+| Dashboard | [sandbox.whop.com](https://sandbox.whop.com) | [whop.com](https://whop.com) |
+| API keys and webhooks | [sandbox.whop.com/dashboard/developer](https://sandbox.whop.com/dashboard/developer) | [whop.com/dashboard/developer](https://whop.com/dashboard/developer) |
+| API base URL | `https://sandbox-api.whop.com/api/v1` | `https://api.whop.com/api/v1` |
+| SDK environment | `Sandbox` | `Production`, the SDK default |
+| Checkout pages | `sandbox.whop.com/checkout/...` | `whop.com/checkout/...` |
+| `WHOP_ENVIRONMENT` | `sandbox` | `production` |
 
-## Create an API key
+> [!WARNING]
+>
+> Sandbox and production API keys look identical, so nothing in a key tells you which environment it belongs to. The snippets on this page pick the environment from a `WHOP_ENVIRONMENT` variable rather than hardcoding it, so the same code runs in both. The [Whop MCP server](https://docs.whop.com/developer/ai/overview.md#mcp-server) only acts on production data.
 
-For the quickest path, create an Account API key. Use this when your server acts on behalf of your own business.
+## Get a sandbox API key
 
-<Steps>
-  <Step title="Create an Account API key">
-    In **Account API Keys**, select **Create**. Name the key something you can recognize later, like `Local development` or `Production payments`.
-  </Step>
+**1. Sign up for the sandbox**
 
-  <Step title="Choose permissions">
-    For the first call below, use the Admin role or grant the read permissions listed on [Retrieve Requesting Account](/api-reference/beta/accounts/retrieve-requesting-account). For production, switch to a narrower custom permission set once you know exactly which endpoints you use.
-  </Step>
+Go to [sandbox.whop.com](https://sandbox.whop.com) and create an account. It's separate from any account you have on whop.com. The sign-up flow creates your first business, which is the Account that owns API keys, products, webhooks, and payments.
 
-  <Step title="Copy the key">
-    Copy the key when Whop shows it. Store it in your local `.env` file as `WHOP_API_KEY`.
+**2. Create an Account API key**
 
-    <Frame>
-      <img src="https://mintcdn.com/whop/xuW6TKFlagvnbmV0/images/developer-api-key-field.png?fit=max&auto=format&n=xuW6TKFlagvnbmV0&q=85&s=699bf36af18f7a12dfd855eb0684b38e" alt="Whop dashboard Account API Keys section showing a key name, masked value, and Create button" width="3100" height="450" data-path="images/developer-api-key-field.png" />
-    </Frame>
-  </Step>
-</Steps>
+Open [sandbox.whop.com/dashboard/developer](https://sandbox.whop.com/dashboard/developer). In **Account API Keys**, select **Create**, and name the key something like `Local development`.
 
-## Choose your key type
+For this quickstart, use the Admin role. Before production, switch to a custom permission set that covers only the endpoints you call.
 
-Most integrations start with an Account API key and never need the others. [Auth & API keys](/developer/guides/auth-scoping) covers every credential type and how to scope one down.
+**3. Store the key on your server**
 
-### Account API keys
+Copy the key when Whop shows it, and put it in your local `.env` file with the environment it belongs to:
 
-Use an Account API key when your server fetches data or performs actions for your own Account and its [connected accounts](/supported-business-models/platforms). This is the key the steps above create.
+```bash theme={null}
+WHOP_ENVIRONMENT=sandbox
+WHOP_API_KEY=your_sandbox_key
+```
 
-### App API keys
+![Whop dashboard Account API Keys section showing a key name, masked value, and Create button](https://mintcdn.com/whop/xuW6TKFlagvnbmV0/images/developer-api-key-field.png?fit=max\&auto=format\&n=xuW6TKFlagvnbmV0\&q=85\&s=699bf36af18f7a12dfd855eb0684b38e)
 
-Use an App API key when you build an app and need to reach data on the accounts that installed it.
+> [!NOTE]
+>
+> Keep `WHOP_API_KEY` on your server. Don't put API keys in browser code, mobile apps, or public repositories. Sandbox and production keys look identical, so name them so you can tell them apart.
 
-1. In the dashboard, open **Apps**.
-2. Select **Create app** and give your app a name. You can change the name later.
-3. Your key is the hidden value after `WHOP_API_KEY` in the **Environment variables** section. Use the reveal button to show it, then store it somewhere safe.
-
-### OAuth tokens
-
-Use an OAuth token when you want users to sign in with their Whop account and grant your app permission to act for them. An OAuth token is scoped to what that individual user can access, rather than to your app's own permissions. Reach for it when you need "Sign in with Whop," access to a user's memberships or profile, or actions taken as a specific user.
-
-See the [OAuth guide](/developer/guides/oauth) for the full flow.
+An Account API key is right when your server acts for your own business. To build an app other businesses install, or to let users sign in with Whop, see [Auth & API keys](https://docs.whop.com/developer/guides/auth-scoping.md).
 
 ## Install the SDK
 
-<CodeGroup>
-  ```bash TypeScript theme={null}
-  pnpm add @whop/sdk
-  ```
-
-  ```bash Python theme={null}
-  pip install whop-sdk
-  ```
-
-  ```bash Ruby theme={null}
-  gem install whop_sdk
-  ```
-</CodeGroup>
-
-Add your credentials to `.env`:
-
-```bash theme={null}
-WHOP_API_KEY=whop_xxxxxxxxxxxxxxxxx
+```bash TypeScript theme={null}
+pnpm add @whop/sdk
 ```
+
+```bash Python theme={null}
+pip install whop-sdk
+```
+
+```bash Ruby theme={null}
+gem install whop_sdk
+```
+
+> [!NOTE]
+>
+> This page needs SDK 2.7.0 or later. Earlier versions don't accept the inline `variant` on checkout configurations.
 
 ## Make your first call
 
-Retrieve the account tied to your API key. This confirms your key and permissions work, and prints your account ID, which starts with `biz_`.
+Point the client at the environment named in `WHOP_ENVIRONMENT` and retrieve the account behind your key. This confirms the key works, and prints your account ID, which starts with `biz_`.
 
-<CodeGroup>
-  ```bash curl theme={null}
-  curl https://api.whop.com/api/v1/accounts/me \
-    -H "Authorization: Bearer $WHOP_API_KEY"
-  ```
+```typescript TypeScript theme={null}
+import { WhopClient, WhopEnvironment } from "@whop/sdk";
 
-  ```json Response theme={null}
-  {
-  	"id": "biz_XXXXXXXX",
-  	"title": "Acme Studio",
-  	"route": "acme-studio",
-  	"status": "approved"
-  }
-  ```
+const apiKey = process.env.WHOP_API_KEY;
 
-  ```typescript TypeScript theme={null}
-  import Whop from "@whop/sdk";
+if (!apiKey) {
+  throw new Error("Set WHOP_API_KEY");
+}
 
-  const apiKey = process.env.WHOP_API_KEY;
+const client = new WhopClient({
+  token: apiKey,
+  environment: process.env.WHOP_ENVIRONMENT === "production" ? WhopEnvironment.Production : WhopEnvironment.Sandbox,
+});
 
-  if (!apiKey) {
-    throw new Error("Set WHOP_API_KEY");
-  }
+const account = await client.accounts.me();
 
-  const client = new Whop({
-    apiKey,
-  });
-
-  const account = await client.accounts.me();
-
-  console.log(account.id);
-  ```
-
-  ```python Python theme={null}
-  import os
-  from whop_sdk import Whop
-
-  client = Whop(
-      api_key=os.environ["WHOP_API_KEY"],
-  )
-
-  account = client.accounts.me()
-
-  print(account.id)
-  ```
-
-  ```ruby Ruby theme={null}
-  require "whop_sdk"
-
-  whop = WhopSDK::Client.new(
-    api_key: ENV.fetch("WHOP_API_KEY"),
-  )
-
-  account = whop.accounts.me
-
-  puts account.id
-  ```
-</CodeGroup>
-
-<Check>
-  That's your account. The key works.
-</Check>
-
-Every endpoint page also has a playground, so you can skip the terminal. Open [Retrieve Requesting Account](/api-reference/beta/accounts/retrieve-requesting-account), paste your key, and select **Send**.
-
-## Do something real
-
-One call creates a plan and returns a `purchase_url`, a live checkout page anyone can pay you at. Open it in your browser.
-
-<CodeGroup>
-  ```typescript TypeScript theme={null}
-  const checkout = await client.checkoutConfigurations.create({
-  	plan: {
-  		title: "Starter",
-  		plan_type: "one_time",
-  		initial_price: 10.0,
-  		currency: "usd",
-  	},
-  });
-
-  console.log(checkout.purchase_url);
-  ```
-
-  ```python Python theme={null}
-  checkout = client.checkout_configurations.create(
-      plan={
-          "title": "Starter",
-          "plan_type": "one_time",
-          "initial_price": 10.0,
-          "currency": "usd",
-      },
-  )
-
-  print(checkout.purchase_url)
-  ```
-
-  ```ruby Ruby theme={null}
-  checkout = whop.checkout_configurations.create(
-    plan: {
-      title: "Starter",
-      plan_type: "one_time",
-      initial_price: 10.0,
-      currency: "usd",
-    },
-  )
-
-  puts checkout.purchase_url
-  ```
-</CodeGroup>
-
-<Warning>
-  The link is live. If someone checks out, they get charged and your balance goes up. Use the [sandbox](/developer/guides/sandbox) to test without moving real money.
-</Warning>
-
-If you already have a plan, pass `plan_id` instead of the inline `plan`. You can't send both. [Create Checkout Configuration](/api-reference/beta/checkout-configurations/create-a-checkout-configuration) lists every option, including recurring pricing, trials, and redirect URLs.
-
-## See a webhook
-
-Whop sends a webhook to your server when something happens in your business, like `payment.succeeded` or `membership.activated`.
-
-<Steps>
-  <Step title="Create a local webhook endpoint">
-    Add a `POST` endpoint in your app and expose it with ngrok, Cloudflare Tunnel, or another HTTPS tunnel while developing.
-  </Step>
-
-  <Step title="Create the webhook in the dashboard">
-    Open **Developer > Webhooks**, then select **Create webhook**.
-
-    <Frame>
-      <img src="https://mintcdn.com/whop/Ck4TMcyCw4wzCcNW/images/app-webhooks.png?fit=max&auto=format&n=Ck4TMcyCw4wzCcNW&q=85&s=770322f79278e3ca244a4269a2cbb45f" alt="Whop Developer Webhooks page with a Create webhook button" width="2730" height="952" data-path="images/app-webhooks.png" />
-    </Frame>
-  </Step>
-
-  <Step title="Enter your URL and events">
-    Paste your HTTPS endpoint, keep the API version on `v1`, and select the events you want to receive.
-
-    <Frame>
-      <img src="https://mintcdn.com/whop/RLIxcN4GVU-CLB5B/images/create-webhook-url.png?fit=max&auto=format&n=RLIxcN4GVU-CLB5B&q=85&s=4016395a2563955dfb323d797b17409e" alt="Create webhook form showing the endpoint URL and API version fields" width="2048" height="1252" data-path="images/create-webhook-url.png" />
-    </Frame>
-
-    <Frame>
-      <img src="https://mintcdn.com/whop/RLIxcN4GVU-CLB5B/images/create-webhook-select-events.png?fit=max&auto=format&n=RLIxcN4GVU-CLB5B&q=85&s=079887392e21e4680a82415244aeaea4" alt="Create webhook form showing the payment_succeeded event selected in the events list" width="2048" height="1252" data-path="images/create-webhook-select-events.png" />
-    </Frame>
-  </Step>
-
-  <Step title="Send a test event">
-    Use the webhook row actions to send a test event. When your server logs the request, your setup is complete.
-
-    <Frame>
-      <img src="https://mintcdn.com/whop/RLIxcN4GVU-CLB5B/images/test-webhook-send-event.png?fit=max&auto=format&n=RLIxcN4GVU-CLB5B&q=85&s=6f023e619faa1a14557787c04f0091d8" alt="Whop dashboard test webhook menu showing Send event" width="697" height="353" data-path="images/test-webhook-send-event.png" />
-    </Frame>
-  </Step>
-</Steps>
-
-## Test in the sandbox
-
-The sandbox is a separate environment with its own dashboard and its own keys. Money never moves there, so you can run checkouts, payouts, and webhooks against realistic data without charging anyone. Sandbox and production keys look identical, so store them under different names.
-
-See [Test in the sandbox](/developer/guides/sandbox) for how to switch environments.
-
-## Pin your API version
-
-Whop versions the API by date. The SDKs send the version they were generated against. If you call the API directly, send the header so later changes don't break your integration:
-
-```bash theme={null}
-curl https://api.whop.com/api/v1/accounts/me \
-  -H "Authorization: Bearer $WHOP_API_KEY" \
-  -H "Api-Version-Date: 2026-07-01"
+console.log(account.id);
 ```
 
-See [API versioning](/developer/api/versioning) for how dated versions work.
+```python Python theme={null}
+import os
+from whop_sdk import Whop, WhopEnvironment
+
+client = Whop(
+    token=os.environ["WHOP_API_KEY"],
+    environment=WhopEnvironment.PRODUCTION if os.environ.get("WHOP_ENVIRONMENT") == "production" else WhopEnvironment.SANDBOX,
+)
+
+account = client.accounts.me()
+
+print(account.id)
+```
+
+```ruby Ruby theme={null}
+require "whop_sdk"
+
+whop = Whop_sdk::Client.new(
+  token: ENV.fetch("WHOP_API_KEY"),
+  environment: ENV["WHOP_ENVIRONMENT"] == "production" ? Whop_sdk::Environment::PRODUCTION : Whop_sdk::Environment::SANDBOX,
+)
+
+account = whop.accounts.me
+
+puts account.id
+```
+
+```bash curl (sandbox) theme={null}
+curl https://sandbox-api.whop.com/api/v1/accounts/me \
+  -H "Authorization: Bearer $WHOP_API_KEY" \
+  -H "Api-Version-Date: 2026-11-04-1"
+```
+
+```json Response (trimmed) theme={null}
+{
+	"id": "biz_XXXXXXXX",
+	"title": "Shine Time Auto Detailing",
+	"route": "shine-time-auto-detailing",
+	"status": "active"
+}
+```
+
+> [!TIP]
+>
+> That's your sandbox account. The key works.
+
+## Create a checkout
+
+One call creates a variant and returns a `purchase_url`, a checkout page hosted on `sandbox.whop.com`.
+
+```typescript TypeScript theme={null}
+const checkout = await client.checkoutConfigurations.create({
+	variant: {
+		title: "Starter",
+		billing_type: "one_time",
+		initial_price: 10.0,
+		currency: "usd",
+	},
+});
+
+console.log(checkout.purchase_url);
+```
+
+```python Python theme={null}
+checkout = client.checkout_configurations.create(
+    variant={
+        "title": "Starter",
+        "billing_type": "one_time",
+        "initial_price": 10.0,
+        "currency": "usd",
+    },
+)
+
+print(checkout.purchase_url)
+```
+
+```ruby Ruby theme={null}
+checkout = whop.checkout_configurations.create(
+  variant: {
+    title: "Starter",
+    billing_type: "one_time",
+    initial_price: 10.0,
+    currency: "usd",
+  },
+)
+
+puts checkout.purchase_url
+```
+
+You'll open this URL in the payment step. If you already have a variant, pass its ID as `variant_id` instead of the inline `variant`. You can't send both. [Create Checkout Configuration](https://docs.whop.com/api-reference/checkout-configurations/create-a-checkout-configuration.md) lists every option, including recurring pricing, trials, and redirect URLs.
+
+## Listen for the webhook
+
+Set up your endpoint before you pay, so the `payment.succeeded` event has somewhere to land.
+
+**1. Add an endpoint**
+
+Add a `POST` route that verifies the signature and logs the event. Verification needs the raw request body, so read it before any JSON parsing.
+
+```typescript TypeScript + Next.js theme={null}
+import { unwrapWebhook } from "@whop/sdk/helpers";
+import type { NextRequest } from "next/server";
+
+export async function POST(request: NextRequest): Promise<Response> {
+  const event = unwrapWebhook<{ type: string; data: { id: string } }>(await request.text(), {
+    headers: Object.fromEntries(request.headers),
+    key: process.env.WHOP_WEBHOOK_SECRET!,
+  });
+
+  console.log(event.type, event.data.id);
+
+  return new Response("OK", { status: 200 });
+}
+```
+
+```python Python + FastAPI theme={null}
+import os
+
+from fastapi import FastAPI, Request, Response
+from whop_sdk.lib.verify_webhook import unwrap
+
+app = FastAPI()
+
+@app.post("/api/webhooks/whop")
+async def whop_webhook(request: Request):
+    event = unwrap(await request.body(), headers=dict(request.headers), key=os.environ["WHOP_WEBHOOK_SECRET"])
+
+    print(event["type"], event["data"]["id"])
+
+    return Response(status_code=200)
+```
+
+```ruby Ruby on Rails theme={null}
+class Api::WebhooksController < ApplicationController
+  skip_before_action :verify_authenticity_token
+
+  def whop
+    event = WhopSDK::Helpers::VerifyWebhook.unwrap(
+      request.raw_post,
+      headers: {
+        "webhook-id" => request.headers["webhook-id"],
+        "webhook-timestamp" => request.headers["webhook-timestamp"],
+        "webhook-signature" => request.headers["webhook-signature"],
+      },
+      key: ENV.fetch("WHOP_WEBHOOK_SECRET"),
+    )
+
+    Rails.logger.info("#{event[:type]} #{event[:data][:id]}")
+
+    head :ok
+  end
+end
+```
+
+While you develop, expose the route over HTTPS with ngrok, Cloudflare Tunnel, or another tunnel.
+
+**2. Create the webhook in the sandbox dashboard**
+
+Open **Developer > Webhooks** in the sandbox dashboard, then select **Create webhook**. Paste the HTTPS address of your endpoint, keep the API version on `v1`, and select `payment.succeeded`.
+
+![Create webhook form showing the payment\_succeeded event selected in the events list](https://mintcdn.com/whop/RLIxcN4GVU-CLB5B/images/create-webhook-select-events.png?fit=max\&auto=format\&n=RLIxcN4GVU-CLB5B\&q=85\&s=079887392e21e4680a82415244aeaea4)
+
+**3. Store the signing secret**
+
+Copy the secret from the webhook's **Secret** column and add it to `.env` exactly as shown, `ws_` prefix included:
+
+```bash theme={null}
+WHOP_WEBHOOK_SECRET=ws_your_secret
+```
+
+Restart your server so it picks up the new value.
+
+## Pay with a test card
+
+Open the `purchase_url` from the checkout step and pay with:
+
+| Field | Value |
+| - | - |
+| Card number | `4242 4242 4242 4242` |
+| Expiry | Any future date, such as `12/34` |
+| CVC | Any 3 digits, such as `123` |
+| Billing address | Any address |
+
+Within a few seconds, your server logs `payment.succeeded` and the payment ID, which starts with `pay_`.
+
+> [!TIP]
+>
+> You've taken a payment and handled its webhook, end to end. Nothing was charged.
+
+To test a declined card or 3D Secure, use the other numbers in [Test cards](https://docs.whop.com/developer/guides/sandbox.md#test-cards). If nothing arrives, check the delivery log on the webhook in the dashboard and [Webhook delivery](https://docs.whop.com/developer/troubleshooting.md#webhook-delivery).
+
+## Go live
+
+Sandbox and production share nothing, so going live means repeating the setup on whop.com with production credentials. Your code doesn't change. Only the values in your environment do.
+
+**1. Create a production key**
+
+Sign in at [whop.com](https://whop.com/start), open [whop.com/dashboard/developer](https://whop.com/dashboard/developer), and create an Account API key with only the permissions your integration uses.
+
+**2. Swap every value for its production twin**
+
+In your production environment, set all three variables to production values. Never reuse a sandbox key or secret in production, or the reverse.
+
+```bash Sandbox theme={null}
+WHOP_ENVIRONMENT=sandbox
+WHOP_API_KEY=your_sandbox_key
+WHOP_WEBHOOK_SECRET=ws_your_sandbox_secret
+```
+
+```bash Production theme={null}
+WHOP_ENVIRONMENT=production
+WHOP_API_KEY=your_production_key
+WHOP_WEBHOOK_SECRET=ws_your_production_secret
+```
+
+If you call the API directly, switch the base URL to `https://api.whop.com/api/v1`.
+
+**3. Recreate what you made in the sandbox**
+
+Products, variants, checkout configurations, and webhooks don't carry over. Create the production webhook against your production URL and store its new signing secret.
+
+**4. Pin your API version**
+
+The SDK sends the version it was built against. If you call the API directly, send `Api-Version-Date` on every request so later changes don't alter your responses. See [API versioning](https://docs.whop.com/developer/api/versioning.md).
+
+> [!WARNING]
+>
+> Production checkout links take real money. Check which key you're holding before running anything that creates a charge or moves a balance.
 
 ## Now build what you came for
 
-<CardGroup cols={2}>
-  <Card title="You sell a subscription or a one-time product" icon="credit-card" href="/developer/guides/accept-payments">
-    Checkout links, the Checkout element, plans, and trials.
-  </Card>
+> [card] [You sell a subscription or a one-time product](https://docs.whop.com/developer/guides/accept-payments.md)
+>
+> Checkout links, the Checkout element, variants, and trials.
 
-  <Card title="You owe money to people who aren't you" icon="money-bill-transfer" href="/developer/platforms/manual-payouts">
-    Payouts, transfers, balances, and the payout portal.
-  </Card>
+> [card] [You owe money to people who aren't you](https://docs.whop.com/developer/platforms/manual-payouts.md)
+>
+> Payouts, transfers, balances, and the payout portal.
 
-  <Card title="You take a cut of what other people sell" icon="store" href="/developer/platforms/quickstart">
-    Connected accounts, collecting on their behalf, and paying them out.
-  </Card>
+> [card] [You take a cut of what other people sell](https://docs.whop.com/developer/platforms/quickstart.md)
+>
+> Subaccounts, collecting on their behalf, and paying them out.
 
-  <Card title="You want distribution, not just infrastructure" icon="cubes" href="/developer/guides/app-views">
-    Apps that run inside Whop, with auth, views, and the CLI.
-  </Card>
+> [card] [You want distribution, not just infrastructure](https://docs.whop.com/developer/guides/app-views.md)
+>
+> Apps that run inside Whop, with auth, views, and the CLI.
 
-  <Card title="Your product needs people talking to each other" icon="messages" href="/developer/guides/chat/quickstart">
-    Chat, DMs, and forums you can embed.
-  </Card>
+> [card] [Your product needs people talking to each other](https://docs.whop.com/developer/guides/chat/quickstart.md)
+>
+> Chat, DMs, and forums you can embed.
 
-  <Card title="You just want to read the reference" icon="code" href="/api-reference/beta/overview">
-    Every resource in the Current API, with a playground on each endpoint.
-  </Card>
-</CardGroup>
+> [card] [You just want to read the reference](https://docs.whop.com/api-reference/overview.md)
+>
+> Every resource in the Current API, with a playground on each endpoint.
+
+
+## Related topics
+
+- [Whop API Overview](https://docs.whop.com/api-reference/overview.md)
+- [Whop API Core Concepts](https://docs.whop.com/developer/concepts.md)
+- [Whop Partners API](https://docs.whop.com/developer/partners/overview.md)

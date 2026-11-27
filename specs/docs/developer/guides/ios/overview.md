@@ -2,41 +2,53 @@
 > Fetch the complete documentation index at: https://docs.whop.com/llms.txt
 > Use this file to discover all available pages before exploring further.
 
+> ## Agent Instructions
+> Treat these docs and the Whop MCP server as the source of truth for Whop API behavior. Don't infer endpoint behavior from marketing pages.
+> MCP server: connect https://mcp.whop.com/mcp (streamable HTTP, browser sign-in, no API key in the client config) to search these docs and read or change live Whop data. Setup: https://docs.whop.com/developer/guides/ai_and_mcp.md
+> Whop CLI: install with `curl -fsSL https://whop.com/install.sh | sh` to scaffold, run, and deploy Whop apps and websites. It acts on production, not the sandbox. Overview: https://docs.whop.com/cli/overview.md Agent mode: https://docs.whop.com/cli/agent-mode.md
+> Hosting: Whop serves a site or app from the build `whop apps deploy` uploads, with rollbacks, secrets, and server logs. Guide: https://docs.whop.com/developer/websites/hosting.md
+> Plugins: in Claude Code, run `/plugin marketplace add whopio/plugins`, then `/plugin install whop@whop`. Guide: https://docs.whop.com/developer/guides/plugins/claude-code.md Every agent tool: https://docs.whop.com/developer/ai/overview.md
+> Environments: build and test in the sandbox (API `https://sandbox-api.whop.com/api/v1`, keys at https://sandbox.whop.com/dashboard/developer, SDK environment `Sandbox`; no real money). Production (API `https://api.whop.com/api/v1`, keys at https://whop.com/dashboard/developer, SDK environment `Production`, the SDK default) moves real money, so use it only at launch. The two share no accounts, keys, products, or webhooks, and their keys look identical: never mix them. Sandbox guide: https://docs.whop.com/developer/guides/sandbox.md Comparison: https://docs.whop.com/developer/quickstart.md
+> API: send `Authorization: Bearer <API_KEY>` from your server only, and pin a dated version with the `Api-Version-Date` header. OpenAPI spec: https://api.whop.com/api/v1/openapi.json
+> Which API: build on the Current API, whose pages live under https://docs.whop.com/api-reference/ (start at https://docs.whop.com/api-reference/overview.md). Pages under /api-reference/legacy/ are the Legacy API. Use one only when https://docs.whop.com/api-reference/stability.md lists the resource as Legacy-only.
+
 # iOS Checkout SDK
 
-> Sell in-app purchases and subscriptions natively on iOS (2.7% + $0.30 vs Apple's 15-30%)
+> Sell in-app purchases and subscriptions in your iOS app, with Whop payments in the US and StoreKit everywhere else.
 
 The Whop iOS Checkout SDK lets you sell in-app purchases and subscriptions in your native iOS app. In the United States, it automatically uses Whop's payment processing (2.7% + \$0.30 versus Apple's 15-30%). Elsewhere, it falls back to Apple's StoreKit for global coverage.
 
-<Tip>
-  The SDK is configured with a scoped `iap:read` API key that's safe to ship in your app bundle. See [Create an API key](/developer/guides/ios/installation#step-3-create-an-api-key) for setup.
-</Tip>
+To take payments in person, use the SDK's Apple Pay button to [accept one-time payments](https://docs.whop.com/developer/guides/ios/accept-one-time-payments.md) instead.
+
+> [!TIP]
+>
+> The SDK is configured with a scoped `iap:read` API key that's safe to ship in your app bundle. See [Create an API key](https://docs.whop.com/developer/guides/ios/installation.md#step-3-create-an-api-key) for setup.
+
+> [!NOTE]
+>
+> Products and Variants are the current commerce resources. The iOS SDK still exposes compatibility symbols such as `plans`, `CheckoutPlan`, `planMappings`, and `planId`. Those symbols all refer to variants.
 
 ## What you can build
 
-<CardGroup cols={2}>
-  <Card title="Build a Paywall" icon="credit-card" href="/developer/guides/ios/build-a-paywall">
-    Display subscription plans and handle purchases in your app
-  </Card>
+> [card] [Build a Paywall](https://docs.whop.com/developer/guides/ios/build-a-paywall.md)
+>
+> Display subscription variants and handle purchases in your app
 
-  <Card title="Check Entitlements" icon="shield-check" href="/developer/guides/ios/check-entitlements">
-    Verify subscription status and gate premium content
-  </Card>
-</CardGroup>
+> [card] [Check Entitlements](https://docs.whop.com/developer/guides/ios/check-entitlements.md)
+>
+> Verify subscription status and gate premium content
 
 ## Related iOS SDKs
 
 Whop also ships separate SDKs for embedded experiences:
 
-<CardGroup cols={2}>
-  <Card title="Embedded Chat" icon="message" href="/developer/guides/chat/quickstart">
-    Add Whop chat channels directly in your app
-  </Card>
+> [card] [Embedded Chat](https://docs.whop.com/developer/guides/chat/quickstart.md)
+>
+> Add Whop chat channels directly in your app
 
-  <Card title="Wallet Elements" icon="wallet" href="/elements/latest/getting-started">
-    Show an account's balances and activity with the Swift wallet elements
-  </Card>
-</CardGroup>
+> [card] [Wallet Elements](https://docs.whop.com/elements/latest/getting-started.md)
+>
+> Show an account's balances and activity with the Swift wallet elements
 
 ## Quick example
 
@@ -86,36 +98,41 @@ struct ContentView: View {
 
 ## Getting started
 
-<Steps>
-  <Step title="Install the SDK">
-    Add the WhopCheckout package to your Xcode project via Swift Package Manager.
+**1. Install the SDK**
 
-    [Installation guide →](/developer/guides/ios/installation)
-  </Step>
+Add the WhopCheckout package to your Xcode project via Swift Package Manager.
 
-  <Step title="Get your API key">
-    Create an API key with the `iap:read` permission in your [Developer Settings](https://whop.com/dashboard/developer). [Why this is safe to embed →](/developer/guides/ios/installation#step-3-create-an-api-key)
-  </Step>
+[Installation guide →](https://docs.whop.com/developer/guides/ios/installation.md)
 
-  <Step title="Configure the SDK">
-    Initialize the SDK with your account ID, API key, and plan mappings via `Checkout.shared.configure()`.
-  </Step>
+**2. Get your API key**
 
-  <Step title="Build your paywall">
-    Display plans and handle purchases. The SDK automatically uses Whop checkout in the US and StoreKit elsewhere.
+Create an API key with the `iap:read` permission in your [Developer Settings](https://whop.com/dashboard/developer). [Why this is safe to embed →](https://docs.whop.com/developer/guides/ios/installation.md#step-3-create-an-api-key)
 
-    [Build a paywall →](/developer/guides/ios/build-a-paywall)
-  </Step>
-</Steps>
+**3. Configure the SDK**
+
+Initialize the SDK with your account ID, API key, and variant mappings through the compatibility property `planMappings` on `Checkout.shared.configure()`.
+
+**4. Build your paywall**
+
+Display variants and handle purchases. The SDK automatically uses Whop checkout in the US and StoreKit elsewhere.
+
+[Build a paywall →](https://docs.whop.com/developer/guides/ios/build-a-paywall.md)
 
 ## Reference
 
-<Card title="API Reference" icon="book" href="/developer/guides/ios/checkout-reference">
-  Complete API documentation for all Checkout classes, methods, and types
-</Card>
+> [card] [API Reference](https://docs.whop.com/developer/guides/ios/checkout-reference.md)
+>
+> Complete API documentation for all Checkout classes, methods, and types
 
 ## Requirements
 
 * iOS 17.0+
 * Xcode 15.0+
 * Swift 5.10+
+
+
+## Related topics
+
+- [iOS Checkout SDK Reference](https://docs.whop.com/developer/guides/ios/checkout-reference.md)
+- [Accept Payments](https://docs.whop.com/developer/guides/accept-payments.md)
+- [Install the Whop iOS SDKs](https://docs.whop.com/developer/guides/ios/installation.md)

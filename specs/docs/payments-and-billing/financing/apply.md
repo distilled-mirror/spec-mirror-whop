@@ -2,6 +2,16 @@
 > Fetch the complete documentation index at: https://docs.whop.com/llms.txt
 > Use this file to discover all available pages before exploring further.
 
+> ## Agent Instructions
+> Treat these docs and the Whop MCP server as the source of truth for Whop API behavior. Don't infer endpoint behavior from marketing pages.
+> MCP server: connect https://mcp.whop.com/mcp (streamable HTTP, browser sign-in, no API key in the client config) to search these docs and read or change live Whop data. Setup: https://docs.whop.com/developer/guides/ai_and_mcp.md
+> Whop CLI: install with `curl -fsSL https://whop.com/install.sh | sh` to scaffold, run, and deploy Whop apps and websites. It acts on production, not the sandbox. Overview: https://docs.whop.com/cli/overview.md Agent mode: https://docs.whop.com/cli/agent-mode.md
+> Hosting: Whop serves a site or app from the build `whop apps deploy` uploads, with rollbacks, secrets, and server logs. Guide: https://docs.whop.com/developer/websites/hosting.md
+> Plugins: in Claude Code, run `/plugin marketplace add whopio/plugins`, then `/plugin install whop@whop`. Guide: https://docs.whop.com/developer/guides/plugins/claude-code.md Every agent tool: https://docs.whop.com/developer/ai/overview.md
+> Environments: build and test in the sandbox (API `https://sandbox-api.whop.com/api/v1`, keys at https://sandbox.whop.com/dashboard/developer, SDK environment `Sandbox`; no real money). Production (API `https://api.whop.com/api/v1`, keys at https://whop.com/dashboard/developer, SDK environment `Production`, the SDK default) moves real money, so use it only at launch. The two share no accounts, keys, products, or webhooks, and their keys look identical: never mix them. Sandbox guide: https://docs.whop.com/developer/guides/sandbox.md Comparison: https://docs.whop.com/developer/quickstart.md
+> API: send `Authorization: Bearer <API_KEY>` from your server only, and pin a dated version with the `Api-Version-Date` header. OpenAPI spec: https://api.whop.com/api/v1/openapi.json
+> Which API: build on the Current API, whose pages live under https://docs.whop.com/api-reference/ (start at https://docs.whop.com/api-reference/overview.md). Pages under /api-reference/legacy/ are the Legacy API. Use one only when https://docs.whop.com/api-reference/stability.md lists the resource as Legacy-only.
+
 # Apply for Financing
 
 > See who is eligible and how to apply to offer buy now pay later payment options at checkout.
@@ -12,7 +22,7 @@ Give your customers the flexibility to split their purchases into monthly instal
 
 Whop partners with ten financing providers. Depending on your business, you may qualify for one or more of these options:
 
-<img src="https://mintcdn.com/whop/S1oxqqJoMYwX-Rh_/images/payments-and-billing/financing-breakdown.png?fit=max&auto=format&n=S1oxqqJoMYwX-Rh_&q=85&s=0f8a664f1c39aad50d75eed77475123b" alt="Financing breakdown: overview of ten financing methods with supported countries, maximum amounts, term lengths, and credit score requirements" width="1024" height="571" data-path="images/payments-and-billing/financing-breakdown.png" />
+![Financing breakdown: overview of ten financing methods with supported countries, maximum amounts, term lengths, and credit score requirements](https://mintcdn.com/whop/S1oxqqJoMYwX-Rh_/images/payments-and-billing/financing-breakdown.png?fit=max\&auto=format\&n=S1oxqqJoMYwX-Rh_\&q=85\&s=0f8a664f1c39aad50d75eed77475123b)
 
 ## How to apply for financing
 
@@ -47,11 +57,11 @@ To qualify for financing options, your business must meet these requirements:
   * New Whop businesses must submit 90 days of statements from their previous **payment processor**. Submit processing statements, not bank statements. They must show total transactions and disputes.
 * **Processing volume**: At least \$30,000 processed from 10+ different customers in the last 90 days
 
-<Tip>
-  Note - if your business is in an ineligible category or has an excessive
-  dispute rate, Whop shows a message that you are ineligible to apply for
-  financing.
-</Tip>
+> [!TIP]
+>
+> Note - if your business is in an ineligible category or has an excessive
+> dispute rate, Whop shows a message that you are ineligible to apply for
+> financing.
 
 ## How it works for customers
 
@@ -64,12 +74,12 @@ When you enable financing:
 
 You can control which financing options appear on each of your checkout links through your pricing settings.
 
-<Tip>
-  You still receive the full payment amount (minus standard fees) while the
-  provider handles customer repayment. Sezzle is the exception: funds from
-  Sezzle orders settle on a 15-day basis before they're available in your
-  balance.
-</Tip>
+> [!TIP]
+>
+> You still receive the full payment amount (minus standard fees) while the
+> provider handles customer repayment. Sezzle is the exception: funds from
+> Sezzle orders settle on a 15-day basis before they're available in your
+> balance.
 
 ## Keep your financing access
 
@@ -82,12 +92,12 @@ Whop's priority is to make sure you keep your financing access for the long term
   * Klarna: warning at 0.5% dispute rate on Klarna transactions
   * All others: warning 1% dispute rate on any other BNPL option
 
-<Tip>
-  When you receive an alert, take extra precautions to prevent further disputes.
-  Set clear return policies, refund angry customers, and make sure your
-  customers know where to go to resolve issues so they don't dispute directly
-  with the bank.
-</Tip>
+> [!TIP]
+>
+> When you receive an alert, take extra precautions to prevent further disputes.
+> Set clear return policies, refund angry customers, and make sure your
+> customers know where to go to resolve issues so they don't dispute directly
+> with the bank.
 
 **Splitit minimum balance (Splitit only)**
 
@@ -110,7 +120,7 @@ If financing isn't showing on your checkout links after approval, check these co
 
 ### 1. Check the maximum product price for the BNPL option
 
-Each financing provider has different maximums, which can depend on customer geographies and risk profiles. Read the [Financing options](/payments-and-billing/financing/all-bnpl-options) article for a full overview of each BNPL maximum.
+Each financing provider has different maximums, which can depend on customer geographies and risk profiles. Read the [Financing options](https://docs.whop.com/payments-and-billing/financing/all-bnpl-options.md) article for a full overview of each BNPL maximum.
 
 ### 2. Check pricing structure
 
@@ -140,3 +150,10 @@ If you're unsure whether your product or service is eligible for financing, plea
 ### 6. Dispute rate too high
 
 Make sure you haven't exceeded a 2% dispute rate across transactions for the BNPL option (1% for Klarna). If you exceed the acceptable rate, Whop automatically removes that option from checkout. Whop will notify you by email and direct message.
+
+
+## Related topics
+
+- [Financing](https://docs.whop.com/payments/financing.md)
+- [Financing Options](https://docs.whop.com/payments-and-billing/financing/all-bnpl-options.md)
+- [Coaches](https://docs.whop.com/supported-business-models/coaches.md)

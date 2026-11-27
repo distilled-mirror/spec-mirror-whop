@@ -2,6 +2,16 @@
 > Fetch the complete documentation index at: https://docs.whop.com/llms.txt
 > Use this file to discover all available pages before exploring further.
 
+> ## Agent Instructions
+> Treat these docs and the Whop MCP server as the source of truth for Whop API behavior. Don't infer endpoint behavior from marketing pages.
+> MCP server: connect https://mcp.whop.com/mcp (streamable HTTP, browser sign-in, no API key in the client config) to search these docs and read or change live Whop data. Setup: https://docs.whop.com/developer/guides/ai_and_mcp.md
+> Whop CLI: install with `curl -fsSL https://whop.com/install.sh | sh` to scaffold, run, and deploy Whop apps and websites. It acts on production, not the sandbox. Overview: https://docs.whop.com/cli/overview.md Agent mode: https://docs.whop.com/cli/agent-mode.md
+> Hosting: Whop serves a site or app from the build `whop apps deploy` uploads, with rollbacks, secrets, and server logs. Guide: https://docs.whop.com/developer/websites/hosting.md
+> Plugins: in Claude Code, run `/plugin marketplace add whopio/plugins`, then `/plugin install whop@whop`. Guide: https://docs.whop.com/developer/guides/plugins/claude-code.md Every agent tool: https://docs.whop.com/developer/ai/overview.md
+> Environments: build and test in the sandbox (API `https://sandbox-api.whop.com/api/v1`, keys at https://sandbox.whop.com/dashboard/developer, SDK environment `Sandbox`; no real money). Production (API `https://api.whop.com/api/v1`, keys at https://whop.com/dashboard/developer, SDK environment `Production`, the SDK default) moves real money, so use it only at launch. The two share no accounts, keys, products, or webhooks, and their keys look identical: never mix them. Sandbox guide: https://docs.whop.com/developer/guides/sandbox.md Comparison: https://docs.whop.com/developer/quickstart.md
+> API: send `Authorization: Bearer <API_KEY>` from your server only, and pin a dated version with the `Api-Version-Date` header. OpenAPI spec: https://api.whop.com/api/v1/openapi.json
+> Which API: build on the Current API, whose pages live under https://docs.whop.com/api-reference/ (start at https://docs.whop.com/api-reference/overview.md). Pages under /api-reference/legacy/ are the Legacy API. Use one only when https://docs.whop.com/api-reference/stability.md lists the resource as Legacy-only.
+
 # Install the Whop Pixel on Shopify
 
 > Add the Whop Pixel to a Shopify storefront with a theme snippet, plus a custom pixel that covers checkout.
@@ -11,431 +21,436 @@ A Shopify install has two parts, and you need both:
 1. **The pixel snippet in your theme.** It runs on every storefront page — home, products, collections, cart — where it tracks visitors and powers the install overlay you see when verifying your pixel from the Whop dashboard.
 2. **A custom pixel.** Shopify's checkout runs in a sandbox that ignores theme scripts, so the snippet goes dark there. Shopify's own **Custom Pixel** feature is the way around that — it runs in every part of your store, checkout included, and reports standard events like `checkout_completed` and `payment_info_submitted`. The script in step 4 forwards each one to Whop, tied to the same visitor the theme snippet tracks.
 
-<Steps>
-  <Step title="Get your Whop Account ID" iconType="regular" titleSize="h2">
-    Find it from your [Whop Dashboard](https://whop.com/dashboard/) - the part of the URL after `dashboard/`, starting with `biz_`. Looks like `biz_xxxxxxxxxxx`.
+## 1. Get your Whop Account ID
 
-    <img src="https://mintcdn.com/whop/i81Det37UaKELkrh/images/dashboard-url.png?fit=max&auto=format&n=i81Det37UaKELkrh&q=85&s=f8dce6ea378318d4c89f7bce9239605d" width="1270" height="244" data-path="images/dashboard-url.png" />
-  </Step>
+Find it from your [Whop Dashboard](https://whop.com/dashboard/) - the part of the URL after `dashboard/`, starting with `biz_`. Looks like `biz_xxxxxxxxxxx`.
 
-  <Step title="Add the pixel snippet to your theme" iconType="regular" titleSize="h2">
-    In Shopify, go to **Online Store > Themes**. On your current theme, select **⋯ > Edit code**. Under **Layout**, open `theme.liquid` and paste this snippet immediately before the closing `</head>` tag. Replace `biz_xxxxxxxxxxxxx` with your own account ID, then select **Save**.
+![Whop dashboard URL in the browser address bar, with the account ID after dashboard underlined](https://mintcdn.com/whop/i81Det37UaKELkrh/images/dashboard-url.png?fit=max\&auto=format\&n=i81Det37UaKELkrh\&q=85\&s=f8dce6ea378318d4c89f7bce9239605d)
 
-    ```html Pixel snippet theme={null}
-    <script>
-    !function(w,d,s,u,n,a,b){if(w[n])return;a=w[n]={q:[],t:+new Date,s:[],o:u,track:function(){a.q.push([+new Date].concat([].slice.call(arguments)))},setScope:function(){a.s=[].slice.call(arguments).filter(function(x){return typeof x==="string"});a.q.push([+new Date,"setScope"].concat(a.s))},scope:function(){var c=[].slice.call(arguments);return{track:function(){a.q.push([+new Date].concat([].slice.call(arguments)).concat([{__scope:c}]))}}}};b=d.createElement(s);b.async=1;b.src=u+"/s.js";d.getElementsByTagName(s)[0].parentNode.insertBefore(b,d.getElementsByTagName(s)[0])}(window,document,"script","https://t.whop.tw","whop");
-    whop.setScope("biz_xxxxxxxxxxxxx");
-    whop.track("page");
-    </script>
-    ```
+## 2. Add the pixel snippet to your theme
 
-    Because `theme.liquid` wraps every storefront page, this one edit covers your whole store. Don't paste the snippet into a single page or section template instead. A visitor who lands anywhere else wouldn't be tracked, and the install overlay would disappear as soon as you navigate off that page.
-  </Step>
+In Shopify, go to **Online Store > Themes**. On your current theme, select **⋯ > Edit code**. Under **Layout**, open `theme.liquid` and paste this snippet immediately before the closing `</head>` tag. Replace `biz_xxxxxxxxxxxxx` with your own account ID, then select **Save**.
 
-  <Step title="Add a custom pixel" iconType="regular" titleSize="h2">
-    In Shopify, go to **Settings > Customer events**, then click **Add custom pixel**. Name it `Whop`.
-  </Step>
+```html Pixel snippet theme={null}
+<script>
+!function(w,d,s,u,n,a,b){if(w[n])return;a=w[n]={q:[],t:+new Date,s:[],o:u,track:function(){a.q.push([+new Date].concat([].slice.call(arguments)))},setScope:function(){a.s=[].slice.call(arguments).filter(function(x){return typeof x==="string"});a.q.push([+new Date,"setScope"].concat(a.s))},scope:function(){var c=[].slice.call(arguments);return{track:function(){a.q.push([+new Date].concat([].slice.call(arguments)).concat([{__scope:c}]))}}}};b=d.createElement(s);b.async=1;b.src=u+"/s.js";d.getElementsByTagName(s)[0].parentNode.insertBefore(b,d.getElementsByTagName(s)[0])}(window,document,"script","https://t.whop.tw","whop");
+whop.setScope("biz_xxxxxxxxxxxxx");
+whop.track("page");
+</script>
+```
 
-  <Step title="Paste the script" iconType="regular" titleSize="h2">
-    Paste this into the pixel's code editor. Replace `biz_xxxxxxxxxxxxx` with your own account ID.
+Because `theme.liquid` wraps every storefront page, this one edit covers your whole store. Don't paste the snippet into a single page or section template instead. A visitor who lands anywhere else wouldn't be tracked, and the install overlay would disappear as soon as you navigate off that page.
 
-    The script reads the `_wuid` cookie the theme snippet sets, so checkout events land on the same visitor the theme snippet has been tracking. It also skips storefront page views — the theme snippet already reports those — and only sends page views from checkout, where theme scripts can't run.
+## 3. Add a custom pixel
 
-    ```javascript Custom pixel theme={null}
-    const WHOP_ACCOUNT_ID = "biz_xxxxxxxxxxxxx";
+In Shopify, go to **Settings > Customer events**, then select **Add custom pixel**. Name it `Whop`.
 
-    const WHOP_ENDPOINT = "https://t.whop.tw/conversions";
+## 4. Paste the script
 
-    const TRACKED_EVENTS = new Set([
-      "product_viewed",
-      "collection_viewed",
-      "search_submitted",
-      "cart_viewed",
-      "product_added_to_cart",
-      "product_removed_from_cart",
-      "checkout_started",
-      "checkout_contact_info_submitted",
-      "checkout_address_info_submitted",
-      "checkout_shipping_info_submitted",
-      "payment_info_submitted",
-      "checkout_completed",
-    ]);
+Paste this into the pixel's code editor. Replace `biz_xxxxxxxxxxxxx` with your own account ID.
 
-    const MAX_EVENT_NAME_LENGTH = 34;
+The script reads the `_wuid` cookie the theme snippet sets, so checkout events land on the same visitor the theme snippet has been tracking. It also skips storefront page views — the theme snippet already reports those — and only sends page views from checkout, where theme scripts can't run.
 
-    const WHOP_STANDARD_EVENTS = new Set([
-      "page",
-      "lead",
-      "contact",
-      "schedule",
-      "submit_application",
-      "complete_registration",
-      "view_content",
-      "add_to_cart",
-    ]);
+```javascript Custom pixel theme={null}
+const WHOP_ACCOUNT_ID = "biz_xxxxxxxxxxxxx";
 
-    // Map onto Whop's own standard event names wherever Shopify's event has a real
-    // equivalent — a standard name skips the character-limit problem entirely,
-    // since only custom names get prefixed with your company tag. Everything else
-    // falls through to a shopify_-prefixed custom name below; Shopify's own names
-    // for the three checkout steps are too long once prefixed, so they're
-    // shortened here too.
-    const EVENT_NAME_OVERRIDES = {
-      page_viewed: "page",
-      product_viewed: "view_content",
-      product_added_to_cart: "add_to_cart",
-      checkout_completed: "purchase",
-      checkout_contact_info_submitted: "shopify_checkout_contact",
-      checkout_address_info_submitted: "shopify_checkout_address",
-      checkout_shipping_info_submitted: "shopify_checkout_shipping",
-    };
+const WHOP_ENDPOINT = "https://t.whop.tw/conversions";
 
-    const TRACKED_QUERY_PARAMS = [
-      "utm_id",
-      "utm_source",
-      "utm_medium",
-      "utm_campaign",
-      "utm_term",
-      "utm_content",
-      "fbclid",
-      "gclid",
-      "ttclid",
-      "li_fat_id",
-      "msclkid",
-      "twclid",
-      "rdt_cid",
-      "sccid",
-      "wbraid",
-      "gbraid",
-      "ig_sid",
-    ];
+const TRACKED_EVENTS = new Set([
+  "product_viewed",
+  "collection_viewed",
+  "search_submitted",
+  "cart_viewed",
+  "product_added_to_cart",
+  "product_removed_from_cart",
+  "checkout_started",
+  "checkout_contact_info_submitted",
+  "checkout_address_info_submitted",
+  "checkout_shipping_info_submitted",
+  "payment_info_submitted",
+  "checkout_completed",
+]);
 
-    function compact(object) {
-      return Object.fromEntries(
-        Object.entries(object).filter(
-          ([, value]) =>
-            value !== null &&
-            value !== undefined &&
-            value !== "",
-        ),
-      );
-    }
+const MAX_EVENT_NAME_LENGTH = 34;
 
-    async function readCookie(name) {
-      try {
-        return (await browser.cookie.get(name)) || null;
-      } catch {
-        return null;
-      }
-    }
+const WHOP_STANDARD_EVENTS = new Set([
+  "page",
+  "lead",
+  "contact",
+  "schedule",
+  "submit_application",
+  "complete_registration",
+  "view_content",
+  "add_to_cart",
+]);
 
-    async function readCookies() {
-      const [fbp, fbc, ga, ttp] = await Promise.all([
-        readCookie("_fbp"),
-        readCookie("_fbc"),
-        readCookie("_ga"),
-        readCookie("_ttp"),
-      ]);
+// Map onto Whop's own standard event names wherever Shopify's event has a real
+// equivalent — a standard name skips the character-limit problem entirely,
+// since only custom names get prefixed with your account ID. Everything else
+// falls through to a shopify_-prefixed custom name below; Shopify's own names
+// for the three checkout steps are too long once prefixed, so they're
+// shortened here too.
+const EVENT_NAME_OVERRIDES = {
+  page_viewed: "page",
+  product_viewed: "view_content",
+  product_added_to_cart: "add_to_cart",
+  checkout_completed: "purchase",
+  checkout_contact_info_submitted: "shopify_checkout_contact",
+  checkout_address_info_submitted: "shopify_checkout_address",
+  checkout_shipping_info_submitted: "shopify_checkout_shipping",
+};
 
-      return { fbp, fbc, ga, ttp };
-    }
+const TRACKED_QUERY_PARAMS = [
+  "utm_id",
+  "utm_source",
+  "utm_medium",
+  "utm_campaign",
+  "utm_term",
+  "utm_content",
+  "fbclid",
+  "gclid",
+  "ttclid",
+  "li_fat_id",
+  "msclkid",
+  "twclid",
+  "rdt_cid",
+  "sccid",
+  "wbraid",
+  "gbraid",
+  "ig_sid",
+];
 
-    // On the very first page view of a visit the theme snippet may still be
-    // loading, so give its _wuid cookie a moment to appear — otherwise that page
-    // view would be reported twice.
-    async function readWuid(eventName) {
-      const wuid = await readCookie("_wuid");
-      if (wuid || eventName !== "page_viewed") return wuid;
+function compact(object) {
+  return Object.fromEntries(
+    Object.entries(object).filter(
+      ([, value]) =>
+        value !== null &&
+        value !== undefined &&
+        value !== "",
+    ),
+  );
+}
 
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-      return readCookie("_wuid");
-    }
+async function readCookie(name) {
+  try {
+    return (await browser.cookie.get(name)) || null;
+  } catch {
+    return null;
+  }
+}
 
-    function readQueryParameters(href) {
-      if (!href) return {};
+async function readCookies() {
+  const [fbp, fbc, ga, ttp] = await Promise.all([
+    readCookie("_fbp"),
+    readCookie("_fbc"),
+    readCookie("_ga"),
+    readCookie("_ttp"),
+  ]);
 
-      try {
-        const url = new URL(href);
+  return { fbp, fbc, ga, ttp };
+}
 
-        return compact(
-          Object.fromEntries(
-            TRACKED_QUERY_PARAMS.map((name) => [
-              name,
-              url.searchParams.get(name),
-            ]),
-          ),
-        );
-      } catch {
-        return {};
-      }
-    }
+// On the very first page view of a visit the theme snippet may still be
+// loading, so give its _wuid cookie a moment to appear — otherwise that page
+// view would be reported twice.
+async function readWuid(eventName) {
+  const wuid = await readCookie("_wuid");
+  if (wuid || eventName !== "page_viewed") return wuid;
 
-    function readTimezone() {
-      try {
-        return Intl.DateTimeFormat()
-          .resolvedOptions()
-          .timeZone;
-      } catch {
-        return null;
-      }
-    }
+  await new Promise((resolve) => setTimeout(resolve, 2000));
+  return readCookie("_wuid");
+}
 
-    function buildContext(event, cookies) {
-      const documentContext = event.context?.document;
-      const navigatorContext = event.context?.navigator;
-      const screen = event.context?.window?.screen;
-      const href = documentContext?.location?.href;
+function readQueryParameters(href) {
+  if (!href) return {};
 
-      return compact({
-        user_agent: navigatorContext?.userAgent,
-        language: navigatorContext?.language,
-        timezone: readTimezone(),
-        screen_resolution: screen ? `${screen.width}x${screen.height}` : null,
-        fbp: cookies.fbp,
-        fbc: cookies.fbc,
-        ga: cookies.ga,
-        ttp: cookies.ttp,
-        ...readQueryParameters(href),
-      });
-    }
+  try {
+    const url = new URL(href);
 
-    // Prefer the visitor ID the theme snippet stores in the _wuid cookie, so a
-    // checkout is tied to the storefront visit that led to it. The shopify_
-    // fallback covers pages where that cookie isn't readable.
-    function getAnonymousId(clientId, wuid) {
-      if (wuid) return wuid;
-
-      if (!clientId) return null;
-
-      const anonymousId = `shopify_${clientId}`;
-
-      if (anonymousId.length > 64) {
-        console.error("Shopify client ID is too long");
-        return null;
-      }
-
-      return anonymousId;
-    }
-
-    function getWhopEventName(shopifyEventName) {
-      const name =
-        EVENT_NAME_OVERRIDES[shopifyEventName] ||
-        `shopify_${shopifyEventName}`;
-
-      if (
-        !WHOP_STANDARD_EVENTS.has(name) &&
-        name.length > MAX_EVENT_NAME_LENGTH
-      ) {
-        console.error(
-          "Whop event name too long, Meta will drop it",
+    return compact(
+      Object.fromEntries(
+        TRACKED_QUERY_PARAMS.map((name) => [
           name,
-          name.length,
-        );
-      }
-
-      return name;
-    }
-
-    function getEventId(event, checkout) {
-      if (event.name === "checkout_completed") {
-        const orderOrCheckoutId =
-          checkout?.order?.id ||
-          checkout?.token ||
-          event.id;
-
-        return `shopify:purchase:${orderOrCheckoutId}`;
-      }
-
-      return `shopify:${event.name}:${event.id}`;
-    }
-
-    function buildUser(event, checkout, wuid) {
-      const anonymousId = getAnonymousId(event.clientId, wuid);
-
-      if (!anonymousId) return null;
-
-      const address =
-        checkout?.shippingAddress ||
-        checkout?.billingAddress ||
-        {};
-
-      const firstName = address.firstName || null;
-      const lastName = address.lastName || null;
-
-      return compact({
-        anonymous_id: anonymousId,
-        external_id:
-          checkout?.order?.customer?.id || null,
-        email: checkout?.email || null,
-        phone:
-          checkout?.phone ||
-          address.phone ||
-          null,
-        first_name: firstName,
-        last_name: lastName,
-        name:
-          [firstName, lastName]
-            .filter(Boolean)
-            .join(" ") || null,
-        city: address.city || null,
-        state:
-          address.provinceCode ||
-          address.province ||
-          null,
-        postal_code: address.zip || null,
-        country:
-          address.countryCode ||
-          address.country ||
-          null,
-      });
-    }
-
-    function isCheckoutSurface(href) {
-      if (!href) return false;
-
-      try {
-        const path = new URL(href).pathname;
-        return path.includes("/checkouts") || path.includes("/orders/");
-      } catch {
-        return false;
-      }
-    }
-
-    async function sendWhopEvent(payload) {
-      try {
-        const response = await fetch(WHOP_ENDPOINT, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(payload),
-          keepalive: true,
-          credentials: "omit",
-        });
-
-        const responseBody = await response.text();
-
-        if (!response.ok) {
-          console.error("Whop event failed", {
-            status: response.status,
-            response: responseBody,
-            payload,
-          });
-
-          return;
-        }
-
-        console.log(
-          "Whop event sent",
-          payload.event_name,
-          responseBody,
-        );
-      } catch (error) {
-        console.error(
-          "Whop request failed",
-          payload.event_name,
-          error,
-        );
-      }
-    }
-
-    async function handleShopifyEvent(event) {
-      const href = event.context?.document?.location?.href || null;
-      const wuid = await readWuid(event.name);
-
-      // The theme snippet already reports storefront page views. Only checkout
-      // and the order status page, where theme scripts can't run, need their
-      // page views sent from here.
-      if (
-        event.name === "page_viewed" &&
-        wuid &&
-        !isCheckoutSurface(href)
-      ) {
-        return;
-      }
-
-      const checkout = event.data?.checkout;
-      const user = buildUser(event, checkout, wuid);
-
-      if (!user) {
-        console.warn(
-          "Shopify event missing a visitor ID",
-          event.name,
-        );
-        return;
-      }
-
-      const cookies = await readCookies();
-      const isPurchase =
-        event.name === "checkout_completed";
-
-      const payload = compact({
-        account_id: WHOP_ACCOUNT_ID,
-        event_name: getWhopEventName(event.name),
-        event_id: getEventId(event, checkout),
-        event_time: event.timestamp,
-        action_source:
-          event.name === "page_viewed" ? null : "website",
-        url: href,
-        referrer_url:
-          event.context?.document?.referrer ||
-          null,
-        title:
-          event.context?.document?.title ||
-          null,
-        user,
-        context: buildContext(event, cookies),
-      });
-
-      if (
-        isPurchase &&
-        checkout?.totalPrice?.amount != null
-      ) {
-        payload.value = Number(
-          checkout.totalPrice.amount,
-        );
-
-        const currency =
-          checkout.totalPrice.currencyCode ||
-          checkout.currencyCode;
-
-        if (currency) {
-          payload.currency = currency.toLowerCase();
-        }
-      }
-
-      await sendWhopEvent(payload);
-    }
-
-    analytics.subscribe("page_viewed", handleShopifyEvent);
-
-    analytics.subscribe(
-      "all_standard_events",
-      async (event) => {
-        if (
-          event.name === "page_viewed" ||
-          !TRACKED_EVENTS.has(event.name)
-        ) {
-          return;
-        }
-
-        await handleShopifyEvent(event);
-      },
+          url.searchParams.get(name),
+        ]),
+      ),
     );
-    ```
-  </Step>
+  } catch {
+    return {};
+  }
+}
 
-  <Step title="Save and connect the pixel" iconType="regular" titleSize="h2">
-    Click **Save**, then **Connect**. Shopify won't send any events to an unconnected pixel.
-  </Step>
+function readTimezone() {
+  try {
+    return Intl.DateTimeFormat()
+      .resolvedOptions()
+      .timeZone;
+  } catch {
+    return null;
+  }
+}
 
-  <Step title="Confirm it's tracking" iconType="regular" titleSize="h2">
-    Visit a live storefront page, then check the [Websites page](https://whop.com/dashboard/websites) in your Whop dashboard. Your domain appears there once a page view comes through. Then place a test order and confirm a purchase shows up too.
+function buildContext(event, cookies) {
+  const documentContext = event.context?.document;
+  const navigatorContext = event.context?.navigator;
+  const screen = event.context?.window?.screen;
+  const href = documentContext?.location?.href;
 
-    When you verify the install live from the dashboard, the overlay follows you across storefront pages but disappears once you enter checkout — Shopify doesn't run theme scripts there. That's expected: the custom pixel keeps reporting checkout events, and the test purchase still shows up in your dashboard.
-  </Step>
-</Steps>
+  return compact({
+    user_agent: navigatorContext?.userAgent,
+    language: navigatorContext?.language,
+    timezone: readTimezone(),
+    screen_resolution: screen ? `${screen.width}x${screen.height}` : null,
+    fbp: cookies.fbp,
+    fbc: cookies.fbc,
+    ga: cookies.ga,
+    ttp: cookies.ttp,
+    ...readQueryParameters(href),
+  });
+}
 
-<Note>
-  Whop's automatic server-side purchase tracking only covers checkouts that happen on Whop itself. A Shopify order is processed entirely inside Shopify, so Whop never sees it unless something reports it — that's what this script's `checkout_completed` (sent as `purchase`) is for. Don't remove it thinking it's a duplicate of Whop's own tracking.
-</Note>
+// Prefer the visitor ID the theme snippet stores in the _wuid cookie, so a
+// checkout is tied to the storefront visit that led to it. The shopify_
+// fallback covers pages where that cookie isn't readable.
+function getAnonymousId(clientId, wuid) {
+  if (wuid) return wuid;
+
+  if (!clientId) return null;
+
+  const anonymousId = `shopify_${clientId}`;
+
+  if (anonymousId.length > 64) {
+    console.error("Shopify client ID is too long");
+    return null;
+  }
+
+  return anonymousId;
+}
+
+function getWhopEventName(shopifyEventName) {
+  const name =
+    EVENT_NAME_OVERRIDES[shopifyEventName] ||
+    `shopify_${shopifyEventName}`;
+
+  if (
+    !WHOP_STANDARD_EVENTS.has(name) &&
+    name.length > MAX_EVENT_NAME_LENGTH
+  ) {
+    console.error(
+      "Whop event name too long, ad networks will drop it",
+      name,
+      name.length,
+    );
+  }
+
+  return name;
+}
+
+function getEventId(event, checkout) {
+  if (event.name === "checkout_completed") {
+    const orderOrCheckoutId =
+      checkout?.order?.id ||
+      checkout?.token ||
+      event.id;
+
+    return `shopify:purchase:${orderOrCheckoutId}`;
+  }
+
+  return `shopify:${event.name}:${event.id}`;
+}
+
+function buildUser(event, checkout, wuid) {
+  const anonymousId = getAnonymousId(event.clientId, wuid);
+
+  if (!anonymousId) return null;
+
+  const address =
+    checkout?.shippingAddress ||
+    checkout?.billingAddress ||
+    {};
+
+  const firstName = address.firstName || null;
+  const lastName = address.lastName || null;
+
+  return compact({
+    anonymous_id: anonymousId,
+    external_id:
+      checkout?.order?.customer?.id || null,
+    email: checkout?.email || null,
+    phone:
+      checkout?.phone ||
+      address.phone ||
+      null,
+    first_name: firstName,
+    last_name: lastName,
+    name:
+      [firstName, lastName]
+        .filter(Boolean)
+        .join(" ") || null,
+    city: address.city || null,
+    state:
+      address.provinceCode ||
+      address.province ||
+      null,
+    postal_code: address.zip || null,
+    country:
+      address.countryCode ||
+      address.country ||
+      null,
+  });
+}
+
+function isCheckoutSurface(href) {
+  if (!href) return false;
+
+  try {
+    const path = new URL(href).pathname;
+    return path.includes("/checkouts") || path.includes("/orders/");
+  } catch {
+    return false;
+  }
+}
+
+async function sendWhopEvent(payload) {
+  try {
+    const response = await fetch(WHOP_ENDPOINT, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+      keepalive: true,
+      credentials: "omit",
+    });
+
+    const responseBody = await response.text();
+
+    if (!response.ok) {
+      console.error("Whop event failed", {
+        status: response.status,
+        response: responseBody,
+        payload,
+      });
+
+      return;
+    }
+
+    console.log(
+      "Whop event sent",
+      payload.event_name,
+      responseBody,
+    );
+  } catch (error) {
+    console.error(
+      "Whop request failed",
+      payload.event_name,
+      error,
+    );
+  }
+}
+
+async function handleShopifyEvent(event) {
+  const href = event.context?.document?.location?.href || null;
+  const wuid = await readWuid(event.name);
+
+  // The theme snippet already reports storefront page views. Only checkout
+  // and the order status page, where theme scripts can't run, need their
+  // page views sent from here.
+  if (
+    event.name === "page_viewed" &&
+    wuid &&
+    !isCheckoutSurface(href)
+  ) {
+    return;
+  }
+
+  const checkout = event.data?.checkout;
+  const user = buildUser(event, checkout, wuid);
+
+  if (!user) {
+    console.warn(
+      "Shopify event missing a visitor ID",
+      event.name,
+    );
+    return;
+  }
+
+  const cookies = await readCookies();
+  const isPurchase =
+    event.name === "checkout_completed";
+
+  const payload = compact({
+    account_id: WHOP_ACCOUNT_ID,
+    event_name: getWhopEventName(event.name),
+    event_id: getEventId(event, checkout),
+    event_time: event.timestamp,
+    action_source:
+      event.name === "page_viewed" ? null : "website",
+    url: href,
+    referrer_url:
+      event.context?.document?.referrer ||
+      null,
+    title:
+      event.context?.document?.title ||
+      null,
+    user,
+    context: buildContext(event, cookies),
+  });
+
+  if (
+    isPurchase &&
+    checkout?.totalPrice?.amount != null
+  ) {
+    payload.value = Number(
+      checkout.totalPrice.amount,
+    );
+
+    const currency =
+      checkout.totalPrice.currencyCode ||
+      checkout.currencyCode;
+
+    if (currency) {
+      payload.currency = currency.toLowerCase();
+    }
+  }
+
+  await sendWhopEvent(payload);
+}
+
+analytics.subscribe("page_viewed", handleShopifyEvent);
+
+analytics.subscribe(
+  "all_standard_events",
+  async (event) => {
+    if (
+      event.name === "page_viewed" ||
+      !TRACKED_EVENTS.has(event.name)
+    ) {
+      return;
+    }
+
+    await handleShopifyEvent(event);
+  },
+);
+```
+
+## 5. Save and connect the pixel
+
+Select **Save**, then **Connect**. Shopify won't send any events to an unconnected pixel.
+
+## 6. Confirm it's tracking
+
+Visit a live storefront page, then check the [Websites page](https://whop.com/dashboard/websites) in your Whop dashboard. Your domain appears there once a page view comes through. Then place a test order and confirm a purchase shows up too.
+
+When you verify the install live from the dashboard, the overlay follows you across storefront pages but disappears once you enter checkout — Shopify doesn't run theme scripts there. That's expected: the custom pixel keeps reporting checkout events, and the test purchase still shows up in your dashboard.
+
+> [!NOTE]
+>
+> Whop's automatic server-side purchase tracking only covers checkouts that happen on Whop itself. A Shopify order is processed entirely inside Shopify, so Whop never sees it unless something reports it — that's what this script's `checkout_completed` (sent as `purchase`) is for. Don't remove it thinking it's a duplicate of Whop's own tracking.
+
+
+## Related topics
+
+- [Install the Whop Pixel](https://docs.whop.com/developer/ads/pixel.md)
+- [Install the Whop Pixel with Calendly](https://docs.whop.com/developer/ads/platforms/calendly.md)
+- [Install the Whop Pixel on Kajabi](https://docs.whop.com/developer/ads/platforms/kajabi.md)

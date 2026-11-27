@@ -2,318 +2,196 @@
 > Fetch the complete documentation index at: https://docs.whop.com/llms.txt
 > Use this file to discover all available pages before exploring further.
 
-# Refund
-
-> A refund represents a full or partial reversal of a payment, including the amount, status, and payment provider.
-
-<ResponseExample>
-  ```json Example theme={null}
-  {
-  	"amount": 6.9,
-  	"created_at": "2023-12-01T05:00:00.401Z",
-  	"currency": "usd",
-  	"id": "rf_xxxxxxxxxxxxxxx",
-  	"payment": {
-  		"billing_reason": "subscription_create",
-  		"card_brand": "mastercard",
-  		"card_last4": "4242",
-  		"created_at": "2023-12-01T05:00:00.401Z",
-  		"currency": "usd",
-  		"dispute_alerted_at": "2023-12-01T05:00:00.401Z",
-  		"id": "pay_xxxxxxxxxxxxxx",
-  		"member": {
-  			"id": "<string>",
-  			"phone": "<string>"
-  		},
-  		"membership": {
-  			"id": "mem_xxxxxxxxxxxxxx",
-  			"status": "trialing"
-  		},
-  		"metadata": {},
-  		"paid_at": "2023-12-01T05:00:00.401Z",
-  		"payment_method_type": "acss_debit",
-  		"plan": {
-  			"id": "plan_xxxxxxxxxxxxx",
-  			"metadata": {}
-  		},
-  		"product": {
-  			"id": "prod_xxxxxxxxxxxxx",
-  			"metadata": {}
-  		},
-  		"subtotal": 6.9,
-  		"tax_amount": 6.9,
-  		"tax_behavior": "exclusive",
-  		"tax_refunded_amount": 6.9,
-  		"total": 6.9,
-  		"usd_total": 6.9,
-  		"user": {
-  			"email": "john.doe@example.com",
-  			"id": "user_xxxxxxxxxxxxx",
-  			"name": "John Doe",
-  			"username": "johndoe42"
-  		}
-  	},
-  	"provider": "stripe",
-  	"provider_created_at": "2023-12-01T05:00:00.401Z",
-  	"reference_status": "available",
-  	"reference_type": "acquirer_reference_number",
-  	"reference_value": "74850120752",
-  	"status": "pending"
-  }
-  ```
-</ResponseExample>
-
-<ResponseField name="amount" type="number" required>
-  The refunded amount as a decimal in the specified currency, such as 10.43 for \$10.43 USD.
-
-  Example: `6.9`
-</ResponseField>
-
-<ResponseField name="created_at" type="string<date-time>" required>
-  The datetime the refund was created.
-
-  Example: `2023-12-01T05:00:00.401Z`
-</ResponseField>
-
-<ResponseField name="currency" type="Currencies" required>
-  The three-letter ISO currency code for the refunded amount.
-
-  Available options: `usd`, `sgd`, `inr`, `aud`, `brl`, `cad`, `dkk`, `eur`, `nok`, `gbp`, `sek`, `chf`, `hkd`, `huf`, `jpy`, `mxn`, `myr`, `pln`, `czk`, `nzd`, `aed`, `eth`, `ape`, `cop`, `ron`, `thb`, `bgn`, `idr`, `dop`, `php`, `try`, `krw`, `twd`, `vnd`, `pkr`, `clp`, `uyu`, `ars`, `zar`, `dzd`, `tnd`, `mad`, `kes`, `kwd`, `jod`, `all`, `xcd`, `amd`, `bsd`, `bhd`, `bob`, `bam`, `khr`, `crc`, `xof`, `egp`, `etb`, `gmd`, `ghs`, `gtq`, `gyd`, `ils`, `jmd`, `mop`, `mga`, `mur`, `mdl`, `mnt`, `nad`, `ngn`, `mkd`, `omr`, `pyg`, `pen`, `qar`, `rwf`, `sar`, `rsd`, `lkr`, `tzs`, `ttd`, `uzs`, `rub`, `btc`, `cny`, `usdt`, `kzt`, `awg`, `whop_usd`, `xau`
-</ResponseField>
-
-<ResponseField name="id" type="string" required>
-  The unique identifier for the refund.
-
-  Example: `rf_xxxxxxxxxxxxxxx`
-</ResponseField>
-
-<ResponseField name="payment" type="object | null" required>
-  The original payment that this refund was issued against. Null if the payment is no longer available.
-
-  <Expandable title="child attributes">
-    <ResponseField name="billing_reason" type="BillingReasons | null" required>
-      The machine-readable reason this charge was created, such as initial subscription purchase, renewal cycle, or one-time payment.
-
-      Available options: `subscription_create`, `subscription_cycle`, `subscription_update`, `one_time`, `manual`, `subscription`
-    </ResponseField>
-
-    <ResponseField name="card_brand" type="CardBrands | null" required>
-      Card network reported by the processor (e.g., 'visa', 'mastercard', 'amex'). Present only when the payment method type is 'card'.
-
-      Available options: `mastercard`, `visa`, `amex`, `discover`, `unionpay`, `jcb`, `diners`, `link`, `troy`, `visadankort`, `visabancontact`, `china_union_pay`, `rupay`, `jcbrupay`, `elo`, `maestro`, `tarjeta_naranja`, `cirrus`, `nspk_mir`, `verve`, `ebt`, `private_label`, `local_brand`, `uatp`, `wexcard`, `uzcard`, `meeza`, `hrg_store_card`, `girocard`, `fuel_card`, `dankort`, `carnet`, `atm_card`, `china_union_payuzcard`, `codensa`, `cabal`, `hipercard`, `jcblankapay`, `cmi`, `aura`, `accel`, `culiance`, `nyce`, `pulse`, `star`, `unknown`
-    </ResponseField>
-
-    <ResponseField name="card_last4" type="string | null" required>
-      The last four digits of the card used to make this payment. Null if the payment was not made with a card.
+> ## Agent Instructions
+> Treat these docs and the Whop MCP server as the source of truth for Whop API behavior. Don't infer endpoint behavior from marketing pages.
+> MCP server: connect https://mcp.whop.com/mcp (streamable HTTP, browser sign-in, no API key in the client config) to search these docs and read or change live Whop data. Setup: https://docs.whop.com/developer/guides/ai_and_mcp.md
+> Whop CLI: install with `curl -fsSL https://whop.com/install.sh | sh` to scaffold, run, and deploy Whop apps and websites. It acts on production, not the sandbox. Overview: https://docs.whop.com/cli/overview.md Agent mode: https://docs.whop.com/cli/agent-mode.md
+> Hosting: Whop serves a site or app from the build `whop apps deploy` uploads, with rollbacks, secrets, and server logs. Guide: https://docs.whop.com/developer/websites/hosting.md
+> Plugins: in Claude Code, run `/plugin marketplace add whopio/plugins`, then `/plugin install whop@whop`. Guide: https://docs.whop.com/developer/guides/plugins/claude-code.md Every agent tool: https://docs.whop.com/developer/ai/overview.md
+> Environments: build and test in the sandbox (API `https://sandbox-api.whop.com/api/v1`, keys at https://sandbox.whop.com/dashboard/developer, SDK environment `Sandbox`; no real money). Production (API `https://api.whop.com/api/v1`, keys at https://whop.com/dashboard/developer, SDK environment `Production`, the SDK default) moves real money, so use it only at launch. The two share no accounts, keys, products, or webhooks, and their keys look identical: never mix them. Sandbox guide: https://docs.whop.com/developer/guides/sandbox.md Comparison: https://docs.whop.com/developer/quickstart.md
+> API: send `Authorization: Bearer <API_KEY>` from your server only, and pin a dated version with the `Api-Version-Date` header. OpenAPI spec: https://api.whop.com/api/v1/openapi.json
+> Which API: build on the Current API, whose pages live under https://docs.whop.com/api-reference/ (start at https://docs.whop.com/api-reference/overview.md). Pages under /api-reference/legacy/ are the Legacy API. Use one only when https://docs.whop.com/api-reference/stability.md lists the resource as Legacy-only.
 
-      Example: `4242`
-    </ResponseField>
+# Refunds API
 
-    <ResponseField name="created_at" type="string<date-time>" required>
-      The datetime the payment was created.
+> A Refund is one full or partial reversal of a payment, issued with Refund Payment. It records how much moved, through which provider, and whether it succeeded.
 
-      Example: `2023-12-01T05:00:00.401Z`
-    </ResponseField>
+A Refund is one full or partial reversal of a payment, issued with [Refund Payment](https://docs.whop.com/api-reference/payments/refund-payment.md). It records how much moved, through which provider, and whether it succeeded.
 
-    <ResponseField name="currency" type="Currencies" required>
-      The three-letter ISO currency code for this payment (e.g., 'usd', 'eur').
+Use the Refunds API to list the refunds on a payment or across an account, and to retrieve a single refund.
 
-      Available options: `usd`, `sgd`, `inr`, `aud`, `brl`, `cad`, `dkk`, `eur`, `nok`, `gbp`, `sek`, `chf`, `hkd`, `huf`, `jpy`, `mxn`, `myr`, `pln`, `czk`, `nzd`, `aed`, `eth`, `ape`, `cop`, `ron`, `thb`, `bgn`, `idr`, `dop`, `php`, `try`, `krw`, `twd`, `vnd`, `pkr`, `clp`, `uyu`, `ars`, `zar`, `dzd`, `tnd`, `mad`, `kes`, `kwd`, `jod`, `all`, `xcd`, `amd`, `bsd`, `bhd`, `bob`, `bam`, `khr`, `crc`, `xof`, `egp`, `etb`, `gmd`, `ghs`, `gtq`, `gyd`, `ils`, `jmd`, `mop`, `mga`, `mur`, `mdl`, `mnt`, `nad`, `ngn`, `mkd`, `omr`, `pyg`, `pen`, `qar`, `rwf`, `sar`, `rsd`, `lkr`, `tzs`, `ttd`, `uzs`, `rub`, `btc`, `cny`, `usdt`, `kzt`, `awg`, `whop_usd`, `xau`
-    </ResponseField>
+## Endpoints
 
-    <ResponseField name="dispute_alerted_at" type="string<date-time> | null" required>
-      When an alert came in that this transaction will be disputed
+| Endpoint | Request |
+| - | - |
+| [List Refunds](https://docs.whop.com/api-reference/refunds/list-refunds.md) | GET `/refunds` |
+| [Retrieve Refund](https://docs.whop.com/api-reference/refunds/retrieve-refund.md) | GET `/refunds/{id}` |
 
-      Example: `2023-12-01T05:00:00.401Z`
-    </ResponseField>
+## Attributes
 
-    <ResponseField name="id" type="string" required>
-      The unique identifier for the payment.
+**id** `string` *required*
 
-      Example: `pay_xxxxxxxxxxxxxx`
-    </ResponseField>
+Refund ID, prefixed `rf_`.
 
-    <ResponseField name="member" type="object | null" required>
-      The member attached to this payment.
+**account\_id** `string | null` *required*
 
-      <Expandable title="child attributes">
-        <ResponseField name="id" type="string" required>
-          The unique identifier for the company member.
-        </ResponseField>
+The account that issued the refund, prefixed `biz_`.
 
-        <ResponseField name="phone" type="string | null" required>
-          The phone number for the member, if available.
-        </ResponseField>
-      </Expandable>
-    </ResponseField>
+**amount** `object | null` *required*
 
-    <ResponseField name="membership" type="object | null" required>
-      The membership attached to this payment.
+The refunded amount as it settled, in the payment's settlement currency, so pages of refunds net against the payment's `refunded_amount`. Converted at the rate in force when the refund was issued, not the payment's original rate. Null only when no exchange rate is recorded for a legacy multi-currency payment.
 
-      <Expandable title="child attributes">
-        <ResponseField name="id" type="string" required>
-          The unique identifier for the membership.
+> [accordion] Properties
+>
+> **amount** `string` *required*
+>
+> The amount in major units, as an exact decimal string. For example, `"10.00"`
+> is ten dollars. It is a string so that no float rounds it in transit.
+>
+> **currency** `string` *required*
+>
+> Three-letter ISO 4217 currency code, lowercase.
+>
+> **decimals** `integer` *required*
+>
+> How many decimal places the amount carries. This is the precision the charge
+> itself runs at.
+>
+> **display\_decimals** `integer` *required*
+>
+> How many decimal places to SHOW. Usually equal to `decimals`, and deliberately not always: COP is charged in centavos but written in whole pesos, so it is `2` and `0`. Format the number in your own locale using this.
 
-          Example: `mem_xxxxxxxxxxxxxx`
-        </ResponseField>
+**created\_at** `string` *required*
 
-        <ResponseField name="status" type="MembershipStatus" required>
-          The state of the membership.
+When the refund was requested, as an ISO 8601 timestamp.
 
-          Available options: `trialing`, `active`, `past_due`, `completed`, `canceled`, `expired`, `unresolved`, `drafted`, `canceling`
-        </ResponseField>
-      </Expandable>
-    </ResponseField>
+**failure\_message** `string | null` *required*
 
-    <ResponseField name="metadata" type="object | null" required>
-      The custom metadata stored on this payment. This will be copied over to the
-      checkout configuration for which this payment was made
-    </ResponseField>
+A merchant-facing explanation of why the refund failed, in the request's
+language. Null unless the refund failed or was canceled.
 
-    <ResponseField name="paid_at" type="string<date-time> | null" required>
-      The time at which this payment was successfully collected. Null if the payment has not yet succeeded. As a Unix timestamp.
+**failure\_reason** `string | null` *required*
 
-      Example: `2023-12-01T05:00:00.401Z`
-    </ResponseField>
+Why the refund failed, normalized across providers. Null unless the refund failed or was canceled.
 
-    <ResponseField name="payment_method_type" type="PaymentMethodTypes | null" required>
-      The type of payment instrument used for this payment (e.g., card, Cash App, iDEAL, Klarna, crypto). Null when the processor does not supply a type.
+Available options: `bank_declined`, `expired_or_canceled_card`, `lost_or_stolen_card`, `insufficient_funds`, `charge_disputed`, `not_refundable`, `merchant_request`, `unknown`
 
-      Available options: `acss_debit`, `addi`, `affirm`, `afterpay_clearpay`, `alipay`, `alipayhk`, `alma`, `amazon_pay`, `apple`, `apple_pay`, `au_bank_transfer`, `au_becs_debit`, `bacs_debit`, `bancolombia`, `bancontact`, `bank_wire`, `billie`, `blik`, `boleto`, `bre_b`, `ca_bank_transfer`, `capchase_pay`, `card`, `card_installments_three`, `card_installments_six`, `card_installments_twelve`, `cashapp`, `claritypay`, `coinbase`, `crypto`, `custom`, `customer_balance`, `demo_pay`, `efecty`, `eps`, `eu_bank_transfer`, `fpx`, `flex_pay`, `gb_bank_transfer`, `gcash`, `giropay`, `google_pay`, `gopay`, `grabpay`, `id_bank_transfer`, `ideal`, `interac`, `kakao_pay`, `klarna`, `klarna_pay_now`, `konbini`, `kr_card`, `kr_market`, `kriya`, `kueski`, `link`, `mb_way`, `m_pesa`, `mercado_pago`, `mercado_pago_ar`, `mercado_pago_mx`, `mobilepay`, `modo`, `mondu`, `multibanco`, `naver_pay`, `nequi`, `netbanking`, `ng_bank`, `ng_bank_transfer`, `ng_card`, `ng_market`, `ng_ussd`, `ng_wallet`, `nupay`, `nz_bank_account`, `oney`, `oney_3x`, `oney_4x`, `opay`, `oxxo`, `p24`, `pago_efectivo`, `pse`, `pay_by_bank`, `payco`, `paynow`, `paypal`, `paypay`, `payto`, `pix`, `platform_balance`, `promptpay`, `qris`, `rapipago`, `rechnung`, `revolut_pay`, `samsung_pay`, `satispay`, `scalapay`, `sencillito`, `sepa_debit`, `sequra`, `servipag`, `sezzle`, `shop_pay`, `shopeepay`, `sofort`, `south_korea_market`, `spei`, `splitit`, `sunbit`, `swish`, `tabby`, `tamara`, `touch_n_go`, `twint`, `upi`, `us_bank_account`, `us_bank_transfer`, `venmo`, `verve`, `vipps`, `webpay`, `wechat_pay`, `yape`, `zip`, `coinflow`, `unknown`
-    </ResponseField>
+**metadata** `object | null` *required*
 
-    <ResponseField name="plan" type="object | null" required>
-      The plan attached to this payment.
+Your own key-value data attached when the refund was requested.
 
-      <Expandable title="child attributes">
-        <ResponseField name="id" type="string" required>
-          The unique identifier for the plan.
+**original\_amount** `object` *required*
 
-          Example: `plan_xxxxxxxxxxxxx`
-        </ResponseField>
+The refunded amount in the currency the processor moved.
 
-        <ResponseField name="metadata" type="object | null" required>
-          Custom key-value pairs stored on the plan. Included in webhook payloads for payment and membership events. Max 50 keys, 100 chars per key, 500 chars per string value. The reserved keys `custom_cta` and `custom_cta_url`, when set, override the product's checkout call to action for this plan.
-        </ResponseField>
-      </Expandable>
-    </ResponseField>
+> [accordion] Properties
+>
+> **amount** `string` *required*
+>
+> The amount in major units, as an exact decimal string. For example, `"10.00"`
+> is ten dollars. It is a string so that no float rounds it in transit.
+>
+> **currency** `string` *required*
+>
+> Three-letter ISO 4217 currency code, lowercase.
+>
+> **decimals** `integer` *required*
+>
+> How many decimal places the amount carries. This is the precision the charge
+> itself runs at.
+>
+> **display\_decimals** `integer` *required*
+>
+> How many decimal places to SHOW. Usually equal to `decimals`, and deliberately not always: COP is charged in centavos but written in whole pesos, so it is `2` and `0`. Format the number in your own locale using this.
 
-    <ResponseField name="product" type="object | null" required>
-      The product this payment was made for
+**payment\_id** `string` *required*
 
-      <Expandable title="child attributes">
-        <ResponseField name="id" type="string" required>
-          The unique identifier for the product.
+The payment this refund reverses, prefixed `pay_`.
 
-          Example: `prod_xxxxxxxxxxxxx`
-        </ResponseField>
+**provider** `string` *required*
 
-        <ResponseField name="metadata" type="object | null" required>
-          Custom key-value pairs stored on the product and included in payment and membership webhook payloads. Max 50 keys, 100 characters per key, 500 characters per string value.
-        </ResponseField>
-      </Expandable>
-    </ResponseField>
+The payment provider that processed the refund, such as `paypal` or
+`coinbase`.
 
-    <ResponseField name="subtotal" type="number | null" required>
-      The subtotal to show to the creator (excluding buyer fees).
+**provider\_created\_at** `string | null` *required*
 
-      Example: `6.9`
-    </ResponseField>
+When the provider created the refund, as an ISO 8601 timestamp.
 
-    <ResponseField name="tax_amount" type="number | null" required>
-      The calculated amount of the sales/VAT tax (if applicable).
+**reason** `string | null` *required*
 
-      Example: `6.9`
-    </ResponseField>
+Why the refund was issued, when recorded.
 
-    <ResponseField name="tax_behavior" type="ReceiptTaxBehaviors | null" required>
-      The type of tax inclusivity applied to the payment, for determining whether the tax is included in the final price, or paid on top.
+Available options: `duplicate`, `fraudulent`, `requested_by_customer`, `expired_uncaptured_charge`, `dispute_alert`
 
-      Available options: `exclusive`, `inclusive`, `unspecified`, `unable_to_collect`
-    </ResponseField>
+**reference\_status** `string | null` *required*
 
-    <ResponseField name="tax_refunded_amount" type="number | null" required>
-      The amount of tax that has been refunded (if applicable).
+Whether a banking-network tracking reference is available for this refund.
 
-      Example: `6.9`
-    </ResponseField>
+Available options: `available`, `pending`, `unavailable`
 
-    <ResponseField name="total" type="number | null" required>
-      The total to show to the creator (excluding buyer fees).
+**reference\_type** `string | null` *required*
 
-      Example: `6.9`
-    </ResponseField>
+The kind of tracking reference, such as an acquirer reference number.
 
-    <ResponseField name="usd_total" type="number | null" required>
-      The total in USD to show to the creator (excluding buyer fees).
+Available options: `acquirer_reference_number`, `retrieval_reference_number`, `system_trace_audit_number`
 
-      Example: `6.9`
-    </ResponseField>
+**reference\_value** `string | null` *required*
 
-    <ResponseField name="user" type="object | null" required>
-      The user that made this payment.
+The tracking reference the buyer's bank can trace the refund by.
 
-      <Expandable title="child attributes">
-        <ResponseField name="email" type="string | null" required>
-          The user's email address. Requires the member:email:read permission to access. Null if not authorized.
+**status** `string` *required*
 
-          Example: `john.doe@example.com`
-        </ResponseField>
+Where the refund stands with the processor: `pending`, `requires_action`, `succeeded`, `failed`, or `canceled`.
 
-        <ResponseField name="id" type="string" required>
-          The unique identifier for the user.
+Available options: `pending`, `requires_action`, `succeeded`, `failed`, `canceled`
 
-          Example: `user_xxxxxxxxxxxxx`
-        </ResponseField>
+**updated\_at** `string` *required*
 
-        <ResponseField name="name" type="string | null" required>
-          The user's display name shown on their public profile.
+When the refund last changed, as an ISO 8601 timestamp.
 
-          Example: `John Doe`
-        </ResponseField>
+**visa\_rdr** `boolean` *required*
 
-        <ResponseField name="username" type="string" required>
-          The user's unique username shown on their public profile.
+True when the card network initiated the refund through Rapid Dispute
+Resolution.
 
-          Example: `johndoe42`
-        </ResponseField>
-      </Expandable>
-    </ResponseField>
-  </Expandable>
-</ResponseField>
+```json Refund theme={null}
+{
+	"id": "rf_xxxxxxxxxxxxxx",
+	"payment_id": "pay_xxxxxxxxxxxxxx",
+	"account_id": "biz_xxxxxxxxxxxxxx",
+	"status": "succeeded",
+	"amount": {
+		"amount": "49.00",
+		"currency": "usd",
+		"decimals": 2,
+		"display_decimals": 2
+	},
+	"original_amount": {
+		"amount": "49.00",
+		"currency": "usd",
+		"decimals": 2,
+		"display_decimals": 2
+	},
+	"provider": "stripe",
+	"reason": "requested_by_customer",
+	"failure_reason": null,
+	"failure_message": null,
+	"reference_type": "acquirer_reference_number",
+	"reference_status": "available",
+	"reference_value": "74000006259000123456789",
+	"visa_rdr": false,
+	"metadata": {
+		"refund_id": "ref_8f2k1"
+	},
+	"provider_created_at": "2026-09-15T14:30:02.000Z",
+	"created_at": "2026-09-15T14:30:00.000Z",
+	"updated_at": "2026-09-15T14:30:05.000Z"
+}
+```
 
-<ResponseField name="provider" type="PaymentProviders" required>
-  The payment provider that processed the refund.
 
-  Available options: `stripe`, `coinbase`, `paypal`, `apple`, `sezzle`, `splitit`, `platform_balance`, `multi_psp`, `adyen`, `claritypay`, `flex_pay`, `checkout_dot_com`, `airwallex`, `coinflow`, `sequra`, `dlocal`, `masspay`, `braintree`
-</ResponseField>
+## Related topics
 
-<ResponseField name="provider_created_at" type="string<date-time> | null" required>
-  The timestamp when the refund was created in the payment provider's system. Null if not available from the provider.
-
-  Example: `2023-12-01T05:00:00.401Z`
-</ResponseField>
-
-<ResponseField name="reference_status" type="RefundReferenceStatuses | null" required>
-  The availability status of the refund tracking reference from the payment processor. Null if no reference was provided.
-
-  Available options: `available`, `pending`, `unavailable`
-</ResponseField>
-
-<ResponseField name="reference_type" type="RefundReferenceTypes | null" required>
-  The type of tracking reference provided by the payment processor, such as an acquirer reference number. Null if no reference was provided.
-
-  Available options: `acquirer_reference_number`, `retrieval_reference_number`, `system_trace_audit_number`
-</ResponseField>
-
-<ResponseField name="reference_value" type="string | null" required>
-  The tracking reference value from the payment processor, used to trace the refund through banking networks. Null if no reference was provided.
-
-  Example: `74850120752`
-</ResponseField>
-
-<ResponseField name="status" type="RefundStatuses" required>
-  The current processing status of the refund, such as pending, succeeded, or failed.
-
-  Available options: `pending`, `requires_action`, `succeeded`, `failed`, `canceled`
-</ResponseField>
+- [Refund](https://docs.whop.com/api-reference/legacy/refunds/refund.md)
+- [List refunds](https://docs.whop.com/api-reference/legacy/refunds/list-refunds.md)
+- [Retrieve refund](https://docs.whop.com/api-reference/legacy/refunds/retrieve-refund.md)

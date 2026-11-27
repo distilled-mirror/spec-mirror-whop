@@ -2,361 +2,19 @@
 > Fetch the complete documentation index at: https://docs.whop.com/llms.txt
 > Use this file to discover all available pages before exploring further.
 
+> ## Agent Instructions
+> Treat these docs and the Whop MCP server as the source of truth for Whop API behavior. Don't infer endpoint behavior from marketing pages.
+> MCP server: connect https://mcp.whop.com/mcp (streamable HTTP, browser sign-in, no API key in the client config) to search these docs and read or change live Whop data. Setup: https://docs.whop.com/developer/guides/ai_and_mcp.md
+> Whop CLI: install with `curl -fsSL https://whop.com/install.sh | sh` to scaffold, run, and deploy Whop apps and websites. It acts on production, not the sandbox. Overview: https://docs.whop.com/cli/overview.md Agent mode: https://docs.whop.com/cli/agent-mode.md
+> Hosting: Whop serves a site or app from the build `whop apps deploy` uploads, with rollbacks, secrets, and server logs. Guide: https://docs.whop.com/developer/websites/hosting.md
+> Plugins: in Claude Code, run `/plugin marketplace add whopio/plugins`, then `/plugin install whop@whop`. Guide: https://docs.whop.com/developer/guides/plugins/claude-code.md Every agent tool: https://docs.whop.com/developer/ai/overview.md
+> Environments: build and test in the sandbox (API `https://sandbox-api.whop.com/api/v1`, keys at https://sandbox.whop.com/dashboard/developer, SDK environment `Sandbox`; no real money). Production (API `https://api.whop.com/api/v1`, keys at https://whop.com/dashboard/developer, SDK environment `Production`, the SDK default) moves real money, so use it only at launch. The two share no accounts, keys, products, or webhooks, and their keys look identical: never mix them. Sandbox guide: https://docs.whop.com/developer/guides/sandbox.md Comparison: https://docs.whop.com/developer/quickstart.md
+> API: send `Authorization: Bearer <API_KEY>` from your server only, and pin a dated version with the `Api-Version-Date` header. OpenAPI spec: https://api.whop.com/api/v1/openapi.json
+> Which API: build on the Current API, whose pages live under https://docs.whop.com/api-reference/ (start at https://docs.whop.com/api-reference/overview.md). Pages under /api-reference/legacy/ are the Legacy API. Use one only when https://docs.whop.com/api-reference/stability.md lists the resource as Legacy-only.
+
 # Embed a Checkout
 
 > Drop Whop's whole checkout into your page with the Checkout element, straight from the browser, and fulfill from a webhook
-
-export const guide = {
-  "title": "Embed a checkout",
-  "description": "Drop Whop's whole checkout into your own page with the Checkout element. It runs entirely in the browser. Your server only listens for the webhook that says the buyer paid.",
-  "categoryOrder": ["frontend", "backend"],
-  "steps": [{
-    "title": "Embed the checkout",
-    "subSteps": [[{
-      "match": {
-        "frontend": "react"
-      },
-      "title": "Install the packages",
-      "body": "Install the Whop Elements packages for React.",
-      "install": {
-        "npm": "npm install @whop/elements-react @whop/elements",
-        "pnpm": "pnpm add @whop/elements-react @whop/elements"
-      }
-    }, {
-      "match": {
-        "frontend": "html"
-      },
-      "title": "Add the script tag",
-      "body": "Load the Whop Elements script on the page that hosts the checkout."
-    }], {
-      "title": "Mount the Checkout element",
-      "body": ["Mount `CheckoutElement` inside a `Checkout` handle and pass the `plan` the buyer is purchasing. The element opens the checkout session itself, prices the order, and collects everything the seller set up. It needs no server code and no API key on the page: the plan defines the price, so the browser never asserts an amount.", "Pass `metadata`, such as your own order ID, on the handle. Whop copies it to the payment and to every webhook about it. Set `returnUrl` to a page you host over `https`. The buyer lands there after an off-site payment step, such as 3D Secure, a bank page, or a financing application. Add your own query parameters to it, such as the order ID. They survive the round trip.", "To attach an affiliate code, a promo code, or campaign attribution, pass `affiliateCode`, `promoCode`, or `attribution` on the handle. A [checkout configuration](/api-reference/beta/checkout-configurations/create-a-checkout-configuration) created on your server is only needed when you want those presets kept out of client code."]
-    }, {
-      "title": "Record the completion",
-      "body": ["`onComplete` fires once when the checkout completes inside the element, before any navigation to `returnUrl`. Use it for analytics and ad pixels.", "Don't fulfill from it. A checkout restored on a later page load fires it again for the same result, and an off-site payment step completes on the return page instead."]
-    }]
-  }, {
-    "title": "Handle the return page",
-    "subSteps": [{
-      "title": "Read the outcome from the URL",
-      "body": ["The buyer arrives at `returnUrl` **whatever happened** during the off-site step. Whop appends two query parameters. `payment` is the `pay_` ID. `status` is `succeeded` when the buyer paid, and `failed` or `canceled` when they didn't. A financing application the lender declined lands here with `status=canceled`, exactly as an approved one lands with `status=succeeded`.", "Your own parameters, such as `order`, stay on the URL. Card declines never reach this page, because the element shows them inline. The return page is the one place where your site sees a failed off-site payment."]
-    }, {
-      "title": "Show the right face",
-      "body": ["Branch on `status`. `succeeded` gets the thank-you page. `failed` and `canceled` get a message that the buyer wasn't charged and a link back to the checkout. Anything else, such as `processing`, means the charge is still pending. Tell the buyer you'll confirm by email.", "Treat the page as a display of the outcome, not as proof of payment. Anyone can type `status=succeeded` into a URL. Access, downloads, and order fulfillment come from the `payment.succeeded` webhook on your server."]
-    }]
-  }, {
-    "title": "Fulfill from your server",
-    "subSteps": [[{
-      "match": {
-        "backend": "nextjs"
-      },
-      "title": "Install the Whop SDK",
-      "body": "The webhook helper ships with the Whop SDK. Install it on the server that receives the webhook.",
-      "install": {
-        "npm": "npm install @whop/sdk @vercel/functions",
-        "pnpm": "pnpm add @whop/sdk @vercel/functions"
-      }
-    }, {
-      "match": {
-        "backend": "express"
-      },
-      "title": "Install the Whop SDK",
-      "body": "The webhook helper ships with the Whop SDK. Install it on the server that receives the webhook.",
-      "install": {
-        "npm": "npm install @whop/sdk express",
-        "pnpm": "pnpm add @whop/sdk express"
-      }
-    }, {
-      "match": {
-        "backend": "python"
-      },
-      "title": "Install the Whop SDK",
-      "body": "The webhook helper ships with the Whop SDK. Install it on the server that receives the webhook.",
-      "install": {
-        "pip": "pip install whop-sdk fastapi",
-        "poetry": "poetry add whop-sdk fastapi"
-      }
-    }], {
-      "title": "Handle the payment webhook",
-      "body": ["Whop sends `payment.succeeded` to your webhook endpoint once the buyer has paid. Verify the signature with the SDK helper, then do the fulfillment work: mark the order paid, grant access, and send the email. The payment carries the `metadata` you set on the Checkout handle.", "Fulfillment belongs here and nowhere else. The buyer can close the browser before your return page loads, a redirect can fail, and anyone can type a query parameter by hand. Follow the [Webhooks guide](/developer/guides/webhooks) to create the webhook and store its `ws_` secret as `WHOP_WEBHOOK_SECRET`."]
-    }]
-  }]
-};
-
-export const code = {
-  frontend: {
-    react: [{
-      code: `// [step:1.1:start]
-import { Checkout, CheckoutElement, WhopElements } from "@whop/elements-react";
-import { loadWhop } from "@whop/elements";
-// [step:1.1:end]
-
-export function CheckoutPage({ orderId }: { orderId: string }) {
-	return (
-		<WhopElements elements={loadWhop()}>
-			{/* [step:1.2:start] */}
-			<Checkout
-				plan="plan_xxxxxxxxxxxxx"
-				metadata={{ order_id: orderId }}
-				returnUrl={\`https://yoursite.com/checkout/return?order=\${orderId}\`}
-				// [step:1.2:end]
-				// [step:1.3:start]
-				onComplete={(completion) => {
-					if (completion.result === "payment") {
-						// Fire analytics or ad pixels here. Fulfill from the webhook, not from this callback.
-						console.log("Checkout completed", completion.paymentId);
-					}
-				}}
-				// [step:1.3:end]
-			>
-				{/* [step:1.2] */}
-				<CheckoutElement />
-			</Checkout>
-		</WhopElements>
-	);
-}
-`,
-      filename: "CheckoutPage.tsx",
-      language: "tsx"
-    }, {
-      code: `export function CheckoutReturn() {
-	// [step:2.1:start]
-	// Whop appends \`payment\` and \`status\` to your returnUrl. Your own parameters (here \`order\`) survive.
-	const params = new URLSearchParams(window.location.search);
-	const paymentId = params.get("payment");
-	const status = params.get("status");
-	const orderId = params.get("order");
-	// [step:2.1:end]
-
-	// [step:2.2:start]
-	if (status === "succeeded") {
-		return (
-			<section>
-				<h1>Thanks for your order</h1>
-				<p>Payment {paymentId} is complete. A receipt is on its way to your email.</p>
-			</section>
-		);
-	}
-
-	if (status === "failed" || status === "canceled") {
-		return (
-			<section>
-				<h1>Your payment did not go through</h1>
-				<p>No money was taken. You can try again with another payment method.</p>
-				<a href={\`/checkout?order=\${orderId}\`}>Back to checkout</a>
-			</section>
-		);
-	}
-
-	return (
-		<section>
-			<h1>Confirming your payment</h1>
-			<p>Your payment is still being processed. We will email you as soon as it is confirmed.</p>
-		</section>
-	);
-	// [step:2.2:end]
-}
-`,
-      filename: "CheckoutReturn.tsx",
-      language: "tsx"
-    }],
-    html: [{
-      code: `<!DOCTYPE html>
-<html>
-  <head>
-    <!-- [step:1.1] -->
-    <script src="https://cdn.whop.com/elements/amber/elements.js" data-whop-elements></script>
-  </head>
-  <body>
-    <div id="checkout"></div>
-
-    <script type="module">
-      const orderId = new URLSearchParams(window.location.search).get("order");
-
-      // [step:1.2:start]
-      const checkout = window.WhopElements().checkout.create({
-        plan: "plan_xxxxxxxxxxxxx",
-        metadata: { order_id: orderId },
-        returnUrl: \`https://yoursite.com/checkout/return?order=\${orderId}\`,
-        // [step:1.2:end]
-        // [step:1.3:start]
-        onComplete: (completion) => {
-          if (completion.result === "payment") {
-            // Fire analytics or ad pixels here. Fulfill from the webhook, not from this callback.
-            console.log("Checkout completed", completion.paymentId);
-          }
-        },
-        // [step:1.3:end]
-      });
-      // [step:1.2]
-      checkout.create("checkout").mount("#checkout");
-    </script>
-  </body>
-</html>
-`,
-      filename: "checkout.html",
-      language: "html"
-    }, {
-      code: `<!DOCTYPE html>
-<html>
-  <body>
-    <section id="succeeded" hidden>
-      <h1>Thanks for your order</h1>
-      <p>Payment <span id="payment-id"></span> is complete. A receipt is on its way to your email.</p>
-    </section>
-    <section id="failed" hidden>
-      <h1>Your payment did not go through</h1>
-      <p>No money was taken. You can try again with another payment method.</p>
-      <a id="retry" href="/checkout">Back to checkout</a>
-    </section>
-    <section id="pending" hidden>
-      <h1>Confirming your payment</h1>
-      <p>Your payment is still being processed. We will email you as soon as it is confirmed.</p>
-    </section>
-
-    <script type="module">
-      // [step:2.1:start]
-      // Whop appends \`payment\` and \`status\` to your returnUrl. Your own parameters (here \`order\`) survive.
-      const params = new URLSearchParams(window.location.search);
-      const paymentId = params.get("payment");
-      const status = params.get("status");
-      const orderId = params.get("order");
-      // [step:2.1:end]
-
-      // [step:2.2:start]
-      if (status === "succeeded") {
-        document.querySelector("#payment-id").textContent = paymentId;
-        document.querySelector("#succeeded").hidden = false;
-      } else if (status === "failed" || status === "canceled") {
-        document.querySelector("#retry").href = \`/checkout?order=\${orderId}\`;
-        document.querySelector("#failed").hidden = false;
-      } else {
-        document.querySelector("#pending").hidden = false;
-      }
-      // [step:2.2:end]
-    </script>
-  </body>
-</html>
-`,
-      filename: "return.html",
-      language: "html"
-    }]
-  },
-  backend: {
-    nextjs: [{
-      code: `// [step:3.1:start]
-import { waitUntil } from "@vercel/functions";
-import { unwrapWebhook } from "@whop/sdk/helpers";
-import type { NextRequest } from "next/server";
-// [step:3.1:end]
-
-export async function POST(request: NextRequest) {
-	// [step:3.2:start]
-	// Give the raw body. Parsing it first changes the bytes and the signature check fails.
-	const payload = await request.text();
-	const headers = Object.fromEntries(request.headers);
-
-	const event = unwrapWebhook(payload, {
-		headers,
-		key: process.env.WHOP_WEBHOOK_SECRET!,
-	});
-
-	if (event.type === "payment.succeeded") {
-		waitUntil(fulfillOrder(event.data));
-	}
-	// [step:3.2:end]
-
-	// Respond in less than 5 seconds, or Whop retries.
-	return new Response("OK", { status: 200 });
-}
-
-async function fulfillOrder(payment: Record<string, any>) {
-	// [step:3.2:start]
-	// metadata.order_id is the value you set on the Checkout handle.
-	const orderId = payment.metadata?.order_id;
-	console.log(\`[PAYMENT SUCCEEDED] \${payment.id} for order \${orderId}\`);
-	// Mark the order paid in your database and grant access here.
-	// [step:3.2:end]
-}
-`,
-      filename: "app/api/webhooks/whop/route.ts",
-      language: "typescript"
-    }],
-    express: [{
-      code: `// [step:3.1:start]
-import { unwrapWebhook } from "@whop/sdk/helpers";
-import express from "express";
-
-const app = express();
-// [step:3.1:end]
-
-// [step:3.2:start]
-// Read the raw body on this route: parsing it first changes the bytes and the signature check fails.
-app.post(
-	"/api/webhooks/whop",
-	express.raw({ type: "application/json" }),
-	(req, res) => {
-		const event = unwrapWebhook(req.body.toString("utf8"), {
-			headers: req.headers,
-			key: process.env.WHOP_WEBHOOK_SECRET!,
-		});
-
-		if (event.type === "payment.succeeded") {
-			// metadata.order_id is the value you set on the Checkout handle.
-			const orderId = event.data.metadata?.order_id;
-			console.log(\`[PAYMENT SUCCEEDED] \${event.data.id} for order \${orderId}\`);
-			// Mark the order paid in your database and grant access here.
-		}
-
-		// Respond in less than 5 seconds, or Whop retries.
-		res.sendStatus(200);
-	},
-);
-// [step:3.2:end]
-
-app.listen(3000);
-`,
-      filename: "server.ts",
-      language: "typescript"
-    }],
-    python: [{
-      code: `# [step:3.1:start]
-import os
-
-from fastapi import BackgroundTasks, FastAPI, Request, Response
-from whop_sdk.lib.verify_webhook import unwrap
-
-app = FastAPI()
-# [step:3.1:end]
-
-
-# [step:3.2:start]
-@app.post("/api/webhooks/whop")
-async def whop_webhook(request: Request, background: BackgroundTasks):
-    # Give the raw body. Parsing it first changes the bytes and the signature check fails.
-    payload = await request.body()
-
-    event = unwrap(payload, dict(request.headers), os.environ["WHOP_WEBHOOK_SECRET"])
-
-    if event["type"] == "payment.succeeded":
-        background.add_task(fulfill_order, event["data"])
-
-    # Respond in less than 5 seconds, or Whop retries.
-    return Response(status_code=200)
-
-
-def fulfill_order(payment):
-    # metadata.order_id is the value you set on the Checkout handle.
-    order_id = (payment.get("metadata") or {}).get("order_id")
-    print(f"[PAYMENT SUCCEEDED] {payment['id']} for order {order_id}")
-    # Mark the order paid in your database and grant access here.
-# [step:3.2:end]
-`,
-      filename: "server.py",
-      language: "python"
-    }]
-  }
-};
 
 Drop Whop's whole checkout into your own page with the Checkout element. It runs entirely in the browser. Your server only listens for the webhook that says the buyer paid.
 
@@ -382,11 +40,11 @@ Load the Whop Elements script on the page that hosts the checkout.
 
 ### 1.2 Mount the Checkout element
 
-Mount `CheckoutElement` inside a `Checkout` handle and pass the `plan` the buyer is purchasing. The element opens the checkout session itself, prices the order, and collects everything the seller set up. It needs no server code and no API key on the page: the plan defines the price, so the browser never asserts an amount.
+Mount `CheckoutElement` inside a `Checkout` handle and pass the variant through the existing `plan` property. The element opens the checkout session itself, prices the order, and collects everything the seller set up. It needs no server code and no API key on the page: the variant defines the price, so the browser never asserts an amount.
 
 Pass `metadata`, such as your own order ID, on the handle. Whop copies it to the payment and to every webhook about it. Set `returnUrl` to a page you host over `https`. The buyer lands there after an off-site payment step, such as 3D Secure, a bank page, or a financing application. Add your own query parameters to it, such as the order ID. They survive the round trip.
 
-To attach an affiliate code, a promo code, or campaign attribution, pass `affiliateCode`, `promoCode`, or `attribution` on the handle. A [checkout configuration](/api-reference/beta/checkout-configurations/create-a-checkout-configuration) created on your server is only needed when you want those presets kept out of client code.
+To attach an affiliate code, a promo code, or campaign attribution, pass `affiliateCode`, `promoCode`, or `attribution` on the handle. A [checkout configuration](https://docs.whop.com/api-reference/checkout-configurations/create-a-checkout-configuration.md) created on your server is only needed when you want those presets kept out of client code.
 
 ### 1.3 Record the completion
 
@@ -450,7 +108,7 @@ poetry add whop-sdk fastapi
 
 Whop sends `payment.succeeded` to your webhook endpoint once the buyer has paid. Verify the signature with the SDK helper, then do the fulfillment work: mark the order paid, grant access, and send the email. The payment carries the `metadata` you set on the Checkout handle.
 
-Fulfillment belongs here and nowhere else. The buyer can close the browser before your return page loads, a redirect can fail, and anyone can type a query parameter by hand. Follow the [Webhooks guide](/developer/guides/webhooks) to create the webhook and store its `ws_` secret as `WHOP_WEBHOOK_SECRET`.
+Fulfillment belongs here and nowhere else. The buyer can close the browser before your return page loads, a redirect can fail, and anyone can type a query parameter by hand. Follow the [Webhooks guide](https://docs.whop.com/developer/guides/webhooks.md) to create the webhook and store its `ws_` secret as `WHOP_WEBHOOK_SECRET`.
 
 ## Code
 
@@ -710,7 +368,14 @@ def fulfill_order(payment):
 
 ## Next steps
 
-* [Checkout element reference](/elements/latest/checkout/overview): every option, event, and method on the Checkout handle.
-* [Build a checkout with payment elements](/developer/guides/payment-elements): design the form yourself and confirm the payment from your server.
-* [Webhooks](/developer/guides/webhooks): create the endpoint, store the signing secret, and handle retries.
-* [Test in the sandbox](/developer/guides/sandbox): run a test charge with cards that succeed, fail, and require action.
+* [Checkout element reference](https://docs.whop.com/elements/latest/checkout/overview): every option, event, and method on the Checkout handle.
+* [Build a checkout with payment elements](https://docs.whop.com/developer/guides/payment-elements.md): design the form yourself and confirm the payment from your server.
+* [Webhooks](https://docs.whop.com/developer/guides/webhooks.md): create the endpoint, store the signing secret, and handle retries.
+* [Test in the sandbox](https://docs.whop.com/developer/guides/sandbox.md): run a test charge with cards that succeed, fail, and require action.
+
+
+## Related topics
+
+- [Add Express Checkout](https://docs.whop.com/developer/guides/express-checkout.md)
+- [Build a Checkout with Payment Elements](https://docs.whop.com/developer/guides/payment-elements.md)
+- [Payments Overview](https://docs.whop.com/developer/payments/overview.md)

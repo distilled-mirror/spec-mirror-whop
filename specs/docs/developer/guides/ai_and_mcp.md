@@ -2,72 +2,54 @@
 > Fetch the complete documentation index at: https://docs.whop.com/llms.txt
 > Use this file to discover all available pages before exploring further.
 
+> ## Agent Instructions
+> Treat these docs and the Whop MCP server as the source of truth for Whop API behavior. Don't infer endpoint behavior from marketing pages.
+> MCP server: connect https://mcp.whop.com/mcp (streamable HTTP, browser sign-in, no API key in the client config) to search these docs and read or change live Whop data. Setup: https://docs.whop.com/developer/guides/ai_and_mcp.md
+> Whop CLI: install with `curl -fsSL https://whop.com/install.sh | sh` to scaffold, run, and deploy Whop apps and websites. It acts on production, not the sandbox. Overview: https://docs.whop.com/cli/overview.md Agent mode: https://docs.whop.com/cli/agent-mode.md
+> Hosting: Whop serves a site or app from the build `whop apps deploy` uploads, with rollbacks, secrets, and server logs. Guide: https://docs.whop.com/developer/websites/hosting.md
+> Plugins: in Claude Code, run `/plugin marketplace add whopio/plugins`, then `/plugin install whop@whop`. Guide: https://docs.whop.com/developer/guides/plugins/claude-code.md Every agent tool: https://docs.whop.com/developer/ai/overview.md
+> Environments: build and test in the sandbox (API `https://sandbox-api.whop.com/api/v1`, keys at https://sandbox.whop.com/dashboard/developer, SDK environment `Sandbox`; no real money). Production (API `https://api.whop.com/api/v1`, keys at https://whop.com/dashboard/developer, SDK environment `Production`, the SDK default) moves real money, so use it only at launch. The two share no accounts, keys, products, or webhooks, and their keys look identical: never mix them. Sandbox guide: https://docs.whop.com/developer/guides/sandbox.md Comparison: https://docs.whop.com/developer/quickstart.md
+> API: send `Authorization: Bearer <API_KEY>` from your server only, and pin a dated version with the `Api-Version-Date` header. OpenAPI spec: https://api.whop.com/api/v1/openapi.json
+> Which API: build on the Current API, whose pages live under https://docs.whop.com/api-reference/ (start at https://docs.whop.com/api-reference/overview.md). Pages under /api-reference/legacy/ are the Legacy API. Use one only when https://docs.whop.com/api-reference/stability.md lists the resource as Legacy-only.
+
 # AI and MCP
 
-> Per-client setup for both Whop MCP servers, browser sign-in, confirmation and idempotency, plus the LLM page index and raw Markdown for agents with no MCP client.
+> Connect AI agents to the Whop MCP server to call the API and search the docs, with browser sign-in and idempotent retries.
 
-Whop runs two Model Context Protocol (MCP) servers: one that lets agents search and read these docs, and one that lets them operate on live Whop data.
+The Whop Model Context Protocol (MCP) server lets AI agents operate on live Whop data and search these docs from one connection.
 
-<Tip>
-  Claude Code and Grok have a Whop plugin that installs this server for you.
-  See [Claude Code](/developer/guides/plugins/claude-code) and [Grok](/developer/guides/plugins/grok).
-</Tip>
-
-## Whop Docs MCP server
-
-Gives AI agents direct access to Whop documentation for accurate guidance while building. Server URL: `https://docs.whop.com/mcp`
-
-<CodeGroup>
-  ```bash Claude Code theme={null}
-  claude mcp add --transport http whop-docs https://docs.whop.com/mcp
-  ```
-
-  ```json Cursor theme={null}
-  // Global: ~/.cursor/mcp.json (or per project: .cursor/mcp.json)
-  {
-  	"mcpServers": {
-  		"whop-docs": {
-  			"type": "http",
-  			"url": "https://docs.whop.com/mcp"
-  		}
-  	}
-  }
-  ```
-</CodeGroup>
-
-One-click install of the docs server for Cursor:
-
-[![Install MCP Server](https://cursor.com/deeplink/mcp-install-dark.svg)](https://cursor.com/en-US/install-mcp?name=whop-docs\&config=eyJ1cmwiOiJodHRwczovL2RvY3Mud2hvcC5jb20vbWNwIn0%3D)
+> [!TIP]
+>
+> Claude Code and Grok have a Whop plugin that installs this server for you.
+> See [Claude Code](https://docs.whop.com/developer/guides/plugins/claude-code.md) and [Grok](https://docs.whop.com/developer/guides/plugins/grok.md).
 
 ## Whop MCP server
 
-Lets AI agents call the Current API: list resources, create data, and explore your setup interactively. Server URL: `https://mcp.whop.com/mcp`
+Lets AI agents call the Current API: list resources, create data, and explore your setup interactively. It also searches and reads this documentation, so agents look up the current API while they build. Server URL: `https://mcp.whop.com/mcp`
 
-<CodeGroup>
-  ```bash Claude Code theme={null}
-  claude mcp add --transport http whop-api https://mcp.whop.com/mcp
-  ```
+```bash Claude Code theme={null}
+claude mcp add --transport http whop-api https://mcp.whop.com/mcp
+```
 
-  ```json Cursor theme={null}
-  // Global: ~/.cursor/mcp.json (or per project: .cursor/mcp.json)
-  {
-  	"mcpServers": {
-  		"whop": {
-  			"type": "http",
-  			"url": "https://mcp.whop.com/mcp"
-  		}
-  	}
-  }
-  ```
-</CodeGroup>
+```json Cursor theme={null}
+// Global: ~/.cursor/mcp.json (or per project: .cursor/mcp.json)
+{
+	"mcpServers": {
+		"whop": {
+			"type": "http",
+			"url": "https://mcp.whop.com/mcp"
+		}
+	}
+}
+```
 
 ### One URL, every client
 
 All clients connect to the `/mcp` URL. Clients on older protocol revisions use the same URL with no special configuration.
 
-<Note>
-  If you connected using the `/sse` URL, update it to `/mcp`. The `/sse` endpoint has been retired and now returns a 404.
-</Note>
+> [!NOTE]
+>
+> If you connected using the `/sse` URL, update it to `/mcp`. The `/sse` endpoint has been retired and now returns a 404.
 
 ### Authentication
 
@@ -77,17 +59,13 @@ The server signs you in through the browser, so the whole client config is a URL
 
 The grant is you, not one business. Business context is a parameter on each operation, so the agent chooses it per call. The tool surface is a reviewed subset of the API. Endpoints that need a first-party whop.com session are excluded.
 
-<Warning>
-  Confirmation and idempotency reduce accidental or duplicate actions. They don't reduce the privileges of the grant. Connect only MCP clients you trust, inspect the actions an agent proposes, and disconnect access when you no longer need it.
-</Warning>
-
-### Confirming consequential operations
-
-Consequential operations run in two calls. The first returns `prepared: true` with the effect, a signed `mcp_confirmation_token`, and its expiry. Nothing has executed at that point. Call the same tool again with the same arguments plus the token and a stable `idempotency_key` to execute. If the arguments change between the two calls, the server returns `confirmation_invalid`.
+> [!WARNING]
+>
+> Every tool call runs when the agent makes it, so your MCP client decides what you approve. Payment, credential, and destructive tools carry `destructiveHint`, which clients use to ask you first. Connect only MCP clients you trust, inspect the actions an agent proposes, and disconnect access when you no longer need it.
 
 ### Retries and idempotency
 
-The `idempotency_key` is a stable key you pick so a retry replays instead of re-executing. On an uncertain outcome the server's response says whether to retry with the same key or verify the effect first. Never switch to a new key until you've verified what happened.
+The `idempotency_key` is a stable key you pick so a retry replays instead of re-executing. The server sends it to the API as the `Idempotency-Key` header. After an uncertain outcome, retry with the same key. Never switch to a new key until you've verified what happened.
 
 ### Connect from Claude.ai
 
@@ -100,32 +78,37 @@ Disconnect the same way: open the connector and remove it. The grant stops worki
 
 ### When sign-in fails
 
-| What you see                              | What happened                                                                              |
-| ----------------------------------------- | ------------------------------------------------------------------------------------------ |
-| This sign-in attempt expired. Start over. | The attempt sat too long. Start the connection again.                                      |
-| A 403 at the end of sign-in               | Sign-in started in one browser and finished in another. Run the whole flow in one browser. |
-| `invalid_grant`                           | The connection's Whop credential is no longer valid. Reconnect to re-authorize.            |
+| What you see | What happened |
+| - | - |
+| This sign-in attempt expired. Start over. | The attempt sat too long. Start the connection again. |
+| A 403 at the end of sign-in | Sign-in started in one browser and finished in another. Run the whole flow in one browser. |
+| `invalid_grant` | The connection's Whop credential is no longer valid. Reconnect to re-authorize. |
 
 ## Plain-file access for agents
 
-If you have no MCP client, [docs.whop.com/llms.txt](https://docs.whop.com/llms.txt) indexes every page by product area, and appending `.md` to any docs URL returns the raw Markdown.
+If you have no MCP client, [docs.whop.com/llms.txt](https://docs.whop.com/llms.txt) indexes every page the way the docs navigation groups them, and appending `.md` to any docs URL returns the raw Markdown.
 
 ## Next steps
 
-<CardGroup cols={2}>
-  <Card title="API overview" icon="map" href="/api-reference/beta/overview">
-    How requests, versioning, and pagination work.
-  </Card>
+> [card] [API overview](https://docs.whop.com/api-reference/overview.md)
+>
+> How requests, versioning, and pagination work.
 
-  <Card title="Quickstart" icon="rocket" href="/developer/quickstart">
-    Make your first API call in a few minutes.
-  </Card>
+> [card] [Quickstart](https://docs.whop.com/developer/quickstart.md)
+>
+> Make your first API call in a few minutes.
 
-  <Card title="Test in sandbox" icon="flask" href="/developer/guides/sandbox">
-    Point your agent at test data before going live.
-  </Card>
+> [card] [Test in sandbox](https://docs.whop.com/developer/guides/sandbox.md)
+>
+> Test with sandbox API keys before going live. The MCP server only reaches production.
 
-  <Card title="Whop CLI" icon="terminal" href="/cli/overview">
-    Build and manage Whop apps from your terminal.
-  </Card>
-</CardGroup>
+> [card] [Whop CLI](https://docs.whop.com/cli/overview.md)
+>
+> Build and manage Whop apps from your terminal.
+
+
+## Related topics
+
+- [AI Tools for Building on Whop](https://docs.whop.com/developer/ai/overview.md)
+- [Build with the CLI and Claude](https://docs.whop.com/developer/guides/cli-with-claude.md)
+- [Whop Plugin for Claude Code](https://docs.whop.com/developer/guides/plugins/claude-code.md)

@@ -2,231 +2,102 @@
 > Fetch the complete documentation index at: https://docs.whop.com/llms.txt
 > Use this file to discover all available pages before exploring further.
 
+> ## Agent Instructions
+> Treat these docs and the Whop MCP server as the source of truth for Whop API behavior. Don't infer endpoint behavior from marketing pages.
+> MCP server: connect https://mcp.whop.com/mcp (streamable HTTP, browser sign-in, no API key in the client config) to search these docs and read or change live Whop data. Setup: https://docs.whop.com/developer/guides/ai_and_mcp.md
+> Whop CLI: install with `curl -fsSL https://whop.com/install.sh | sh` to scaffold, run, and deploy Whop apps and websites. It acts on production, not the sandbox. Overview: https://docs.whop.com/cli/overview.md Agent mode: https://docs.whop.com/cli/agent-mode.md
+> Hosting: Whop serves a site or app from the build `whop apps deploy` uploads, with rollbacks, secrets, and server logs. Guide: https://docs.whop.com/developer/websites/hosting.md
+> Plugins: in Claude Code, run `/plugin marketplace add whopio/plugins`, then `/plugin install whop@whop`. Guide: https://docs.whop.com/developer/guides/plugins/claude-code.md Every agent tool: https://docs.whop.com/developer/ai/overview.md
+> Environments: build and test in the sandbox (API `https://sandbox-api.whop.com/api/v1`, keys at https://sandbox.whop.com/dashboard/developer, SDK environment `Sandbox`; no real money). Production (API `https://api.whop.com/api/v1`, keys at https://whop.com/dashboard/developer, SDK environment `Production`, the SDK default) moves real money, so use it only at launch. The two share no accounts, keys, products, or webhooks, and their keys look identical: never mix them. Sandbox guide: https://docs.whop.com/developer/guides/sandbox.md Comparison: https://docs.whop.com/developer/quickstart.md
+> API: send `Authorization: Bearer <API_KEY>` from your server only, and pin a dated version with the `Api-Version-Date` header. OpenAPI spec: https://api.whop.com/api/v1/openapi.json
+> Which API: build on the Current API, whose pages live under https://docs.whop.com/api-reference/ (start at https://docs.whop.com/api-reference/overview.md). Pages under /api-reference/legacy/ are the Legacy API. Use one only when https://docs.whop.com/api-reference/stability.md lists the resource as Legacy-only.
+
 # Zapier
 
-> Connect Whop to 7,000+ apps with Zapier. Automate triggers, actions, and conditional workflows.
+> Automate Whop with Zapier: start Zaps from Whop events, and manage memberships, payments, and invoices from other apps.
 
-## About Zapier
+> [card] [Whop on Zapier](https://zapier.com/apps/whop/integrations)
+>
+> See the Whop app on Zapier
 
-Zapier is an automation platform that connects over 7,000 apps without code. It works on a simple idea: when something happens in one app (a **trigger**), automatically do something in another app (an **action**).
+Zapier connects Whop to thousands of other apps without code. A Zap starts with a **trigger**, an event in one app, and runs one or more **actions** in other apps. For example, a new Whop payment can post to Slack and add a row to a Google Sheet.
 
-Zapier calls these automated workflows **Zaps**. Each Zap starts with one trigger and can include one or more actions. For example, a new member could trigger a welcome message in Discord. The Zap could also add the member to a Google Sheet and send a Slack notification.
+The Whop app on Zapier has 16 triggers, 20 actions, and 12 searches.
 
-## Key Zapier concepts
+## Triggers
 
-* **Triggers** — Events that start a Zap. In the Whop integration, triggers fire when something happens on your Whop (e.g., new payment, new member, new dispute).
-* **Actions** — Tasks Zapier runs after a trigger. Whop actions let you cancel a membership, create an invoice, approve a waitlist entry, look up member details, and more.
-* **Paths** — Conditional logic (if/then branching). Route high-value payments differently than standard ones, or handle different product types with different workflows.
-* **Filters** — Conditions a Zap must meet to continue, such as payments over \$50 or specific products.
+Triggers start a Zap when something happens in your Whop business.
 
-## Triggers — events that start your workflows
+| Area | Triggers |
+| - | - |
+| **Memberships** | New Member Joined, Membership Canceled, Membership Scheduled to Cancel |
+| **Payments** | New Payment, Payment Pending, Failed Payment, Payment Refunded, Payment Method Saved |
+| **Disputes** | New Dispute, New Dispute Alert, Dispute Updated |
+| **Invoices** | New Invoice, Invoice Paid, Invoice Past Due |
+| **Waitlists** | New Waitlist, Waitlist Approved |
 
-Triggers are the starting point of every Zap. When one of these events occurs on your Whop, Zapier runs the workflow you built. Whop has **14 triggers**:
+## Actions
 
-| Trigger                 | Description                                         | Status  |
-| ----------------------- | --------------------------------------------------- | ------- |
-| New Member Joined       | Fires when a new member joins your Whop             | UPDATED |
-| Membership Went Valid   | Fires when any membership becomes active/valid      | UPDATED |
-| Membership Went Invalid | Fires after a membership expiration or cancellation | Updated |
-| Payment Completed       | Fires when a payment is successfully processed      | UPDATED |
-| Payment Failed          | Fires when a payment attempt fails                  | UPDATED |
-| Payment Refunded        | Fires after a payment refund                        | New     |
-| New Dispute             | Fires when a customer files a chargeback or dispute | New     |
-| `New Dispute Alert`     | Fires when Whop detects an early dispute signal     | New     |
-| Invoice Created         | Fires when Whop generates a new invoice             | New     |
-| Invoice Past Due        | Fires when an invoice becomes overdue               | New     |
-| New Lead                | Fires when Whop captures a new lead or prospect     | New     |
-| New Entry               | Fires when someone submits a waitlist entry         | New     |
-| Entry Approved          | Fires after approval of a waitlist entry            | New     |
-| Entry Denied            | Fires after denial of a waitlist entry              | New     |
+Actions change something in Whop.
 
-### Trigger details
+| Area | Actions |
+| - | - |
+| **Memberships** | Cancel Membership, Uncancel Membership, Pause Membership, Resume Membership, Update Membership, Add Free Days to Membership |
+| **Payments** | Create Payment, Refund Payment |
+| **Invoices** | Create Invoice, Void Invoice |
+| **Waitlists** | Approve Waitlist, Deny Waitlist |
+| **Products and pricing** | Create Plan, Create Promo Code, Create Checkout Session |
+| **Affiliates** | Find or Create Affiliate, Archive Affiliate, Unarchive Affiliate |
 
-**Membership triggers**
+**Create Payment** charges a member's saved payment method. The result arrives asynchronously, so use the New Payment or Failed Payment trigger to confirm it.
 
-* **New Member Joined** — Fires when a new member successfully joins your Whop with any plan. Data includes member email, product, plan, and membership ID. Use for welcome messages, sales platform updates, or team notifications.
-* **Membership Went Valid** — Fires when any membership becomes active through a new purchase, renewal, restored access, or resumption. This trigger covers more events than New Member Joined. Use it to track active subscribers or sync access.
-* **Membership Went Invalid** — Fires when a membership becomes inactive after cancellation, expiration, failed payment, or manual revocation. Use it to remove access, run win-back campaigns, or log churn.
+## Searches
 
-**Payment triggers**
+Searches look up Whop records to use in later steps of a Zap.
 
-* **Payment Completed** — Fires on every successful payment. Payload includes amount, currency, payment method, member details, product, plan, and whether it’s initial or renewal. Use for revenue tracking, sales notifications, and financial logging.
-* **Payment Failed** — Fires when the processor declines a payment or another failure occurs. Includes the failure reason, member information, and plan. Use for payment reminders, failure logs, or churn notifications.
-* **Payment Refunded** — Fires after a payment receives a refund. Use it to update accounting, adjust revenue trackers, or send a customer confirmation.
+| Area | Searches |
+| - | - |
+| **Members and memberships** | Find Member, Find Membership |
+| **Payments** | Find Payment, Find Refund, Get Payment Fees |
+| **Products** | Find Product, Find Products, Find Plan |
+| **Invoices** | Find Invoice |
+| **Waitlists** | Find Entry, Find Entries |
 
-**Dispute and dispute alert triggers**
+## Get started
 
-* **New Dispute** — Fires when a customer files a chargeback or dispute. Use it to notify your team, pause member access, or start evidence collection.
-* **New Dispute Alert** — Fires when Whop detects an early dispute signal before it becomes a chargeback. Use it to contact the customer and resolve the issue before the chargeback.
+**1. Pick a Whop trigger**
 
-**Invoice triggers**
+In Zapier, create a Zap and choose **Whop** as the trigger app. Pick a trigger event, such as **New Payment**.
 
-* **Invoice Created** — Fires when Whop generates a new invoice. Use it to sync accounting, send custom invoice notifications, or log to a sheet.
-* **Invoice Past Due** — Fires when an invoice passes its due date unpaid. Use for follow-up emails, finance-team alerts, or pausing access until paid.
+**2. Connect your Whop account**
 
-**Lead trigger**
+Sign in when Zapier asks you to connect Whop, then choose the Whop business to use.
 
-* **New Lead** — Fires when Whop captures a new lead from a store page, landing page, or API. Use it to add the lead to email marketing, notify sales, or start a nurture sequence.
+**3. Test the trigger**
 
-**Waitlist / entry triggers**
+Pull in a test event to check the data the trigger sends.
 
-* **New Entry** — Fires when someone submits a waitlist application. Use to notify your team, log to a review sheet, or send a confirmation.
-* **Entry Approved** — Fires when you approve a waitlist entry. Use it to send welcome messages, add the user to Discord, or update your sales platform.
-* **Entry Denied** — Fires when you deny a waitlist entry. Use it to send a rejection email or log the reason.
+**4. Add actions**
 
-## Actions — what happens next
+Add actions in Whop or any other app. Use Zapier **Paths** to run different actions based on the payment amount, the product, or other data.
 
-Actions run after a trigger (or as steps in multi-step Zaps). Whop has **29 actions** in these categories.
+**5. Publish**
 
-### Membership actions
+Test the Zap and turn it on.
 
-| Action            | Description                           | Status  |
-| ----------------- | ------------------------------------- | ------- |
-| Cancel Membership | Cancel an existing membership         | UPDATED |
-| Pause Membership  | Temporarily pause a membership        | New     |
-| Resume Membership | Resume a previously paused membership | New     |
-| Update Membership | Update membership details or metadata | New     |
+Zaps built on an older version of the Whop app can use trigger names that no longer appear here. If Zapier offers an update to the latest Whop app version, update the Zap so it keeps working.
 
-* **Cancel Membership** — Terminates an active subscription. Use it when a customer files a dispute or for self-service cancellation flows.
-* **Pause Membership** — Suspends access without cancelling. Use for seasonal holds or member-requested breaks.
-* **Resume Membership** — Reactivates a paused membership. Pair with a trigger or manual step.
-* **Update Membership** — Change membership details or metadata (tags, custom fields, etc.).
+## Next steps
 
-### Payment actions
+> [card] [Webhooks](https://docs.whop.com/developer/guides/webhooks.md)
+>
+> Receive Whop events in your own code instead.
 
-| Action           | Description                                       | Status  |
-| ---------------- | ------------------------------------------------- | ------- |
-| Create Payment   | Charge a member using their stored payment method | UPDATED |
-| Refund Payment   | Issue a full or partial refund on a payment       | New     |
-| Retry Payment    | Retry a failed payment attempt                    | New     |
-| Get Payment Fees | Retrieve fee breakdown for a payment              | New     |
+> [card] [HubSpot](https://docs.whop.com/third-party-integrations/hubspot.md)
+>
+> Sync Whop payments into HubSpot.
 
-* **Create Payment** — Charges a member's stored payment method asynchronously. Use webhooks or Payment Completed to confirm the result. Use this action for add-ons or one-off charges.
-* **Refund Payment** — Issues a full or partial refund. Use it for automatic refund rules, such as refunding small amounts after dispute alerts.
-* **Retry Payment** — Retry a failed charge. Use in dunning sequences after a delay.
-* **Get Payment Fees** — Get fee breakdown (platform + processor). Use for reporting and reconciliation.
 
-### Invoice actions
+## Related topics
 
-| Action         | Description                         | Status |
-| -------------- | ----------------------------------- | ------ |
-| Create Invoice | Generate a new invoice for a member | New    |
-| Void Invoice   | Void an existing unpaid invoice     | New    |
-
-* **Create Invoice** — Generate a new invoice. Use for custom billing or one-off charges.
-* **Void Invoice** — Cancel an unpaid invoice to prevent collection. Use this action when you create an invoice in error.
-
-### Lead actions
-
-| Action      | Description                       | Status |
-| ----------- | --------------------------------- | ------ |
-| Create Lead | Create a new lead/prospect record | New    |
-| Update Lead | Update an existing lead record    | New    |
-
-* **Create Lead** — Create a lead in Whop from external sources (e.g., Typeform, Facebook Lead Ad).
-* **Update Lead** — Update an existing lead (status, notes, etc.).
-
-### Waitlist / entry actions
-
-| Action        | Description                      | Status |
-| ------------- | -------------------------------- | ------ |
-| Approve Entry | Approve a pending waitlist entry | New    |
-| Deny Entry    | Deny a pending waitlist entry    | New    |
-
-* **Approve Entry** — Approve a waitlist entry and trigger checkout or access. Whop notifies the user.
-* **Deny Entry** — Deny a waitlist entry and optionally notify the user.
-
-### Create & manage actions
-
-| Action                  | Description                                          | Status  |
-| ----------------------- | ---------------------------------------------------- | ------- |
-| Create Plan             | Create a new pricing plan for a product              | UPDATED |
-| Update Plan             | Update an existing plan’s pricing or settings        | New     |
-| Update Product          | Update a product’s title, description, or visibility | New     |
-| Create Promo Code       | Create a new discount promo code                     | UPDATED |
-| Delete Promo Code       | Archive/delete an existing promo code                | UPDATED |
-| Create Checkout Session | Generate a checkout link for a plan                  | UPDATED |
-
-* **Create Plan** — Create a free, one-time, or recurring plan with stock, a waitlist, automatic expiration, and other settings.
-* **Update Plan** — Change pricing, interval, visibility, stock, and other plan settings.
-* **Update Product** — Change product title, description, visibility, and related settings.
-* **Create Promo Code** — Create a discount code (percentage or fixed), usage limits, product/plan restrictions, expiration.
-* **Delete Promo Code** — Archive a promo code to prevent its use for new checkouts.
-* **Create Checkout Session** — Generate a checkout link for a plan. Use for dynamic links in emails or campaigns.
-
-### Find & lookup actions
-
-| Action          | Description                               | Status  |
-| --------------- | ----------------------------------------- | ------- |
-| Find Membership | Look up a membership by ID or filters     | UPDATED |
-| Find Products   | Search for products in your Whop          | New     |
-| Find Entry      | Look up a specific waitlist entry         | New     |
-| Find Entries    | Search/list waitlist entries with filters | New     |
-
-* **Find Membership** — Look up a membership by ID or filters. Use before conditional actions or to get details for later steps.
-* **Find Products** — Search products. Use when you need product IDs for other actions or for reports.
-* **Find Entry** — Look up one waitlist entry by ID.
-* **Find Entries** — List waitlist entries with filters (product, plan, status, date). Use for review workflows or exporting applicants.
-
-## Using Zapier Paths for conditional workflows
-
-**Paths** add if/then logic: one trigger can lead to different actions depending on the data.
-
-1. Add a **Paths** step after your trigger.
-2. Define two or more paths. Each path has rules and its own actions.
-3. Zapier evaluates the trigger data and runs the matching paths.
-
-**Example: Payment routing**
-
-* **Path A — High-value:** If amount > \$100 → post to #high-value-sales in Slack, add to the priority customers sheet.
-* **Path B — Standard:** If amount ≤ \$100 → post to #sales in Slack.
-* **Path C — First-time:** If first payment → send welcome email, notify #new-customers in Discord.
-* **Path D — Renewal:** If renewal → log to a renewal tracker sheet.
-
-**Example: New member onboarding**
-
-* **Path A — Premium:** If member joined a premium product → assign premium Discord role, send onboarding email, add to outreach sheet.
-* **Path B — Free:** If free product → assign basic Discord role, send welcome with upgrade incentives.
-
-**Example: Failed payment recovery**
-
-* **Path A — First failure:** Send an email to update the payment method. Retry payment after 24 hours.
-* **Path B — Repeated failures:** Notify #churn-risk in Slack and send a more urgent email.
-
-**Example: Dispute handling**
-
-* **Path A — Low-value:** If the disputed amount is under your threshold, such as \$25, issue an automatic refund to avoid fees.
-* **Path B — High-value:** If the amount exceeds the threshold → notify the team in Slack with member and payment details.
-
-<Tip>
-  Use specific conditions, add a fallback path for unmatched events, and use
-  Find actions before Paths to enrich data. Keep each path focused on one
-  scenario.
-</Tip>
-
-## Common integration examples
-
-**Slack** — Post completed payments to #sales and new disputes to #disputes. Send new members to #new-members and payment failures to #churn-risk. Route waitlist notifications to a review channel.
-
-**Discord** — Send a welcome message when a member joins. Post sale notifications in a feed channel and notify moderators when memberships become invalid. Announce waitlist approvals.
-
-**Google Sheets** — Log payment dates, amounts, members, products, and plans. Track new members, membership churn, leads, and waitlist applicants.
-
-**Gmail and email** — Send welcome messages to new members. Send payment, refund, failed-payment, and waitlist confirmations. Create lead nurture or launch emails.
-
-**Customer relationship management systems** — Create or update contacts when members join or Whop captures leads. Log payments as deals or revenue. Update membership status changes.
-
-**Accounting systems** — Create accounting invoices when Whop generates invoices. Record payments as income. Log refunds and adjust revenue in QuickBooks, Xero, or another system.
-
-## Getting started
-
-1. Log in at [Zapier.com](https://zapier.com) and select **Create Zap**.
-2. Search for **Whop** as the trigger app and select it.
-3. Choose one of the 14 trigger events.
-4. Connect your Whop account (authenticate with your Whop API credentials).
-5. Test the trigger to pull test data from your Whop.
-6. Add one or more actions — use Whop's 29 actions or any of Zapier's 7,000+ apps.
-7. Optionally add a **Paths** step between trigger and actions for conditional branching.
-8. Test and publish your Zap. It will run automatically when the trigger event occurs.
-
-For more on Whop’s API and resources, see the [Whop Developer Documentation](https://docs.whop.com).
+- [HubSpot](https://docs.whop.com/third-party-integrations/hubspot.md)

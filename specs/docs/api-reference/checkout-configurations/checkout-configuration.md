@@ -2,190 +2,237 @@
 > Fetch the complete documentation index at: https://docs.whop.com/llms.txt
 > Use this file to discover all available pages before exploring further.
 
-# Checkout Configuration
+> ## Agent Instructions
+> Treat these docs and the Whop MCP server as the source of truth for Whop API behavior. Don't infer endpoint behavior from marketing pages.
+> MCP server: connect https://mcp.whop.com/mcp (streamable HTTP, browser sign-in, no API key in the client config) to search these docs and read or change live Whop data. Setup: https://docs.whop.com/developer/guides/ai_and_mcp.md
+> Whop CLI: install with `curl -fsSL https://whop.com/install.sh | sh` to scaffold, run, and deploy Whop apps and websites. It acts on production, not the sandbox. Overview: https://docs.whop.com/cli/overview.md Agent mode: https://docs.whop.com/cli/agent-mode.md
+> Hosting: Whop serves a site or app from the build `whop apps deploy` uploads, with rollbacks, secrets, and server logs. Guide: https://docs.whop.com/developer/websites/hosting.md
+> Plugins: in Claude Code, run `/plugin marketplace add whopio/plugins`, then `/plugin install whop@whop`. Guide: https://docs.whop.com/developer/guides/plugins/claude-code.md Every agent tool: https://docs.whop.com/developer/ai/overview.md
+> Environments: build and test in the sandbox (API `https://sandbox-api.whop.com/api/v1`, keys at https://sandbox.whop.com/dashboard/developer, SDK environment `Sandbox`; no real money). Production (API `https://api.whop.com/api/v1`, keys at https://whop.com/dashboard/developer, SDK environment `Production`, the SDK default) moves real money, so use it only at launch. The two share no accounts, keys, products, or webhooks, and their keys look identical: never mix them. Sandbox guide: https://docs.whop.com/developer/guides/sandbox.md Comparison: https://docs.whop.com/developer/quickstart.md
+> API: send `Authorization: Bearer <API_KEY>` from your server only, and pin a dated version with the `Api-Version-Date` header. OpenAPI spec: https://api.whop.com/api/v1/openapi.json
+> Which API: build on the Current API, whose pages live under https://docs.whop.com/api-reference/ (start at https://docs.whop.com/api-reference/overview.md). Pages under /api-reference/legacy/ are the Legacy API. Use one only when https://docs.whop.com/api-reference/stability.md lists the resource as Legacy-only.
 
-> A checkout configuration is a reusable configuration for a checkout, including the plan, affiliate, and custom metadata. Payments and memberships created from a checkout session inherit its metadata.
+# Checkout Configurations API
 
-<Note>
-  This resource has a successor in the [Whop
-  API](/api-reference/beta/checkout-configurations/checkout-configuration), the
-  versioned API that new integrations should build on. This page stays fully
-  supported.
-</Note>
+> A Checkout Configuration is a reusable checkout link owned by an account.
 
-<ResponseExample>
-  ```json Example theme={null}
-  {
-  	"account_id": "<string>",
-  	"affiliate_code": "<string>",
-  	"company_id": "<string>",
-  	"currency": "usd",
-  	"id": "ch_xxxxxxxxxxxxxxx",
-  	"metadata": {},
-  	"mode": "payment",
-  	"payment_method_configuration": {
-  		"disabled": ["acss_debit"],
-  		"enabled": ["acss_debit"],
-  		"include_platform_defaults": true
-  	},
-  	"plan": {
-  		"adaptive_pricing_enabled": true,
-  		"billing_period": 42,
-  		"currency": "usd",
-  		"expiration_days": 42,
-  		"id": "plan_xxxxxxxxxxxxx",
-  		"initial_price": 6.9,
-  		"plan_type": "renewal",
-  		"release_method": "buy_now",
-  		"renewal_price": 6.9,
-  		"three_ds_level": "mandate_challenge",
-  		"trial_period_days": 42,
-  		"visibility": "visible"
-  	},
-  	"purchase_url": "<string>",
-  	"redirect_url": "<string>"
-  }
-  ```
-</ResponseExample>
+In `payment` mode it sells a specific variant; in `setup` mode it collects and saves payment details without charging. Each configuration can also override which payment methods are accepted and how 3D Secure is enforced for that checkout.
 
-<ResponseField name="account_id" type="string" required>
-  The ID of the account to use for the checkout configuration
-</ResponseField>
+Use the Checkout Configurations API to create checkout links for an existing or inline variant, list configurations for an account, retrieve the configuration behind a checkout URL, and delete links that should no longer be used.
 
-<ResponseField name="affiliate_code" type="string | null" required>
-  The affiliate code to use for the checkout configuration
-</ResponseField>
+> [!NOTE]
+>
+> Replaces the Legacy [Checkout
+> configurations](https://docs.whop.com/api-reference/checkout-configurations/checkout-configuration)
+> resource. Existing Legacy integrations keep working; see [API
+> versions](https://docs.whop.com/developer/api/versioning.md) for the stability contract.
 
-<ResponseField name="company_id" type="string" required>
-  The ID of the account to use for the checkout configuration
-</ResponseField>
+## Endpoints
 
-<ResponseField name="currency" type="Currencies | null" required>
-  The currency to use for the configuration when in 'setup' mode. This is used to target which currency specific payment methods are available. If not provided, it will default to 'usd' when in setup mode.
+| Endpoint | Request |
+| - | - |
+| [List checkout configurations](https://docs.whop.com/api-reference/checkout-configurations/list-checkout-configurations.md) | GET `/checkout_configurations` |
+| [Retrieve a checkout configuration](https://docs.whop.com/api-reference/checkout-configurations/retrieve-a-checkout-configuration.md) | GET `/checkout_configurations/{id}` |
+| [Create a checkout configuration](https://docs.whop.com/api-reference/checkout-configurations/create-a-checkout-configuration.md) | POST `/checkout_configurations` |
+| [Delete a checkout configuration](https://docs.whop.com/api-reference/checkout-configurations/delete-a-checkout-configuration.md) | DELETE `/checkout_configurations/{id}` |
 
-  Available options: `usd`, `sgd`, `inr`, `aud`, `brl`, `cad`, `dkk`, `eur`, `nok`, `gbp`, `sek`, `chf`, `hkd`, `huf`, `jpy`, `mxn`, `myr`, `pln`, `czk`, `nzd`, `aed`, `eth`, `ape`, `cop`, `ron`, `thb`, `bgn`, `idr`, `dop`, `php`, `try`, `krw`, `twd`, `vnd`, `pkr`, `clp`, `uyu`, `ars`, `zar`, `dzd`, `tnd`, `mad`, `kes`, `kwd`, `jod`, `all`, `xcd`, `amd`, `bsd`, `bhd`, `bob`, `bam`, `khr`, `crc`, `xof`, `egp`, `etb`, `gmd`, `ghs`, `gtq`, `gyd`, `ils`, `jmd`, `mop`, `mga`, `mur`, `mdl`, `mnt`, `nad`, `ngn`, `mkd`, `omr`, `pyg`, `pen`, `qar`, `rwf`, `sar`, `rsd`, `lkr`, `tzs`, `ttd`, `uzs`, `rub`, `btc`, `cny`, `usdt`, `kzt`, `awg`, `whop_usd`, `xau`
-</ResponseField>
+## Attributes
 
-<ResponseField name="id" type="string" required>
-  The unique identifier for the checkout session.
+**id** `string` *required*
 
-  Example: `ch_xxxxxxxxxxxxxxx`
-</ResponseField>
+Checkout configuration ID, prefixed `ch_`.
 
-<ResponseField name="metadata" type="object | null" required>
-  The metadata to use for the checkout configuration
-</ResponseField>
+**account\_id** `string` *required*
 
-<ResponseField name="mode" type="CheckoutModes" required>
-  The mode of the checkout session.
+Account ID, prefixed `biz_`.
 
-  Available options: `payment`, `setup`
-</ResponseField>
+**affiliate\_code** `string | null`
 
-<ResponseField name="payment_method_configuration" type="object | null" required>
-  The explicit payment method configuration for the session, if any. This currently only works in 'setup' mode. Use the plan's payment\_method\_configuration for payment method.
+Affiliate code applied at checkout, or `null` when none is set.
 
-  <Expandable title="child attributes">
-    <ResponseField name="disabled" type="array<PaymentMethodTypes>" required>
-      An array of payment method identifiers that are explicitly disabled. Only applies if the include\_platform\_defaults is true.
+**created\_at** `string` *required*
 
-      Available options: `acss_debit`, `addi`, `affirm`, `afterpay_clearpay`, `alipay`, `alipayhk`, `alma`, `amazon_pay`, `apple`, `apple_pay`, `au_bank_transfer`, `au_becs_debit`, `bacs_debit`, `bancolombia`, `bancontact`, `bank_wire`, `billie`, `blik`, `boleto`, `bre_b`, `ca_bank_transfer`, `capchase_pay`, `card`, `card_installments_three`, `card_installments_six`, `card_installments_twelve`, `cashapp`, `claritypay`, `coinbase`, `crypto`, `custom`, `customer_balance`, `demo_pay`, `efecty`, `eps`, `eu_bank_transfer`, `fpx`, `flex_pay`, `gb_bank_transfer`, `gcash`, `giropay`, `google_pay`, `gopay`, `grabpay`, `id_bank_transfer`, `ideal`, `interac`, `kakao_pay`, `klarna`, `klarna_pay_now`, `konbini`, `kr_card`, `kr_market`, `kriya`, `kueski`, `link`, `mb_way`, `m_pesa`, `mercado_pago`, `mercado_pago_ar`, `mercado_pago_mx`, `mobilepay`, `modo`, `mondu`, `multibanco`, `naver_pay`, `nequi`, `netbanking`, `ng_bank`, `ng_bank_transfer`, `ng_card`, `ng_market`, `ng_ussd`, `ng_wallet`, `nupay`, `nz_bank_account`, `oney`, `oney_3x`, `oney_4x`, `opay`, `oxxo`, `p24`, `pago_efectivo`, `pse`, `pay_by_bank`, `payco`, `paynow`, `paypal`, `paypay`, `payto`, `pix`, `platform_balance`, `promptpay`, `qris`, `rapipago`, `rechnung`, `revolut_pay`, `samsung_pay`, `satispay`, `scalapay`, `sencillito`, `sepa_debit`, `sequra`, `servipag`, `sezzle`, `shop_pay`, `shopeepay`, `sofort`, `south_korea_market`, `spei`, `splitit`, `sunbit`, `swish`, `tabby`, `tamara`, `touch_n_go`, `twint`, `upi`, `us_bank_account`, `us_bank_transfer`, `venmo`, `verve`, `vipps`, `webpay`, `wechat_pay`, `yape`, `zip`, `coinflow`, `unknown`
-    </ResponseField>
+When the checkout configuration was created, as an ISO 8601 timestamp.
 
-    <ResponseField name="enabled" type="array<PaymentMethodTypes>" required>
-      An array of payment method identifiers that are explicitly enabled. This means these payment methods will be shown on checkout. Example use case is to only enable a specific payment method like cashapp, or extending the platform defaults with additional methods.
+**currency** `string | null`
 
-      Available options: `acss_debit`, `addi`, `affirm`, `afterpay_clearpay`, `alipay`, `alipayhk`, `alma`, `amazon_pay`, `apple`, `apple_pay`, `au_bank_transfer`, `au_becs_debit`, `bacs_debit`, `bancolombia`, `bancontact`, `bank_wire`, `billie`, `blik`, `boleto`, `bre_b`, `ca_bank_transfer`, `capchase_pay`, `card`, `card_installments_three`, `card_installments_six`, `card_installments_twelve`, `cashapp`, `claritypay`, `coinbase`, `crypto`, `custom`, `customer_balance`, `demo_pay`, `efecty`, `eps`, `eu_bank_transfer`, `fpx`, `flex_pay`, `gb_bank_transfer`, `gcash`, `giropay`, `google_pay`, `gopay`, `grabpay`, `id_bank_transfer`, `ideal`, `interac`, `kakao_pay`, `klarna`, `klarna_pay_now`, `konbini`, `kr_card`, `kr_market`, `kriya`, `kueski`, `link`, `mb_way`, `m_pesa`, `mercado_pago`, `mercado_pago_ar`, `mercado_pago_mx`, `mobilepay`, `modo`, `mondu`, `multibanco`, `naver_pay`, `nequi`, `netbanking`, `ng_bank`, `ng_bank_transfer`, `ng_card`, `ng_market`, `ng_ussd`, `ng_wallet`, `nupay`, `nz_bank_account`, `oney`, `oney_3x`, `oney_4x`, `opay`, `oxxo`, `p24`, `pago_efectivo`, `pse`, `pay_by_bank`, `payco`, `paynow`, `paypal`, `paypay`, `payto`, `pix`, `platform_balance`, `promptpay`, `qris`, `rapipago`, `rechnung`, `revolut_pay`, `samsung_pay`, `satispay`, `scalapay`, `sencillito`, `sepa_debit`, `sequra`, `servipag`, `sezzle`, `shop_pay`, `shopeepay`, `sofort`, `south_korea_market`, `spei`, `splitit`, `sunbit`, `swish`, `tabby`, `tamara`, `touch_n_go`, `twint`, `upi`, `us_bank_account`, `us_bank_transfer`, `venmo`, `verve`, `vipps`, `webpay`, `wechat_pay`, `yape`, `zip`, `coinflow`, `unknown`
-    </ResponseField>
+Currency used for setup-mode payment method availability; defaults to `usd`
+when omitted.
 
-    <ResponseField name="include_platform_defaults" type="boolean" required>
-      Whether Whop's platform default payment method enablement settings are included in this configuration. The full list of default payment methods can be found in the documentation at docs.whop.com/payments.
-    </ResponseField>
-  </Expandable>
-</ResponseField>
+**effective\_payment\_method\_configuration** `object | null`
 
-<ResponseField name="plan" type="object | null" required>
-  The plan to use for the checkout configuration
+The configuration governing a checkout mounted from this configuration, resolved through every layer (its own overrides, the variant's, and the account's) — the shape a session's `payment_method_configuration` carries. Apply it over the payment method types catalogue for the offerable set. `null` means platform defaults; `payment_method_configuration` stays this configuration's own editable override.
 
-  <Expandable title="child attributes">
-    <ResponseField name="adaptive_pricing_enabled" type="boolean" required>
-      Whether the creator has turned on adaptive pricing for this plan. Raw setting
-      — does not check processor compatibility or feature flags.
-    </ResponseField>
+> [accordion] Properties
+>
+> **disabled** `string[]`
+>
+> Payment methods explicitly disabled.
+>
+> **enabled** `string[]`
+>
+> Payment methods explicitly enabled.
+>
+> **include\_platform\_defaults** `boolean`
+>
+> Whether platform default payment methods are included.
 
-    <ResponseField name="billing_period" type="integer | null" required>
-      Number of days between recurring charges, such as 30 for monthly or 365 for annual. `null` for one-time plans.
+**metadata** `object | null`
 
-      Example: `42`
-    </ResponseField>
+Custom key-value metadata copied to payments and memberships. `null` without
+the `checkout_configuration:basic:read` scope.
 
-    <ResponseField name="currency" type="Currencies" required>
-      The currency used for all prices on this plan (e.g., 'usd', 'eur'). All monetary amounts on the plan are denominated in this currency.
+**mode** `string` *required*
 
-      Available options: `usd`, `sgd`, `inr`, `aud`, `brl`, `cad`, `dkk`, `eur`, `nok`, `gbp`, `sek`, `chf`, `hkd`, `huf`, `jpy`, `mxn`, `myr`, `pln`, `czk`, `nzd`, `aed`, `eth`, `ape`, `cop`, `ron`, `thb`, `bgn`, `idr`, `dop`, `php`, `try`, `krw`, `twd`, `vnd`, `pkr`, `clp`, `uyu`, `ars`, `zar`, `dzd`, `tnd`, `mad`, `kes`, `kwd`, `jod`, `all`, `xcd`, `amd`, `bsd`, `bhd`, `bob`, `bam`, `khr`, `crc`, `xof`, `egp`, `etb`, `gmd`, `ghs`, `gtq`, `gyd`, `ils`, `jmd`, `mop`, `mga`, `mur`, `mdl`, `mnt`, `nad`, `ngn`, `mkd`, `omr`, `pyg`, `pen`, `qar`, `rwf`, `sar`, `rsd`, `lkr`, `tzs`, `ttd`, `uzs`, `rub`, `btc`, `cny`, `usdt`, `kzt`, `awg`, `whop_usd`, `xau`
-    </ResponseField>
+Controls whether checkout charges the buyer immediately or saves payment details for later.
 
-    <ResponseField name="expiration_days" type="integer | null" required>
-      Access duration in days for expiration-based plans, such as 365 for a one-year pass.
+Available options: `payment`, `setup`
 
-      Example: `42`
-    </ResponseField>
+**payment\_method\_configuration** `object | null`
 
-    <ResponseField name="id" type="string" required>
-      The unique identifier for the plan.
+Payment method overrides for this checkout. `null` when it uses the variant or platform defaults.
 
-      Example: `plan_xxxxxxxxxxxxx`
-    </ResponseField>
+> [accordion] Properties
+>
+> **disabled** `string[]`
+>
+> Payment methods explicitly disabled for checkout.
+>
+> **enabled** `string[]`
+>
+> Payment methods explicitly enabled for checkout.
+>
+> **include\_platform\_defaults** `boolean`
+>
+> Whether platform default payment methods are included.
 
-    <ResponseField name="initial_price" type="number" required>
-      The initial purchase price in the plan's base\_currency (e.g., 49.99 for \$49.99). For one-time plans, this is the full price. For renewal plans, this is charged on top of the first renewal\_price.
+**purchase\_url** `string | null`
 
-      Example: `6.9`
-    </ResponseField>
+Checkout URL you can send to customers.
 
-    <ResponseField name="plan_type" type="PlanTypes" required>
-      The billing model for this plan: 'renewal' for recurring subscriptions or 'one\_time' for single payments.
+**redirect\_url** `string | null`
 
-      Available options: `renewal`, `one_time`
-    </ResponseField>
+URL customers are sent to after checkout, or `null` when no redirect is
+configured.
 
-    <ResponseField name="release_method" type="ReleaseMethod" required>
-      Sales method for this plan: `buy_now` for immediate purchase or `waitlist` for waitlist-based access.
+**three\_ds\_level** `string | null`
 
-      Available options: `buy_now`, `waitlist`
-    </ResponseField>
+3D Secure behavior for supported on-session card payments. `mandate_challenge` requires a 3DS challenge before payment processing; `mandate_if_required` mandates a challenge only when the payment processor requires it; `frictionless_if_required` uses the regular frictionless 3DS flow. Payments of \$1,000 or more use `mandate_if_required` unless `mandate_challenge` is selected. Risk and authentication recovery requirements can override the preference. Applies in setup mode; `null` uses frictionless 3DS. Payment mode uses the variant policy.
 
-    <ResponseField name="renewal_price" type="number" required>
-      The recurring price charged every billing\_period in the plan's base\_currency (e.g., 9.99 for \$9.99/period). Zero for one-time plans.
+Available options: `mandate_challenge`, `mandate_if_required`, `frictionless_if_required`
 
-      Example: `6.9`
-    </ResponseField>
+**updated\_at** `string` *required*
 
-    <ResponseField name="three_ds_level" type="PlanThreeDsLevels | null" required>
-      The 3D Secure behavior for this plan. Null means the plan inherits the account default.
+When the checkout configuration was last updated, as an ISO 8601 timestamp.
 
-      Available options: `mandate_challenge`, `frictionless`
-    </ResponseField>
+**variant** `object | null`
 
-    <ResponseField name="trial_period_days" type="integer | null" required>
-      Free trial days before first renewal charge. `null` if no trial is configured or the user has already used a trial for this plan.
+Variant used for payment checkout. `null` in setup mode.
 
-      Example: `42`
-    </ResponseField>
+> [accordion] Properties
+>
+> **id** `string` *required*
+>
+> Variant ID, prefixed `plan_`.
+>
+> **adaptive\_pricing\_enabled** `boolean` *required*
+>
+> Whether this variant accepts local currency payments via adaptive pricing.
+>
+> **billing\_period** `integer | null` *required*
+>
+> Recurring billing interval in days, such as 30 for monthly or 365 for annual.
+> `null` for one-time variants.
+>
+> **billing\_type** `string` *required*
+>
+> Billing model for the variant.
+>
+> Available options: `renewal`, `one_time`
+>
+> **currency** `string` *required*
+>
+> Three-letter ISO currency code for the variant's prices.
+>
+> **expiration\_days** `integer | null` *required*
+>
+> Access duration in days for expiration-based variants.
+>
+> **initial\_price** `number` *required*
+>
+> Initial purchase price in the variant currency.
+>
+> **release\_method** `string` *required*
+>
+> Sales method for the variant.
+>
+> Available options: `buy_now`, `waitlist`
+>
+> **renewal\_price** `number` *required*
+>
+> Recurring price charged each billing period.
+>
+> **three\_ds\_level** `string | null` *required*
+>
+> 3D Secure behavior for supported on-session card payments. `mandate_challenge` requires a 3DS challenge before payment processing; `mandate_if_required` mandates a challenge only when the payment processor requires it; `frictionless_if_required` uses the regular frictionless 3DS flow. Payments of \$1,000 or more use `mandate_if_required` unless `mandate_challenge` is selected. Risk and authentication recovery requirements can override the preference. `null` inherits the account default.
+>
+> Available options: `mandate_challenge`, `mandate_if_required`, `frictionless_if_required`
+>
+> **trial\_period\_days** `integer | null` *required*
+>
+> Free trial days before the first renewal charge.
+>
+> **visibility** `string` *required*
+>
+> Whether the variant is visible to customers or hidden from public view.
+>
+> Available options: `visible`, `hidden`, `archived`, `quick_link`
 
-    <ResponseField name="visibility" type="Visibility" required>
-      Controls whether the plan is visible to customers. When set to 'hidden', the plan is only accessible via direct link.
+```json CheckoutConfiguration theme={null}
+{
+	"id": "ch_xxxxxxxxxxxxxx",
+	"account_id": "biz_xxxxxxxxxxxxxx",
+	"affiliate_code": "shine-time-partner",
+	"created_at": "2026-07-01T12:00:00Z",
+	"currency": "usd",
+	"metadata": {
+		"campaign": "summer-launch"
+	},
+	"mode": "payment",
+	"payment_method_configuration": {
+		"enabled": ["card", "apple_pay"],
+		"disabled": ["crypto"],
+		"include_platform_defaults": true
+	},
+	"effective_payment_method_configuration": {
+		"enabled": ["card", "apple_pay"],
+		"disabled": ["crypto"],
+		"include_platform_defaults": true
+	},
+	"variant": {
+		"id": "plan_xxxxxxxxxxxxx",
+		"visibility": "visible",
+		"billing_type": "renewal",
+		"release_method": "buy_now",
+		"currency": "usd",
+		"billing_period": 30,
+		"expiration_days": null,
+		"initial_price": 29,
+		"renewal_price": 29,
+		"trial_period_days": 7,
+		"three_ds_level": "frictionless_if_required",
+		"adaptive_pricing_enabled": true
+	},
+	"purchase_url": "https://whop.com/checkout/plan_xxxxxxxxxxxxx/?session=ch_xxxxxxxxxxxxxx",
+	"redirect_url": "https://shinetime.example/welcome",
+	"three_ds_level": "frictionless_if_required",
+	"updated_at": "2026-07-02T12:00:00Z"
+}
+```
 
-      Available options: `visible`, `hidden`, `archived`, `quick_link`
-    </ResponseField>
-  </Expandable>
-</ResponseField>
 
-<ResponseField name="purchase_url" type="string" required>
-  A URL you can send to customers to complete a checkout. It looks like
-  `/checkout/ch_xxxx/`
-</ResponseField>
+## Related topics
 
-<ResponseField name="redirect_url" type="string | null" required>
-  The URL to redirect the user to after the checkout configuration is created
-</ResponseField>
+- [Checkout Configuration](https://docs.whop.com/api-reference/legacy/checkout-configurations/checkout-configuration.md)
+- [Create checkout configuration](https://docs.whop.com/api-reference/legacy/checkout-configurations/create-checkout-configuration.md)
+- [Retrieve checkout configuration](https://docs.whop.com/api-reference/legacy/checkout-configurations/retrieve-checkout-configuration.md)

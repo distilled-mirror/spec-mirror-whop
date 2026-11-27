@@ -2,27 +2,37 @@
 > Fetch the complete documentation index at: https://docs.whop.com/llms.txt
 > Use this file to discover all available pages before exploring further.
 
-# Build a Paywall
+> ## Agent Instructions
+> Treat these docs and the Whop MCP server as the source of truth for Whop API behavior. Don't infer endpoint behavior from marketing pages.
+> MCP server: connect https://mcp.whop.com/mcp (streamable HTTP, browser sign-in, no API key in the client config) to search these docs and read or change live Whop data. Setup: https://docs.whop.com/developer/guides/ai_and_mcp.md
+> Whop CLI: install with `curl -fsSL https://whop.com/install.sh | sh` to scaffold, run, and deploy Whop apps and websites. It acts on production, not the sandbox. Overview: https://docs.whop.com/cli/overview.md Agent mode: https://docs.whop.com/cli/agent-mode.md
+> Hosting: Whop serves a site or app from the build `whop apps deploy` uploads, with rollbacks, secrets, and server logs. Guide: https://docs.whop.com/developer/websites/hosting.md
+> Plugins: in Claude Code, run `/plugin marketplace add whopio/plugins`, then `/plugin install whop@whop`. Guide: https://docs.whop.com/developer/guides/plugins/claude-code.md Every agent tool: https://docs.whop.com/developer/ai/overview.md
+> Environments: build and test in the sandbox (API `https://sandbox-api.whop.com/api/v1`, keys at https://sandbox.whop.com/dashboard/developer, SDK environment `Sandbox`; no real money). Production (API `https://api.whop.com/api/v1`, keys at https://whop.com/dashboard/developer, SDK environment `Production`, the SDK default) moves real money, so use it only at launch. The two share no accounts, keys, products, or webhooks, and their keys look identical: never mix them. Sandbox guide: https://docs.whop.com/developer/guides/sandbox.md Comparison: https://docs.whop.com/developer/quickstart.md
+> API: send `Authorization: Bearer <API_KEY>` from your server only, and pin a dated version with the `Api-Version-Date` header. OpenAPI spec: https://api.whop.com/api/v1/openapi.json
+> Which API: build on the Current API, whose pages live under https://docs.whop.com/api-reference/ (start at https://docs.whop.com/api-reference/overview.md). Pages under /api-reference/legacy/ are the Legacy API. Use one only when https://docs.whop.com/api-reference/stability.md lists the resource as Legacy-only.
 
-> Display subscription plans and handle purchases in your iOS app
+# Build an iOS Paywall
 
-This guide shows you how to build a paywall that displays your subscription plans and handles the purchase flow. By the end, you'll have a working paywall that lets users subscribe to your product.
+> Build a SwiftUI paywall with the WhopCheckout SDK that shows your subscription variants and handles purchases.
+
+This guide shows you how to build a paywall that displays your subscription variants and handles the purchase flow. By the end, you'll have a working paywall that lets users subscribe to your product.
 
 ## What you'll build
 
-* A paywall screen that displays available plans with pricing
+* A paywall screen that displays available variants with pricing
 * A purchase flow that handles payments through Whop
 * Error handling for cancelled or failed purchases
 
 ## Prerequisites
 
-* [Install the SDK](/developer/guides/ios/installation)
-* A Whop account with at least one product and plan
-* An API key scoped to `iap:read` — see [Create an API key](/developer/guides/ios/installation#step-3-create-an-api-key) for setup
+* [Install the SDK](https://docs.whop.com/developer/guides/ios/installation.md)
+* A Whop account with at least one product and variant
+* An API key scoped to `iap:read` — see [Create an API key](https://docs.whop.com/developer/guides/ios/installation.md#step-3-create-an-api-key) for setup
 
-<Info>
-  The `iap:read` permission is designed for client-side use and only grants access to in-app purchase operations. It's safe to embed in your app bundle. Never ship a key with broader permissions.
-</Info>
+> [!NOTE]
+>
+> The `iap:read` permission is designed for client-side use and only grants access to in-app purchase operations. It's safe to embed in your app bundle. Never ship a key with broader permissions.
 
 ## Step 1: Configure the SDK
 
@@ -55,15 +65,15 @@ struct MyApp: App {
 }
 ```
 
-<Info>
-  Find your account ID in the URL of your [Whop
-  Dashboard](https://whop.com/dashboard) (starts with `biz_`). Find your plan
-  IDs in the Products tab under each plan (starts with `plan_`).
-</Info>
+> [!NOTE]
+>
+> Find your account ID in the URL of your [Whop
+> Dashboard](https://whop.com/dashboard) (starts with `biz_`). Find your variant
+> IDs in the Products tab under each variant (IDs retain the `plan_` prefix).
 
-## Step 2: Display available plans
+## Step 2: Display available variants
 
-Use the `plans` property to show available subscription options:
+Use the compatibility property `plans` to show available subscription variants:
 
 ```swift theme={null}
 struct PaywallView: View {
@@ -71,7 +81,7 @@ struct PaywallView: View {
 
     var body: some View {
         VStack(spacing: 20) {
-            Text("Choose a Plan")
+            Text("Choose a Variant")
                 .font(.title)
                 .bold()
 
@@ -89,7 +99,7 @@ struct PlanCard: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text(plan.title ?? "Plan")
+            Text(plan.title ?? "Variant")
                 .font(.headline)
 
             Text(plan.initialPrice, format: .currency(code: plan.baseCurrency))
@@ -180,14 +190,14 @@ struct PaywallView: View {
                     }
                     .padding(.top, 32)
 
-                    // Plans
+                    // Variants
                     ForEach(checkout.plans) { plan in
                         Button {
                             selectedPlanId = plan.id
                         } label: {
                             HStack {
                                 VStack(alignment: .leading, spacing: 4) {
-                                    Text(plan.title ?? "Plan")
+                                    Text(plan.title ?? "Variant")
                                         .font(.headline)
                                     Text(plan.initialPrice, format: .currency(code: plan.baseCurrency))
                                         .foregroundStyle(.secondary)
@@ -256,12 +266,17 @@ struct PaywallView: View {
 
 ## Next steps
 
-<CardGroup cols={2}>
-  <Card title="Check Entitlements" icon="shield-check" href="/developer/guides/ios/check-entitlements">
-    Learn how to gate content based on subscription status
-  </Card>
+> [card] [Check Entitlements](https://docs.whop.com/developer/guides/ios/check-entitlements.md)
+>
+> Learn how to gate content based on subscription status
 
-  <Card title="API Reference" icon="book" href="/developer/guides/ios/checkout-reference">
-    Explore all available methods and properties
-  </Card>
-</CardGroup>
+> [card] [API Reference](https://docs.whop.com/developer/guides/ios/checkout-reference.md)
+>
+> Explore all available methods and properties
+
+
+## Related topics
+
+- [iOS Checkout SDK](https://docs.whop.com/developer/guides/ios/overview.md)
+- [iOS Checkout SDK Reference](https://docs.whop.com/developer/guides/ios/checkout-reference.md)
+- [Install the Whop iOS SDKs](https://docs.whop.com/developer/guides/ios/installation.md)

@@ -2,6 +2,16 @@
 > Fetch the complete documentation index at: https://docs.whop.com/llms.txt
 > Use this file to discover all available pages before exploring further.
 
+> ## Agent Instructions
+> Treat these docs and the Whop MCP server as the source of truth for Whop API behavior. Don't infer endpoint behavior from marketing pages.
+> MCP server: connect https://mcp.whop.com/mcp (streamable HTTP, browser sign-in, no API key in the client config) to search these docs and read or change live Whop data. Setup: https://docs.whop.com/developer/guides/ai_and_mcp.md
+> Whop CLI: install with `curl -fsSL https://whop.com/install.sh | sh` to scaffold, run, and deploy Whop apps and websites. It acts on production, not the sandbox. Overview: https://docs.whop.com/cli/overview.md Agent mode: https://docs.whop.com/cli/agent-mode.md
+> Hosting: Whop serves a site or app from the build `whop apps deploy` uploads, with rollbacks, secrets, and server logs. Guide: https://docs.whop.com/developer/websites/hosting.md
+> Plugins: in Claude Code, run `/plugin marketplace add whopio/plugins`, then `/plugin install whop@whop`. Guide: https://docs.whop.com/developer/guides/plugins/claude-code.md Every agent tool: https://docs.whop.com/developer/ai/overview.md
+> Environments: build and test in the sandbox (API `https://sandbox-api.whop.com/api/v1`, keys at https://sandbox.whop.com/dashboard/developer, SDK environment `Sandbox`; no real money). Production (API `https://api.whop.com/api/v1`, keys at https://whop.com/dashboard/developer, SDK environment `Production`, the SDK default) moves real money, so use it only at launch. The two share no accounts, keys, products, or webhooks, and their keys look identical: never mix them. Sandbox guide: https://docs.whop.com/developer/guides/sandbox.md Comparison: https://docs.whop.com/developer/quickstart.md
+> API: send `Authorization: Bearer <API_KEY>` from your server only, and pin a dated version with the `Api-Version-Date` header. OpenAPI spec: https://api.whop.com/api/v1/openapi.json
+> Which API: build on the Current API, whose pages live under https://docs.whop.com/api-reference/ (start at https://docs.whop.com/api-reference/overview.md). Pages under /api-reference/legacy/ are the Legacy API. Use one only when https://docs.whop.com/api-reference/stability.md lists the resource as Legacy-only.
+
 # Payouts & Money Movement
 
 > Pay out users, move money between accounts, and read balances and ledgers.
@@ -13,28 +23,33 @@ Payouts is the other side of the money path: sending money out and moving it bet
 * **Pay out users** to their connected payout method.
 * **Move money** between accounts with transfers, deposits, and swaps.
 * **Issue cards** and read card transactions.
-* **Read the ledger**: balances, pending amounts, and financial time-series for reconciliation and reporting.
+* **Read the ledger**: balances and pending amounts for reconciliation and reporting.
 
 ## Core objects
 
-Payout, transfer, deposit, swap, card, ledger. Each is defined in [Core Concepts](/developer/concepts).
+Payout, transfer, deposit, swap, card, ledger. Each is defined in [Core Concepts](https://docs.whop.com/developer/concepts.md).
 
 ## Where to go next
 
-<Columns cols={2}>
-  <Card title="Send payouts" icon="money-bill-transfer" href="/developer/platforms/manual-payouts">
-    Pay users from your balance.
-  </Card>
+> [card] [Send payouts](https://docs.whop.com/developer/platforms/manual-payouts.md)
+>
+> Pay users from your balance.
 
-  <Card title="Embed the payout portal" icon="window" href="/developer/platforms/render-payout-portal">
-    Let users manage their own payout methods.
-  </Card>
+> [card] [Embed the payout portal](https://docs.whop.com/developer/platforms/render-payout-portal.md)
+>
+> Let users manage their own payout methods.
 
-  <Card title="Add funds" icon="plus" href="/developer/platforms/add-funds-to-your-balance">
-    Top up the balance you pay out from.
-  </Card>
+> [card] [Add funds](https://docs.whop.com/developer/platforms/add-funds-to-your-balance.md)
+>
+> Top up the balance you pay out from.
 
-  <Card title="Wallet stats" icon="chart-line" href="/developer/guides/ledger-stats">
-    Query financial time-series from your ledger.
-  </Card>
-</Columns>
+> [card] [Settle in one currency](https://docs.whop.com/developer/payouts/preferred-settlement-currency.md)
+>
+> Convert every new sale into the currency you pay out in.
+
+
+## Related topics
+
+- [Platform Map](https://docs.whop.com/developer/platform-map.md)
+- [Manual Payouts to Subaccounts](https://docs.whop.com/developer/platforms/manual-payouts.md)
+- [Enable Subaccount Payouts](https://docs.whop.com/developer/platforms/render-payout-portal.md)

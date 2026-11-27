@@ -2,37 +2,47 @@
 > Fetch the complete documentation index at: https://docs.whop.com/llms.txt
 > Use this file to discover all available pages before exploring further.
 
+> ## Agent Instructions
+> Treat these docs and the Whop MCP server as the source of truth for Whop API behavior. Don't infer endpoint behavior from marketing pages.
+> MCP server: connect https://mcp.whop.com/mcp (streamable HTTP, browser sign-in, no API key in the client config) to search these docs and read or change live Whop data. Setup: https://docs.whop.com/developer/guides/ai_and_mcp.md
+> Whop CLI: install with `curl -fsSL https://whop.com/install.sh | sh` to scaffold, run, and deploy Whop apps and websites. It acts on production, not the sandbox. Overview: https://docs.whop.com/cli/overview.md Agent mode: https://docs.whop.com/cli/agent-mode.md
+> Hosting: Whop serves a site or app from the build `whop apps deploy` uploads, with rollbacks, secrets, and server logs. Guide: https://docs.whop.com/developer/websites/hosting.md
+> Plugins: in Claude Code, run `/plugin marketplace add whopio/plugins`, then `/plugin install whop@whop`. Guide: https://docs.whop.com/developer/guides/plugins/claude-code.md Every agent tool: https://docs.whop.com/developer/ai/overview.md
+> Environments: build and test in the sandbox (API `https://sandbox-api.whop.com/api/v1`, keys at https://sandbox.whop.com/dashboard/developer, SDK environment `Sandbox`; no real money). Production (API `https://api.whop.com/api/v1`, keys at https://whop.com/dashboard/developer, SDK environment `Production`, the SDK default) moves real money, so use it only at launch. The two share no accounts, keys, products, or webhooks, and their keys look identical: never mix them. Sandbox guide: https://docs.whop.com/developer/guides/sandbox.md Comparison: https://docs.whop.com/developer/quickstart.md
+> API: send `Authorization: Bearer <API_KEY>` from your server only, and pin a dated version with the `Api-Version-Date` header. OpenAPI spec: https://api.whop.com/api/v1/openapi.json
+> Which API: build on the Current API, whose pages live under https://docs.whop.com/api-reference/ (start at https://docs.whop.com/api-reference/overview.md). Pages under /api-reference/legacy/ are the Legacy API. Use one only when https://docs.whop.com/api-reference/stability.md lists the resource as Legacy-only.
+
 # Accept One-time Payments
 
-> Sell physical goods and real-world services with native Apple Pay through Whop (2.7% + $0.30 fees)
+> Accept one-time Apple Pay payments for physical goods and real-world services in your iOS app.
 
-<iframe src="https://www.youtube.com/embed/K2e_sht1P1I?rel=0" title="Accept one-time payments on iOS with Whop" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen style={{ aspectRatio: "16 / 9", width: "100%", border: 0 }} />
+[Accept one-time payments on iOS with Whop](https://www.youtube.com/embed/K2e_sht1P1I?rel=0)
 
 Use `Checkout.ApplePayButton` to accept one-time payments for physical goods or real-world services using Apple Pay. Whop processes payments at **2.7% + \$0.30** instead of Apple's 15–30% in-app purchase fees.
 
-<Tip>
-  For web sales, use [checkout links or the Checkout element](/developer/guides/accept-payments) for **100+ payment methods** across **195 countries**.
-</Tip>
+> [!TIP]
+>
+> For web sales, use [checkout links or the Checkout element](https://docs.whop.com/developer/guides/accept-payments.md) for **100+ payment methods** across **195 countries**.
 
-<Warning>
-  **Apple Pay isn't for digital content.** Only use `Checkout.ApplePayButton` if your app sells physical goods (merch, food, hardware) or real-world services (event tickets, deliveries). Apps selling digital content — premium features, subscriptions, in-app currency, content unlocks — must use StoreKit. See the [Apple Pay eligibility](/developer/guides/ios/checkout-reference#apple-pay-eligibility) section for details.
-</Warning>
+> [!WARNING]
+>
+> **Apple Pay isn't for digital content.** Only use `Checkout.ApplePayButton` if your app sells physical goods (merch, food, hardware) or real-world services (event tickets, deliveries). Apps selling digital content — premium features, subscriptions, in-app currency, content unlocks — must use StoreKit. See the [Apple Pay eligibility](https://docs.whop.com/developer/guides/ios/checkout-reference.md#apple-pay-eligibility) section for details.
 
 ## What you'll build
 
 * A product detail screen with a native Apple Pay button
 * A purchase flow that handles success, failure, and cancellation
-* Plan configuration in the Whop dashboard for your physical goods
+* Variant configuration in the Whop dashboard for your physical goods
 
 ## Prerequisites
 
-* [Install the WhopCheckout SDK](/developer/guides/ios/installation)
-* An API key scoped to `iap:read` — see [Create an API key](/developer/guides/ios/installation#step-3-create-an-api-key)
-* A Whop product with a one-time plan (see [Step 5](#step-5-set-up-your-plan))
+* [Install the WhopCheckout SDK](https://docs.whop.com/developer/guides/ios/installation.md)
+* An API key scoped to `iap:read` — see [Create an API key](https://docs.whop.com/developer/guides/ios/installation.md#step-3-create-an-api-key)
+* A Whop product with a one-time variant (see [Step 5](#step-5-set-up-your-variant))
 
 ## Step 1: Configure the SDK
 
-Initialize the SDK at app launch. For one-time physical goods you don't need `planMappings` — that's only used for StoreKit fallback on subscriptions.
+Initialize the SDK at app launch. For one-time physical goods you don't need the compatibility property `planMappings` — that's only used for StoreKit fallback on subscriptions.
 
 ```swift theme={null}
 import SwiftUI
@@ -57,7 +67,7 @@ struct DropsApp: App {
 }
 ```
 
-See the [installation guide](/developer/guides/ios/installation) for the full setup and security notes on the API key.
+See the [installation guide](https://docs.whop.com/developer/guides/ios/installation.md) for the full setup and security notes on the API key.
 
 ## Step 2: Add the `Apple Pay` button
 
@@ -76,7 +86,7 @@ struct ProductDetailView: View {
             // product image, title, price, size picker...
 
             Checkout.ApplePayButton(
-                // planId: find in Dashboard > Products > [product] > Plans
+                // planId: find in Dashboard > Products > [product] > Variants
                 planId: product.planId,
                 label: .buy,
                 onCompletion: { result in
@@ -98,22 +108,22 @@ struct ProductDetailView: View {
 
 When the user taps, they get the native Apple Pay sheet. Face ID or double-click confirms, and the payment flows through Whop.
 
-<Info>
-  `onCompletion` **isn't called** when the user cancels — the sheet just dismisses. No cleanup needed.
-</Info>
+> [!NOTE]
+>
+> `onCompletion` **isn't called** when the user cancels — the sheet just dismisses. No cleanup needed.
 
 ## Step 3: Choose a button label
 
 The `label` parameter controls the text on the button. Pick the one that fits the action:
 
-| Label       | Button text          | Use for                                 |
-| ----------- | -------------------- | --------------------------------------- |
-| `.buy`      | Buy with Apple Pay   | One-time merchandise and physical goods |
-| `.checkout` | Check out with…      | Cart-style checkout flows               |
-| `.order`    | Order with Apple Pay | Food, deliveries, made-to-order items   |
-| `.book`     | Book with Apple Pay  | Reservations, appointments, events      |
-| `.continue` | Continue with…       | Multi-step flows where this isn't final |
-| `.plain`    | (Apple Pay logo)     | Fallback when no verb fits              |
+| Label | Button text | Use for |
+| - | - | - |
+| `.buy` | Buy with Apple Pay | One-time merchandise and physical goods |
+| `.checkout` | Check out with… | Cart-style checkout flows |
+| `.order` | Order with Apple Pay | Food, deliveries, made-to-order items |
+| `.book` | Book with Apple Pay | Reservations, appointments, events |
+| `.continue` | Continue with… | Multi-step flows where this isn't final |
+| `.plain` | (Apple Pay logo) | Fallback when no verb fits |
 
 The full list comes from Apple's `PayWithApplePayButtonLabel` — see [Apple's documentation](https://developer.apple.com/documentation/passkit/paywithapplepaybuttonlabel) for every option.
 
@@ -121,9 +131,9 @@ The full list comes from Apple's `PayWithApplePayButtonLabel` — see [Apple's d
 
 `onCompletion` receives a `Result<CheckoutPurchaseResult, Error>`. On success you get back:
 
-| Property     | Type                  | Description                                  |
-| ------------ | --------------------- | -------------------------------------------- |
-| `receiptId`  | `String`              | Unique receipt ID for this purchase          |
+| Property | Type | Description |
+| - | - | - |
+| `receiptId` | `String` | Unique receipt ID for this purchase |
 | `membership` | `CheckoutMembership?` | The membership Whop created for the purchase |
 
 Use this to show a confirmation screen, kick off shipping, or store the receipt for your own records.
@@ -145,43 +155,37 @@ onCompletion: { result in
 }
 ```
 
-## Step 5: Set up your plan
+## Step 5: Set up your variant
 
-Each purchasable item needs a plan in your Whop dashboard:
+Each purchasable item needs a variant in your Whop dashboard:
 
-<Steps>
-  <Step title="Create a plan">
-    Go to your [Dashboard](https://whop.com/dashboard) > Products > select your product > **Plans** > **Create plan**.
-  </Step>
+**1. Create a variant**
 
-  <Step title="Set it to one-time">
-    Choose **One-time payment** and set the price.
-  </Step>
+Go to your [Dashboard](https://whop.com/dashboard) > Products > select your product > **Variants** > **Create variant**.
 
-  <Step title="(Optional) Set inventory limits">
-    For limited drops, set a stock cap. The checkout enforces it automatically — when stock runs out, purchases stop.
-  </Step>
+**2. Set it to one-time**
 
-  <Step title="Copy the plan ID">
-    The ID starts with `plan_`. Pass it to `Checkout.ApplePayButton(planId:)`.
-  </Step>
-</Steps>
+Choose **One-time payment** and set the price.
+
+**3. (Optional) Set inventory limits**
+
+For limited drops, set a stock cap. The checkout enforces it automatically — when stock runs out, purchases stop.
+
+**4. Copy the variant ID**
+
+The ID retains the `plan_` prefix. Pass it through the compatibility parameter `Checkout.ApplePayButton(planId:)`.
 
 ## Handle fulfillment with webhooks
-
-<Warning>
-  `webhooks.unwrap` is not available in the current `@whop/sdk`. The handler below is kept for reference and will not run as written.
-</Warning>
 
 For physical goods, you'll need a server-side webhook to trigger shipping after a successful purchase. Listen for the `payment.succeeded` event:
 
 ```typescript theme={null}
-import { whopsdk } from "@/lib/whop-sdk";
+import { unwrapWebhook } from "@whop/sdk/helpers";
 
 export async function POST(request: Request) {
   const body = await request.text();
   const headers = Object.fromEntries(request.headers);
-  const event = whopsdk.webhooks.unwrap(body, { headers });
+  const event = unwrapWebhook(body, { headers, key: process.env.WHOP_WEBHOOK_SECRET });
 
   if (event.type === "payment.succeeded") {
     // Trigger your shipping/fulfillment flow
@@ -192,9 +196,9 @@ export async function POST(request: Request) {
 }
 ```
 
-<Info>
-  The client-side `onCompletion` callback confirms the payment to the user, but your **server** should handle fulfillment via webhooks — don't rely on the client alone. See the full [webhooks guide](/developer/guides/webhooks) for setup.
-</Info>
+> [!NOTE]
+>
+> The client-side `onCompletion` callback confirms the payment to the user, but your **server** should handle fulfillment via webhooks — don't rely on the client alone. See the full [webhooks guide](https://docs.whop.com/developer/guides/webhooks.md) for setup.
 
 ## Complete example
 
@@ -264,20 +268,25 @@ struct ProductDetailView: View {
 
 ## Next steps
 
-<CardGroup cols={2}>
-  <Card title="Webhooks" icon="webhook" href="/developer/guides/webhooks">
-    Handle payment events and trigger fulfillment
-  </Card>
+> [card] [Webhooks](https://docs.whop.com/developer/guides/webhooks.md)
+>
+> Handle payment events and trigger fulfillment
 
-  <Card title="Apple Pay eligibility" icon="shield-check" href="/developer/guides/ios/checkout-reference#apple-pay-eligibility">
-    Confirm your app qualifies under App Store Review Guidelines
-  </Card>
+> [card] [Apple Pay eligibility](https://docs.whop.com/developer/guides/ios/checkout-reference.md#apple-pay-eligibility)
+>
+> Confirm your app qualifies under App Store Review Guidelines
 
-  <Card title="Build a paywall" icon="credit-card" href="/developer/guides/ios/build-a-paywall">
-    Sell subscriptions instead of one-time purchases
-  </Card>
+> [card] [Build a paywall](https://docs.whop.com/developer/guides/ios/build-a-paywall.md)
+>
+> Sell subscriptions instead of one-time purchases
 
-  <Card title="API reference" icon="book" href="/developer/guides/ios/checkout-reference">
-    Full SDK documentation
-  </Card>
-</CardGroup>
+> [card] [API reference](https://docs.whop.com/developer/guides/ios/checkout-reference.md)
+>
+> Full SDK documentation
+
+
+## Related topics
+
+- [iOS Checkout SDK](https://docs.whop.com/developer/guides/ios/overview.md)
+- [Accept Payments](https://docs.whop.com/developer/guides/accept-payments.md)
+- [Payments Overview](https://docs.whop.com/developer/payments/overview.md)

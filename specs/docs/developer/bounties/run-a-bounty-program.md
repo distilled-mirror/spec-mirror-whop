@@ -2,58 +2,66 @@
 > Fetch the complete documentation index at: https://docs.whop.com/llms.txt
 > Use this file to discover all available pages before exploring further.
 
+> ## Agent Instructions
+> Treat these docs and the Whop MCP server as the source of truth for Whop API behavior. Don't infer endpoint behavior from marketing pages.
+> MCP server: connect https://mcp.whop.com/mcp (streamable HTTP, browser sign-in, no API key in the client config) to search these docs and read or change live Whop data. Setup: https://docs.whop.com/developer/guides/ai_and_mcp.md
+> Whop CLI: install with `curl -fsSL https://whop.com/install.sh | sh` to scaffold, run, and deploy Whop apps and websites. It acts on production, not the sandbox. Overview: https://docs.whop.com/cli/overview.md Agent mode: https://docs.whop.com/cli/agent-mode.md
+> Hosting: Whop serves a site or app from the build `whop apps deploy` uploads, with rollbacks, secrets, and server logs. Guide: https://docs.whop.com/developer/websites/hosting.md
+> Plugins: in Claude Code, run `/plugin marketplace add whopio/plugins`, then `/plugin install whop@whop`. Guide: https://docs.whop.com/developer/guides/plugins/claude-code.md Every agent tool: https://docs.whop.com/developer/ai/overview.md
+> Environments: build and test in the sandbox (API `https://sandbox-api.whop.com/api/v1`, keys at https://sandbox.whop.com/dashboard/developer, SDK environment `Sandbox`; no real money). Production (API `https://api.whop.com/api/v1`, keys at https://whop.com/dashboard/developer, SDK environment `Production`, the SDK default) moves real money, so use it only at launch. The two share no accounts, keys, products, or webhooks, and their keys look identical: never mix them. Sandbox guide: https://docs.whop.com/developer/guides/sandbox.md Comparison: https://docs.whop.com/developer/quickstart.md
+> API: send `Authorization: Bearer <API_KEY>` from your server only, and pin a dated version with the `Api-Version-Date` header. OpenAPI spec: https://api.whop.com/api/v1/openapi.json
+> Which API: build on the Current API, whose pages live under https://docs.whop.com/api-reference/ (start at https://docs.whop.com/api-reference/overview.md). Pages under /api-reference/legacy/ are the Legacy API. Use one only when https://docs.whop.com/api-reference/stability.md lists the resource as Legacy-only.
+
 # Run a Bounty Program
 
-> Post bounties on behalf of an account, fund the escrow, and surface the submission queue in your own product: rewards, the $5 escrow floor, `experience_id`, and review.
+> Post paid bounties through the API, fund the escrow from an account balance, schedule repeats, take and review submissions, and cancel bounties.
 
 Post paid tasks from your own product, fund them from an account's balance, and pull the submission queue into your own interface. This guide covers the full loop: creating a bounty, taking work, reviewing it, and cancelling.
 
-<Note>
-  You need an API key with `bounty:create` and `payout:transfer_funds`, because posting a bounty moves money. Reading submissions needs `bounty:basic:read`.
-</Note>
+> [!NOTE]
+>
+> You need an API key with `bounty:create` and `payout:transfer_funds`, because posting a bounty moves money. Reading submissions needs `bounty:basic:read`.
 
 ## Post a bounty
 
-[`POST /bounties`](/api-reference/beta/bounties/create-bounty) needs a `title`, a `description` holding the instructions a worker follows, and a `gross_reward_amount`.
+[`POST /bounties`](https://docs.whop.com/api-reference/bounties/create-bounty) needs a `title`, a `description` holding the instructions a worker follows, and a `gross_reward_amount`.
 
-<CodeGroup>
-  ```typescript TypeScript theme={null}
-  import Whop from "@whop/sdk";
+```typescript TypeScript theme={null}
+import { WhopClient } from "@whop/sdk";
 
-  const client = new Whop({ apiKey: process.env.WHOP_API_KEY });
+const client = new WhopClient({ token: process.env.WHOP_API_KEY });
 
-  const bounty = await client.bounties.create({
-  	title: "Clip our launch stream",
-  	description: "Cut a 30 to 60 second vertical clip and post it to TikTok. Include the product name in the caption.",
-  	gross_reward_amount: 25,
-  	accepted_submissions_limit: 4,
-  	business_goal_type: "clipping",
-  	account_id: "biz_XXXXXXXX",
-  	allowed_country_codes: ["US", "CA"],
-  });
+const bounty = await client.bounties.create({
+	title: "Clip our launch stream",
+	description: "Cut a 30 to 60 second vertical clip and post it to TikTok. Include the product name in the caption.",
+	gross_reward_amount: 25,
+	accepted_submissions_limit: 4,
+	business_goal_type: "clipping",
+	account_id: "biz_XXXXXXXX",
+	allowed_country_codes: ["US", "CA"],
+});
 
-  console.log(bounty.id);
-  ```
+console.log(bounty.id);
+```
 
-  ```python Python theme={null}
-  import os
-  from whop_sdk import Whop
+```python Python theme={null}
+import os
+from whop_sdk import Whop
 
-  client = Whop(api_key=os.environ["WHOP_API_KEY"])
+client = Whop(token=os.environ["WHOP_API_KEY"])
 
-  bounty = client.bounties.create(
-      title="Clip our launch stream",
-      description="Cut a 30 to 60 second vertical clip and post it to TikTok. Include the product name in the caption.",
-      gross_reward_amount=25,
-      accepted_submissions_limit=4,
-      business_goal_type="clipping",
-      account_id="biz_XXXXXXXX",
-      allowed_country_codes=["US", "CA"],
-  )
+bounty = client.bounties.create(
+    title="Clip our launch stream",
+    description="Cut a 30 to 60 second vertical clip and post it to TikTok. Include the product name in the caption.",
+    gross_reward_amount=25,
+    accepted_submissions_limit=4,
+    business_goal_type="clipping",
+    account_id="biz_XXXXXXXX",
+    allowed_country_codes=["US", "CA"],
+)
 
-  print(bounty.id)
-  ```
-</CodeGroup>
+print(bounty.id)
+```
 
 ### What the reward costs you
 
@@ -81,37 +89,35 @@ A bounty publishes as soon as you create it, unless you set `publish_at`. Whop c
 
 `frequency` turns a scheduled bounty into a recurring one. It defaults to `once`, takes `hourly`, `daily`, `weekly`, or `monthly`, and **only applies alongside `publish_at`**. Each occurrence is a separate bounty with its own submissions and its own escrow.
 
-<CodeGroup>
-  ```typescript TypeScript theme={null}
-  const weekly = await client.bounties.create({
-  	title: "Weekly product clip",
-  	description: "One vertical clip per week featuring a different product from the catalog.",
-  	gross_reward_amount: 50,
-  	account_id: "biz_XXXXXXXX",
-  	business_goal_type: "clipping",
-  	publish_at: "2026-09-01T15:00:00Z",
-  	publish_at_timezone: "America/New_York",
-  	frequency: "weekly",
-  });
-  ```
+```typescript TypeScript theme={null}
+const weekly = await client.bounties.create({
+	title: "Weekly product clip",
+	description: "One vertical clip per week featuring a different product from the catalog.",
+	gross_reward_amount: 50,
+	account_id: "biz_XXXXXXXX",
+	business_goal_type: "clipping",
+	publish_at: "2026-09-01T15:00:00Z",
+	publish_at_timezone: "America/New_York",
+	frequency: "weekly",
+});
+```
 
-  ```python Python theme={null}
-  weekly = client.bounties.create(
-      title="Weekly product clip",
-      description="One vertical clip per week featuring a different product from the catalog.",
-      gross_reward_amount=50,
-      account_id="biz_XXXXXXXX",
-      business_goal_type="clipping",
-      publish_at="2026-09-01T15:00:00Z",
-      publish_at_timezone="America/New_York",
-      frequency="weekly",
-  )
-  ```
-</CodeGroup>
+```python Python theme={null}
+weekly = client.bounties.create(
+    title="Weekly product clip",
+    description="One vertical clip per week featuring a different product from the catalog.",
+    gross_reward_amount=50,
+    account_id="biz_XXXXXXXX",
+    business_goal_type="clipping",
+    publish_at="2026-09-01T15:00:00Z",
+    publish_at_timezone="America/New_York",
+    frequency="weekly",
+)
+```
 
 ## Edit a bounty
 
-What [`PATCH /bounties/{id}`](/api-reference/beta/bounties/update-bounty) accepts depends on whether the bounty has published. A **scheduled draft** accepts everything: the reward, the winner slots, the schedule, and the content fields.
+What [`PATCH /bounties/{id}`](https://docs.whop.com/api-reference/bounties/update-bounty) accepts depends on whether the bounty has published. A **scheduled draft** accepts everything: the reward, the winner slots, the schedule, and the content fields.
 
 A **published bounty** accepts content only, meaning `title`, `description`, `allowed_country_codes`, and `business_goal_type`. Even those are refused once the bounty stops accepting attempts, or once any submission reaches `submitted` or `approved`. The reward, the winner slots, and the schedule are all fixed once a bounty publishes.
 
@@ -119,35 +125,33 @@ A **published bounty** accepts content only, meaning `title`, `description`, `al
 
 ## Take submissions
 
-[`POST /bounty_submissions`](/api-reference/beta/bounty-submissions/create-bounty-submission) takes the `bounty_id` and a `deliverable`. Combine `urls`, `file_ids`, and a `caption`, with **at least one link, or one file**. Whop rejects an empty deliverable. On a standard bounty this single call is the whole worker flow, and the submission goes straight to review. Submissions need a user credential, so an Account API key can't author one.
+[`POST /bounty_submissions`](https://docs.whop.com/api-reference/bounty-submissions/create-bounty-submission) takes the `bounty_id` and a `deliverable`. Combine `urls`, `file_ids`, and a `caption`, with **at least one link, or one file**. Whop rejects an empty deliverable. On a standard bounty this single call is the whole worker flow, and the submission goes straight to review. Submissions need a user credential, so an Account API key can't author one.
 
-<CodeGroup>
-  ```typescript TypeScript theme={null}
-  const submission = await client.bountySubmissions.create({
-  	bounty_id: "bnty_XXXXXXXX",
-  	deliverable: {
-  		urls: ["https://www.tiktok.com/@creator/video/1234567890"],
-  		file_ids: ["file_XXXXXXXX"],
-  		caption: "Vertical cut, 42 seconds.",
-  	},
-  });
-  ```
+```typescript TypeScript theme={null}
+const submission = await client.bountySubmissions.create({
+	bounty_id: "bnty_XXXXXXXX",
+	deliverable: {
+		urls: ["https://www.tiktok.com/@creator/video/1234567890"],
+		file_ids: ["file_XXXXXXXX"],
+		caption: "Vertical cut, 42 seconds.",
+	},
+});
+```
 
-  ```python Python theme={null}
-  submission = client.bounty_submissions.create(
-      bounty_id="bnty_XXXXXXXX",
-      deliverable={
-          "urls": ["https://www.tiktok.com/@creator/video/1234567890"],
-          "file_ids": ["file_XXXXXXXX"],
-          "caption": "Vertical cut, 42 seconds.",
-      },
-  )
-  ```
-</CodeGroup>
+```python Python theme={null}
+submission = client.bounty_submissions.create(
+    bounty_id="bnty_XXXXXXXX",
+    deliverable={
+        "urls": ["https://www.tiktok.com/@creator/video/1234567890"],
+        "file_ids": ["file_XXXXXXXX"],
+        "caption": "Vertical cut, 42 seconds.",
+    },
+)
+```
 
 `allowed_country_codes` restricts who can work a bounty. It takes ISO 3166 alpha-2 codes. An empty list means worldwide.
 
-A worker can withdraw their own attempt with [`DELETE /bounty_submissions/{id}`](/api-reference/beta/bounty-submissions/cancel-bounty-submission). Only the worker who started it can, and an Account API key can't do it for them.
+A worker can withdraw their own attempt with [`DELETE /bounty_submissions/{id}`](https://docs.whop.com/api-reference/bounty-submissions/cancel-bounty-submission). Only the worker who started it can, and an Account API key can't do it for them.
 
 ### Goals your integration can't complete
 
@@ -155,49 +159,47 @@ Two goal types accumulate their proof outside the API. On a `data_capture` bount
 
 ## Review the queue
 
-Read submissions with [`GET /bounty_submissions`](/api-reference/beta/bounty-submissions/list-bounty-submissions), filtered by `bounty_id` and optionally by `status`.
+Read submissions with [`GET /bounty_submissions`](https://docs.whop.com/api-reference/bounty-submissions/list-bounty-submissions), filtered by `bounty_id` and optionally by `status`.
 
-<CodeGroup>
-  ```typescript TypeScript theme={null}
-  const queue = await client.bountySubmissions.list({
-  	bounty_id: "bnty_XXXXXXXX",
-  	status: "submitted",
-  });
+```typescript TypeScript theme={null}
+const queue = await client.bountySubmissions.list({
+	bounty_id: "bnty_XXXXXXXX",
+	status: "submitted",
+});
 
-  for (const submission of queue.data) {
-  	console.log(submission.id, submission.status);
-  }
-  ```
+for (const submission of queue.data) {
+	console.log(submission.id, submission.status);
+}
+```
 
-  ```python Python theme={null}
-  queue = client.bounty_submissions.list(
-      bounty_id="bnty_XXXXXXXX",
-      status="submitted",
-  )
+```python Python theme={null}
+queue = client.bounty_submissions.list(
+    bounty_id="bnty_XXXXXXXX",
+    status="submitted",
+)
 
-  for submission in queue.data:
-      print(submission.id, submission.status)
-  ```
-</CodeGroup>
+for submission in queue.data:
+    print(submission.id, submission.status)
+```
 
 A submission moves through four states:
 
-| `status`      | Meaning                                                                                             |
-| ------------- | --------------------------------------------------------------------------------------------------- |
-| `in_progress` | An active attempt that hasn't submitted proof                                                       |
-| `submitted`   | Awaiting a decision                                                                                 |
-| `approved`    | Accepted, and the escrowed reward pays out                                                          |
-| `denied`      | Rejected. `denial_reason` carries the reason when a presentable one exists, and is `null` otherwise |
+| `status` | Meaning |
+| - | - |
+| `in_progress` | An active attempt that hasn't submitted proof |
+| `submitted` | Awaiting a decision |
+| `approved` | Accepted, and the escrowed reward pays out |
+| `denied` | Rejected. `denial_reason` carries the reason when a presentable one exists, and is `null` otherwise |
 
-<Warning>
-  Approving and denying happen in the Whop dashboard. The API has no approve or deny operation, so your product can show the queue and its outcomes, but a person decides in Whop.
-</Warning>
+> [!WARNING]
+>
+> Approving and denying happen in the Whop dashboard. The API has no approve or deny operation, so your product can show the queue and its outcomes, but a person decides in Whop.
 
 Bounties emit no webhooks. To reflect outcomes in your own product, poll `GET /bounty_submissions` filtered to the bounty. Once a minute suits a queue a person reviews. Back off to every few minutes when a bounty has no recent activity.
 
 ## Cancel a bounty
 
-[`POST /bounties/{id}/cancel`](/api-reference/beta/bounties/cancel) refunds the funder immediately when no work is in flight. When work is under review, it stops new submissions and cancels once that work resolves and pays out.
+[`POST /bounties/{id}/cancel`](https://docs.whop.com/api-reference/bounties/cancel) refunds the funder immediately when no work is in flight. When work is under review, it stops new submissions and cancels once that work resolves and pays out.
 
 Repeating the request does nothing. A bounty that already paid out every slot returns a `400`.
 
@@ -212,20 +214,25 @@ Four rules the request schema can't express. Each returns an error even though t
 
 ## Next steps
 
-<CardGroup cols={2}>
-  <Card title="Bounties overview" icon="trophy" href="/developer/bounties/overview">
-    The objects and how they fit together.
-  </Card>
+> [card] [Bounties overview](https://docs.whop.com/developer/bounties/overview.md)
+>
+> The objects and how they fit together.
 
-  <Card title="Upload files" icon="arrow-up-from-bracket" href="/developer/guides/upload-files">
-    Get the file IDs a deliverable references.
-  </Card>
+> [card] [Upload files](https://docs.whop.com/developer/guides/upload-files.md)
+>
+> Get the file IDs a deliverable references.
 
-  <Card title="Bounties reference" icon="code" href="/api-reference/beta/bounties/bounty">
-    Request and response shapes for every endpoint.
-  </Card>
+> [card] [Bounties reference](https://docs.whop.com/api-reference/bounties/bounty)
+>
+> Request and response shapes for every endpoint.
 
-  <Card title="Bounty submissions reference" icon="list-check" href="/api-reference/beta/bounty-submissions/retrieve-bounty-submission">
-    The submission object and its filters.
-  </Card>
-</CardGroup>
+> [card] [Bounty submissions reference](https://docs.whop.com/api-reference/bounty-submissions/retrieve-bounty-submission.md)
+>
+> The submission object and its filters.
+
+
+## Related topics
+
+- [Bounties](https://docs.whop.com/developer/bounties/overview.md)
+- [Update Bounty](https://docs.whop.com/api-reference/bounties/update-bounty.md)
+- [Create Bounty](https://docs.whop.com/api-reference/bounties/create-bounty.md)

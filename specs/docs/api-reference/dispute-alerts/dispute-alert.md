@@ -2,278 +2,176 @@
 > Fetch the complete documentation index at: https://docs.whop.com/llms.txt
 > Use this file to discover all available pages before exploring further.
 
-# Dispute Alert
-
-> A dispute alert represents an early warning notification from a payment processor about a potential dispute or chargeback.
-
-<ResponseExample>
-  ```json Example theme={null}
-  {
-  	"alert_type": "dispute",
-  	"amount": 6.9,
-  	"charge_for_alert": true,
-  	"created_at": "2023-12-01T05:00:00.401Z",
-  	"currency": "usd",
-  	"dispute": {
-  		"amount": 6.9,
-  		"created_at": "2023-12-01T05:00:00.401Z",
-  		"currency": "usd",
-  		"id": "dspt_xxxxxxxxxxxxx",
-  		"reason": "Product Not Received",
-  		"status": "warning_needs_response"
-  	},
-  	"id": "dspa_xxxxxxxxxxxxx",
-  	"payment": {
-  		"billing_reason": "subscription_create",
-  		"card_brand": "mastercard",
-  		"card_last4": "4242",
-  		"created_at": "2023-12-01T05:00:00.401Z",
-  		"currency": "usd",
-  		"dispute_alerted_at": "2023-12-01T05:00:00.401Z",
-  		"id": "pay_xxxxxxxxxxxxxx",
-  		"member": {
-  			"id": "<string>",
-  			"phone": "<string>"
-  		},
-  		"membership": {
-  			"id": "mem_xxxxxxxxxxxxxx",
-  			"status": "trialing"
-  		},
-  		"paid_at": "2023-12-01T05:00:00.401Z",
-  		"payment_method_type": "acss_debit",
-  		"subtotal": 6.9,
-  		"total": 6.9,
-  		"usd_total": 6.9,
-  		"user": {
-  			"email": "john.doe@example.com",
-  			"id": "user_xxxxxxxxxxxxx",
-  			"name": "John Doe",
-  			"username": "johndoe42"
-  		}
-  	},
-  	"transaction_date": "2023-12-01T05:00:00.401Z"
-  }
-  ```
-</ResponseExample>
-
-<ResponseField name="alert_type" type="DisputeAlertTypes" required>
-  The type of the dispute alert.
-
-  Available options: `dispute`, `dispute_rdr`, `fraud`
-</ResponseField>
-
-<ResponseField name="amount" type="number" required>
-  The alerted amount in the specified currency.
-
-  Example: `6.9`
-</ResponseField>
-
-<ResponseField name="charge_for_alert" type="boolean" required>
-  Whether this alert incurs a charge.
-</ResponseField>
-
-<ResponseField name="created_at" type="string<date-time>" required>
-  The time the dispute alert was created.
-
-  Example: `2023-12-01T05:00:00.401Z`
-</ResponseField>
-
-<ResponseField name="currency" type="Currencies" required>
-  The three-letter ISO currency code for the alerted amount.
-
-  Available options: `usd`, `sgd`, `inr`, `aud`, `brl`, `cad`, `dkk`, `eur`, `nok`, `gbp`, `sek`, `chf`, `hkd`, `huf`, `jpy`, `mxn`, `myr`, `pln`, `czk`, `nzd`, `aed`, `eth`, `ape`, `cop`, `ron`, `thb`, `bgn`, `idr`, `dop`, `php`, `try`, `krw`, `twd`, `vnd`, `pkr`, `clp`, `uyu`, `ars`, `zar`, `dzd`, `tnd`, `mad`, `kes`, `kwd`, `jod`, `all`, `xcd`, `amd`, `bsd`, `bhd`, `bob`, `bam`, `khr`, `crc`, `xof`, `egp`, `etb`, `gmd`, `ghs`, `gtq`, `gyd`, `ils`, `jmd`, `mop`, `mga`, `mur`, `mdl`, `mnt`, `nad`, `ngn`, `mkd`, `omr`, `pyg`, `pen`, `qar`, `rwf`, `sar`, `rsd`, `lkr`, `tzs`, `ttd`, `uzs`, `rub`, `btc`, `cny`, `usdt`, `kzt`, `awg`, `whop_usd`, `xau`
-</ResponseField>
-
-<ResponseField name="dispute" type="object | null" required>
-  The dispute associated with the dispute alert.
-
-  <Expandable title="child attributes">
-    <ResponseField name="amount" type="number" required>
-      The disputed amount in the specified currency, formatted as a decimal.
-
-      Example: `6.9`
-    </ResponseField>
-
-    <ResponseField name="created_at" type="string<date-time> | null" required>
-      The datetime the dispute was created.
-
-      Example: `2023-12-01T05:00:00.401Z`
-    </ResponseField>
-
-    <ResponseField name="currency" type="Currencies" required>
-      The three-letter ISO currency code for the disputed amount.
-
-      Available options: `usd`, `sgd`, `inr`, `aud`, `brl`, `cad`, `dkk`, `eur`, `nok`, `gbp`, `sek`, `chf`, `hkd`, `huf`, `jpy`, `mxn`, `myr`, `pln`, `czk`, `nzd`, `aed`, `eth`, `ape`, `cop`, `ron`, `thb`, `bgn`, `idr`, `dop`, `php`, `try`, `krw`, `twd`, `vnd`, `pkr`, `clp`, `uyu`, `ars`, `zar`, `dzd`, `tnd`, `mad`, `kes`, `kwd`, `jod`, `all`, `xcd`, `amd`, `bsd`, `bhd`, `bob`, `bam`, `khr`, `crc`, `xof`, `egp`, `etb`, `gmd`, `ghs`, `gtq`, `gyd`, `ils`, `jmd`, `mop`, `mga`, `mur`, `mdl`, `mnt`, `nad`, `ngn`, `mkd`, `omr`, `pyg`, `pen`, `qar`, `rwf`, `sar`, `rsd`, `lkr`, `tzs`, `ttd`, `uzs`, `rub`, `btc`, `cny`, `usdt`, `kzt`, `awg`, `whop_usd`, `xau`
-    </ResponseField>
+> ## Agent Instructions
+> Treat these docs and the Whop MCP server as the source of truth for Whop API behavior. Don't infer endpoint behavior from marketing pages.
+> MCP server: connect https://mcp.whop.com/mcp (streamable HTTP, browser sign-in, no API key in the client config) to search these docs and read or change live Whop data. Setup: https://docs.whop.com/developer/guides/ai_and_mcp.md
+> Whop CLI: install with `curl -fsSL https://whop.com/install.sh | sh` to scaffold, run, and deploy Whop apps and websites. It acts on production, not the sandbox. Overview: https://docs.whop.com/cli/overview.md Agent mode: https://docs.whop.com/cli/agent-mode.md
+> Hosting: Whop serves a site or app from the build `whop apps deploy` uploads, with rollbacks, secrets, and server logs. Guide: https://docs.whop.com/developer/websites/hosting.md
+> Plugins: in Claude Code, run `/plugin marketplace add whopio/plugins`, then `/plugin install whop@whop`. Guide: https://docs.whop.com/developer/guides/plugins/claude-code.md Every agent tool: https://docs.whop.com/developer/ai/overview.md
+> Environments: build and test in the sandbox (API `https://sandbox-api.whop.com/api/v1`, keys at https://sandbox.whop.com/dashboard/developer, SDK environment `Sandbox`; no real money). Production (API `https://api.whop.com/api/v1`, keys at https://whop.com/dashboard/developer, SDK environment `Production`, the SDK default) moves real money, so use it only at launch. The two share no accounts, keys, products, or webhooks, and their keys look identical: never mix them. Sandbox guide: https://docs.whop.com/developer/guides/sandbox.md Comparison: https://docs.whop.com/developer/quickstart.md
+> API: send `Authorization: Bearer <API_KEY>` from your server only, and pin a dated version with the `Api-Version-Date` header. OpenAPI spec: https://api.whop.com/api/v1/openapi.json
+> Which API: build on the Current API, whose pages live under https://docs.whop.com/api-reference/ (start at https://docs.whop.com/api-reference/overview.md). Pages under /api-reference/legacy/ are the Legacy API. Use one only when https://docs.whop.com/api-reference/stability.md lists the resource as Legacy-only.
 
-    <ResponseField name="id" type="string" required>
-      The unique identifier for the dispute.
+# Dispute Alerts API
 
-      Example: `dspt_xxxxxxxxxxxxx`
-    </ResponseField>
+> A Dispute alert is an early warning from a card issuer that a settled payment is being questioned, ahead of any chargeback.
 
-    <ResponseField name="reason" type="string | null" required>
-      A human-readable reason for the dispute.
+`type` separates fraud reports (`early_fraud_warning`), pre-dispute notices (`dispute_alert`), and Visa RDR cases the network already closed by refunding (`rapid_dispute_resolution`).
 
-      Example: `Product Not Received`
-    </ResponseField>
+Use the Dispute alerts API to list alerts for an account, filter them by type or payment, and read `actionable` to see whether refunding can still avoid the chargeback.
 
-    <ResponseField name="status" type="DisputeStatuses" required>
-      The current status of the dispute lifecycle, such as needs\_response, under\_review, won, or lost.
+## Endpoints
 
-      Available options: `warning_needs_response`, `warning_under_review`, `warning_closed`, `needs_response`, `under_review`, `won`, `lost`, `closed`, `other`
-    </ResponseField>
-  </Expandable>
-</ResponseField>
+| Endpoint | Request |
+| - | - |
+| [List Dispute Alerts](https://docs.whop.com/api-reference/dispute-alerts/list-dispute-alerts.md) | GET `/dispute_alerts` |
+| [Retrieve Dispute Alert](https://docs.whop.com/api-reference/dispute-alerts/retrieve-dispute-alert.md) | GET `/dispute_alerts/{id}` |
 
-<ResponseField name="id" type="string" required>
-  The unique identifier of the dispute alert.
+## Attributes
 
-  Example: `dspa_xxxxxxxxxxxxx`
-</ResponseField>
+**id** `string` *required*
 
-<ResponseField name="payment" type="object | null" required>
-  The payment associated with the dispute alert.
+Dispute alert ID, prefixed `dspa_`.
 
-  <Expandable title="child attributes">
-    <ResponseField name="billing_reason" type="BillingReasons | null" required>
-      The machine-readable reason this charge was created, such as initial subscription purchase, renewal cycle, or one-time payment.
+**account\_id** `string | null` *required*
 
-      Available options: `subscription_create`, `subscription_cycle`, `subscription_update`, `one_time`, `manual`, `subscription`
-    </ResponseField>
+The account the alerted payment belongs to, prefixed `biz_`. `null` while the
+alert is unmatched.
 
-    <ResponseField name="card_brand" type="CardBrands | null" required>
-      Card network reported by the processor (e.g., 'visa', 'mastercard', 'amex'). Present only when the payment method type is 'card'.
+**amount** `number` *required*
 
-      Available options: `mastercard`, `visa`, `amex`, `discover`, `unionpay`, `jcb`, `diners`, `link`, `troy`, `visadankort`, `visabancontact`, `china_union_pay`, `rupay`, `jcbrupay`, `elo`, `maestro`, `tarjeta_naranja`, `cirrus`, `nspk_mir`, `verve`, `ebt`, `private_label`, `local_brand`, `uatp`, `wexcard`, `uzcard`, `meeza`, `hrg_store_card`, `girocard`, `fuel_card`, `dankort`, `carnet`, `atm_card`, `china_union_payuzcard`, `codensa`, `cabal`, `hipercard`, `jcblankapay`, `cmi`, `aura`, `accel`, `culiance`, `nyce`, `pulse`, `star`, `unknown`
-    </ResponseField>
+The alerted amount, in whole units of `currency`. This is what the issuer
+reported, which can differ from the payment's own amount.
 
-    <ResponseField name="card_last4" type="string | null" required>
-      The last four digits of the card used to make this payment. Null if the payment was not made with a card.
+**auto\_refunded** `boolean` *required*
 
-      Example: `4242`
-    </ResponseField>
+Whether Whop automatically refunded the alerted payment. Reflects the payment,
+so it can be `true` for a refund issued by another flow (RDR, resolution) on
+the same payment.
 
-    <ResponseField name="created_at" type="string<date-time>" required>
-      The datetime the payment was created.
+**card\_brand** `string | null` *required*
 
-      Example: `2023-12-01T05:00:00.401Z`
-    </ResponseField>
+The card network as reported by the issuer, lowercased, such as `visa` or
+`mastercard`. `unknown` when the report carries neither a network nor a
+recognizable BIN.
 
-    <ResponseField name="currency" type="Currencies" required>
-      The three-letter ISO currency code for this payment (e.g., 'usd', 'eur').
+**created\_at** `string` *required*
 
-      Available options: `usd`, `sgd`, `inr`, `aud`, `brl`, `cad`, `dkk`, `eur`, `nok`, `gbp`, `sek`, `chf`, `hkd`, `huf`, `jpy`, `mxn`, `myr`, `pln`, `czk`, `nzd`, `aed`, `eth`, `ape`, `cop`, `ron`, `thb`, `bgn`, `idr`, `dop`, `php`, `try`, `krw`, `twd`, `vnd`, `pkr`, `clp`, `uyu`, `ars`, `zar`, `dzd`, `tnd`, `mad`, `kes`, `kwd`, `jod`, `all`, `xcd`, `amd`, `bsd`, `bhd`, `bob`, `bam`, `khr`, `crc`, `xof`, `egp`, `etb`, `gmd`, `ghs`, `gtq`, `gyd`, `ils`, `jmd`, `mop`, `mga`, `mur`, `mdl`, `mnt`, `nad`, `ngn`, `mkd`, `omr`, `pyg`, `pen`, `qar`, `rwf`, `sar`, `rsd`, `lkr`, `tzs`, `ttd`, `uzs`, `rub`, `btc`, `cny`, `usdt`, `kzt`, `awg`, `whop_usd`, `xau`
-    </ResponseField>
+When Whop received the alert, as an ISO 8601 timestamp.
 
-    <ResponseField name="dispute_alerted_at" type="string<date-time> | null" required>
-      When an alert came in that this transaction will be disputed
+**currency** `string` *required*
 
-      Example: `2023-12-01T05:00:00.401Z`
-    </ResponseField>
+Three-letter ISO currency code of the alerted amount.
 
-    <ResponseField name="id" type="string" required>
-      The unique identifier for the payment.
+**fee** `object | null` *required*
 
-      Example: `pay_xxxxxxxxxxxxxx`
-    </ResponseField>
+The alert fee charged to the account, in the currency it was collected in. `null` when `fee_charged` is false.
 
-    <ResponseField name="member" type="object | null" required>
-      The member attached to this payment.
+> [accordion] Properties
+>
+> **amount** `string` *required*
+>
+> The amount in major units, as an exact decimal string. For example, `"10.00"`
+> is ten dollars. It is a string so that no float rounds it in transit.
+>
+> **currency** `string` *required*
+>
+> Three-letter ISO 4217 currency code, lowercase.
+>
+> **decimals** `integer` *required*
+>
+> How many decimal places the amount carries. This is the precision the charge
+> itself runs at.
+>
+> **display\_decimals** `integer` *required*
+>
+> How many decimal places to SHOW. Usually equal to `decimals`, and deliberately not always: COP is charged in centavos but written in whole pesos, so it is `2` and `0`. Format the number in your own locale using this.
 
-      <Expandable title="child attributes">
-        <ResponseField name="id" type="string" required>
-          The unique identifier for the company member.
-        </ResponseField>
+**fee\_charged** `boolean` *required*
 
-        <ResponseField name="phone" type="string | null" required>
-          The phone number for the member, if available.
-        </ResponseField>
-      </Expandable>
-    </ResponseField>
+Whether Whop charged the account an alert fee for this one. Always `false` for
+`early_fraud_warning`, which Whop is not billed for and never passes on.
 
-    <ResponseField name="membership" type="object | null" required>
-      The membership attached to this payment.
+**issuer** `string | null` *required*
 
-      <Expandable title="child attributes">
-        <ResponseField name="id" type="string" required>
-          The unique identifier for the membership.
+Deprecated: always `null` outside Whop's own dashboard. Name of the bank that
+issued the card and filed the report. DEPRECATED: Always null outside Whop's
+own dashboard.
 
-          Example: `mem_xxxxxxxxxxxxxx`
-        </ResponseField>
+**payment\_id** `string | null` *required*
 
-        <ResponseField name="status" type="MembershipStatus" required>
-          The state of the membership.
+The payment the issuer reported, prefixed `pay_`. `null` when Whop could not
+match the report to a payment.
 
-          Available options: `trialing`, `active`, `past_due`, `completed`, `canceled`, `expired`, `unresolved`, `drafted`, `canceling`
-        </ResponseField>
-      </Expandable>
-    </ResponseField>
+**product\_id** `string | null` *required*
 
-    <ResponseField name="paid_at" type="string<date-time> | null" required>
-      The time at which this payment was successfully collected. Null if the payment has not yet succeeded. As a Unix timestamp.
+The product the alerted payment was for, prefixed `prod_`.
 
-      Example: `2023-12-01T05:00:00.401Z`
-    </ResponseField>
+**reason** `string | null` *required*
 
-    <ResponseField name="payment_method_type" type="PaymentMethodTypes | null" required>
-      The type of payment instrument used for this payment (e.g., card, Cash App, iDEAL, Klarna, crypto). Null when the processor does not supply a type.
+What the cardholder claims. `fraud` when they say they didn't make the payment: always for an `early_fraud_warning`, and for Ethoca fraud alerts and Visa RDR cases filed under a fraud reason. `customer_dispute` when they made the payment but dispute it, such as a product not received or a canceled subscription. `null` when the alert carries no claim, such as an issuer's request for transaction documents.
 
-      Available options: `acss_debit`, `addi`, `affirm`, `afterpay_clearpay`, `alipay`, `alipayhk`, `alma`, `amazon_pay`, `apple`, `apple_pay`, `au_bank_transfer`, `au_becs_debit`, `bacs_debit`, `bancolombia`, `bancontact`, `bank_wire`, `billie`, `blik`, `boleto`, `bre_b`, `ca_bank_transfer`, `capchase_pay`, `card`, `card_installments_three`, `card_installments_six`, `card_installments_twelve`, `cashapp`, `claritypay`, `coinbase`, `crypto`, `custom`, `customer_balance`, `demo_pay`, `efecty`, `eps`, `eu_bank_transfer`, `fpx`, `flex_pay`, `gb_bank_transfer`, `gcash`, `giropay`, `google_pay`, `gopay`, `grabpay`, `id_bank_transfer`, `ideal`, `interac`, `kakao_pay`, `klarna`, `klarna_pay_now`, `konbini`, `kr_card`, `kr_market`, `kriya`, `kueski`, `link`, `mb_way`, `m_pesa`, `mercado_pago`, `mercado_pago_ar`, `mercado_pago_mx`, `mobilepay`, `modo`, `mondu`, `multibanco`, `naver_pay`, `nequi`, `netbanking`, `ng_bank`, `ng_bank_transfer`, `ng_card`, `ng_market`, `ng_ussd`, `ng_wallet`, `nupay`, `nz_bank_account`, `oney`, `oney_3x`, `oney_4x`, `opay`, `oxxo`, `p24`, `pago_efectivo`, `pse`, `pay_by_bank`, `payco`, `paynow`, `paypal`, `paypay`, `payto`, `pix`, `platform_balance`, `promptpay`, `qris`, `rapipago`, `rechnung`, `revolut_pay`, `samsung_pay`, `satispay`, `scalapay`, `sencillito`, `sepa_debit`, `sequra`, `servipag`, `sezzle`, `shop_pay`, `shopeepay`, `sofort`, `south_korea_market`, `spei`, `splitit`, `sunbit`, `swish`, `tabby`, `tamara`, `touch_n_go`, `twint`, `upi`, `us_bank_account`, `us_bank_transfer`, `venmo`, `verve`, `vipps`, `webpay`, `wechat_pay`, `yape`, `zip`, `coinflow`, `unknown`
-    </ResponseField>
+Available options: `fraud`, `customer_dispute`
 
-    <ResponseField name="subtotal" type="number | null" required>
-      The subtotal to show to the creator (excluding buyer fees).
+**reported\_at** `string` *required*
 
-      Example: `6.9`
-    </ResponseField>
+When the issuer filed the report, as an ISO 8601 timestamp. Earlier than
+`created_at`, which is when Whop received it.
 
-    <ResponseField name="total" type="number | null" required>
-      The total to show to the creator (excluding buyer fees).
+**source** `string | null` *required*
 
-      Example: `6.9`
-    </ResponseField>
+The network program that sent the alert, which `type` alone doesn't tell apart. `ethoca` for Mastercard Ethoca, `cdrn` for Visa Verifi CDRN, `rdr` for Visa RDR, `tc40` / `safe` for a Visa / Mastercard fraud report, `paypal` for a PayPal alert. `null` when the network didn't say.
 
-    <ResponseField name="usd_total" type="number | null" required>
-      The total in USD to show to the creator (excluding buyer fees).
+Available options: `ethoca`, `cdrn`, `rdr`, `tc40`, `safe`, `paypal`
 
-      Example: `6.9`
-    </ResponseField>
+**transaction\_at** `string | null` *required*
 
-    <ResponseField name="user" type="object | null" required>
-      The user that made this payment.
+When the reported transaction was made, as an ISO 8601 timestamp — falls back
+to when the matched payment was made if the issuer's own report didn't carry
+one. Should not be `null` in practice; treat one as a data issue rather than
+expected behavior.
 
-      <Expandable title="child attributes">
-        <ResponseField name="email" type="string | null" required>
-          The user's email address. Requires the member:email:read permission to access. Null if not authorized.
+**type** `string` *required*
 
-          Example: `john.doe@example.com`
-        </ResponseField>
+What the issuer sent. `early_fraud_warning` is a fraud report on a settled payment (Visa TC40 / Mastercard SAFE) — refunding still avoids the chargeback, and Whop never charges a fee for one. `dispute_alert` is a pre-dispute notice from the issuer's alert network, which Whop pays for and passes on as a fee. `rapid_dispute_resolution` is a Visa RDR case the network already closed by refunding the payment — nothing is left to act on.
 
-        <ResponseField name="id" type="string" required>
-          The unique identifier for the user.
+Available options: `early_fraud_warning`, `dispute_alert`, `rapid_dispute_resolution`
 
-          Example: `user_xxxxxxxxxxxxx`
-        </ResponseField>
+**updated\_at** `string` *required*
 
-        <ResponseField name="name" type="string | null" required>
-          The user's display name shown on their public profile.
+When the alert was last changed, as an ISO 8601 timestamp.
 
-          Example: `John Doe`
-        </ResponseField>
+```json DisputeAlert theme={null}
+{
+	"id": "dspa_xxxxxxxxxxxxx",
+	"type": "dispute_alert",
+	"source": "ethoca",
+	"reason": "fraud",
+	"amount": 69.95,
+	"currency": "usd",
+	"card_brand": "visa",
+	"issuer": null,
+	"account_id": "biz_xxxxxxxxxxxxxx",
+	"payment_id": "pay_xxxxxxxxxxxxxx",
+	"product_id": "prod_xxxxxxxxxxxxx",
+	"fee_charged": true,
+	"fee": {
+		"amount": "20.00",
+		"currency": "usd",
+		"decimals": 2,
+		"display_decimals": 2
+	},
+	"auto_refunded": false,
+	"reported_at": "2026-08-10T17:37:09.000Z",
+	"transaction_at": "2026-08-02T00:00:00.000Z",
+	"created_at": "2026-08-10T21:39:26.668Z",
+	"updated_at": "2026-08-10T21:39:28.137Z"
+}
+```
 
-        <ResponseField name="username" type="string" required>
-          The user's unique username shown on their public profile.
 
-          Example: `johndoe42`
-        </ResponseField>
-      </Expandable>
-    </ResponseField>
-  </Expandable>
-</ResponseField>
+## Related topics
 
-<ResponseField name="transaction_date" type="string<date-time> | null" required>
-  The date of the original transaction.
-
-  Example: `2023-12-01T05:00:00.401Z`
-</ResponseField>
+- [Dispute Alert](https://docs.whop.com/api-reference/legacy/dispute-alerts/dispute-alert.md)
+- [List dispute alerts](https://docs.whop.com/api-reference/legacy/dispute-alerts/list-dispute-alerts.md)
+- [Retrieve dispute alert](https://docs.whop.com/api-reference/legacy/dispute-alerts/retrieve-dispute-alert.md)

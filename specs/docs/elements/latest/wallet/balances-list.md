@@ -2,242 +2,253 @@
 > Fetch the complete documentation index at: https://docs.whop.com/llms.txt
 > Use this file to discover all available pages before exploring further.
 
+> ## Agent Instructions
+> Treat these docs and the Whop MCP server as the source of truth for Whop API behavior. Don't infer endpoint behavior from marketing pages.
+> MCP server: connect https://mcp.whop.com/mcp (streamable HTTP, browser sign-in, no API key in the client config) to search these docs and read or change live Whop data. Setup: https://docs.whop.com/developer/guides/ai_and_mcp.md
+> Whop CLI: install with `curl -fsSL https://whop.com/install.sh | sh` to scaffold, run, and deploy Whop apps and websites. It acts on production, not the sandbox. Overview: https://docs.whop.com/cli/overview.md Agent mode: https://docs.whop.com/cli/agent-mode.md
+> Hosting: Whop serves a site or app from the build `whop apps deploy` uploads, with rollbacks, secrets, and server logs. Guide: https://docs.whop.com/developer/websites/hosting.md
+> Plugins: in Claude Code, run `/plugin marketplace add whopio/plugins`, then `/plugin install whop@whop`. Guide: https://docs.whop.com/developer/guides/plugins/claude-code.md Every agent tool: https://docs.whop.com/developer/ai/overview.md
+> Environments: build and test in the sandbox (API `https://sandbox-api.whop.com/api/v1`, keys at https://sandbox.whop.com/dashboard/developer, SDK environment `Sandbox`; no real money). Production (API `https://api.whop.com/api/v1`, keys at https://whop.com/dashboard/developer, SDK environment `Production`, the SDK default) moves real money, so use it only at launch. The two share no accounts, keys, products, or webhooks, and their keys look identical: never mix them. Sandbox guide: https://docs.whop.com/developer/guides/sandbox.md Comparison: https://docs.whop.com/developer/quickstart.md
+> API: send `Authorization: Bearer <API_KEY>` from your server only, and pin a dated version with the `Api-Version-Date` header. OpenAPI spec: https://api.whop.com/api/v1/openapi.json
+> Which API: build on the Current API, whose pages live under https://docs.whop.com/api-reference/ (start at https://docs.whop.com/api-reference/overview.md). Pages under /api-reference/legacy/ are the Legacy API. Use one only when https://docs.whop.com/api-reference/stability.md lists the resource as Legacy-only.
+
 # ListElement
 
 > The holdings behind an account's balance. Every currency and token gets its own row, showing its name and its value in dollars, largest first. Rows can report which one the viewer tapped, so you can open your own screen for it. When `openHoldingOnSelect` is on, a row click shows that holding's balance page in place of this unit's chart and list.
 
-<Info>This page documents `@whop/elements@1.1.0` and `@whop/elements-react@1.1.0`.</Info>
+> [!NOTE]
+>
+> This page documents `@whop/elements@1.10.0` and `@whop/elements-react@1.10.0`.
 
 *Since `v1.0.0`.*
 
-<div data-whop-platform="web">
-  Mounts inside [`Balances`](/elements/latest/wallet/balances), in [`Wallet`](/elements/latest/wallet/overview). `accountId` and `openHoldingOnSelect` come from `Wallet`. Pass props and callbacks through the create options or React props.
-</div>
+Mounts inside [`Balances`](https://docs.whop.com/elements/latest/wallet/balances), in [`Wallet`](https://docs.whop.com/elements/latest/wallet/overview). `accountId` and `openHoldingOnSelect` come from `Wallet`. Pass props and callbacks through the create options or React props.
 
-<div data-whop-platform="swift" style={{ display: "none" }}>
-  Mounts anywhere in your view hierarchy. Takes an `accountId` and loads its own data; pass a closure too and the rows become tappable. The root is a `VStack`, so it sizes to its content and fills the width you give it.
-</div>
+Mounts anywhere in your view hierarchy. Takes an `accountId` and loads its own data; pass a closure too and the rows become tappable. The root is a `VStack`, so it sizes to its content and fills the width you give it.
 
-<div data-whop-split style={{ display: "flex", gap: "1.5rem", alignItems: "flex-start", flexWrap: "wrap" }}>
-  <div style={{ flex: "1 1 26rem", minWidth: 0 }}>
-    <div data-whop-usage="wallet/balances-list">
-      <CodeGroup>
-        ```tsx React theme={null}
-        import { WhopElements, Wallet, Balances, ListElement } from "@whop/elements-react";
-        import { loadWhop } from "@whop/elements";
+```tsx React theme={null}
+import { WhopElements, Wallet, Balances, ListElement } from "@whop/elements-react";
+import { loadWhop } from "@whop/elements";
 
-        function Example() {
-          return (
-            <WhopElements elements={loadWhop()}>
-              <Wallet /* options */>
-                <Balances>
-                  <ListElement onBalanceSelected={(e) => console.log(e)} onAccountSelected={(e) => console.log(e)} />
-                </Balances>
-              </Wallet>
-            </WhopElements>
-          );
+function Example() {
+  return (
+    <WhopElements elements={loadWhop()}>
+      <Wallet /* options */>
+        <Balances>
+          <ListElement onBalanceSelected={(e) => console.log(e)} onAccountSelected={(e) => console.log(e)} onCreditsSelected={(e) => console.log(e)} />
+        </Balances>
+      </Wallet>
+    </WhopElements>
+  );
+}
+```
+
+```html JavaScript theme={null}
+<script src="https://cdn.whop.com/elements/amber/elements.js" data-whop-elements></script>
+<script type="module">
+  const wallet = window.WhopElements().wallet.create({ /* options */ });
+  const balances = wallet.create('balances', { /* options */ });
+  balances.create('list', {
+    onBalanceSelected: (e) => console.log(e),
+    onAccountSelected: (e) => console.log(e),
+    onCreditsSelected: (e) => console.log(e)
+  }).mount('#wallet-balances-list');
+</script>
+```
+
+```swift Swift theme={null}
+import SwiftUI
+import WhopElements
+
+// WhopSDK.configure(tokenProvider:) runs once at app launch. See Getting started.
+struct WalletScreen: View {
+    var body: some View {
+        ListElement(
+            accountId: "biz_xxxx"
+        ) { balance in
+            print(balance.symbol)
         }
-        ```
-
-        ```html JavaScript theme={null}
-        <script src="https://cdn.whop.com/elements/amber/elements.js" data-whop-elements></script>
-        <script type="module">
-          const wallet = window.WhopElements().wallet.create({ /* options */ });
-          const balances = wallet.create('balances', { /* options */ });
-          balances.create('list', {
-            onBalanceSelected: (e) => console.log(e),
-            onAccountSelected: (e) => console.log(e)
-          }).mount('#wallet-balances-list');
-        </script>
-        ```
-
-        ```swift Swift theme={null}
-        import SwiftUI
-        import WhopElements
-
-        // WhopSDK.configure(tokenProvider:) runs once at app launch. See Getting started.
-        struct WalletScreen: View {
-            var body: some View {
-                ListElement(
-                    accountId: "biz_xxxx"
-                ) { balance in
-                    print(balance.symbol)
-                }
-            }
-        }
-        ```
-      </CodeGroup>
-    </div>
-  </div>
-
-  <div style={{ flex: "1 1 20rem", minWidth: 0 }}>
-    <div data-whop-platform="web">
-      <div data-whop-demo-shell style={{ position: "relative", minHeight: "320px", transition: "min-height 200ms ease" }}>
-        <div data-whop-demo-skeleton style={{ position: "absolute", inset: "0", borderRadius: "12px", background: "rgba(140, 140, 140, 0.12)", pointerEvents: "none", transition: "opacity 200ms ease" }} />
-
-        <div data-whop-demo-native="element:balances/list" data-whop-elements-version="1.1.0" style={{ position: "relative" }} />
-      </div>
-
-      <p style={{ fontSize: "0.8125rem", opacity: 0.7 }}>Example data. [Open the Playground](/elements/latest/wallet/overview#playground).</p>
-    </div>
-
-    <div data-whop-platform="swift" style={{ display: "none" }}>
-      <div style={{ width: "22rem", maxWidth: "100%" }}>
-        <div data-whop-simulator-shell className="whop-ios-simulator" style={{ position: "relative", aspectRatio: "390 / 800", overflow: "hidden" }}>
-          <iframe src={"https://app.revyl.ai/embed/f128a268-f5e0-47c1-8919-86e4f04d6876?controls=0"} title="ListElement running on an iPhone simulator" loading="lazy" allow="fullscreen; clipboard-read; clipboard-write" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", border: 0, background: "transparent", display: "block" }} />
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div data-whop-platform="web">
-  ## Props
-
-  <ResponseField name="accessToken" type="string">
-    A scoped token for the read. An account needs `company:balance:read`; a user's holdings or owned-account list needs `user:balance:read`. Mint it on your server with `POST /api/v1/access_tokens`. Without it the read uses the viewer's own session, which only works same-origin.
-  </ResponseField>
-
-  <ResponseField name="includeOwnedAccounts" type="boolean">
-    For a user's `user_…` account, list their personal balance followed by every owned account the backend returns instead of listing the holdings inside their personal account. Ignored for an account. Defaults to `false`.
-  </ResponseField>
-
-  <ResponseField name="showSourceCurrency" type="boolean">
-    Show each row in the currency it is held in (€4.20, 0.00000009 cbBTC) and put the dollar value underneath. Off by default, so every row is in dollars. Defaults to `false`.
-  </ResponseField>
-
-  <ResponseField name="showUsdEquivalent" type="boolean">
-    Keep the dollar value under a holding shown in its own currency. Only applies when `showSourceCurrency` is on. Defaults to `true`.
-  </ResponseField>
-
-  <ResponseField name="showPersonalAccount" type="boolean">
-    Keep the personal row when `includeOwnedAccounts` is on. Turn it off if your app has no personal account to open. Defaults to `true`.
-  </ResponseField>
-
-  <ResponseField name="maxItems" type="number">
-    Show at most this many holding rows, largest first. When there are more, the list gains a Show all balances control that expands the rest in place. Without it every holding is listed.
-  </ResponseField>
-
-  ## Events
-
-  Pass callbacks in the create options or React props.
-
-  ### `onBalanceSelected`
-
-  A holding row was clicked, with `includeOwnedAccounts` off. `holding` is `usd` for the combined dollar row, otherwise the holding symbol (`cbBTC`, `EUR`), and `kind` tells you which of the three it is so you can route without classifying symbols yourself. The element never navigates.
-
-  **Signature:** `((payload: { holding: string; kind: "usd" | "cash" | "asset"; }) => void)`
-
-  ### `onAccountSelected`
-
-  An account row was clicked, with `includeOwnedAccounts` on. `accountId` is the personal `user_…` tag or an owned `biz_…` tag, and `kind` lets you route without inspecting it. The element never navigates.
-
-  **Signature:** `((payload: { accountId: string; kind: "personal" | "business"; }) => void)`
-
-  ### `onLoaderStart`
-
-  Runs after the loading skeleton first paints and before `onReady`.
-
-  **Signature:** `(() => void)`
-
-  ### `onReady`
-
-  Runs after the element's first complete paint.
-
-  **Signature:** `(() => void)`
-
-  ### `onError`
-
-  Runs when the element fails to load or crashes. The fallback remains visible. Use `code` for programmatic handling. `sourceKey` identifies a failed host-state source.
-
-  **Signature:** `((e: { message: string; code?: string | undefined; sourceKey?: string | undefined; }) => void)`
-
-  ## Methods
-
-  Call these on the handle returned by `create`, or through a React `ref`.
-
-  ### `mount`
-
-  Mounts the element in `target` and starts loading. React components mount themselves.
-
-  **Signature:** `(target: string | HTMLElement) => void`
-
-  ### `destroy`
-
-  Removes the element and releases its frame and subscriptions. You can call it more than once. React removes the element automatically.
-
-  **Signature:** `() => void`
-
-  ### `update`
-
-  Merges new props into the mounted element. In React, change the component props instead.
-
-  **Signature:** `(options: Partial<ListElementProps>) => void`
-
-  ## Styling
-
-  Style these parts through `appearance.classes`. Use camel case or kebab case for property names and include units. Page stylesheets can't reach the element's frame. The framework validates each declaration before injecting it.
-
-  | Class                           | Targets                                                                      |
-  | ------------------------------- | ---------------------------------------------------------------------------- |
-  | `.whop-ActivityRow`             | One ledger activity row — its icon, title, timestamp, and amount             |
-  | `.whop-ActivitySurface`         | The activity feed — title, filters, and up to every fetched row              |
-  | `.whop-BalanceBreakdownSurface` | A currency balance total, segmented bar, and amount rows                     |
-  | `.whop-BalanceRow`              | One balance row — its icon, name, value and chevron                          |
-  | `.whop-BalancesSurface`         | The balances list — one row per holding or account                           |
-  | `.whop-CashBalanceSurface`      | The holding balance page — back, title, amount, split, actions, and activity |
-
-  ```ts theme={null}
-  const wallet = whop.wallet.create({
-    appearance: {
-      classes: {
-        'whop-ActivityRow': { borderRadius: '8px', fontWeight: '600' },
-        'whop-ActivitySurface': { borderRadius: '8px', fontWeight: '600' },
-        'whop-BalanceBreakdownSurface': { borderRadius: '8px', fontWeight: '600' }
-      }
     }
-  });
+}
+```
 
-  // 6 classes use this shape
-  wallet.update({
-    appearance: { classes: { 'whop-ActivityRow': { fontWeight: '700' } } }
-  });
-  ```
+Example data. [Open the Playground](https://docs.whop.com/elements/latest/wallet/overview#playground).
 
-  In React, pass `appearance` to `<Wallet>`. Set it globally with `WhopElements({ appearance })`.
-</div>
+[ListElement running on an iPhone simulator](https://app.revyl.ai/embed/f128a268-f5e0-47c1-8919-86e4f04d6876?controls=0)
 
-<div data-whop-platform="swift" style={{ display: "none" }}>
-  ## Parameters
+## Props
 
-  <ResponseField name="accountId" type="String" required>
-    The account whose money the view reads. Use an account ID prefixed `biz_`. A user ID prefixed `user_` reads the viewer's own balance and needs viewer authentication (`WhopSDK.configureWithOAuth`), not an account token.
-  </ResponseField>
+**accessToken** `string`
 
-  <ResponseField name="onBalanceSelected" type="((WalletBalance) -> Void)?">
-    Called with the row the viewer tapped. Omit it and the rows render without chevrons, and tapping does nothing.
-  </ResponseField>
+A scoped token for the read. An account needs `company:balance:read`; a user's holdings or owned-account list needs `user:balance:read`. Mint it on your server with `POST /api/v1/access_tokens`. Without it the read uses the viewer's own session, which only works same-origin.
 
-  ## `WalletBalance`
+**includeOwnedAccounts** `boolean`
 
-  What a selection hands back:
+For a user's `user_…` account, list their personal balance followed by every owned account the backend returns instead of listing the holdings inside their personal account. Ignored for an account. Defaults to `false`.
 
-  * `id: String`: stable per row
-  * `symbol: String`: `USD`, `BTC`, …
-  * `displayName: String`: the name shown on the row
-  * `amountUsd: Decimal`: the row's value in dollars
-  * `isCrypto: Bool`: a crypto holding rather than fiat
+**showSourceCurrency** `boolean`
 
-  ## States
+Show each row in the currency it is held in (€4.20, 0.00000009 cbBTC) and put the dollar value underneath. Off by default, so every row is in dollars. Defaults to `false`.
 
-  Shows two placeholder rows while the balances load. An account ID that can't be resolved shows `Couldn't load this account.` If the balance read itself fails, the list renders empty rather than showing an error.
+**showUsdEquivalent** `boolean`
 
-  ## Good to know
+Keep the dollar value under a holding shown in its own currency. Only applies when `showSourceCurrency` is on. Defaults to `true`.
 
-  * It doesn't scroll on its own, so put it in a `ScrollView` when it shares a screen with other content.
-  * Pairs with [`BalanceElement`](/elements/latest/wallet/balances-balance#swift), which shows the same account's total and how it changed.
+**showPersonalAccount** `boolean`
 
-  <Note>
-    Call `WhopSDK.configure(tokenProvider:)` once at launch. Views wait for the token. See [Getting started](/elements/latest/getting-started). Apply a theme with `.whopTheme(_:)`.
-  </Note>
-</div>
+Keep the personal row when `includeOwnedAccounts` is on. Turn it off if your app has no personal account to open. Defaults to `true`.
+
+**maxItems** `number`
+
+Show at most this many holding rows, largest first. When there are more, the list gains a Show all balances control that expands the rest in place. Without it every holding is listed.
+
+## Events
+
+Pass callbacks in the create options or React props.
+
+### `onBalanceSelected`
+
+A holding row was clicked, with `includeOwnedAccounts` off. `holding` is `usd` for the combined dollar row, otherwise the holding symbol (`cbBTC`, `EUR`), and `kind` tells you which of the three it is so you can route without classifying symbols yourself. The element never navigates.
+
+**payload** `object`
+
+**properties**
+
+**holding** `string` *required*
+
+**kind** `"usd" | "cash" | "asset"` *required*
+
+### `onAccountSelected`
+
+An account row was clicked, with `includeOwnedAccounts` on. `accountId` is the personal `user_…` tag or an owned `biz_…` tag, and `kind` lets you route without inspecting it. The element never navigates.
+
+**payload** `object`
+
+**properties**
+
+**accountId** `string` *required*
+
+**kind** `"personal" | "business"` *required*
+
+### `onCreditsSelected`
+
+The Whop credits row was clicked. Credits are spendable on Whop only and never withdrawable, so they sit outside every holding row; the host opens its own credits screen. The element never navigates.
+
+### `onLoaderStart`
+
+Runs after the loading skeleton first paints and before `onReady`.
+
+### `onReady`
+
+Runs after the element's first complete paint.
+
+### `onError`
+
+Runs when the element fails to load or crashes. The fallback remains visible. Use `code` for programmatic handling. `sourceKey` identifies a failed host-state source.
+
+**e** `object`
+
+**properties**
+
+**message** `string` *required*
+
+**code** `string`
+
+**sourceKey** `string`
+
+## Methods
+
+Call these on the handle returned by `create`, or through a React `ref`.
+
+### `mount`
+
+Mounts the element in `target` and starts loading. React components mount themselves.
+
+**Parameters**
+
+**target** `string | HTMLElement` *required*
+
+### `destroy`
+
+Removes the element and releases its frame and subscriptions. You can call it more than once. React removes the element automatically.
+
+### `update`
+
+Merges new props into the mounted element. In React, change the component props instead.
+
+**Parameters**
+
+**options** `Partial\<ListElementProps\>` *required*
+
+## Styling
+
+Style these parts through `appearance.classes`. Use camel case or kebab case for property names and include units. Page stylesheets can't reach the element's frame. The framework validates each declaration before injecting it.
+
+| Class | Targets |
+| - | - |
+| `.whop-ActivityRow` | One ledger activity row — its icon, title, timestamp, and amount |
+| `.whop-ActivitySurface` | The activity feed — title, filters, and up to every fetched row |
+| `.whop-BalanceBreakdownSurface` | A currency balance total, segmented bar, and amount rows |
+| `.whop-BalanceRow` | One balance row — its icon, name, value and chevron |
+| `.whop-BalancesSurface` | The balances list — one row per holding or account |
+| `.whop-CashBalanceSurface` | The holding balance page — back, title, amount, split, actions, and activity |
+| `.whop-PlatformCreditsRow` | Whop-issued credits — spendable on Whop only, never withdrawable |
+
+```ts theme={null}
+const wallet = whop.wallet.create({
+  appearance: {
+    classes: {
+      'whop-ActivityRow': { borderRadius: '8px', fontWeight: '600' },
+      'whop-ActivitySurface': { borderRadius: '8px', fontWeight: '600' },
+      'whop-BalanceBreakdownSurface': { borderRadius: '8px', fontWeight: '600' }
+    }
+  }
+});
+
+// 7 classes use this shape
+wallet.update({
+  appearance: { classes: { 'whop-ActivityRow': { fontWeight: '700' } } }
+});
+```
+
+In React, pass `appearance` to `<Wallet>`. Set it globally with `WhopElements({ appearance })`.
+
+## Parameters
+
+**accountId** `String` *required*
+
+The account whose money the view reads. Use an account ID prefixed `biz_`. A user ID prefixed `user_` reads the viewer's own balance and needs viewer authentication (`WhopSDK.configureWithOAuth`), not an account token.
+
+**onBalanceSelected** `((WalletBalance) -\> Void)?`
+
+Called with the row the viewer tapped. Omit it and the rows render without chevrons, and tapping does nothing.
+
+## `WalletBalance`
+
+What a selection hands back:
+
+* `id: String`: stable per row
+* `symbol: String`: `USD`, `BTC`, …
+* `displayName: String`: the name shown on the row
+* `amountUsd: Decimal`: the row's value in dollars
+* `isCrypto: Bool`: a crypto holding rather than fiat
+
+## States
+
+Shows two placeholder rows while the balances load. An account ID that can't be resolved shows `Couldn't load this account.` If the balance read itself fails, the list renders empty rather than showing an error.
+
+## Good to know
+
+* It doesn't scroll on its own, so put it in a `ScrollView` when it shares a screen with other content.
+* Pairs with [`BalanceElement`](https://docs.whop.com/elements/latest/wallet/balances-balance#swift), which shows the same account's total and how it changed.
+
+> [!NOTE]
+>
+> Call `WhopSDK.configure(tokenProvider:)` once at launch. Views wait for the token. See [Getting started](https://docs.whop.com/elements/latest/getting-started.md). Apply a theme with `.whopTheme(_:)`.
+
+
+## Related topics
+
+- [Getting Started with Elements](https://docs.whop.com/elements/latest/getting-started.md)
+- [BalanceElement](https://docs.whop.com/elements/latest/wallet/balances-balance.md)
+- [Balances](https://docs.whop.com/elements/latest/wallet/balances.md)

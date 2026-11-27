@@ -2,9 +2,19 @@
 > Fetch the complete documentation index at: https://docs.whop.com/llms.txt
 > Use this file to discover all available pages before exploring further.
 
+> ## Agent Instructions
+> Treat these docs and the Whop MCP server as the source of truth for Whop API behavior. Don't infer endpoint behavior from marketing pages.
+> MCP server: connect https://mcp.whop.com/mcp (streamable HTTP, browser sign-in, no API key in the client config) to search these docs and read or change live Whop data. Setup: https://docs.whop.com/developer/guides/ai_and_mcp.md
+> Whop CLI: install with `curl -fsSL https://whop.com/install.sh | sh` to scaffold, run, and deploy Whop apps and websites. It acts on production, not the sandbox. Overview: https://docs.whop.com/cli/overview.md Agent mode: https://docs.whop.com/cli/agent-mode.md
+> Hosting: Whop serves a site or app from the build `whop apps deploy` uploads, with rollbacks, secrets, and server logs. Guide: https://docs.whop.com/developer/websites/hosting.md
+> Plugins: in Claude Code, run `/plugin marketplace add whopio/plugins`, then `/plugin install whop@whop`. Guide: https://docs.whop.com/developer/guides/plugins/claude-code.md Every agent tool: https://docs.whop.com/developer/ai/overview.md
+> Environments: build and test in the sandbox (API `https://sandbox-api.whop.com/api/v1`, keys at https://sandbox.whop.com/dashboard/developer, SDK environment `Sandbox`; no real money). Production (API `https://api.whop.com/api/v1`, keys at https://whop.com/dashboard/developer, SDK environment `Production`, the SDK default) moves real money, so use it only at launch. The two share no accounts, keys, products, or webhooks, and their keys look identical: never mix them. Sandbox guide: https://docs.whop.com/developer/guides/sandbox.md Comparison: https://docs.whop.com/developer/quickstart.md
+> API: send `Authorization: Bearer <API_KEY>` from your server only, and pin a dated version with the `Api-Version-Date` header. OpenAPI spec: https://api.whop.com/api/v1/openapi.json
+> Which API: build on the Current API, whose pages live under https://docs.whop.com/api-reference/ (start at https://docs.whop.com/api-reference/overview.md). Pages under /api-reference/legacy/ are the Legacy API. Use one only when https://docs.whop.com/api-reference/stability.md lists the resource as Legacy-only.
+
 # Whop Cards
 
-> Spend your balance instantly and earn 5% cashback on select merchants
+> Spend your pending Whop balance instantly with a Visa card, earn 5% cashback at select merchants, add it to a mobile wallet, and issue cards to employees.
 
 Spend your balance instantly and earn 5% cashback on select merchants. No extra fees, no waiting.
 
@@ -39,30 +49,27 @@ Add your Whop Card to Apple Wallet or Google Wallet in seconds. Tap to pay anywh
 
 Issue cards to your team in seconds. Set custom spending limits per card to keep budgets in check.
 
-## For platforms
-
-Platforms can issue cards for their users via API and earn a portion of interchange, at no additional cost to the user.
-
 ## Next steps
 
-<CardGroup cols={2}>
-  <Card title="Supported regions" icon="globe" href="/whop-finance/supported-regions">
-    Check supported U.S. states and unsupported countries for consumer and business Whop Cards
-  </Card>
+> [card] [Supported regions](https://docs.whop.com/whop-finance/supported-regions.md)
+>
+> Check supported U.S. states and unsupported countries for consumer and business Whop Cards
 
-  <Card title="Treasury" icon="piggy-bank" href="/whop-finance/treasury">
-    Earn up to 6% APY on your Whop balance automatically
-  </Card>
+> [card] [Set up payouts](https://docs.whop.com/manage-your-business/manage-payouts/set-up-payouts.md)
+>
+> Connect a payout method and start moving money out of Whop
 
-  <Card title="Set up payouts" icon="money-bill-transfer" href="/manage-your-business/manage-payouts/set-up-payouts">
-    Connect a payout method and start moving money out of Whop
-  </Card>
+> [card] [Card declines & risk rules](https://docs.whop.com/whop-finance/card-declines-and-risk-rules.md)
+>
+> Understand why a card transaction was declined and which risk rules applied during authorization
 
-  <Card title="Card declines & risk rules" icon="ban" href="/whop-finance/card-declines-and-risk-rules">
-    Understand why a card transaction was declined and which risk rules applied during authorization
-  </Card>
+> [card] [Blocked categories & merchants](https://docs.whop.com/whop-finance/blocked-categories-and-merchants.md)
+>
+> See the merchant categories and merchants that Whop Cards block by default
 
-  <Card title="Blocked categories & merchants" icon="shield-halved" href="/whop-finance/blocked-categories-and-merchants">
-    See the merchant categories and merchants that Whop Cards block by default
-  </Card>
-</CardGroup>
+
+## Related topics
+
+- [Whop Card Supported Regions](https://docs.whop.com/whop-finance/supported-regions.md)
+- [Whop Ads](https://docs.whop.com/manage-your-business/growth-marketing/ads.md)
+- [Card Declines & Risk Rules](https://docs.whop.com/whop-finance/card-declines-and-risk-rules.md)

@@ -2,368 +2,19 @@
 > Fetch the complete documentation index at: https://docs.whop.com/llms.txt
 > Use this file to discover all available pages before exploring further.
 
+> ## Agent Instructions
+> Treat these docs and the Whop MCP server as the source of truth for Whop API behavior. Don't infer endpoint behavior from marketing pages.
+> MCP server: connect https://mcp.whop.com/mcp (streamable HTTP, browser sign-in, no API key in the client config) to search these docs and read or change live Whop data. Setup: https://docs.whop.com/developer/guides/ai_and_mcp.md
+> Whop CLI: install with `curl -fsSL https://whop.com/install.sh | sh` to scaffold, run, and deploy Whop apps and websites. It acts on production, not the sandbox. Overview: https://docs.whop.com/cli/overview.md Agent mode: https://docs.whop.com/cli/agent-mode.md
+> Hosting: Whop serves a site or app from the build `whop apps deploy` uploads, with rollbacks, secrets, and server logs. Guide: https://docs.whop.com/developer/websites/hosting.md
+> Plugins: in Claude Code, run `/plugin marketplace add whopio/plugins`, then `/plugin install whop@whop`. Guide: https://docs.whop.com/developer/guides/plugins/claude-code.md Every agent tool: https://docs.whop.com/developer/ai/overview.md
+> Environments: build and test in the sandbox (API `https://sandbox-api.whop.com/api/v1`, keys at https://sandbox.whop.com/dashboard/developer, SDK environment `Sandbox`; no real money). Production (API `https://api.whop.com/api/v1`, keys at https://whop.com/dashboard/developer, SDK environment `Production`, the SDK default) moves real money, so use it only at launch. The two share no accounts, keys, products, or webhooks, and their keys look identical: never mix them. Sandbox guide: https://docs.whop.com/developer/guides/sandbox.md Comparison: https://docs.whop.com/developer/quickstart.md
+> API: send `Authorization: Bearer <API_KEY>` from your server only, and pin a dated version with the `Api-Version-Date` header. OpenAPI spec: https://api.whop.com/api/v1/openapi.json
+> Which API: build on the Current API, whose pages live under https://docs.whop.com/api-reference/ (start at https://docs.whop.com/api-reference/overview.md). Pages under /api-reference/legacy/ are the Legacy API. Use one only when https://docs.whop.com/api-reference/stability.md lists the resource as Legacy-only.
+
 # Add Express Checkout
 
 > Put one-press Apple Pay and Google Pay buttons on your page with the Express Checkout element, straight from the browser, and fulfill from a webhook
-
-export const guide = {
-  "title": "Add express checkout",
-  "description": "Put one-press Apple Pay and Google Pay buttons on a product page with the Express Checkout element. Whop renders the wallets the device can pay with and confirms the payment for you. Your server only listens for the webhook.",
-  "categoryOrder": ["frontend", "backend"],
-  "steps": [{
-    "title": "Add the wallet buttons",
-    "subSteps": [[{
-      "match": {
-        "frontend": "react"
-      },
-      "title": "Install the packages",
-      "body": "Install the Whop Elements packages for React.",
-      "install": {
-        "npm": "npm install @whop/elements-react @whop/elements",
-        "pnpm": "pnpm add @whop/elements-react @whop/elements"
-      }
-    }, {
-      "match": {
-        "frontend": "html"
-      },
-      "title": "Add the script tag",
-      "body": "Load the Whop Elements script on the page that shows the buttons."
-    }], {
-      "title": "Mount the buttons",
-      "body": ["Mount `ExpressCheckoutElement` inside a `Checkout` handle and pass the `plan` to sell. The element renders only the wallets the buyer's device can pay with, best-native-first for the browser, and renders nothing where no wallet is available. Keep a regular checkout path on the page for those buyers.", "Pass `metadata`, such as your own order ID, on the handle. Whop copies it to the payment and to every webhook about it. Set `returnUrl` to a page you host over `https`. A finished purchase redirects the tab there, and so does a payment that needed a full-page step.", "Wallets open only on pages whose domain you registered as a payment method domain. Follow [Enable Apple Pay and Google Pay](/payments/apple-pay) once per domain, serve the page over `https`, and test on a real device with a wallet set up."]
-    }, {
-      "title": "Pick the wallets and layout",
-      "body": ["`wallets` limits which wallets may render, for example `[\"apple_pay\"]`. The element never shows a wallet the device or the checkout's payment method configuration can't back, so the list is a ceiling, not a promise.", "`layout` arranges the buttons. `auto` follows the container width, and `horizontal` or `vertical` forces one arrangement. `appearance` on the handle themes the element's outcome and error lines."]
-    }, {
-      "title": "Record the completion",
-      "body": ["A press opens the wallet sheet. When the buyer authorizes, Whop confirms the payment on the checkout session, and the sheet's checkmark follows that confirm. `onComplete` fires once the result stands, before any navigation to `returnUrl`. Use it for analytics and ad pixels.", "Don't fulfill from it. A checkout restored on a later page load fires it again for the same result. A payment that left for a full-page step completes on the return page instead."]
-    }]
-  }, {
-    "title": "Handle the return page",
-    "subSteps": [{
-      "title": "Read the outcome from the URL",
-      "body": ["Most wallet payments settle inline, and a payment that still needs a step runs it in a dialog when the step fits in one. A step that can only run full page, such as a bank redirect, leaves the page and returns the buyer to `returnUrl` **whatever happened**. Whop appends two query parameters. `payment` is the `pay_` ID. `status` is `succeeded` when the buyer paid, and `failed` or `canceled` when they didn't.", "Your own parameters, such as `order`, stay on the URL. The element reports inline declines itself, so the return page is the one place where your site sees a failed off-site step."]
-    }, {
-      "title": "Show the right face",
-      "body": ["Branch on `status`. `succeeded` gets the thank-you page. `failed` and `canceled` get a message that the buyer wasn't charged and a link back to the product. Anything else, such as `processing`, means the charge is still pending. Tell the buyer you'll confirm by email.", "Treat the page as a display of the outcome, not as proof of payment. Anyone can type `status=succeeded` into a URL. Access, downloads, and order fulfillment come from the `payment.succeeded` webhook on your server."]
-    }]
-  }, {
-    "title": "Fulfill from your server",
-    "subSteps": [[{
-      "match": {
-        "backend": "nextjs"
-      },
-      "title": "Install the Whop SDK",
-      "body": "The webhook helper ships with the Whop SDK. Install it on the server that receives the webhook.",
-      "install": {
-        "npm": "npm install @whop/sdk @vercel/functions",
-        "pnpm": "pnpm add @whop/sdk @vercel/functions"
-      }
-    }, {
-      "match": {
-        "backend": "express"
-      },
-      "title": "Install the Whop SDK",
-      "body": "The webhook helper ships with the Whop SDK. Install it on the server that receives the webhook.",
-      "install": {
-        "npm": "npm install @whop/sdk express",
-        "pnpm": "pnpm add @whop/sdk express"
-      }
-    }, {
-      "match": {
-        "backend": "python"
-      },
-      "title": "Install the Whop SDK",
-      "body": "The webhook helper ships with the Whop SDK. Install it on the server that receives the webhook.",
-      "install": {
-        "pip": "pip install whop-sdk fastapi",
-        "poetry": "poetry add whop-sdk fastapi"
-      }
-    }], {
-      "title": "Handle the payment webhook",
-      "body": ["Whop sends `payment.succeeded` to your webhook endpoint once the buyer has paid. Verify the signature with the SDK helper, then do the fulfillment work: mark the order paid, grant access, and send the email. A wallet payment reports `apple_pay` or `google_pay` in `payment_method_type`, and the payment carries the `metadata` you set on the Checkout handle.", "Fulfillment belongs here and nowhere else. The buyer can close the browser before your return page loads, a redirect can fail, and anyone can type a query parameter by hand. Follow the [Webhooks guide](/developer/guides/webhooks) to create the webhook and store its `ws_` secret as `WHOP_WEBHOOK_SECRET`."]
-    }]
-  }]
-};
-
-export const code = {
-  frontend: {
-    react: [{
-      code: `// [step:1.1:start]
-import { Checkout, ExpressCheckoutElement, WhopElements } from "@whop/elements-react";
-import { loadWhop } from "@whop/elements";
-// [step:1.1:end]
-
-export function BuyButton({ orderId }: { orderId: string }) {
-	return (
-		<WhopElements elements={loadWhop()}>
-			{/* [step:1.2:start] */}
-			<Checkout
-				plan="plan_xxxxxxxxxxxxx"
-				metadata={{ order_id: orderId }}
-				returnUrl={\`https://yoursite.com/checkout/return?order=\${orderId}\`}
-				// [step:1.2:end]
-				// [step:1.4:start]
-				onComplete={(completion) => {
-					if (completion.result === "payment") {
-						// Fire analytics or ad pixels here. Fulfill from the webhook, not from this callback.
-						console.log("Express checkout completed", completion.paymentId);
-					}
-				}}
-				// [step:1.4:end]
-			>
-				{/* [step:1.3:start] */}
-				<ExpressCheckoutElement layout="horizontal" wallets={["apple_pay", "google_pay"]} />
-				{/* [step:1.3:end] */}
-			</Checkout>
-		</WhopElements>
-	);
-}
-`,
-      filename: "BuyButton.tsx",
-      language: "tsx"
-    }, {
-      code: `export function CheckoutReturn() {
-	// [step:2.1:start]
-	// Whop appends \`payment\` and \`status\` to your returnUrl. Your own parameters (here \`order\`) survive.
-	const params = new URLSearchParams(window.location.search);
-	const paymentId = params.get("payment");
-	const status = params.get("status");
-	const orderId = params.get("order");
-	// [step:2.1:end]
-
-	// [step:2.2:start]
-	if (status === "succeeded") {
-		return (
-			<section>
-				<h1>Thanks for your order</h1>
-				<p>Payment {paymentId} is complete. A receipt is on its way to your email.</p>
-			</section>
-		);
-	}
-
-	if (status === "failed" || status === "canceled") {
-		return (
-			<section>
-				<h1>Your payment did not go through</h1>
-				<p>No money was taken. You can try again with another payment method.</p>
-				<a href={\`/checkout?order=\${orderId}\`}>Back to checkout</a>
-			</section>
-		);
-	}
-
-	return (
-		<section>
-			<h1>Confirming your payment</h1>
-			<p>Your payment is still being processed. We will email you as soon as it is confirmed.</p>
-		</section>
-	);
-	// [step:2.2:end]
-}
-`,
-      filename: "CheckoutReturn.tsx",
-      language: "tsx"
-    }],
-    html: [{
-      code: `<!DOCTYPE html>
-<html>
-  <head>
-    <!-- [step:1.1] -->
-    <script src="https://cdn.whop.com/elements/amber/elements.js" data-whop-elements></script>
-  </head>
-  <body>
-    <div id="express-checkout"></div>
-
-    <script type="module">
-      const orderId = new URLSearchParams(window.location.search).get("order");
-
-      // [step:1.2:start]
-      const checkout = window.WhopElements().checkout.create({
-        plan: "plan_xxxxxxxxxxxxx",
-        metadata: { order_id: orderId },
-        returnUrl: \`https://yoursite.com/checkout/return?order=\${orderId}\`,
-        // [step:1.2:end]
-        // [step:1.4:start]
-        onComplete: (completion) => {
-          if (completion.result === "payment") {
-            // Fire analytics or ad pixels here. Fulfill from the webhook, not from this callback.
-            console.log("Express checkout completed", completion.paymentId);
-          }
-        },
-        // [step:1.4:end]
-      });
-      // [step:1.3:start]
-      checkout
-        .create("expressCheckout", { layout: "horizontal", wallets: ["apple_pay", "google_pay"] })
-        .mount("#express-checkout");
-      // [step:1.3:end]
-    </script>
-  </body>
-</html>
-`,
-      filename: "buy.html",
-      language: "html"
-    }, {
-      code: `<!DOCTYPE html>
-<html>
-  <body>
-    <section id="succeeded" hidden>
-      <h1>Thanks for your order</h1>
-      <p>Payment <span id="payment-id"></span> is complete. A receipt is on its way to your email.</p>
-    </section>
-    <section id="failed" hidden>
-      <h1>Your payment did not go through</h1>
-      <p>No money was taken. You can try again with another payment method.</p>
-      <a id="retry" href="/checkout">Back to checkout</a>
-    </section>
-    <section id="pending" hidden>
-      <h1>Confirming your payment</h1>
-      <p>Your payment is still being processed. We will email you as soon as it is confirmed.</p>
-    </section>
-
-    <script type="module">
-      // [step:2.1:start]
-      // Whop appends \`payment\` and \`status\` to your returnUrl. Your own parameters (here \`order\`) survive.
-      const params = new URLSearchParams(window.location.search);
-      const paymentId = params.get("payment");
-      const status = params.get("status");
-      const orderId = params.get("order");
-      // [step:2.1:end]
-
-      // [step:2.2:start]
-      if (status === "succeeded") {
-        document.querySelector("#payment-id").textContent = paymentId;
-        document.querySelector("#succeeded").hidden = false;
-      } else if (status === "failed" || status === "canceled") {
-        document.querySelector("#retry").href = \`/checkout?order=\${orderId}\`;
-        document.querySelector("#failed").hidden = false;
-      } else {
-        document.querySelector("#pending").hidden = false;
-      }
-      // [step:2.2:end]
-    </script>
-  </body>
-</html>
-`,
-      filename: "return.html",
-      language: "html"
-    }]
-  },
-  backend: {
-    nextjs: [{
-      code: `// [step:3.1:start]
-import { waitUntil } from "@vercel/functions";
-import { unwrapWebhook } from "@whop/sdk/helpers";
-import type { NextRequest } from "next/server";
-// [step:3.1:end]
-
-export async function POST(request: NextRequest) {
-	// [step:3.2:start]
-	// Give the raw body. Parsing it first changes the bytes and the signature check fails.
-	const payload = await request.text();
-	const headers = Object.fromEntries(request.headers);
-
-	const event = unwrapWebhook(payload, {
-		headers,
-		key: process.env.WHOP_WEBHOOK_SECRET!,
-	});
-
-	if (event.type === "payment.succeeded") {
-		waitUntil(fulfillOrder(event.data));
-	}
-	// [step:3.2:end]
-
-	// Respond in less than 5 seconds, or Whop retries.
-	return new Response("OK", { status: 200 });
-}
-
-async function fulfillOrder(payment: Record<string, any>) {
-	// [step:3.2:start]
-	// metadata.order_id is the value you set on the Checkout handle.
-	const orderId = payment.metadata?.order_id;
-	console.log(\`[PAYMENT SUCCEEDED] \${payment.id} for order \${orderId}\`);
-	// Mark the order paid in your database and grant access here.
-	// [step:3.2:end]
-}
-`,
-      filename: "app/api/webhooks/whop/route.ts",
-      language: "typescript"
-    }],
-    express: [{
-      code: `// [step:3.1:start]
-import { unwrapWebhook } from "@whop/sdk/helpers";
-import express from "express";
-
-const app = express();
-// [step:3.1:end]
-
-// [step:3.2:start]
-// Read the raw body on this route: parsing it first changes the bytes and the signature check fails.
-app.post(
-	"/api/webhooks/whop",
-	express.raw({ type: "application/json" }),
-	(req, res) => {
-		const event = unwrapWebhook(req.body.toString("utf8"), {
-			headers: req.headers,
-			key: process.env.WHOP_WEBHOOK_SECRET!,
-		});
-
-		if (event.type === "payment.succeeded") {
-			// metadata.order_id is the value you set on the Checkout handle.
-			const orderId = event.data.metadata?.order_id;
-			console.log(\`[PAYMENT SUCCEEDED] \${event.data.id} for order \${orderId}\`);
-			// Mark the order paid in your database and grant access here.
-		}
-
-		// Respond in less than 5 seconds, or Whop retries.
-		res.sendStatus(200);
-	},
-);
-// [step:3.2:end]
-
-app.listen(3000);
-`,
-      filename: "server.ts",
-      language: "typescript"
-    }],
-    python: [{
-      code: `# [step:3.1:start]
-import os
-
-from fastapi import BackgroundTasks, FastAPI, Request, Response
-from whop_sdk.lib.verify_webhook import unwrap
-
-app = FastAPI()
-# [step:3.1:end]
-
-
-# [step:3.2:start]
-@app.post("/api/webhooks/whop")
-async def whop_webhook(request: Request, background: BackgroundTasks):
-    # Give the raw body. Parsing it first changes the bytes and the signature check fails.
-    payload = await request.body()
-
-    event = unwrap(payload, dict(request.headers), os.environ["WHOP_WEBHOOK_SECRET"])
-
-    if event["type"] == "payment.succeeded":
-        background.add_task(fulfill_order, event["data"])
-
-    # Respond in less than 5 seconds, or Whop retries.
-    return Response(status_code=200)
-
-
-def fulfill_order(payment):
-    # metadata.order_id is the value you set on the Checkout handle.
-    order_id = (payment.get("metadata") or {}).get("order_id")
-    print(f"[PAYMENT SUCCEEDED] {payment['id']} for order {order_id}")
-    # Mark the order paid in your database and grant access here.
-# [step:3.2:end]
-`,
-      filename: "server.py",
-      language: "python"
-    }]
-  }
-};
 
 Put one-press Apple Pay and Google Pay buttons on a product page with the Express Checkout element. Whop renders the wallets the device can pay with and confirms the payment for you. Your server only listens for the webhook.
 
@@ -389,11 +40,11 @@ Load the Whop Elements script on the page that shows the buttons.
 
 ### 1.2 Mount the buttons
 
-Mount `ExpressCheckoutElement` inside a `Checkout` handle and pass the `plan` to sell. The element renders only the wallets the buyer's device can pay with, best-native-first for the browser, and renders nothing where no wallet is available. Keep a regular checkout path on the page for those buyers.
+Mount `ExpressCheckoutElement` inside a `Checkout` handle and pass the variant through the existing `plan` property. The element renders only the wallets the buyer's device can pay with, best-native-first for the browser, and renders nothing where no wallet is available. Keep a regular checkout path on the page for those buyers.
 
 Pass `metadata`, such as your own order ID, on the handle. Whop copies it to the payment and to every webhook about it. Set `returnUrl` to a page you host over `https`. A finished purchase redirects the tab there, and so does a payment that needed a full-page step.
 
-Wallets open only on pages whose domain you registered as a payment method domain. Follow [Enable Apple Pay and Google Pay](/payments/apple-pay) once per domain, serve the page over `https`, and test on a real device with a wallet set up.
+Wallets open only on pages whose domain has Apple Pay ready. Follow [Enable Apple Pay and Google Pay](https://docs.whop.com/payments/apple-pay.md) once per domain, serve the page over `https`, and test on a real device with a wallet set up.
 
 ### 1.3 Pick the wallets and layout
 
@@ -463,7 +114,7 @@ poetry add whop-sdk fastapi
 
 Whop sends `payment.succeeded` to your webhook endpoint once the buyer has paid. Verify the signature with the SDK helper, then do the fulfillment work: mark the order paid, grant access, and send the email. A wallet payment reports `apple_pay` or `google_pay` in `payment_method_type`, and the payment carries the `metadata` you set on the Checkout handle.
 
-Fulfillment belongs here and nowhere else. The buyer can close the browser before your return page loads, a redirect can fail, and anyone can type a query parameter by hand. Follow the [Webhooks guide](/developer/guides/webhooks) to create the webhook and store its `ws_` secret as `WHOP_WEBHOOK_SECRET`.
+Fulfillment belongs here and nowhere else. The buyer can close the browser before your return page loads, a redirect can fail, and anyone can type a query parameter by hand. Follow the [Webhooks guide](https://docs.whop.com/developer/guides/webhooks.md) to create the webhook and store its `ws_` secret as `WHOP_WEBHOOK_SECRET`.
 
 ## Code
 
@@ -725,7 +376,14 @@ def fulfill_order(payment):
 
 ## Next steps
 
-* [Express Checkout element reference](/elements/latest/checkout/expressCheckout): every option, event, and styling hook on the element.
-* [Open a wallet sheet from your own button](/developer/guides/payment-request): render the button yourself and price the order yourself with the payment request resource.
-* [Enable Apple Pay and Google Pay](/payments/apple-pay): register and verify your domain as a payment method domain.
-* [Embed a checkout](/developer/guides/embed-checkout): the full checkout form, which already shows the wallet buttons above it.
+* [Express Checkout element reference](https://docs.whop.com/elements/latest/checkout/expressCheckout.md): every option, event, and styling hook on the element.
+* [Open a wallet sheet from your own button](https://docs.whop.com/developer/guides/payment-request.md): render the button yourself and price the order yourself with the payment request resource.
+* [Enable Apple Pay and Google Pay](https://docs.whop.com/payments/apple-pay.md): add Apple Pay to your domain.
+* [Embed a checkout](https://docs.whop.com/developer/guides/embed-checkout.md): the full checkout form, which already shows the wallet buttons above it.
+
+
+## Related topics
+
+- [Open a Wallet Sheet from Your Own Button](https://docs.whop.com/developer/guides/payment-request.md)
+- [Accept Payments](https://docs.whop.com/developer/guides/accept-payments.md)
+- [ExpressCheckoutElement](https://docs.whop.com/elements/latest/checkout/expressCheckout.md)

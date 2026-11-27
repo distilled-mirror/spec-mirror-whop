@@ -2,214 +2,207 @@
 > Fetch the complete documentation index at: https://docs.whop.com/llms.txt
 > Use this file to discover all available pages before exploring further.
 
+> ## Agent Instructions
+> Treat these docs and the Whop MCP server as the source of truth for Whop API behavior. Don't infer endpoint behavior from marketing pages.
+> MCP server: connect https://mcp.whop.com/mcp (streamable HTTP, browser sign-in, no API key in the client config) to search these docs and read or change live Whop data. Setup: https://docs.whop.com/developer/guides/ai_and_mcp.md
+> Whop CLI: install with `curl -fsSL https://whop.com/install.sh | sh` to scaffold, run, and deploy Whop apps and websites. It acts on production, not the sandbox. Overview: https://docs.whop.com/cli/overview.md Agent mode: https://docs.whop.com/cli/agent-mode.md
+> Hosting: Whop serves a site or app from the build `whop apps deploy` uploads, with rollbacks, secrets, and server logs. Guide: https://docs.whop.com/developer/websites/hosting.md
+> Plugins: in Claude Code, run `/plugin marketplace add whopio/plugins`, then `/plugin install whop@whop`. Guide: https://docs.whop.com/developer/guides/plugins/claude-code.md Every agent tool: https://docs.whop.com/developer/ai/overview.md
+> Environments: build and test in the sandbox (API `https://sandbox-api.whop.com/api/v1`, keys at https://sandbox.whop.com/dashboard/developer, SDK environment `Sandbox`; no real money). Production (API `https://api.whop.com/api/v1`, keys at https://whop.com/dashboard/developer, SDK environment `Production`, the SDK default) moves real money, so use it only at launch. The two share no accounts, keys, products, or webhooks, and their keys look identical: never mix them. Sandbox guide: https://docs.whop.com/developer/guides/sandbox.md Comparison: https://docs.whop.com/developer/quickstart.md
+> API: send `Authorization: Bearer <API_KEY>` from your server only, and pin a dated version with the `Api-Version-Date` header. OpenAPI spec: https://api.whop.com/api/v1/openapi.json
+> Which API: build on the Current API, whose pages live under https://docs.whop.com/api-reference/ (start at https://docs.whop.com/api-reference/overview.md). Pages under /api-reference/legacy/ are the Legacy API. Use one only when https://docs.whop.com/api-reference/stability.md lists the resource as Legacy-only.
+
 # BrandingElement
 
-> Whop's merchant-of-record notice: the Whop wordmark with links to the buyer terms and privacy policy. Mount it alongside every payment collection surface.
+> Whop's merchant-of-record notice: the buyer's agreement to Whop's Buyer Terms of Service and Privacy Policy, with the Whop wordmark. Required — the payment, card and card fields elements stay in their loading state until it is mounted, and payments cannot be confirmed without it.
 
-<Info>This page documents `@whop/elements@1.1.0` and `@whop/elements-react@1.1.0`.</Info>
+> [!NOTE]
+>
+> This page documents `@whop/elements@1.10.0` and `@whop/elements-react@1.10.0`.
 
 *Since `v1.0.0`.*
 
-<div data-whop-platform="web">
-  Mounts inside [`Payments`](/elements/latest/payments/overview). Pass props and callbacks through the create options or React props.
-</div>
+Mounts inside [`Payments`](https://docs.whop.com/elements/latest/payments/overview). Pass props and callbacks through the create options or React props.
 
-<div data-whop-platform="swift" style={{ display: "none" }}>
-  Mounts inside a `WhopPayments` scope. The merchant-of-record line every payment surface has to carry, with the Whop wordmark drawn as a path.
-</div>
+> [!NOTE]
+>
+> **Required.** The other elements in a Payments handle, except `AddressElement`, `EmailElement`, and `TaxIdElement`, stay in their loading state until `BrandingElement` is mounted — mount it alongside them.
 
-<div data-whop-platform="react-native" style={{ display: "none" }}>
-  Mount inside `<Payments>`, which owns the charge and the confirmation token. `<Payments>` itself mounts inside `<WhopElements>`. Required on every form that collects: `createConfirmationToken` refuses while none is mounted, and it themes with the rest of your form.
-</div>
+Mounts inside a `WhopPayments` scope. The merchant-of-record line every payment surface has to carry, with the Whop wordmark drawn as a path.
 
-<div data-whop-split style={{ display: "flex", gap: "1.5rem", alignItems: "flex-start", flexWrap: "wrap" }}>
-  <div style={{ flex: "1 1 26rem", minWidth: 0 }}>
-    <div data-whop-usage="payments/branding">
-      <CodeGroup>
-        ```tsx React theme={null}
-        import { WhopElements, Payments, BrandingElement } from "@whop/elements-react";
-        import { loadWhop } from "@whop/elements";
+Mount inside `<Payments>`, which owns the charge and the confirmation token. `<Payments>` itself mounts inside `<WhopElements>`. Required on every form that collects: `createConfirmationToken` refuses while none is mounted, and it themes with the rest of your form.
 
-        function Example() {
-          return (
-            <WhopElements elements={loadWhop()}>
-              <Payments /* options */>
-                <BrandingElement />
-              </Payments>
-            </WhopElements>
-          );
-        }
-        ```
+```tsx React theme={null}
+import { WhopElements, Payments, BrandingElement } from "@whop/elements-react";
+import { loadWhop } from "@whop/elements";
 
-        ```tsx React Native theme={null}
-        import { BrandingElement, Payments } from '@whop/elements-react-native';
+function Example() {
+  return (
+    <WhopElements elements={loadWhop()}>
+      <Payments /* options */>
+        <BrandingElement />
+      </Payments>
+    </WhopElements>
+  );
+}
+```
 
-        <Payments accountId="biz_xxxxxxxx" plan="plan_xxxxxxxx">
-          {/* your form */}
-          <BrandingElement />
-        </Payments>
-        ```
+```tsx React Native theme={null}
+import { BrandingElement, Payments } from '@whop/elements-react-native';
 
-        ```html JavaScript theme={null}
-        <script src="https://cdn.whop.com/elements/amber/elements.js" data-whop-elements></script>
-        <script type="module">
-          const payments = window.WhopElements().payments.create({ /* options */ });
-          payments.create('branding').mount('#payments-branding');
-        </script>
-        ```
+<Payments accountId="biz_xxxxxxxx" plan="plan_xxxxxxxx">
+  {/* your form */}
+  <BrandingElement />
+</Payments>
+```
 
-        ```swift Swift theme={null}
-        import Elements
-        import SwiftUI
+```html JavaScript theme={null}
+<script src="https://cdn.whop.com/elements/amber/elements.js" data-whop-elements></script>
+<script type="module">
+  const payments = window.WhopElements().payments.create({ /* options */ });
+  payments.create('branding').mount('#payments-branding');
+</script>
+```
 
-        // .whopElements(environment:) runs once at the app root. See Getting started.
-        struct CheckoutScreen: View {
+```swift Swift theme={null}
+import Elements
+import SwiftUI
 
-            var body: some View {
-                WhopPayments(accountID: "biz_xxxx", charge: .plan(id: "plan_xxxx")) { payments in
-                    ScrollView {
-                        VStack(alignment: .leading, spacing: 20) {
-                        WhopPaymentElement()
-                            WhopBrandingElement()
-                        }
-                        .padding()
-                    }
+// .whopElements(environment:) runs once at the app root. See Getting started.
+struct CheckoutScreen: View {
+
+    var body: some View {
+        WhopPayments(accountID: "biz_xxxx", charge: .plan(id: "plan_xxxx")) { payments in
+            ScrollView {
+                VStack(alignment: .leading, spacing: 20) {
+                WhopPaymentElement()
+                    WhopBrandingElement()
                 }
+                .padding()
             }
         }
-        ```
-      </CodeGroup>
-    </div>
-  </div>
+    }
+}
+```
 
-  <div style={{ flex: "1 1 20rem", minWidth: 0 }}>
-    <div data-whop-platform="web">
-      <div data-whop-demo-shell style={{ position: "relative", minHeight: "320px", transition: "min-height 200ms ease" }}>
-        <div data-whop-demo-skeleton style={{ position: "absolute", inset: "0", borderRadius: "12px", background: "rgba(140, 140, 140, 0.12)", pointerEvents: "none", transition: "opacity 200ms ease" }} />
+Example data. [Open the Playground](https://docs.whop.com/elements/latest/payments/overview#playground).
 
-        <div data-whop-demo-native="element:payments/branding" data-whop-elements-version="1.1.0" style={{ position: "relative" }} />
-      </div>
+[BrandingElement running on Android, in the React Native example app](https://app.revyl.ai/embed/c280bcb7-3262-4cc8-a0ef-d77bc0c49b55?controls=0)
 
-      <p style={{ fontSize: "0.8125rem", opacity: 0.7 }}>Example data. [Open the Playground](/elements/latest/payments/overview#playground).</p>
-    </div>
+## Props
 
-    <div data-whop-platform="react-native" style={{ display: "none" }}>
-      <div style={{ width: "22rem", maxWidth: "100%" }}>
-        <div data-whop-simulator-shell className="whop-ios-simulator" style={{ position: "relative", aspectRatio: "390 / 800", overflow: "hidden" }}>
-          <iframe src={"https://app.revyl.ai/embed/c280bcb7-3262-4cc8-a0ef-d77bc0c49b55?controls=0"} title="BrandingElement running on Android, in the React Native example app" loading="lazy" allow="fullscreen; clipboard-read; clipboard-write" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", border: 0, background: "transparent", display: "block" }} />
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
+*This element takes no consumer props.*
 
-<div data-whop-platform="web">
-  ## Props
+## Events
 
-  *This element takes no consumer props.*
+Pass callbacks in the create options or React props.
 
-  ## Events
+### `onLoaderStart`
 
-  Pass callbacks in the create options or React props.
+Runs after the loading skeleton first paints and before `onReady`.
 
-  ### `onLoaderStart`
+### `onReady`
 
-  Runs after the loading skeleton first paints and before `onReady`.
+Runs after the element's first complete paint.
 
-  **Signature:** `(() => void)`
+### `onError`
 
-  ### `onReady`
+Runs when the element fails to load or crashes. The fallback remains visible. Use `code` for programmatic handling. `sourceKey` identifies a failed host-state source.
 
-  Runs after the element's first complete paint.
+**e** `object`
 
-  **Signature:** `(() => void)`
+**properties**
 
-  ### `onError`
+**message** `string` *required*
 
-  Runs when the element fails to load or crashes. The fallback remains visible. Use `code` for programmatic handling. `sourceKey` identifies a failed host-state source.
+**code** `string`
 
-  **Signature:** `((e: { message: string; code?: string | undefined; sourceKey?: string | undefined; }) => void)`
+**sourceKey** `string`
 
-  ## Methods
+## Methods
 
-  Call these on the handle returned by `create`, or through a React `ref`.
+Call these on the handle returned by `create`, or through a React `ref`.
 
-  ### `mount`
+### `mount`
 
-  Mounts the element in `target` and starts loading. React components mount themselves.
+Mounts the element in `target` and starts loading. React components mount themselves.
 
-  **Signature:** `(target: string | HTMLElement) => void`
+**Parameters**
 
-  ### `destroy`
+**target** `string | HTMLElement` *required*
 
-  Removes the element and releases its frame and subscriptions. You can call it more than once. React removes the element automatically.
+### `destroy`
 
-  **Signature:** `() => void`
+Removes the element and releases its frame and subscriptions. You can call it more than once. React removes the element automatically.
 
-  ### `update`
+### `update`
 
-  Merges new props into the mounted element. In React, change the component props instead.
+Merges new props into the mounted element. In React, change the component props instead.
 
-  **Signature:** `(options: Partial<BrandingElementProps>) => void`
+**Parameters**
 
-  ## Styling
+**options** `Partial\<BrandingElementProps\>` *required*
 
-  This element doesn't expose class names for styling. Use `appearance` (theme, accent color, variables) to restyle it.
-</div>
+## Styling
 
-<div data-whop-platform="swift" style={{ display: "none" }}>
-  ## States
+This element doesn't expose class names for styling. Use `appearance` (theme, accent color, variables) to restyle it.
 
-  Renders immediately. It fetches nothing and has no failure state.
+## States
 
-  ## Good to know
+Renders immediately. It fetches nothing and has no failure state.
 
-  * **`createConfirmationToken` refuses while it is unmounted.** Whop is merchant of record on these sales, so the buyer has to be told so on the screen where they pay.
-  * The wordmark is a vector path, not an asset, so the framework carries no image bundle.
+## Good to know
 
-  ## Install
+* **`createConfirmationToken` refuses while it is unmounted.** Whop is merchant of record on these sales, so the buyer has to be told so on the screen where they pay.
+* The wordmark is a vector path, not an asset, so the framework carries no image bundle.
 
-  ```swift theme={null}
-  dependencies: [
-      .package(url: "https://github.com/whopio/elements-swift.git", from: "0.1.0")
-  ]
-  ```
+## Install
 
-  <Note>
-    Mount it inside a `WhopPayments(accountID:charge:)` scope, which creates the controller and hands it to its content. `payments.buyer` is the signed-in buyer once an email sign-in has proven one. `WhopBrandingElement` has to be on screen too, because Whop is merchant of record on these sales and `createConfirmationToken` refuses without it. Style with `.whopElementsAppearance(_:)`. The module is `Elements`, not the wallet SDK's `WhopElements`. See [Getting started](/elements/latest/getting-started) and [Appearance](/elements/latest/appearance).
-  </Note>
-</div>
+```swift theme={null}
+dependencies: [
+    .package(url: "https://github.com/whopio/elements-swift.git", from: "0.1.0")
+]
+```
 
-<div data-whop-platform="react-native" style={{ display: "none" }}>
-  ## Props
+> [!NOTE]
+>
+> Mount it inside a `WhopPayments(accountID:charge:)` scope, which creates the controller and hands it to its content. `payments.buyer` is the signed-in buyer once an email sign-in has proven one. `WhopBrandingElement` has to be on screen too, because Whop is merchant of record on these sales and `createConfirmationToken` refuses without it. Style with `.whopElementsAppearance(_:)`. The module is `Elements`, not the wallet SDK's `WhopElements`. See [Getting started](https://docs.whop.com/elements/latest/getting-started.md) and [Appearance](https://docs.whop.com/elements/latest/appearance.md).
 
-  <ResponseField name="style" type="StyleProp<ViewStyle>">
-    Applied to the element's outer `View`. For theming, prefer `appearance.parts` on the provider, which covers every element on this surface. Note the React Native part names are their own set today, not the web's `whop-*` class names, so a web appearance object does not port across unchanged.
-  </ResponseField>
+## Props
 
-  <ResponseField name="fallback" type="ReactNode">
-    Rendered instead of the built-in skeleton while the element loads.
-  </ResponseField>
+**style** `StyleProp\<ViewStyle\>`
 
-  <ResponseField name="onReady" type="() => void">
-    Fires once the element is interactive. `<Payments>` groups these, so its own `onLoadingChange` is usually the one you want.
-  </ResponseField>
+Applied to the element's outer `View`. For theming, prefer `appearance.parts` on the provider, which covers every element on this surface. Note the React Native part names are their own set today, not the web's `whop-*` class names, so a web appearance object does not port across unchanged.
 
-  <ResponseField name="onError" type="(error: { message: string; code?: string }) => void">
-    A load or configuration failure for this element. The element renders its own error face either way.
-  </ResponseField>
+**fallback** `ReactNode`
 
-  ## States
+Rendered instead of the built-in skeleton while the element loads.
 
-  Renders immediately. It has no data to load and no states of its own.
+**onReady** `() =\> void`
 
-  ## Good to know
+Fires once the element is interactive. `<Payments>` groups these, so its own `onLoadingChange` is usually the one you want.
 
-  * Required. `createConfirmationToken` refuses with a `BrandingRequiredError` while no `BrandingElement` is mounted, exactly as the web elements hold their reveal until branding attaches.
-  * Mount it once anywhere inside `<Payments>`, typically under your submit button.
-  * The wordmark follows the resolved theme's light or dark appearance on its own.
+**onError** `(error: \{ message: string; code?: string \}) =\> void`
 
-  <Note>
-    Wrap your app in `<WhopElements getToken={…}>` once, then mount `<Payments>` around the elements. See [Getting started](/elements/latest/getting-started) and [Appearance](/elements/latest/appearance).
-  </Note>
-</div>
+A load or configuration failure for this element. The element renders its own error face either way.
+
+## States
+
+Renders immediately. It has no data to load and no states of its own.
+
+## Good to know
+
+* Required. `createConfirmationToken` refuses with a `BrandingRequiredError` while no `BrandingElement` is mounted, exactly as the web elements hold their reveal until branding attaches.
+* Mount it once anywhere inside `<Payments>`, typically under your submit button.
+* The wordmark follows the resolved theme's light or dark appearance on its own.
+
+> [!NOTE]
+>
+> Wrap your app in `<WhopElements getToken={…}>` once, then mount `<Payments>` around the elements. See [Getting started](https://docs.whop.com/elements/latest/getting-started.md) and [Appearance](https://docs.whop.com/elements/latest/appearance.md).
+
+
+## Related topics
+
+- [CardExpiryElement](https://docs.whop.com/elements/latest/payments/cardFields-cardExpiry.md)
+- [CardCvcElement](https://docs.whop.com/elements/latest/payments/cardFields-cardCvc.md)
+- [CardNumberElement](https://docs.whop.com/elements/latest/payments/cardFields-cardNumber.md)

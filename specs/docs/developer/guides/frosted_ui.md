@@ -2,100 +2,108 @@
 > Fetch the complete documentation index at: https://docs.whop.com/llms.txt
 > Use this file to discover all available pages before exploring further.
 
+> ## Agent Instructions
+> Treat these docs and the Whop MCP server as the source of truth for Whop API behavior. Don't infer endpoint behavior from marketing pages.
+> MCP server: connect https://mcp.whop.com/mcp (streamable HTTP, browser sign-in, no API key in the client config) to search these docs and read or change live Whop data. Setup: https://docs.whop.com/developer/guides/ai_and_mcp.md
+> Whop CLI: install with `curl -fsSL https://whop.com/install.sh | sh` to scaffold, run, and deploy Whop apps and websites. It acts on production, not the sandbox. Overview: https://docs.whop.com/cli/overview.md Agent mode: https://docs.whop.com/cli/agent-mode.md
+> Hosting: Whop serves a site or app from the build `whop apps deploy` uploads, with rollbacks, secrets, and server logs. Guide: https://docs.whop.com/developer/websites/hosting.md
+> Plugins: in Claude Code, run `/plugin marketplace add whopio/plugins`, then `/plugin install whop@whop`. Guide: https://docs.whop.com/developer/guides/plugins/claude-code.md Every agent tool: https://docs.whop.com/developer/ai/overview.md
+> Environments: build and test in the sandbox (API `https://sandbox-api.whop.com/api/v1`, keys at https://sandbox.whop.com/dashboard/developer, SDK environment `Sandbox`; no real money). Production (API `https://api.whop.com/api/v1`, keys at https://whop.com/dashboard/developer, SDK environment `Production`, the SDK default) moves real money, so use it only at launch. The two share no accounts, keys, products, or webhooks, and their keys look identical: never mix them. Sandbox guide: https://docs.whop.com/developer/guides/sandbox.md Comparison: https://docs.whop.com/developer/quickstart.md
+> API: send `Authorization: Bearer <API_KEY>` from your server only, and pin a dated version with the `Api-Version-Date` header. OpenAPI spec: https://api.whop.com/api/v1/openapi.json
+> Which API: build on the Current API, whose pages live under https://docs.whop.com/api-reference/ (start at https://docs.whop.com/api-reference/overview.md). Pages under /api-reference/legacy/ are the Legacy API. Use one only when https://docs.whop.com/api-reference/stability.md lists the resource as Legacy-only.
+
 # Frosted UI
 
-> Use Whop's UI kit and Tailwind design system.
+> Install and use Frosted UI, Whop's React component library and design system, to build your app's interface.
 
 Frosted UI is Whop's comprehensive React component library and design system. It provides more than 60 components that meet accessibility standards. It also includes a sophisticated color system, typography scale, and seamless dark mode support—all built on Radix UI primitives and Tailwind CSS.
 
 ## Installation
 
-<Steps>
-  <Step title="Install the package">
-    <CodeGroup>
-      ```bash pnpm theme={null}
-      pnpm add @whop/react
-      ```
+**1. Install the package**
 
-      ```bash npm theme={null}
-      npm install @whop/react
-      ```
+```bash pnpm theme={null}
+pnpm add @whop/react
+```
 
-      ```bash yarn theme={null}
-      yarn add @whop/react
-      ```
+```bash npm theme={null}
+npm install @whop/react
+```
 
-      ```bash bun theme={null}
-      bun install @whop/react
-      ```
-    </CodeGroup>
+```bash yarn theme={null}
+yarn add @whop/react
+```
 
-    <Note>
-      The `@whop/react` package includes Frosted UI and all necessary dependencies.
-    </Note>
-  </Step>
+```bash bun theme={null}
+bun install @whop/react
+```
 
-  <Step title="Set up the WhopApp provider">
-    Wrap your application with the `WhopApp` component in your root layout. This sets up the theme and iframe SDK.
+> [!NOTE]
+>
+> The `@whop/react` package includes Frosted UI and all necessary dependencies.
 
-    ```tsx theme={null}
-    // app/layout.tsx
-    import { WhopApp } from "@whop/react";
+**2. Set up the WhopApp provider**
 
-    export default function RootLayout({
-        children,
-    }: {
-        children: React.ReactNode;
-    }) {
-        return (
-            <html lang="en">
-                <body>
-                    <WhopApp accentColor="blue" appearance="inherit">
-                        {children}
-                    </WhopApp>
-                </body>
-            </html>
-        );
-    }
-    ```
-  </Step>
+Wrap your application with the `WhopApp` component in your root layout. This sets up the theme and iframe SDK.
 
-  <Step title="Configure Next.js (optional)">
-    Use the `withWhopAppConfig` wrapper in your Next.js configuration:
+```tsx theme={null}
+// app/layout.tsx
+import { WhopApp } from "@whop/react";
 
-    ```typescript theme={null}
-    // next.config.ts
-    import type { NextConfig } from "next";
-    import { withWhopAppConfig } from "@whop/react/next.config";
+export default function RootLayout({
+    children,
+}: {
+    children: React.ReactNode;
+}) {
+    return (
+        <html lang="en">
+            <body>
+                <WhopApp accentColor="blue" appearance="inherit">
+                    {children}
+                </WhopApp>
+            </body>
+        </html>
+    );
+}
+```
 
-    const nextConfig: NextConfig = {
-        // your config options
-    };
+**3. Configure Next.js (optional)**
 
-    export default withWhopAppConfig(nextConfig);
-    ```
+Use the `withWhopAppConfig` wrapper in your Next.js configuration:
 
-    <Note>
-      This configures server actions and optimizes Frosted UI imports.
-    </Note>
-  </Step>
+```typescript theme={null}
+// next.config.ts
+import type { NextConfig } from "next";
+import { withWhopAppConfig } from "@whop/react/next.config";
 
-  <Step title="Set up Tailwind (optional)">
-    If you're using Tailwind CSS, add the Frosted UI plugin to access design tokens:
+const nextConfig: NextConfig = {
+    // your config options
+};
 
-    ```javascript theme={null}
-    // tailwind.config.js
-    import { frostedThemePlugin } from "@whop/react/tailwind";
+export default withWhopAppConfig(nextConfig);
+```
 
-    export default {
-        content: ["./src/**/*.{js,ts,jsx,tsx}"],
-        plugins: [frostedThemePlugin()],
-    };
-    ```
-  </Step>
-</Steps>
+> [!NOTE]
+>
+> This configures server actions and optimizes Frosted UI imports.
 
-<Check>Frosted UI is now set up and ready to use.</Check>
+**4. Set up Tailwind (optional)**
+
+If you're using Tailwind CSS, add the Frosted UI plugin to access design tokens:
+
+```javascript theme={null}
+// tailwind.config.js
+import { frostedThemePlugin } from "@whop/react/tailwind";
+
+export default {
+    content: ["./src/**/*.{js,ts,jsx,tsx}"],
+    plugins: [frostedThemePlugin()],
+};
+```
+
+> [!TIP]
+>
+> Frosted UI is now set up and ready to use.
 
 ***
 
@@ -107,18 +115,18 @@ Frosted UI provides a comprehensive typography system with two main components: 
 
 Both components use a 10-step size scale (0-9):
 
-| Size | Font Size | Usage               |
-| ---- | --------- | ------------------- |
-| 0    | 10px      | Smallest text       |
-| 1    | 12px      | Small labels        |
-| 2    | 14px      | Body text (small)   |
-| 3    | 16px      | Body text (default) |
-| 4    | 18px      | Emphasized text     |
-| 5    | 20px      | Subheadings         |
-| 6    | 24px      | Headings            |
-| 7    | 28px      | Large headings      |
-| 8    | 32px      | Display text        |
-| 9    | 40px      | Hero text           |
+| Size | Font Size | Usage |
+| - | - | - |
+| 0 | 10px | Smallest text |
+| 1 | 12px | Small labels |
+| 2 | 14px | Body text (small) |
+| 3 | 16px | Body text (default) |
+| 4 | 18px | Emphasized text |
+| 5 | 20px | Subheadings |
+| 6 | 24px | Headings |
+| 7 | 28px | Large headings |
+| 8 | 32px | Display text |
+| 9 | 40px | Hero text |
 
 ### Text component
 
@@ -254,11 +262,11 @@ With the Tailwind plugin, you can use Frosted UI colors directly:
 
 * Use `{color}-a1` through `{color}-a12` for transparency
 
-<Warning>
-  With the `frostedUiPlugin()` added to your tailwind config, the default
-  tailwind colors like `bg-blue-200` don't work. Use `bg-blue-2` instead
-  according to the above documentation.
-</Warning>
+> [!WARNING]
+>
+> With the `frostedUiPlugin()` added to your tailwind config, the default
+> tailwind colors like `bg-blue-200` don't work. Use `bg-blue-2` instead
+> according to the above documentation.
 
 ***
 
@@ -316,14 +324,14 @@ Frosted UI uses a mobile-first responsive system with 5 breakpoints.
 
 ### Breakpoint scale
 
-| Name      | Min Width | Usage            |
-| --------- | --------- | ---------------- |
-| `initial` | 0px       | Mobile (default) |
-| `xs`      | 520px     | Large mobile     |
-| `sm`      | 768px     | Tablet           |
-| `md`      | 1024px    | Small desktop    |
-| `lg`      | 1280px    | Desktop          |
-| `xl`      | 1640px    | Large desktop    |
+| Name | Min Width | Usage |
+| - | - | - |
+| `initial` | 0px | Mobile (default) |
+| `xs` | 520px | Large mobile |
+| `sm` | 768px | Tablet |
+| `md` | 1024px | Small desktop |
+| `lg` | 1280px | Desktop |
+| `xl` | 1640px | Large desktop |
 
 ### Responsive props
 
@@ -353,7 +361,7 @@ import { Text, Box } from "@whop/react";
 
 Frosted UI includes an icon system through the `@frosted-ui/icons` package.
 
-### Using Icons
+### Using icons
 
 ```tsx theme={null}
 import { IconButton } from "@whop/react";
@@ -368,7 +376,7 @@ import { MagnifyingGlassIcon, Cross2Icon } from "@frosted-ui/icons";
 </IconButton>
 ```
 
-### Common Icons
+### Common icons
 
 Frosted UI uses Radix Icons, which includes icons like:
 
@@ -383,7 +391,7 @@ Frosted UI uses Radix Icons, which includes icons like:
 
 The Frosted UI Tailwind plugin provides design tokens as Tailwind utilities.
 
-### What's Included
+### What's included
 
 **Typography:**
 
@@ -611,10 +619,10 @@ Frosted UI includes 60+ components organized by category:
 
 **Utilities:** `ScrollArea`, `Separator`, `Portal`, `VisuallyHidden`, `AccessibleIcon`
 
-<Info>
-  All components are built on Radix UI primitives and follow accessibility best
-  practices.
-</Info>
+> [!NOTE]
+>
+> All components are built on Radix UI primitives and follow accessibility best
+> practices.
 
 ***
 
@@ -623,3 +631,10 @@ Frosted UI includes 60+ components organized by category:
 * [Radix UI Documentation](https://www.radix-ui.com/) - Component primitives
 * [Radix Colors](https://www.radix-ui.com/colors) - Color system documentation
 * [Tailwind CSS](https://tailwindcss.com/) - Utility-first CSS framework
+
+
+## Related topics
+
+- [Platform Map](https://docs.whop.com/developer/platform-map.md)
+- [Build Whop Apps with React Native](https://docs.whop.com/developer/guides/react-native.md)
+- [Getting Started with Elements](https://docs.whop.com/elements/latest/getting-started.md)

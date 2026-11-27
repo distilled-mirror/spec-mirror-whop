@@ -2,9 +2,19 @@
 > Fetch the complete documentation index at: https://docs.whop.com/llms.txt
 > Use this file to discover all available pages before exploring further.
 
+> ## Agent Instructions
+> Treat these docs and the Whop MCP server as the source of truth for Whop API behavior. Don't infer endpoint behavior from marketing pages.
+> MCP server: connect https://mcp.whop.com/mcp (streamable HTTP, browser sign-in, no API key in the client config) to search these docs and read or change live Whop data. Setup: https://docs.whop.com/developer/guides/ai_and_mcp.md
+> Whop CLI: install with `curl -fsSL https://whop.com/install.sh | sh` to scaffold, run, and deploy Whop apps and websites. It acts on production, not the sandbox. Overview: https://docs.whop.com/cli/overview.md Agent mode: https://docs.whop.com/cli/agent-mode.md
+> Hosting: Whop serves a site or app from the build `whop apps deploy` uploads, with rollbacks, secrets, and server logs. Guide: https://docs.whop.com/developer/websites/hosting.md
+> Plugins: in Claude Code, run `/plugin marketplace add whopio/plugins`, then `/plugin install whop@whop`. Guide: https://docs.whop.com/developer/guides/plugins/claude-code.md Every agent tool: https://docs.whop.com/developer/ai/overview.md
+> Environments: build and test in the sandbox (API `https://sandbox-api.whop.com/api/v1`, keys at https://sandbox.whop.com/dashboard/developer, SDK environment `Sandbox`; no real money). Production (API `https://api.whop.com/api/v1`, keys at https://whop.com/dashboard/developer, SDK environment `Production`, the SDK default) moves real money, so use it only at launch. The two share no accounts, keys, products, or webhooks, and their keys look identical: never mix them. Sandbox guide: https://docs.whop.com/developer/guides/sandbox.md Comparison: https://docs.whop.com/developer/quickstart.md
+> API: send `Authorization: Bearer <API_KEY>` from your server only, and pin a dated version with the `Api-Version-Date` header. OpenAPI spec: https://api.whop.com/api/v1/openapi.json
+> Which API: build on the Current API, whose pages live under https://docs.whop.com/api-reference/ (start at https://docs.whop.com/api-reference/overview.md). Pages under /api-reference/legacy/ are the Legacy API. Use one only when https://docs.whop.com/api-reference/stability.md lists the resource as Legacy-only.
+
 # Manage Users
 
-> Understand how to manage your users and make changes to their memberships
+> See your users and their memberships in the Whop dashboard, and edit, pause, or cancel a membership.
 
 On the dashboard for your business, select the [Users](https://whop.com/dashboard/users/) tab. From this page, you can view all your users' details and manage their memberships.
 
@@ -22,10 +32,10 @@ From the Users table, you will be able to see the following information about ea
 
 You can filter and export any of this user data using the buttons at the top of the table.
 
-<Tip>
-  If you need help, Whop AI can help create reports around any user and
-  membership data you might need.
-</Tip>
+> [!TIP]
+>
+> If you need help, Whop AI can help create reports around any user and
+> membership data you might need.
 
 You can also contact any user via Whop DM, their email address, or any other linked socials from this page.
 
@@ -67,3 +77,10 @@ To extend a customer's access or push back their next renewal date, you can add 
 4. Enter the number of free days you want to add and confirm.
 
 Adding free days moves the customer's next charge date by the number of days you choose.
+
+
+## Related topics
+
+- [Manage Disputes](https://docs.whop.com/manage-your-business/manage-payments/manage-disputes.md)
+- [Business Analytics Dashboard](https://docs.whop.com/manage-your-business/manage-business/analytics.md)
+- [Manage Products](https://docs.whop.com/manage-your-business/products/manage-products.md)

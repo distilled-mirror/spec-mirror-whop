@@ -2,196 +2,192 @@
 > Fetch the complete documentation index at: https://docs.whop.com/llms.txt
 > Use this file to discover all available pages before exploring further.
 
-# Review
+> ## Agent Instructions
+> Treat these docs and the Whop MCP server as the source of truth for Whop API behavior. Don't infer endpoint behavior from marketing pages.
+> MCP server: connect https://mcp.whop.com/mcp (streamable HTTP, browser sign-in, no API key in the client config) to search these docs and read or change live Whop data. Setup: https://docs.whop.com/developer/guides/ai_and_mcp.md
+> Whop CLI: install with `curl -fsSL https://whop.com/install.sh | sh` to scaffold, run, and deploy Whop apps and websites. It acts on production, not the sandbox. Overview: https://docs.whop.com/cli/overview.md Agent mode: https://docs.whop.com/cli/agent-mode.md
+> Hosting: Whop serves a site or app from the build `whop apps deploy` uploads, with rollbacks, secrets, and server logs. Guide: https://docs.whop.com/developer/websites/hosting.md
+> Plugins: in Claude Code, run `/plugin marketplace add whopio/plugins`, then `/plugin install whop@whop`. Guide: https://docs.whop.com/developer/guides/plugins/claude-code.md Every agent tool: https://docs.whop.com/developer/ai/overview.md
+> Environments: build and test in the sandbox (API `https://sandbox-api.whop.com/api/v1`, keys at https://sandbox.whop.com/dashboard/developer, SDK environment `Sandbox`; no real money). Production (API `https://api.whop.com/api/v1`, keys at https://whop.com/dashboard/developer, SDK environment `Production`, the SDK default) moves real money, so use it only at launch. The two share no accounts, keys, products, or webhooks, and their keys look identical: never mix them. Sandbox guide: https://docs.whop.com/developer/guides/sandbox.md Comparison: https://docs.whop.com/developer/quickstart.md
+> API: send `Authorization: Bearer <API_KEY>` from your server only, and pin a dated version with the `Api-Version-Date` header. OpenAPI spec: https://api.whop.com/api/v1/openapi.json
+> Which API: build on the Current API, whose pages live under https://docs.whop.com/api-reference/ (start at https://docs.whop.com/api-reference/overview.md). Pages under /api-reference/legacy/ are the Legacy API. Use one only when https://docs.whop.com/api-reference/stability.md lists the resource as Legacy-only.
 
-> A user-submitted review of a company, including a star rating and optional text feedback.
+# Reviews API
 
-<ResponseExample>
-  ```json Example theme={null}
-  {
-  	"attachments": [
-  		{
-  			"content_type": "image/jpeg",
-  			"filename": "document.pdf",
-  			"id": "<string>",
-  			"url": "https://media.whop.com/abc123/optimized.jpg"
-  		}
-  	],
-  	"company": {
-  		"id": "biz_xxxxxxxxxxxxxx",
-  		"route": "pickaxe",
-  		"title": "Pickaxe"
-  	},
-  	"created_at": "2023-12-01T05:00:00.401Z",
-  	"description": "Great product, really helped me grow my audience.",
-  	"id": "rev_xxxxxxxxxxxxxx",
-  	"joined_at": "2023-12-01T05:00:00.401Z",
-  	"paid_for_product": true,
-  	"product": {
-  		"id": "prod_xxxxxxxxxxxxx",
-  		"title": "Pickaxe Analytics"
-  	},
-  	"published_at": "2023-12-01T05:00:00.401Z",
-  	"stars": 42,
-  	"status": "pending",
-  	"title": "Amazing community and tools",
-  	"updated_at": "2023-12-01T05:00:00.401Z",
-  	"user": {
-  		"id": "user_xxxxxxxxxxxxx",
-  		"name": "John Doe",
-  		"username": "johndoe42"
-  	}
-  }
-  ```
-</ResponseExample>
+> A Review is a customer's star rating and optional written feedback on a product, shown on the product's store page.
 
-<ResponseField name="attachments" type="array<object>" required>
-  A list of files and media attached to the review.
+Use the Reviews API to list a product's reviews, filtered by star rating or creation date, and retrieve a review by ID.
 
-  <Expandable title="child attributes">
-    <ResponseField name="content_type" type="string | null" required>
-      Uploaded file MIME type, such as image/jpeg, video/mp4, or audio/mpeg.
+## Endpoints
 
-      Example: `image/jpeg`
-    </ResponseField>
+| Endpoint | Request |
+| - | - |
+| [List reviews](https://docs.whop.com/api-reference/reviews/list-reviews.md) | GET `/reviews` |
+| [Retrieve review](https://docs.whop.com/api-reference/reviews/retrieve-review.md) | GET `/reviews/{id}` |
+| [Delete review](https://docs.whop.com/api-reference/reviews/delete-review.md) | DELETE `/reviews/{id}` |
 
-    <ResponseField name="filename" type="string | null" required>
-      The original filename of the uploaded attachment, including its file extension.
+## Attributes
 
-      Example: `document.pdf`
-    </ResponseField>
+**id** `string` *required*
 
-    <ResponseField name="id" type="string" required />
+The unique identifier for the review.
 
-    <ResponseField name="url" type="string | null" required>
-      A pre-optimized URL for rendering this attachment on the client. This should be used for displaying attachments in apps.
+**account** `object` *required*
 
-      Example: `https://media.whop.com/abc123/optimized.jpg`
-    </ResponseField>
-  </Expandable>
-</ResponseField>
+The account that this review was written for.
 
-<ResponseField name="company" type="object" required>
-  The company that this review was written for.
+> [accordion] Properties
+>
+> **id** `string` *required*
+>
+> The unique identifier for the account.
+>
+> **route** `string` *required*
+>
+> URL slug for the account's store page. For example,
+> `shine-time-auto-detailing` in whop.com/shine-time-auto-detailing.
+>
+> **title** `string` *required*
+>
+> The display name of the account shown to customers.
 
-  <Expandable title="child attributes">
-    <ResponseField name="id" type="string" required>
-      The unique identifier for the company.
+**attachments** `object[]` *required*
 
-      Example: `biz_xxxxxxxxxxxxxx`
-    </ResponseField>
+A list of files and media attached to the review.
 
-    <ResponseField name="route" type="string" required>
-      URL slug for the account's store page, e.g. `pickaxe` in whop.com/pickaxe.
+> [accordion] Properties
+>
+> **id** `string` *required*
+>
+> The unique identifier for the attachment.
+>
+> **content\_type** `string | null` *required*
+>
+> Uploaded file MIME type, such as image/jpeg, video/mp4, or audio/mpeg.
+>
+> **filename** `string | null` *required*
+>
+> The original filename of the uploaded attachment, including its file
+> extension.
+>
+> **url** `string | null` *required*
+>
+> A pre-optimized URL for rendering this attachment on the client. This should be used for displaying attachments in apps.
 
-      Example: `pickaxe`
-    </ResponseField>
+**created\_at** `string` *required*
 
-    <ResponseField name="title" type="string" required>
-      The display name of the company shown to customers.
+When the review was created, as an ISO 8601 timestamp.
 
-      Example: `Pickaxe`
-    </ResponseField>
-  </Expandable>
-</ResponseField>
+**description** `string | null` *required*
 
-<ResponseField name="created_at" type="string<date-time>" required>
-  The datetime the review was created.
+The body text of the review containing the user's detailed feedback. Returns
+an empty string if no description was provided.
 
-  Example: `2023-12-01T05:00:00.401Z`
-</ResponseField>
+**joined\_at** `string | null` *required*
 
-<ResponseField name="description" type="string | null" required>
-  The body text of the review containing the user's detailed feedback. Returns an empty string if no description was provided.
+When the reviewer first joined the product, as an ISO 8601 timestamp. Null if
+unknown.
 
-  Example: `Great product, really helped me grow my audience.`
-</ResponseField>
+**paid\_for\_product** `boolean | null` *required*
 
-<ResponseField name="id" type="string" required>
-  The unique identifier for the review.
+Whether the reviewer paid for the product. Null if the payment status is
+unknown.
 
-  Example: `rev_xxxxxxxxxxxxxx`
-</ResponseField>
+**product** `object` *required*
 
-<ResponseField name="joined_at" type="string<date-time> | null" required>
-  The timestamp of when the reviewer first joined the product. Null if unknown.
+The product that this review was written for.
 
-  Example: `2023-12-01T05:00:00.401Z`
-</ResponseField>
+> [accordion] Properties
+>
+> **id** `string` *required*
+>
+> The unique identifier for the product.
+>
+> **title** `string` *required*
+>
+> The display name of the product shown to customers on the product page and in search results.
 
-<ResponseField name="paid_for_product" type="boolean | null" required>
-  Whether the reviewer paid for the product. Null if the payment status is
-  unknown.
-</ResponseField>
+**published\_at** `string | null` *required*
 
-<ResponseField name="product" type="object" required>
-  The product that this review was written for.
+When the review was published, as an ISO 8601 timestamp. Null if unknown.
 
-  <Expandable title="child attributes">
-    <ResponseField name="id" type="string" required>
-      The unique identifier for the product.
+**stars** `integer` *required*
 
-      Example: `prod_xxxxxxxxxxxxx`
-    </ResponseField>
+The star rating given by the reviewer, from 1 to 5.
 
-    <ResponseField name="title" type="string" required>
-      The display name of the product shown to customers on the product page and in search results.
+**status** `string` *required*
 
-      Example: `Pickaxe Analytics`
-    </ResponseField>
-  </Expandable>
-</ResponseField>
+The moderation status of the review. Only published reviews are returned.
 
-<ResponseField name="published_at" type="string<date-time> | null" required>
-  The timestamp of when the review was published. Null if the review has not been published yet.
+Available options: `published`
 
-  Example: `2023-12-01T05:00:00.401Z`
-</ResponseField>
+**title** `string | null` *required*
 
-<ResponseField name="stars" type="integer" required>
-  The star rating given by the reviewer, from 1 to 5.
+A short summary title for the review. Null if the reviewer did not provide
+one.
 
-  Example: `42`
-</ResponseField>
+**updated\_at** `string` *required*
 
-<ResponseField name="status" type="ReviewStatus" required>
-  The current moderation status of the review.
+When the review was last updated, as an ISO 8601 timestamp.
 
-  Available options: `pending`, `published`, `removed`
-</ResponseField>
+**user** `object` *required*
 
-<ResponseField name="title" type="string | null" required>
-  A short summary title for the review. Null if the reviewer did not provide one.
+The user account of the person who wrote this review.
 
-  Example: `Amazing community and tools`
-</ResponseField>
+> [accordion] Properties
+>
+> **id** `string` *required*
+>
+> The unique identifier for the user.
+>
+> **name** `string | null` *required*
+>
+> The user's display name shown on their public profile.
+>
+> **username** `string` *required*
+>
+> The user's unique username shown on their public profile.
 
-<ResponseField name="updated_at" type="string<date-time>" required>
-  The datetime the review was last updated.
+```json Review theme={null}
+{
+	"id": "rev_xxxxxxxxxxxxxx",
+	"title": "Worth every penny",
+	"description": "Two years on and the paint still beads like the day it was coated.",
+	"stars": 5,
+	"status": "published",
+	"paid_for_product": true,
+	"created_at": "2026-09-20T18:02:00.000Z",
+	"updated_at": "2026-09-20T18:02:00.000Z",
+	"published_at": "2026-09-20T18:02:00.000Z",
+	"joined_at": "2024-08-11T14:00:00.000Z",
+	"user": {
+		"id": "user_xxxxxxxxxxxxxx",
+		"name": "Dana Whitfield",
+		"username": "danawhitfield"
+	},
+	"attachments": [
+		{
+			"id": "file_xxxxxxxxxxxxxx",
+			"filename": "coated-hood.png",
+			"content_type": "image/png",
+			"url": "https://img.whop.com/uploads/coated-hood.png"
+		}
+	],
+	"account": {
+		"id": "biz_xxxxxxxxxxxxxx",
+		"title": "Shine Time Auto Detailing",
+		"route": "shine-time-auto-detailing"
+	},
+	"product": {
+		"id": "prod_xxxxxxxxxxxxxx",
+		"title": "Ceramic Coating Package"
+	}
+}
+```
 
-  Example: `2023-12-01T05:00:00.401Z`
-</ResponseField>
 
-<ResponseField name="user" type="object" required>
-  The user account of the person who wrote this review.
+## Related topics
 
-  <Expandable title="child attributes">
-    <ResponseField name="id" type="string" required>
-      The unique identifier for the user.
-
-      Example: `user_xxxxxxxxxxxxx`
-    </ResponseField>
-
-    <ResponseField name="name" type="string | null" required>
-      The user's display name shown on their public profile.
-
-      Example: `John Doe`
-    </ResponseField>
-
-    <ResponseField name="username" type="string" required>
-      The user's unique username shown on their public profile.
-
-      Example: `johndoe42`
-    </ResponseField>
-  </Expandable>
-</ResponseField>
+- [Review Reports API](https://docs.whop.com/api-reference/review-reports/review-report.md)
+- [Review](https://docs.whop.com/api-reference/legacy/reviews/review.md)
+- [API Versions](https://docs.whop.com/developer/api/versioning.md)

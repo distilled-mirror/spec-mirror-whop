@@ -2,9 +2,19 @@
 > Fetch the complete documentation index at: https://docs.whop.com/llms.txt
 > Use this file to discover all available pages before exploring further.
 
+> ## Agent Instructions
+> Treat these docs and the Whop MCP server as the source of truth for Whop API behavior. Don't infer endpoint behavior from marketing pages.
+> MCP server: connect https://mcp.whop.com/mcp (streamable HTTP, browser sign-in, no API key in the client config) to search these docs and read or change live Whop data. Setup: https://docs.whop.com/developer/guides/ai_and_mcp.md
+> Whop CLI: install with `curl -fsSL https://whop.com/install.sh | sh` to scaffold, run, and deploy Whop apps and websites. It acts on production, not the sandbox. Overview: https://docs.whop.com/cli/overview.md Agent mode: https://docs.whop.com/cli/agent-mode.md
+> Hosting: Whop serves a site or app from the build `whop apps deploy` uploads, with rollbacks, secrets, and server logs. Guide: https://docs.whop.com/developer/websites/hosting.md
+> Plugins: in Claude Code, run `/plugin marketplace add whopio/plugins`, then `/plugin install whop@whop`. Guide: https://docs.whop.com/developer/guides/plugins/claude-code.md Every agent tool: https://docs.whop.com/developer/ai/overview.md
+> Environments: build and test in the sandbox (API `https://sandbox-api.whop.com/api/v1`, keys at https://sandbox.whop.com/dashboard/developer, SDK environment `Sandbox`; no real money). Production (API `https://api.whop.com/api/v1`, keys at https://whop.com/dashboard/developer, SDK environment `Production`, the SDK default) moves real money, so use it only at launch. The two share no accounts, keys, products, or webhooks, and their keys look identical: never mix them. Sandbox guide: https://docs.whop.com/developer/guides/sandbox.md Comparison: https://docs.whop.com/developer/quickstart.md
+> API: send `Authorization: Bearer <API_KEY>` from your server only, and pin a dated version with the `Api-Version-Date` header. OpenAPI spec: https://api.whop.com/api/v1/openapi.json
+> Which API: build on the Current API, whose pages live under https://docs.whop.com/api-reference/ (start at https://docs.whop.com/api-reference/overview.md). Pages under /api-reference/legacy/ are the Legacy API. Use one only when https://docs.whop.com/api-reference/stability.md lists the resource as Legacy-only.
+
 # Financing
 
-> Let customers split payments into monthly installments
+> Let customers pay in monthly installments with providers like Klarna and Afterpay while you get paid upfront.
 
 Give your customers the flexibility to split their purchases into monthly installments while you get paid upfront.
 
@@ -53,11 +63,11 @@ To qualify for financing options, your business must meet these requirements:
   * New Whop businesses must submit 90 days of statements from their previous **payment processor**. Submit processing statements, not bank statements. They must show total transactions and disputes.
 * **Processing volume**: At least \$30,000 processed from 10+ different customers in the last 90 days
 
-<Tip>
-  You'll receive a Whop DM after Whop approves your business and enables
-  financing. If you haven't heard back about your application, check your email
-  for requests for additional documentation or application updates.
-</Tip>
+> [!TIP]
+>
+> You'll receive a Whop DM after Whop approves your business and enables
+> financing. If you haven't heard back about your application, check your email
+> for requests for additional documentation or application updates.
 
 ## How it works for customers
 
@@ -70,12 +80,12 @@ When you enable financing:
 
 You can control which financing options appear on each of your checkout links through your pricing settings.
 
-<Tip>
-  You still receive the full payment amount (minus standard fees) while the
-  provider handles customer repayment. Sezzle is the exception: funds from
-  Sezzle orders settle on a 15-day basis before they're available in your
-  balance.
-</Tip>
+> [!TIP]
+>
+> You still receive the full payment amount (minus standard fees) while the
+> provider handles customer repayment. Sezzle is the exception: funds from
+> Sezzle orders settle on a 15-day basis before they're available in your
+> balance.
 
 ## Keep your financing access
 
@@ -88,12 +98,12 @@ Whop’s priority is to make sure you keep your financing access for the long te
   * Klarna: warning at 0.5% dispute rate on Klarna transactions
   * All others: warning 1% dispute rate on any other BNPL option
 
-<Tip>
-  When you receive an alert, take extra precautions to prevent further disputes.
-  Set clear return policies, refund angry customers, and make sure your
-  customers know where to go to resolve issues so they don't dispute directly
-  with the bank.
-</Tip>
+> [!TIP]
+>
+> When you receive an alert, take extra precautions to prevent further disputes.
+> Set clear return policies, refund angry customers, and make sure your
+> customers know where to go to resolve issues so they don't dispute directly
+> with the bank.
 
 **Splitit minimum balance (Splitit only)**
 
@@ -132,11 +142,11 @@ If financing isn't showing on your checkout links after approval, check these co
 
 **Restricted business type**
 
-<Tip>
-  Financing providers (Splitit, Klarna, Sezzle, Afterpay, and Zip Pay) don't
-  support certain categories of products or services. If your business falls
-  under one of these categories, you won't be eligible for financing on Whop.
-</Tip>
+> [!TIP]
+>
+> Financing providers (Splitit, Klarna, Sezzle, Afterpay, and Zip Pay) don't
+> support certain categories of products or services. If your business falls
+> under one of these categories, you won't be eligible for financing on Whop.
 
 * **Adult, Gambling & Dating:** Adult entertainment or pornography, escort
   services, gambling, gaming, raffles, lotteries, dating, or matchmaking services.
@@ -161,3 +171,10 @@ If financing isn't showing on your checkout links after approval, check these co
 
 * Check that your Whop Payments account is fully configured
 * Verify your store page is complete with clear product descriptions
+
+
+## Related topics
+
+- [Apply for Financing](https://docs.whop.com/payments-and-billing/financing/apply.md)
+- [Financing Options](https://docs.whop.com/payments-and-billing/financing/all-bnpl-options.md)
+- [Whop Partner Program Guide](https://docs.whop.com/partners.md)

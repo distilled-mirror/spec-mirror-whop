@@ -2,6 +2,16 @@
 > Fetch the complete documentation index at: https://docs.whop.com/llms.txt
 > Use this file to discover all available pages before exploring further.
 
+> ## Agent Instructions
+> Treat these docs and the Whop MCP server as the source of truth for Whop API behavior. Don't infer endpoint behavior from marketing pages.
+> MCP server: connect https://mcp.whop.com/mcp (streamable HTTP, browser sign-in, no API key in the client config) to search these docs and read or change live Whop data. Setup: https://docs.whop.com/developer/guides/ai_and_mcp.md
+> Whop CLI: install with `curl -fsSL https://whop.com/install.sh | sh` to scaffold, run, and deploy Whop apps and websites. It acts on production, not the sandbox. Overview: https://docs.whop.com/cli/overview.md Agent mode: https://docs.whop.com/cli/agent-mode.md
+> Hosting: Whop serves a site or app from the build `whop apps deploy` uploads, with rollbacks, secrets, and server logs. Guide: https://docs.whop.com/developer/websites/hosting.md
+> Plugins: in Claude Code, run `/plugin marketplace add whopio/plugins`, then `/plugin install whop@whop`. Guide: https://docs.whop.com/developer/guides/plugins/claude-code.md Every agent tool: https://docs.whop.com/developer/ai/overview.md
+> Environments: build and test in the sandbox (API `https://sandbox-api.whop.com/api/v1`, keys at https://sandbox.whop.com/dashboard/developer, SDK environment `Sandbox`; no real money). Production (API `https://api.whop.com/api/v1`, keys at https://whop.com/dashboard/developer, SDK environment `Production`, the SDK default) moves real money, so use it only at launch. The two share no accounts, keys, products, or webhooks, and their keys look identical: never mix them. Sandbox guide: https://docs.whop.com/developer/guides/sandbox.md Comparison: https://docs.whop.com/developer/quickstart.md
+> API: send `Authorization: Bearer <API_KEY>` from your server only, and pin a dated version with the `Api-Version-Date` header. OpenAPI spec: https://api.whop.com/api/v1/openapi.json
+> Which API: build on the Current API, whose pages live under https://docs.whop.com/api-reference/ (start at https://docs.whop.com/api-reference/overview.md). Pages under /api-reference/legacy/ are the Legacy API. Use one only when https://docs.whop.com/api-reference/stability.md lists the resource as Legacy-only.
+
 # Content Rewards
 
 > Earn rewards as a member or run creator campaigns with Content Rewards.
@@ -54,102 +64,100 @@ Content Rewards is an automated system that manages creator relationships and pa
 * Select **Content Rewards** from the available apps.
 * Select **Add** to include it in your whop.
 
-<img src="https://mintcdn.com/whop/XkQkLHsY-Hk8KVyG/how-to-videos/setupcontentrewards.gif?s=dfa369cbc52f28ac115a9b0e1cc7579c" alt="Add Content Rewards app" width="1222" height="720" data-path="how-to-videos/setupcontentrewards.gif" />
+![Add Content Rewards app](https://mintcdn.com/whop/XkQkLHsY-Hk8KVyG/how-to-videos/setupcontentrewards.gif?s=dfa369cbc52f28ac115a9b0e1cc7579c)
 
-<Card title="Get started with Whop" icon="sparkles" href="/get-started">
-  If you don't have a whop yet, select this card to learn how to set up your
-  account.
-</Card>
+> [card] [Get started with Whop](https://docs.whop.com/get-started.md)
+>
+> If you don't have a whop yet, select this card to learn how to set up your
+> account.
 
 #### Step 2: Create your first campaign
 
 When you add the Content Rewards app, you'll see a form with all the settings you need to configure. Here's what each field means and how to set it up:
 
-<img src="https://mintcdn.com/whop/gkU9N_oxv5Gb4qnv/images/croptions1.png?fit=max&auto=format&n=gkU9N_oxv5Gb4qnv&q=85&s=abcdcb702f311bcd6296086c5e316054" alt="Configure Content Rewards" width="912" height="721" data-path="images/croptions1.png" />
+![Configure Content Rewards](https://mintcdn.com/whop/gkU9N_oxv5Gb4qnv/images/croptions1.png?fit=max\&auto=format\&n=gkU9N_oxv5Gb4qnv\&q=85\&s=abcdcb702f311bcd6296086c5e316054)
 
-<Steps>
-  <Step title="Campaign name">
-    Creators see your campaign name publicly, so make it clear and appealing.
+**1. Campaign name**
 
-    * Enter a descriptive name that represents your brand or specific campaign (e.g. Laptop Lunch Prep UGC Campaign)
-    * You can also include your reward rate in your title (Fanatics UGC - \$3 per 1,000 views) to entice content creators
-  </Step>
+Creators see your campaign name publicly, so make it clear and appealing.
 
-  <Step title="Campaign type">
-    Select the type of content you want creators to make:
+* Enter a descriptive name that represents your brand or specific campaign (e.g. Laptop Lunch Prep UGC Campaign)
+* You can also include your reward rate in your title (Fanatics UGC - \$3 per 1,000 views) to entice content creators
 
-    * **Clipping**: Creators take your existing videos or podcasts and turn them into short-form content
-    * **UGC (User-Generated Content)**: Creators make original content featuring your brand
-  </Step>
+**2. Campaign type**
 
-  <Step title="Brand category">
-    Pick the category that best represents your brand. This helps creators understand your niche and create better targeted content.
-  </Step>
+Select the type of content you want creators to make:
 
-  <Step title="Campaign budget">
-    Enter the total amount you're willing to spend on this campaign. Think of this like ad spend, but instead of paying a platform directly, you're investing in creators who will promote your brand. You can select your preferred currency from the dropdown menu.
+* **Clipping**: Creators take your existing videos or podcasts and turn them into short-form content
+* **UGC (User-Generated Content)**: Creators make original content featuring your brand
 
-    <Tip>
-      Note: Whop won't charge you until you set up your payments and deposit funds.
-    </Tip>
-  </Step>
+**3. Brand category**
 
-  <Step title="Reward rate">
-    Set how much creators earn per 1,000 views on their videos.
+Pick the category that best represents your brand. This helps creators understand your niche and create better targeted content.
 
-    <Tip>
-      * UGC content typically pays higher rates than clipping
-      * Higher rates attract better creators
-    </Tip>
-  </Step>
+**4. Campaign budget**
 
-  <Step title="Minimum payout">
-    Choose the minimum amount a creator can earn from a video before it reaches your review queue. If you choose \$0, you'll need to review every video submission, even those with only a few views. To focus on quality content that's performing, choose a minimum payout amount.
+Enter the total amount you're willing to spend on this campaign. Think of this like ad spend, but instead of paying a platform directly, you're investing in creators who will promote your brand. You can select your preferred currency from the dropdown menu.
 
-    * **Example**: With a \$3 reward rate and \$6 minimum payout, only videos with at least 2,000 views enter your review queue (\$3 × 2 = \$6 earned).
-  </Step>
+> [!TIP]
+>
+> Note: Whop won't charge you until you set up your payments and deposit funds.
 
-  <Step title="Maximum payout">
-    Cap how much a single creator can earn from one video to protect your campaign budget. Without a cap, one video with hundreds of millions of views could consume your entire budget, leaving nothing for other creators. The maximum payout ensures your budget gets distributed across multiple creators and videos.
+**5. Reward rate**
 
-    * **Example**: With a \$3,000 maximum payout and \$3 reward rate, a creator stops earning once their video hits 1 million views, even if it continues growing.
-  </Step>
+Set how much creators earn per 1,000 views on their videos.
 
-  <Step title="Flat fee bonus (optional)">
-    When you choose a flat fee bonus, every approved submission earns both the view-based reward AND the flat fee amount. This can help attract more creators, especially when you're launching a new campaign.
+> [!TIP]
+>
+> * UGC content typically pays higher rates than clipping
+> * Higher rates attract better creators
 
-    * **Example**: With a \$3 reward rate, \$10 flat fee, and 2,000 views, a creator earns \$16 total (\$6 from views + \$10 flat fee).
-  </Step>
+**6. Minimum payout**
 
-  <Step title="Platform selection">
-    Choose which social media platforms you'll accept submissions from.
-  </Step>
+Choose the minimum amount a creator can earn from a video before it reaches your review queue. If you choose \$0, you'll need to review every video submission, even those with only a few views. To focus on quality content that's performing, choose a minimum payout amount.
 
-  <Step title="Available content">
-    This is where you communicate what you want and give creators everything they need to make great content for your brand. Here's what to include:
+* **Example**: With a \$3 reward rate and \$6 minimum payout, only videos with at least 2,000 views enter your review queue (\$3 × 2 = \$6 earned).
 
-    * Brand guidelines and details about your brand
-    * Your campaign goals and messaging
-    * Examples of content that's worked for your brand (case studies, successful hooks, etc.)
-    * For clipping campaigns: Access to your video footage and any assets they can use
+**7. Maximum payout**
 
-    <Tip>
-      Pro tip: Upload a comprehensive Google Doc with all your guidelines and examples, then paste the shareable link here. You can always update the document later without changing your campaign settings.
-    </Tip>
-  </Step>
+Cap how much a single creator can earn from one video to protect your campaign budget. Without a cap, one video with hundreds of millions of views could consume your entire budget, leaving nothing for other creators. The maximum payout ensures your budget gets distributed across multiple creators and videos.
 
-  <Step title="Requirements">
-    Clearly outline the rules creators must follow before you approve and pay their submissions:
+* **Example**: With a \$3,000 maximum payout and \$3 reward rate, a creator stops earning once their video hits 1 million views, even if it continues growing.
 
-    * Content quality standards
-    * Brand mention requirements
-    * Prohibited content guidelines
-    * Video length or format specifications
-      * Any required messaging
+**8. Flat fee bonus (optional)**
 
-    This protects your brand and ensures you only pay for content that meets your standards.
-  </Step>
-</Steps>
+When you choose a flat fee bonus, every approved submission earns both the view-based reward AND the flat fee amount. This can help attract more creators, especially when you're launching a new campaign.
+
+* **Example**: With a \$3 reward rate, \$10 flat fee, and 2,000 views, a creator earns \$16 total (\$6 from views + \$10 flat fee).
+
+**9. Platform selection**
+
+Choose which social media platforms you'll accept submissions from.
+
+**10. Available content**
+
+This is where you communicate what you want and give creators everything they need to make great content for your brand. Here's what to include:
+
+* Brand guidelines and details about your brand
+* Your campaign goals and messaging
+* Examples of content that's worked for your brand (case studies, successful hooks, etc.)
+* For clipping campaigns: Access to your video footage and any assets they can use
+
+> [!TIP]
+>
+> Pro tip: Upload a comprehensive Google Doc with all your guidelines and examples, then paste the shareable link here. You can always update the document later without changing your campaign settings.
+
+**11. Requirements**
+
+Clearly outline the rules creators must follow before you approve and pay their submissions:
+
+* Content quality standards
+* Brand mention requirements
+* Prohibited content guidelines
+* Video length or format specifications
+  * Any required messaging
+
+This protects your brand and ensures you only pay for content that meets your standards.
 
 #### Step 3: Fund and launch your campaign
 
@@ -170,3 +178,10 @@ You can add more money anytime by:
 1. Selecting the three dots (···) on your campaign
 2. Selecting **Add budget**
 3. Entering the amount and selecting **Send**
+
+
+## Related topics
+
+- [Team Management](https://docs.whop.com/manage-your-business/team-management/manage-team-roles.md)
+- [Access Content on Mobile](https://docs.whop.com/memberships-and-access/access-discord-server/access-content-on-mobile.md)
+- [Community Guidelines](https://docs.whop.com/trust-and-safety/trust-safety-overview/community-guidelines.md)

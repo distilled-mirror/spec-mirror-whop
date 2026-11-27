@@ -2,16 +2,26 @@
 > Fetch the complete documentation index at: https://docs.whop.com/llms.txt
 > Use this file to discover all available pages before exploring further.
 
+> ## Agent Instructions
+> Treat these docs and the Whop MCP server as the source of truth for Whop API behavior. Don't infer endpoint behavior from marketing pages.
+> MCP server: connect https://mcp.whop.com/mcp (streamable HTTP, browser sign-in, no API key in the client config) to search these docs and read or change live Whop data. Setup: https://docs.whop.com/developer/guides/ai_and_mcp.md
+> Whop CLI: install with `curl -fsSL https://whop.com/install.sh | sh` to scaffold, run, and deploy Whop apps and websites. It acts on production, not the sandbox. Overview: https://docs.whop.com/cli/overview.md Agent mode: https://docs.whop.com/cli/agent-mode.md
+> Hosting: Whop serves a site or app from the build `whop apps deploy` uploads, with rollbacks, secrets, and server logs. Guide: https://docs.whop.com/developer/websites/hosting.md
+> Plugins: in Claude Code, run `/plugin marketplace add whopio/plugins`, then `/plugin install whop@whop`. Guide: https://docs.whop.com/developer/guides/plugins/claude-code.md Every agent tool: https://docs.whop.com/developer/ai/overview.md
+> Environments: build and test in the sandbox (API `https://sandbox-api.whop.com/api/v1`, keys at https://sandbox.whop.com/dashboard/developer, SDK environment `Sandbox`; no real money). Production (API `https://api.whop.com/api/v1`, keys at https://whop.com/dashboard/developer, SDK environment `Production`, the SDK default) moves real money, so use it only at launch. The two share no accounts, keys, products, or webhooks, and their keys look identical: never mix them. Sandbox guide: https://docs.whop.com/developer/guides/sandbox.md Comparison: https://docs.whop.com/developer/quickstart.md
+> API: send `Authorization: Bearer <API_KEY>` from your server only, and pin a dated version with the `Api-Version-Date` header. OpenAPI spec: https://api.whop.com/api/v1/openapi.json
+> Which API: build on the Current API, whose pages live under https://docs.whop.com/api-reference/ (start at https://docs.whop.com/api-reference/overview.md). Pages under /api-reference/legacy/ are the Legacy API. Use one only when https://docs.whop.com/api-reference/stability.md lists the resource as Legacy-only.
+
 # Enable Apple Pay and Google Pay
 
-> Enable Apple Pay and Google Pay on your own domain by verifying it as a payment method domain
+> Host the Apple Pay verification file and register your domain so Apple Pay and Google Pay work in Whop Elements on your site.
 
-Apple Pay and Google Pay let customers pay from the wallet already on their device. When a [Whop Elements](/elements/latest/getting-started) checkout or payment element renders on your own site, both wallets require the page's domain to be a verified payment method domain. One verified domain clears both wallets for every element on that page.
+Apple Pay and Google Pay let customers pay from the wallet already on their device. When a [Whop Elements](https://docs.whop.com/elements/latest/getting-started.md) checkout or payment element renders on your own site, both wallets require Apple Pay to be ready on the page's domain. One domain with Apple Pay ready clears both wallets for every element on that page.
 
-<Note>
-  Domain verification is only required for pages you host. Whop-hosted checkout
-  pages and whop.com are already approved.
-</Note>
+> [!NOTE]
+>
+> Domain verification is only required for pages you host. Whop-hosted checkout
+> pages and whop.com are already approved.
 
 ## Prerequisites
 
@@ -42,53 +52,51 @@ The file must be:
 * Accessible without authentication
 * Served with the correct content (no modifications)
 
-<Tabs>
-  <Tab title="Next.js">
-    Place the file in your `public` folder:
+> [tab] Next.js
+>
+> Place the file in your `public` folder:
+>
+> ```
+> public/
+> └── .well-known/
+>     └── apple-developer-merchantid-domain-association
+> ```
 
-    ```
-    public/
-    └── .well-known/
-        └── apple-developer-merchantid-domain-association
-    ```
-  </Tab>
+> [tab] Nginx
+>
+> Add a location block to serve the file:
+>
+> ```nginx theme={null}
+> location /.well-known/apple-developer-merchantid-domain-association {
+>     alias /path/to/apple-developer-merchantid-domain-association;
+>     default_type application/octet-stream;
+> }
+> ```
 
-  <Tab title="Nginx">
-    Add a location block to serve the file:
+> [tab] Vercel
+>
+> Create a `vercel.json` with a rewrite rule that proxies to the file hosted on whop.com:
+>
+> ```json theme={null}
+> {
+>   "rewrites": [
+>     {
+>       "source": "/.well-known/apple-developer-merchantid-domain-association",
+>       "destination": "https://whop.com/.well-known/apple-platform-integrator/apple-developer-merchantid-domain-association"
+>     }
+>   ]
+> }
+> ```
 
-    ```nginx theme={null}
-    location /.well-known/apple-developer-merchantid-domain-association {
-        alias /path/to/apple-developer-merchantid-domain-association;
-        default_type application/octet-stream;
-    }
-    ```
-  </Tab>
-
-  <Tab title="Vercel">
-    Create a `vercel.json` with a rewrite rule that proxies to the file hosted on whop.com:
-
-    ```json theme={null}
-    {
-      "rewrites": [
-        {
-          "source": "/.well-known/apple-developer-merchantid-domain-association",
-          "destination": "https://whop.com/.well-known/apple-platform-integrator/apple-developer-merchantid-domain-association"
-        }
-      ]
-    }
-    ```
-  </Tab>
-
-  <Tab title="Cloudflare Pages">
-    Place the file in your output directory:
-
-    ```
-    dist/
-    └── .well-known/
-        └── apple-developer-merchantid-domain-association
-    ```
-  </Tab>
-</Tabs>
+> [tab] Cloudflare Pages
+>
+> Place the file in your output directory:
+>
+> ```
+> dist/
+> └── .well-known/
+>     └── apple-developer-merchantid-domain-association
+> ```
 
 ### Step 3: Verify file access
 
@@ -104,90 +112,78 @@ The file should download or display its contents without any errors.
 
 Register the domain from the dashboard or through the API. Either way, Whop checks that the file is reachable before registering the domain with Apple.
 
-<Tabs>
-  <Tab title="Dashboard">
-    Navigate to your [checkout settings](https://whop.com/dashboard/settings/checkout/) and find the **Apple Pay and Google Pay for embedded checkout** section. Select **Configure** to open **Payment domains**.
+> [tab] Dashboard
+>
+> Open **Websites** in your dashboard and select the domain. Select **Fix Apple Pay**, follow the steps, then select **Check now**.
 
-    <Frame>
-      <img src="https://mintcdn.com/whop/qJMsh85qcrvhDnDi/images/apple-pay/payment-domains-settings.png?fit=max&auto=format&n=qJMsh85qcrvhDnDi&q=85&s=2797c1311a2bbd28cdef5e86929eb25f" alt="Payment domains settings showing the Configure button" width="2868" height="1654" data-path="images/apple-pay/payment-domains-settings.png" />
-    </Frame>
-
-    Select **Add domain**, choose **Self-hosted verification**, and enter your domain.
-
-    <Frame>
-      <img src="https://mintcdn.com/whop/qJMsh85qcrvhDnDi/images/apple-pay/add-domain-self-hosted.png?fit=max&auto=format&n=qJMsh85qcrvhDnDi&q=85&s=cbb7f1aa2b9d605470356ee4d058f7cd" alt="Add domain dialog for self-hosted verification" width="2608" height="1246" data-path="images/apple-pay/add-domain-self-hosted.png" />
-    </Frame>
-
-    A domain listed as **Needs verification** is still waiting on the file. Fix the hosting, then select **Verify domain**.
-  </Tab>
-
-  <Tab title="API">
-    Register the hostname with the [Payment Method Domains API](/api-reference/beta/payment-method-domains/payment-method-domain). Whop attempts verification inline and returns `verified` when Apple fetched the file, or `pending` when it couldn't.
-
-    <CodeGroup>
-      ```typescript TypeScript theme={null}
-      import { WhopClient } from "@whop/sdk";
-
-      const client = new WhopClient({ token: process.env.WHOP_API_KEY });
-
-      const domain = await client.paymentMethodDomains.create({
-        hostname: "shop.example.com",
-      });
-
-      console.log(domain.status); // "verified", or "pending" until the file is reachable
-      ```
-
-      ```python Python theme={null}
-      import os
-      from whop_sdk import Whop
-
-      client = Whop(token=os.environ["WHOP_API_KEY"])
-
-      domain = client.payment_method_domains.create(hostname="shop.example.com")
-
-      print(domain.status)  # "verified", or "pending" until the file is reachable
-      ```
-    </CodeGroup>
-
-    Once you host the file, re-run verification for a `pending` domain with [Verify Payment Method Domain](/api-reference/beta/payment-method-domains/verify-payment-method-domain):
-
-    <CodeGroup>
-      ```typescript TypeScript theme={null}
-      await client.paymentMethodDomains.verify({ id: domain.id });
-      ```
-
-      ```python Python theme={null}
-      client.payment_method_domains.verify(id=domain.id)
-      ```
-    </CodeGroup>
-  </Tab>
-</Tabs>
+> [tab] API
+>
+> Add the domain with Apple Pay through the [Domains API](https://docs.whop.com/api-reference/domains/domain). If your account already has the domain, [update it](https://docs.whop.com/api-reference/domains/update-domain.md) with `apple_pay: {}` instead. Your API key needs the `domain:manage` permission.
+>
+> ```typescript TypeScript theme={null}
+> import { WhopClient } from "@whop/sdk";
+>
+> const client = new WhopClient({ token: process.env.WHOP_API_KEY });
+>
+> const domain = await client.domains.create({
+>   domain: "shop.example.com",
+>   apple_pay: {},
+> });
+>
+> console.log(domain.apple_pay?.state); // "pending" while Whop registers the domain with Apple
+> ```
+>
+> ```python Python theme={null}
+> import os
+> from whop_sdk import Whop
+>
+> client = Whop(token=os.environ["WHOP_API_KEY"])
+>
+> domain = client.domains.create(domain="shop.example.com", apple_pay={})
+>
+> print(domain.apple_pay.state)  # "pending" while Whop registers the domain with Apple
+> ```
+>
+> Whop registers the domain with Apple in the background. [Retrieve the domain](https://docs.whop.com/api-reference/domains/retrieve-domain.md) until `apple_pay.state` is `ready`, or `action_required` when Apple couldn't fetch the file. Once you host the file, register an `action_required` domain again with [Check Domain](https://docs.whop.com/api-reference/domains/check-domain.md):
+>
+> ```typescript TypeScript theme={null}
+> await client.domains.check({ id: domain.id });
+> ```
+>
+> ```python Python theme={null}
+> client.domains.check(id=domain.id)
+> ```
+>
+> The Domains API replaces the deprecated Payment Method Domains API. The [migration guide](https://docs.whop.com/developer/api/migrate-from-previous-versions.md#payment-method-domains) maps each of its requests to the Domains API.
 
 ## Troubleshooting
 
-<AccordionGroup>
-  <Accordion title="Apple Pay or Google Pay button doesn't appear">
-    * Make sure your domain shows as verified in **Payment domains** or returns `status: "verified"` from the API.
-    * The [ExpressCheckoutElement](/elements/latest/checkout/expressCheckout) renders only the wallets the buyer's device can pay with, and renders nothing where no wallet is available. Test Apple Pay in Safari on a real Apple device, not in a simulator.
-    * If using **Framer**, load the Elements script through Custom Code in your site headers, not through the Embed component. Framer's Embed component uses a `srcdoc` iframe, which Safari treats as an insecure context and blocks Apple Pay.
-  </Accordion>
+> [accordion] Apple Pay or Google Pay button doesn't appear
+>
+> * Make sure your domain shows as verified in **Payment domains** or returns `apple_pay.state: "ready"` from the [Domains API](https://docs.whop.com/api-reference/domains/retrieve-domain.md).
+> * The [ExpressCheckoutElement](https://docs.whop.com/elements/latest/checkout/expressCheckout.md) renders only the wallets the buyer's device can pay with, and renders nothing where no wallet is available. Test Apple Pay in Safari on a real Apple device, not in a simulator.
+> * If using **Framer**, load the Elements script through Custom Code in your site headers, not through the Embed component. Framer's Embed component uses a `srcdoc` iframe, which Safari treats as an insecure context and blocks Apple Pay.
 
-  <Accordion title="Self-hosted file returns 404">
-    * Verify the file is in the correct location:
-      `/.well-known/apple-developer-merchantid-domain-association`.
-    * Check that your web server serves files without extensions.
-    * Make sure your hosting configuration doesn't block the `.well-known` directory.
-  </Accordion>
-</AccordionGroup>
+> [accordion] Self-hosted file returns 404
+>
+> * Verify the file is in the correct location:
+>   `/.well-known/apple-developer-merchantid-domain-association`.
+> * Check that your web server serves files without extensions.
+> * Make sure your hosting configuration doesn't block the `.well-known` directory.
 
 ## Next steps
 
-<CardGroup cols={2}>
-  <Card title="Express Checkout" icon="apple" href="/developer/guides/express-checkout">
-    Add one-press Apple Pay and Google Pay buttons to your site
-  </Card>
+> [card] [Express Checkout](https://docs.whop.com/developer/guides/express-checkout.md)
+>
+> Add one-press Apple Pay and Google Pay buttons to your site
 
-  <Card title="Checkout Links" icon="link" href="/payments/create-checkout-link">
-    Create shareable checkout links for your products
-  </Card>
-</CardGroup>
+> [card] [Checkout Links](https://docs.whop.com/payments/create-checkout-link.md)
+>
+> Create shareable checkout links for your products
+
+
+## Related topics
+
+- [Add Express Checkout](https://docs.whop.com/developer/guides/express-checkout.md)
+- [Open a Wallet Sheet from Your Own Button](https://docs.whop.com/developer/guides/payment-request.md)
+- [Migrate from Previous Versions](https://docs.whop.com/developer/api/migrate-from-previous-versions.md)

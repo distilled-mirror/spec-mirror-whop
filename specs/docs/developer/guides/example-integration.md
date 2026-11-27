@@ -2,11 +2,21 @@
 > Fetch the complete documentation index at: https://docs.whop.com/llms.txt
 > Use this file to discover all available pages before exploring further.
 
+> ## Agent Instructions
+> Treat these docs and the Whop MCP server as the source of truth for Whop API behavior. Don't infer endpoint behavior from marketing pages.
+> MCP server: connect https://mcp.whop.com/mcp (streamable HTTP, browser sign-in, no API key in the client config) to search these docs and read or change live Whop data. Setup: https://docs.whop.com/developer/guides/ai_and_mcp.md
+> Whop CLI: install with `curl -fsSL https://whop.com/install.sh | sh` to scaffold, run, and deploy Whop apps and websites. It acts on production, not the sandbox. Overview: https://docs.whop.com/cli/overview.md Agent mode: https://docs.whop.com/cli/agent-mode.md
+> Hosting: Whop serves a site or app from the build `whop apps deploy` uploads, with rollbacks, secrets, and server logs. Guide: https://docs.whop.com/developer/websites/hosting.md
+> Plugins: in Claude Code, run `/plugin marketplace add whopio/plugins`, then `/plugin install whop@whop`. Guide: https://docs.whop.com/developer/guides/plugins/claude-code.md Every agent tool: https://docs.whop.com/developer/ai/overview.md
+> Environments: build and test in the sandbox (API `https://sandbox-api.whop.com/api/v1`, keys at https://sandbox.whop.com/dashboard/developer, SDK environment `Sandbox`; no real money). Production (API `https://api.whop.com/api/v1`, keys at https://whop.com/dashboard/developer, SDK environment `Production`, the SDK default) moves real money, so use it only at launch. The two share no accounts, keys, products, or webhooks, and their keys look identical: never mix them. Sandbox guide: https://docs.whop.com/developer/guides/sandbox.md Comparison: https://docs.whop.com/developer/quickstart.md
+> API: send `Authorization: Bearer <API_KEY>` from your server only, and pin a dated version with the `Api-Version-Date` header. OpenAPI spec: https://api.whop.com/api/v1/openapi.json
+> Which API: build on the Current API, whose pages live under https://docs.whop.com/api-reference/ (start at https://docs.whop.com/api-reference/overview.md). Pages under /api-reference/legacy/ are the Legacy API. Use one only when https://docs.whop.com/api-reference/stability.md lists the resource as Legacy-only.
+
 # Example Integration
 
-> Build a marketplace on top of Whop's global payment and payout rails.
+> Build a Mercor-style marketplace on Whop with Next.js: set up the pages, take payments with the Checkout element, and pay subaccounts at scale.
 
-This guide shows how to recreate the core of the Mercor Clone demo using Whop Rails. You'll build the key pages, wire up payments with the Checkout element, and pay connected accounts at scale.
+This guide shows how to recreate the core of the Mercor Clone demo using Whop Rails. You'll build the key pages, wire up payments with the Checkout element, and pay subaccounts at scale.
 
 To see the example repository, visit the [Mercor clone repository](https://github.com/whopio/mercor-clone). Otherwise, follow the tutorial below to get started:
 
@@ -23,7 +33,7 @@ DATABASE_URL="postgresql://user:password@localhost:5432/mercorclone?schema=publi
 # Whop
 WHOP_API_KEY="whop_XXXXXXXXXXXXXXXX"
 PLATFORM_ACCOUNT_ID="biz_XXXXXXXXXXXX"
-WHOP_WEBHOOK_SECRET="whsec_XXXXXXXXXXX"  # recommended for webhook signature verification
+WHOP_WEBHOOK_SECRET="ws_XXXXXXXXXXX"
 
 # Auth (example if using NextAuth)
 NEXTAUTH_URL="http://localhost:3000"
@@ -33,8 +43,19 @@ NEXTAUTH_SECRET="$(openssl rand -base64 32)"
 Install dependencies
 
 ```bash theme={null}
-pnpm add @whop/elements @whop/elements-react
+pnpm add @whop/sdk @whop/elements @whop/elements-react
 # plus your web framework deps (e.g., Next.js, Prisma, etc.)
+```
+
+Create one Whop client for your server routes. The SDK sends the API version it was generated from on every request.
+
+```ts theme={null}
+// lib/whop.ts
+import { WhopClient } from "@whop/sdk";
+
+export const whop = new WhopClient({
+	token: process.env.WHOP_API_KEY,
+});
 ```
 
 ## 1) Project structure and pages
@@ -63,7 +84,7 @@ app/
     whop/
       events/route.ts           # Webhook for payment events
     payouts/
-      setup/route.ts            # Create connected account
+      setup/route.ts            # Create subaccount
     submissions/
       [id]/complete/route.ts    # Create transfer payout on completion
 ```
@@ -148,12 +169,13 @@ export default function EarnerPayoutsPage() {
 
 ## 2) Payment flow with the checkout element
 
-Server: create a Whop checkout configuration (one-time plan) that includes your own metadata to link payments back to the recruiter account.
+Server: create a Whop checkout configuration with an inline one-time variant and your own metadata to link payments back to the recruiter account.
 
 ```ts theme={null}
 // app/api/checkout/create-session/route.ts
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
+import { whop } from "@/lib/whop";
 
 export async function POST(request: Request) {
 	const session = await auth();
@@ -164,43 +186,34 @@ export async function POST(request: Request) {
 	if (!amount || amount <= 0)
 		return NextResponse.json({ error: "Invalid amount" }, { status: 400 });
 
-	const res = await fetch(
-		"https://api.whop.com/api/v1/checkout_configurations",
-		{
-			method: "POST",
-			headers: {
-				Authorization: `Bearer ${process.env.WHOP_API_KEY!}`,
-				"Content-Type": "application/json",
+	const cfg = await whop.checkoutConfigurations
+		.create({
+			account_id: process.env.PLATFORM_ACCOUNT_ID!,
+			variant: {
+				visibility: "visible",
+				billing_type: "one_time",
+				release_method: "buy_now",
+				currency: currency.toLowerCase(),
+				initial_price: amount,
 			},
-			body: JSON.stringify({
-				plan: {
-					account_id: process.env.PLATFORM_ACCOUNT_ID,
-					visibility: "visible",
-					plan_type: "one_time",
-					release_method: "buy_now",
-					currency: currency.toLowerCase(),
-					initial_price: amount,
-				},
-				metadata: {
-					recruiterId: session.user.id,
-					amount: String(amount),
-					currency,
-					type: "add_funds",
-				},
-			}),
-		},
-	);
+			metadata: {
+				recruiterId: session.user.id,
+				amount: String(amount),
+				currency,
+				type: "add_funds",
+			},
+		})
+		.catch(() => null);
 
-	if (!res.ok)
+	if (!cfg)
 		return NextResponse.json(
 			{ error: "Failed to create checkout configuration" },
-			{ status: res.status },
+			{ status: 502 },
 		);
-	const cfg = await res.json();
 	return NextResponse.json({
 		purchaseUrl: cfg.purchase_url,
 		checkoutConfigId: cfg.id,
-		planId: cfg.plan.id,
+		variantId: cfg.variant?.id,
 	});
 }
 ```
@@ -300,22 +313,25 @@ export default function AddFundsModal({
 
 A finished checkout redirects the tab to `returnUrl`, so the modal needs no completion callback. Credit the recruiter's balance from the webhook below and render it on the page `returnUrl` points to.
 
-Webhook: receive Whop payment events and credit recruiter balance on `payment.succeeded`.
+Webhook: verify the signature, receive Whop payment events, and credit the recruiter balance on `payment.succeeded`. Pin the webhook's `api_version_date` when you [create it](https://docs.whop.com/developer/guides/webhooks.md) so `data` is the current Payment object, where `total` is a money object with a decimal-string `amount`.
 
 ```ts theme={null}
 // app/api/whop/events/route.ts
 import { NextResponse } from "next/server";
+import { unwrapWebhook } from "@whop/sdk/helpers";
 import { prisma } from "@/lib/prisma";
 
 export async function POST(request: Request) {
-	// TODO: verify signature using WHOP_WEBHOOK_SECRET
-	const body = await request.json();
-	const { type: eventType, data } = body;
+	const payload = await request.text();
+	const { type: eventType, data } = unwrapWebhook(payload, {
+		headers: Object.fromEntries(request.headers),
+		key: process.env.WHOP_WEBHOOK_SECRET!,
+	});
 
-	if (eventType?.startsWith("payment.")) {
+	if (eventType.startsWith("payment.")) {
 		const paymentId = data.id;
 		const recruiterId = data.metadata?.recruiterId;
-		const total = data.total ?? Number(data.metadata?.amount ?? 0);
+		const total = Number(data.total?.amount ?? 0);
 		const currency = (data.currency ?? "usd").toUpperCase();
 		if (!recruiterId) return NextResponse.json({ received: true });
 
@@ -367,15 +383,16 @@ export async function POST(request: Request) {
 }
 ```
 
-## 3) Connected account payouts (account setup + payout portal)
+## 3) Subaccount payouts (account setup + payout portal)
 
-Create a Whop sub-account (earner account) under your platform account. Store the returned `whopId` to route transfers.
+Create a Whop subaccount (earner account) under your platform account. Passing your user ID as `external_id` makes a retried create return the same subaccount. Store the returned ID as `whopId` to route transfers. To find the account by your user ID later, call `whop.accounts.list({ external_id })`.
 
 ```ts theme={null}
 // app/api/payouts/setup/route.ts
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { whop } from "@/lib/whop";
 
 export async function POST() {
 	const session = await auth();
@@ -395,24 +412,19 @@ export async function POST() {
 		where: { id: session.user.id },
 		select: { email: true, name: true },
 	});
-	const res = await fetch("https://api.whop.com/api/v1/accounts", {
-		method: "POST",
-		headers: {
-			Authorization: `Bearer ${process.env.WHOP_API_KEY!}`,
-			"Content-Type": "application/json",
-		},
-		body: JSON.stringify({
+	const account = await whop.accounts
+		.create({
 			email: user!.email,
 			title: user!.name || user!.email.split("@")[0],
-		}),
-	});
-	if (!res.ok)
+			external_id: session.user.id,
+		})
+		.catch(() => null);
+	if (!account)
 		return NextResponse.json(
 			{ error: "Failed to create payout account" },
-			{ status: res.status },
+			{ status: 502 },
 		);
 
-	const account = await res.json();
 	const record = await prisma.whopAccount.create({
 		data: {
 			title: account.title,
@@ -430,7 +442,7 @@ export async function POST() {
 
 Embed a payout portal with Whop Elements
 
-Mint an access token for the earner's account on your server (see [Enable Connected Account Payouts](/developer/platforms/render-payout-portal#server-side-implementation)), then mount the wallet surfaces with it:
+Mint an access token for the earner's account on your server (see [Enable Subaccount Payouts](https://docs.whop.com/developer/platforms/render-payout-portal.md#server-side-implementation)), then mount the wallet surfaces with it:
 
 ```tsx theme={null}
 "use client";
@@ -466,7 +478,7 @@ function EarnerPayoutPortal({
 }
 ```
 
-Gig completion: transfer funds from platform to earner sub-account using the earner's `whopAccountId` and an idempotency key per submission.
+Gig completion: transfer funds from platform to earner subaccount using the earner's `whopAccountId` and an idempotency key per submission.
 
 ```ts theme={null}
 // app/api/submissions/[id]/complete/route.ts
@@ -474,6 +486,7 @@ import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { createLedgerEntry, getRecruiterBalance } from "@/lib/ledger";
+import { whop } from "@/lib/whop";
 
 const PLATFORM_FEE_PERCENTAGE = 0.05;
 
@@ -518,20 +531,17 @@ export async function POST(
 			{ status: 400 },
 		);
 
-	const platformFee = listingAmount * PLATFORM_FEE_PERCENTAGE;
+	const platformFee =
+		Math.round(listingAmount * PLATFORM_FEE_PERCENTAGE * 100) / 100;
 	const earnerAmount = listingAmount - platformFee;
 	const idempotencyKey = `submission_${submission.id}_payout`;
 
-	const transfer = await fetch("https://api.whop.com/api/v1/transfers", {
-		method: "POST",
-		headers: {
-			Authorization: `Bearer ${process.env.WHOP_API_KEY!}`,
-			"Content-Type": "application/json",
-		},
-		body: JSON.stringify({
+	const t = await whop.transfers
+		.create({
+			type: "balance",
 			amount: earnerAmount,
 			currency: submission.listing.currency.toLowerCase(),
-			origin_id: process.env.PLATFORM_ACCOUNT_ID,
+			origin_id: process.env.PLATFORM_ACCOUNT_ID!,
 			destination_id: submission.earner.whopAccount.whopId,
 			idempotence_key: idempotencyKey,
 			notes: `Gig payment: ${submission.listing.title}`,
@@ -539,14 +549,13 @@ export async function POST(
 				submissionId: submission.id,
 				listingId: submission.listing.id,
 			},
-		}),
-	});
-	if (!transfer.ok)
+		})
+		.catch(() => null);
+	if (!t)
 		return NextResponse.json(
 			{ error: "Failed to create transfer" },
-			{ status: transfer.status },
+			{ status: 502 },
 		);
-	const t = await transfer.json();
 
 	const updated = await prisma.$transaction(async (tx) => {
 		await createLedgerEntry(
@@ -574,6 +583,13 @@ export async function POST(
 }
 ```
 
-That's the core of the Mercor-style marketplace. Recruiters fund balances through payments, earners set up payout accounts (sub-accounts), and completed gigs transfer money to earners minus your platform fee.
+That's the core of the Mercor-style marketplace. Recruiters fund balances through payments, earners set up payout accounts (subaccounts), and completed gigs transfer money to earners minus your platform fee.
 
 Reference repository: [Mercor clone](https://github.com/whopio/mercor-clone)
+
+
+## Related topics
+
+- [Platform Quickstart](https://docs.whop.com/developer/platforms/quickstart.md)
+- [Troubleshoot Whop Integrations](https://docs.whop.com/developer/troubleshooting.md)
+- [Zapier](https://docs.whop.com/third-party-integrations/zapier.md)

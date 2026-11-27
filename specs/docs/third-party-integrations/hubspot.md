@@ -2,180 +2,83 @@
 > Fetch the complete documentation index at: https://docs.whop.com/llms.txt
 > Use this file to discover all available pages before exploring further.
 
+> ## Agent Instructions
+> Treat these docs and the Whop MCP server as the source of truth for Whop API behavior. Don't infer endpoint behavior from marketing pages.
+> MCP server: connect https://mcp.whop.com/mcp (streamable HTTP, browser sign-in, no API key in the client config) to search these docs and read or change live Whop data. Setup: https://docs.whop.com/developer/guides/ai_and_mcp.md
+> Whop CLI: install with `curl -fsSL https://whop.com/install.sh | sh` to scaffold, run, and deploy Whop apps and websites. It acts on production, not the sandbox. Overview: https://docs.whop.com/cli/overview.md Agent mode: https://docs.whop.com/cli/agent-mode.md
+> Hosting: Whop serves a site or app from the build `whop apps deploy` uploads, with rollbacks, secrets, and server logs. Guide: https://docs.whop.com/developer/websites/hosting.md
+> Plugins: in Claude Code, run `/plugin marketplace add whopio/plugins`, then `/plugin install whop@whop`. Guide: https://docs.whop.com/developer/guides/plugins/claude-code.md Every agent tool: https://docs.whop.com/developer/ai/overview.md
+> Environments: build and test in the sandbox (API `https://sandbox-api.whop.com/api/v1`, keys at https://sandbox.whop.com/dashboard/developer, SDK environment `Sandbox`; no real money). Production (API `https://api.whop.com/api/v1`, keys at https://whop.com/dashboard/developer, SDK environment `Production`, the SDK default) moves real money, so use it only at launch. The two share no accounts, keys, products, or webhooks, and their keys look identical: never mix them. Sandbox guide: https://docs.whop.com/developer/guides/sandbox.md Comparison: https://docs.whop.com/developer/quickstart.md
+> API: send `Authorization: Bearer <API_KEY>` from your server only, and pin a dated version with the `Api-Version-Date` header. OpenAPI spec: https://api.whop.com/api/v1/openapi.json
+> Which API: build on the Current API, whose pages live under https://docs.whop.com/api-reference/ (start at https://docs.whop.com/api-reference/overview.md). Pages under /api-reference/legacy/ are the Legacy API. Use one only when https://docs.whop.com/api-reference/stability.md lists the resource as Legacy-only.
+
 # HubSpot
 
-> Connect Whop to HubSpot. Sync products, generate checkout links from deals and contacts, and see payments natively in Commerce Hub.
+> Sync Whop payments and subscriptions into HubSpot and send Whop checkout links from deals and contacts.
 
-<Card title="Install the Whop app for HubSpot" icon="download" href="https://ecosystem.hubspot.com/marketplace/listing/whoppayments-by-whop">
-  Available on the HubSpot App Marketplace
-</Card>
+> [card] [Install Whop Payments for HubSpot](https://ecosystem.hubspot.com/marketplace/listing/whoppayments-by-whop)
+>
+> Available on the HubSpot App Marketplace
 
-## Overview
+The Whop Payments app brings your Whop revenue into HubSpot as native Commerce Hub records. Your sales team sees payments and subscriptions on the contact and deal, and can send a Whop checkout link without leaving HubSpot.
 
-The Whop × HubSpot integration brings your payment, subscription, and membership data into HubSpot using **native** Payment and Subscription objects — not custom properties or spreadsheets. Your sales team gets full visibility into revenue inside HubSpot's customer relationship management tools.
+You need a Whop business with at least one product, and a HubSpot account where you can install apps.
 
-This guide covers what the integration does, how payments flow through the system, and how to connect Whop to HubSpot.
+## What syncs
 
-## What this integration does
+| Whop data | In HubSpot |
+| - | - |
+| **Payments** | Commerce Hub payment records, associated with the contact, deal, quote, or invoice |
+| **Memberships** | Subscription records with status and recurring revenue, associated with the contact and deal |
+| **Products and plans** | Products in your HubSpot product library |
 
-| Feature                          | Description                                                                                                                      |
-| -------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
-| **Product Sync**                 | Sync all Whop products and pricing plans into HubSpot's product library in one action.                                           |
-| **Checkout Link Generation**     | Generate and send Whop checkout sessions from a deal or contact record in a few actions.                                         |
-| **Native Payment Records**       | Every Whop payment creates a native HubSpot payment record in Commerce Hub.                                                      |
-| **Subscription Tracking**        | Recurring subscriptions appear as HubSpot subscription objects with status, recurring revenue, and billing details.              |
-| **Deal & Contact Association**   | HubSpot links payments and subscriptions to the relevant deal, contact, or both.                                                 |
-| **Quote Payments**               | Add a "Pay with Whop" button directly to HubSpot quote templates.                                                                |
-| **Multi-Payment Method Support** | Supports all payment methods enabled in your Whop account. The right methods appear automatically based on the buyer's location. |
+The app syncs **every** Whop payment, not only ones that started in HubSpot. Each payment shows whether it came from a HubSpot checkout link or from elsewhere on Whop.
 
-## Connecting Whop to HubSpot
+## Connect Whop to HubSpot
 
-Setup is one-time and usually takes under 10 minutes.
+**1. Install the app**
 
-### Prerequisites
+Select **Install Whop Payments for HubSpot** at the top of this page, or search for "Whop" in the HubSpot App Marketplace. Choose the HubSpot account to install it in.
 
-* An active Whop account (free to create)
-* HubSpot account with admin or integration permissions
-* At least one product in Whop. This is optional during setup but required to process payments.
+**2. Create a Whop API key**
 
-### Part 1: Install the app in HubSpot
+In your Whop dashboard, go to **Developer**. Under **Account API keys**, select **Create API key**. Give the key the Admin role, name it (for example, "HubSpot"), and copy it. Whop shows the key only once.
 
-1. In HubSpot, open the App Marketplace and search for **Whop**, or use the install button at the top of this page.
-2. Select the orange **Connect** button. If you have multiple HubSpot accounts, choose the correct one.
-3. Confirm you have a Whop account (or create one at whop.com).
-4. Select **Yes** to continue to the API key step.
+**3. Paste the key into HubSpot**
 
-### Part 2: Generate your Whop API key
+Paste your Whop API key when the app asks for it, then save. To replace the key later, open the app's settings in HubSpot.
 
-1. Log into your Whop dashboard.
-2. In the left sidebar, go to **Developer**.
-3. Scroll to **API Keys** and select **Create API Key**.
-4. Select **All** permission scopes and name the key (e.g., "HubSpot Integration").
-5. Select **Save**. Copy the token immediately and store it securely — Whop won't show it again.
+**4. Sync your products**
 
-<Tip>
-  To update your API key later, go to HubSpot
-  **Settings** → **Integrations** → **Connected Apps** → **Whop** → **Settings**
-  and paste the new key.
-</Tip>
+From the app's settings in HubSpot, sync your Whop products into the product library. Run it again after you add or change products in Whop.
 
-### Part 3: Connect the API key in HubSpot
+Treat the API key like a password. If it leaks, delete it in your Whop dashboard and create a new one.
 
-1. In HubSpot, paste the API key into the field provided.
-2. Select **Save**. You should see "API key saved."
-3. Select **OK** to finish. The integration is now active.
+## Send checkout links from HubSpot
 
-## Syncing products
+Add the Whop card (**Whop-Payment-Link-Deal**) to your deal and contact record views. From a record, pick a product and pricing plan in the card to generate a Whop checkout link for that buyer. When they pay, HubSpot links the payment and any subscription to that record.
 
-After connecting, sync your Whop products into HubSpot's product library so they're available when generating checkout links.
+You can also show the Whop payment link as a column in your HubSpot invoice list, and add a "Pay with Whop" button to quote templates. The app's setup guide, linked from the HubSpot listing, covers both.
 
-1. In HubSpot, go to **Settings** → **Integrations** → **Connected Apps** → **Whop**.
-2. Select **Sync Products**.
-3. HubSpot imports all products from your Whop account into its product library.
+The checkout shows the payment methods available in your Whop business for the buyer's location. See [Pricing and fees](https://docs.whop.com/fees.md) for the full list.
 
-Re-run this sync any time you add or update products in Whop.
+## Get help
 
-## Adding the Whop payment card to records
+For help with the app inside HubSpot, use the support link on the [HubSpot listing](https://ecosystem.hubspot.com/marketplace/listing/whoppayments-by-whop). For questions about payments or your Whop account, contact Whop support.
 
-Add the Whop payment card to your deal and contact views so your team can generate checkout links without leaving HubSpot. Do this once per view.
+## Next steps
 
-### For deal records
+> [card] [GoHighLevel](https://docs.whop.com/third-party-integrations/gohighlevel.md)
+>
+> Use Whop as a payment provider in GoHighLevel.
 
-1. Open any deal in HubSpot.
-2. Select **Customize** in the right panel, and then select **Customize the default view**.
-3. Select **Add a card** and open the **Card Library**.
-4. Search for **Whop** and add the **Whop-Payment-Link-Deal** card.
-5. Drag it to your preferred position. For easy access, place it near the top. Then select **Save and Exit**.
+> [card] [Zapier](https://docs.whop.com/third-party-integrations/zapier.md)
+>
+> Send Whop events to other apps and tools.
 
-### For contact records
 
-Follow the same steps inside a contact record view. Each view has its own configuration.
+## Related topics
 
-## Generating a checkout session
-
-1. Open the deal or contact where you want to collect payment.
-2. Find the Whop payment card on the record.
-3. Select the **Product** from the dropdown (populated from your synced Whop products).
-4. Select the **Pricing Plan** (e.g., $2,000 one-time or $500/month recurring).
-5. Select **Generate Checkout Session**.
-6. Copy the unique checkout link and send it to the prospect.
-
-<Tip>
-  The checkout form automatically displays the right payment methods based on
-  the buyer's location. Whop supports 100+ payment methods across 135+
-  currencies.
-</Tip>
-
-## Adding Whop payment links to invoices
-
-You can add the Whop payment link as a visible column on your invoice list for quick access.
-
-1. In HubSpot, go to **Invoices**.
-2. Select **Edit columns**.
-3. Search for and select **Whop payment link**.
-4. Save the view. The payment link now appears as a column on every invoice row.
-
-## Adding a payment button to quotes
-
-You can add a "Pay with Whop" button to any HubSpot quote template so prospects can pay directly from the quote.
-
-1. Find **Quote template settings** through HubSpot search, and then select it.
-2. Select **Customize Quote Template** and select the template you want to edit.
-3. Select a content block (e.g., the Quote Name block for the top, or Sender Account for the bottom).
-4. In the rich content editor, select **Insert** → **Embed**.
-5. Paste the payment button code below.
-
-```html theme={null}
-<a href="https://whop-payments.com/quote-pay.html?quoteId=&portalId=YOUR_PORTAL_ID"
-   style="display: inline-block; padding: 12px 20px;
-          background-color: #ff6423; color: white;
-          border-radius: 6px; text-decoration: none;">
-   Pay with Whop
-</a>
-```
-
-Replace `YOUR_PORTAL_ID` with your HubSpot portal ID.
-
-## How payment data appears in HubSpot
-
-When a customer pays through a Whop checkout link generated from HubSpot, HubSpot logs the data automatically.
-
-### Payment records
-
-Every completed payment creates a native HubSpot payment record. View them under **Commerce Hub** → **Payments**. Each record includes payment ID, amount, card details, contact/deal association, and timestamp.
-
-### Subscription records
-
-For recurring payments, HubSpot creates a subscription record alongside the payment. It tracks subscription status, monthly recurring revenue, annual recurring revenue, total collected, billing method, and Whop Membership ID.
-
-### Object associations
-
-| Association            | Description                                                  |
-| ---------------------- | ------------------------------------------------------------ |
-| Payment → Contact      | HubSpot links the payment to the contact used for checkout.  |
-| Payment → Deal         | HubSpot links the payment to the deal that started checkout. |
-| Subscription → Contact | HubSpot links the subscription to the contact.               |
-| Subscription → Payment | HubSpot links each payment to its parent subscription.       |
-
-<Tip>
-  You don't need to log payments or update deal stages manually. Data flows from
-  Whop into HubSpot as soon as Whop processes a payment.
-</Tip>
-
-## Frequently asked questions
-
-**Paid Whop account**
-
-No. Whop accounts are free. You only pay transaction fees on payments you process. See [Pricing and fees](/fees) for details.
-
-**Supported payment methods**
-
-Whop supports more than 100 payment methods across 195 countries and more than 135 currencies. Options include cards, digital wallets, bank transfers, and financing. Examples include Visa, Apple Pay, PayPal, Klarna, and Afterpay. The available methods depend on the buyer's location. See [Pricing and fees](/fees) for the full list.
-
-**Using another payment processor**
-
-Yes. Whop payments are separate and clearly labeled. In **Commerce Hub** → **Payments** you can filter to show only Whop transactions.
-
-**Viewing all Whop payments**
-
-Go to **Commerce Hub** → **Payments** in HubSpot to see every Whop payment as a native record.
+- [GoHighLevel](https://docs.whop.com/third-party-integrations/gohighlevel.md)
+- [Zapier](https://docs.whop.com/third-party-integrations/zapier.md)
+- [List Markets](https://docs.whop.com/api-reference/trades/list-markets.md)

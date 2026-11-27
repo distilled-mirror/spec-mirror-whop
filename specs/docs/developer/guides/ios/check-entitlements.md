@@ -2,9 +2,19 @@
 > Fetch the complete documentation index at: https://docs.whop.com/llms.txt
 > Use this file to discover all available pages before exploring further.
 
+> ## Agent Instructions
+> Treat these docs and the Whop MCP server as the source of truth for Whop API behavior. Don't infer endpoint behavior from marketing pages.
+> MCP server: connect https://mcp.whop.com/mcp (streamable HTTP, browser sign-in, no API key in the client config) to search these docs and read or change live Whop data. Setup: https://docs.whop.com/developer/guides/ai_and_mcp.md
+> Whop CLI: install with `curl -fsSL https://whop.com/install.sh | sh` to scaffold, run, and deploy Whop apps and websites. It acts on production, not the sandbox. Overview: https://docs.whop.com/cli/overview.md Agent mode: https://docs.whop.com/cli/agent-mode.md
+> Hosting: Whop serves a site or app from the build `whop apps deploy` uploads, with rollbacks, secrets, and server logs. Guide: https://docs.whop.com/developer/websites/hosting.md
+> Plugins: in Claude Code, run `/plugin marketplace add whopio/plugins`, then `/plugin install whop@whop`. Guide: https://docs.whop.com/developer/guides/plugins/claude-code.md Every agent tool: https://docs.whop.com/developer/ai/overview.md
+> Environments: build and test in the sandbox (API `https://sandbox-api.whop.com/api/v1`, keys at https://sandbox.whop.com/dashboard/developer, SDK environment `Sandbox`; no real money). Production (API `https://api.whop.com/api/v1`, keys at https://whop.com/dashboard/developer, SDK environment `Production`, the SDK default) moves real money, so use it only at launch. The two share no accounts, keys, products, or webhooks, and their keys look identical: never mix them. Sandbox guide: https://docs.whop.com/developer/guides/sandbox.md Comparison: https://docs.whop.com/developer/quickstart.md
+> API: send `Authorization: Bearer <API_KEY>` from your server only, and pin a dated version with the `Api-Version-Date` header. OpenAPI spec: https://api.whop.com/api/v1/openapi.json
+> Which API: build on the Current API, whose pages live under https://docs.whop.com/api-reference/ (start at https://docs.whop.com/api-reference/overview.md). Pages under /api-reference/legacy/ are the Legacy API. Use one only when https://docs.whop.com/api-reference/stability.md lists the resource as Legacy-only.
+
 # Check Entitlements
 
-> Verify subscription status and gate premium content in your iOS app
+> Gate premium iOS content with hasAccess(to:) or isSubscribed, list active memberships, log users in and out to sync devices, and support guest purchases.
 
 This guide shows you how to check if a user has an active subscription and gate premium content accordingly. You'll also learn how to handle user login/logout to sync subscriptions across devices.
 
@@ -16,8 +26,8 @@ This guide shows you how to check if a user has an active subscription and gate 
 
 ## Prerequisites
 
-* [Install the SDK](/developer/guides/ios/installation)
-* [Configure the SDK](/developer/guides/ios/build-a-paywall#step-1-configure-the-sdk)
+* [Install the SDK](https://docs.whop.com/developer/guides/ios/installation.md)
+* [Configure the SDK](https://docs.whop.com/developer/guides/ios/build-a-paywall.md#step-1-configure-the-sdk)
 
 ## Check subscription status
 
@@ -277,12 +287,17 @@ You don't need to refresh manually.
 
 ## Next steps
 
-<CardGroup cols={2}>
-  <Card title="Build a Paywall" icon="credit-card" href="/developer/guides/ios/build-a-paywall">
-    Display plans and handle purchases
-  </Card>
+> [card] [Build a Paywall](https://docs.whop.com/developer/guides/ios/build-a-paywall.md)
+>
+> Display variants and handle purchases
 
-  <Card title="API Reference" icon="book" href="/developer/guides/ios/checkout-reference">
-    Explore all available methods and properties
-  </Card>
-</CardGroup>
+> [card] [API Reference](https://docs.whop.com/developer/guides/ios/checkout-reference.md)
+>
+> Explore all available methods and properties
+
+
+## Related topics
+
+- [iOS Checkout SDK](https://docs.whop.com/developer/guides/ios/overview.md)
+- [iOS Checkout SDK Reference](https://docs.whop.com/developer/guides/ios/checkout-reference.md)
+- [Build an iOS Paywall](https://docs.whop.com/developer/guides/ios/build-a-paywall.md)

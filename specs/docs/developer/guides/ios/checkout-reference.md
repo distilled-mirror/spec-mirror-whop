@@ -2,17 +2,27 @@
 > Fetch the complete documentation index at: https://docs.whop.com/llms.txt
 > Use this file to discover all available pages before exploring further.
 
-# API Reference
+> ## Agent Instructions
+> Treat these docs and the Whop MCP server as the source of truth for Whop API behavior. Don't infer endpoint behavior from marketing pages.
+> MCP server: connect https://mcp.whop.com/mcp (streamable HTTP, browser sign-in, no API key in the client config) to search these docs and read or change live Whop data. Setup: https://docs.whop.com/developer/guides/ai_and_mcp.md
+> Whop CLI: install with `curl -fsSL https://whop.com/install.sh | sh` to scaffold, run, and deploy Whop apps and websites. It acts on production, not the sandbox. Overview: https://docs.whop.com/cli/overview.md Agent mode: https://docs.whop.com/cli/agent-mode.md
+> Hosting: Whop serves a site or app from the build `whop apps deploy` uploads, with rollbacks, secrets, and server logs. Guide: https://docs.whop.com/developer/websites/hosting.md
+> Plugins: in Claude Code, run `/plugin marketplace add whopio/plugins`, then `/plugin install whop@whop`. Guide: https://docs.whop.com/developer/guides/plugins/claude-code.md Every agent tool: https://docs.whop.com/developer/ai/overview.md
+> Environments: build and test in the sandbox (API `https://sandbox-api.whop.com/api/v1`, keys at https://sandbox.whop.com/dashboard/developer, SDK environment `Sandbox`; no real money). Production (API `https://api.whop.com/api/v1`, keys at https://whop.com/dashboard/developer, SDK environment `Production`, the SDK default) moves real money, so use it only at launch. The two share no accounts, keys, products, or webhooks, and their keys look identical: never mix them. Sandbox guide: https://docs.whop.com/developer/guides/sandbox.md Comparison: https://docs.whop.com/developer/quickstart.md
+> API: send `Authorization: Bearer <API_KEY>` from your server only, and pin a dated version with the `Api-Version-Date` header. OpenAPI spec: https://api.whop.com/api/v1/openapi.json
+> Which API: build on the Current API, whose pages live under https://docs.whop.com/api-reference/ (start at https://docs.whop.com/api-reference/overview.md). Pages under /api-reference/legacy/ are the Legacy API. Use one only when https://docs.whop.com/api-reference/stability.md lists the resource as Legacy-only.
 
-> Complete API documentation for WhopCheckout
+# iOS Checkout SDK Reference
+
+> Reference for the classes, methods, and types in the WhopCheckout iOS SDK.
 
 This page documents all classes, methods, properties, and types available in the WhopCheckout SDK.
 
-<Info>
-  For guides, see [Build a
-  Paywall](/developer/guides/ios/build-a-paywall) or [Check
-  Entitlements](/developer/guides/ios/check-entitlements).
-</Info>
+> [!NOTE]
+>
+> For guides, see [Build a
+> Paywall](https://docs.whop.com/developer/guides/ios/build-a-paywall.md) or [Check
+> Entitlements](https://docs.whop.com/developer/guides/ios/check-entitlements.md).
 
 ## Checkout
 
@@ -65,11 +75,11 @@ func configure(
 
 **Parameters:**
 
-| Parameter      | Type            | Description                                                                                                                                                                       |
-| -------------- | --------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `companyId`    | `String`        | Your Whop account ID (starts with `biz_`)                                                                                                                                         |
-| `apiKey`       | `String`        | Your API key. Give it only the `iap:read` scope — see [Create an API key](/developer/guides/ios/installation#step-3-create-an-api-key) for why this is safe to embed in your app. |
-| `planMappings` | `[PlanMapping]` | Mapping of Whop plan IDs to Apple StoreKit product IDs. Pass an empty array if you don't need StoreKit fallback.                                                                  |
+| Parameter | Type | Description |
+| - | - | - |
+| `companyId` | `String` | Your Whop account ID (starts with `biz_`) |
+| `apiKey` | `String` | Your API key. Give it only the `iap:read` scope — see [Create an API key](https://docs.whop.com/developer/guides/ios/installation.md#step-3-create-an-api-key) for why this is safe to embed in your app. |
+| `planMappings` | `[PlanMapping]` | Compatibility property that maps Whop variant IDs to Apple StoreKit product IDs. Pass an empty array if you don't need StoreKit fallback. |
 
 **Example:**
 
@@ -126,7 +136,7 @@ var appUserId: String? { get }
 
 ### `plans`
 
-Array of available subscription plans for the configured products.
+Compatibility property containing the available subscription variants for the configured products.
 
 ```swift theme={null}
 var plans: [CheckoutPlan] { get }
@@ -136,7 +146,7 @@ var plans: [CheckoutPlan] { get }
 
 ```swift theme={null}
 ForEach(checkout.plans) { plan in
-    Text(plan.title ?? "Plan")
+    Text(plan.title ?? "Variant")
 }
 ```
 
@@ -184,18 +194,18 @@ When `true`, the SDK defaults to Whop web checkout (lower fees). When `false`, i
 
 ### `refreshPlans()`
 
-Refreshes the available plans from the server.
+Refreshes the available variants from the server.
 
 ```swift theme={null}
 @discardableResult
 func refreshPlans() async throws -> [CheckoutPlan]
 ```
 
-**Returns:** The refreshed plans with current pricing.
+**Returns:** The refreshed variants with current pricing.
 
 **Throws:** `WhopCheckoutError` if the refresh fails.
 
-Call this to update pricing or plan availability after initialization. This also updates the `plans` property with the latest data.
+Call this to update pricing or variant availability after initialization. This also updates the compatibility property `plans` with the latest data.
 
 **Example:**
 
@@ -219,8 +229,8 @@ func hasAccess(to productId: String) -> Bool
 
 **Parameters:**
 
-| Parameter   | Type     | Description                                   |
-| ----------- | -------- | --------------------------------------------- |
+| Parameter | Type | Description |
+| - | - | - |
 | `productId` | `String` | The product ID to check (starts with `prod_`) |
 
 **Returns:** `true` if the user has an active membership for the product
@@ -238,7 +248,7 @@ if checkout.hasAccess(to: "prod_xxxxxxxxxxxxxx") {
 
 ### purchase(\_:method:)
 
-Initiates a purchase flow for a plan. By default, uses Whop web checkout in the United States (lower fees) and StoreKit elsewhere.
+Initiates a purchase flow for a variant. By default, uses Whop web checkout in the United States (lower fees) and StoreKit elsewhere.
 
 ```swift theme={null}
 func purchase(_ whopPlanId: String, method: PaymentMethod? = nil) async throws -> CheckoutPurchaseResult
@@ -246,10 +256,10 @@ func purchase(_ whopPlanId: String, method: PaymentMethod? = nil) async throws -
 
 **Parameters:**
 
-| Parameter    | Type             | Description                                            |
-| ------------ | ---------------- | ------------------------------------------------------ |
-| `whopPlanId` | `String`         | The Whop plan ID to purchase (starts with `plan_`)     |
-| `method`     | `PaymentMethod?` | Override the payment method. Defaults based on region. |
+| Parameter | Type | Description |
+| - | - | - |
+| `whopPlanId` | `String` | The Whop variant ID to purchase (retains the `plan_` prefix) |
+| `method` | `PaymentMethod?` | Override the payment method. Defaults based on region. |
 
 **Returns:** `CheckoutPurchaseResult` containing the receipt ID and membership information
 
@@ -276,11 +286,11 @@ do {
 let result = try await checkout.purchase("plan_xxx", method: .storeKit)
 ```
 
-<Info>
-  For Apple Pay, use [`Checkout.ApplePayButton`](#checkoutapplepaybutton), or
-  [`presentApplePay(_:)`](#presentapplepay) when your UI triggers Apple Pay
-  from a custom interaction.
-</Info>
+> [!NOTE]
+>
+> For Apple Pay, use [`Checkout.ApplePayButton`](#checkout-applepaybutton), or
+> [`presentApplePay(_:)`](#presentapplepay-_) when your UI triggers Apple Pay
+> from a custom interaction.
 
 ***
 
@@ -294,8 +304,8 @@ func logIn(appUserId: String) async throws
 
 **Parameters:**
 
-| Parameter   | Type     | Description                                             |
-| ----------- | -------- | ------------------------------------------------------- |
+| Parameter | Type | Description |
+| - | - | - |
 | `appUserId` | `String` | Your app's user ID (shouldn't change for the same user) |
 
 **Example:**
@@ -360,58 +370,58 @@ struct CheckoutPurchaseResult {
 }
 ```
 
-| Property     | Type                  | Description                             |
-| ------------ | --------------------- | --------------------------------------- |
-| `receiptId`  | `String`              | The unique receipt ID for this purchase |
+| Property | Type | Description |
+| - | - | - |
+| `receiptId` | `String` | The unique receipt ID for this purchase |
 | `membership` | `CheckoutMembership?` | The membership created by this purchase |
 
-<Accordion title="When's membership nil?">
-  The `membership` property depends on the payment method used:
-
-  | Payment Method    | Region     | `membership` value    |
-  | ----------------- | ---------- | --------------------- |
-  | Whop web checkout | US         | Populated immediately |
-  | StoreKit          | Outside US | `nil` initially       |
-
-  **Why StoreKit purchases return nil:**
-  StoreKit transactions are processed asynchronously by Apple. When the purchase completes, the SDK may not yet have the Whop membership synced. The SDK also tracks StoreKit entitlements, so `checkout.isSubscribed` will still return `true`.
-
-  **How to handle both cases:**
-
-  ```swift theme={null}
-  do {
-      let result = try await checkout.purchase("plan_xxx")
-
-      // Always check isSubscribed - works for both payment methods
-      if checkout.isSubscribed {
-          // Grant access
-      }
-
-      // Optionally use membership details if available
-      if let membership = result.membership {
-          print("Membership ID: \(membership.id)")
-          print("Expires: \(membership.expiresAt?.formatted() ?? "N/A")")
-      }
-  } catch WhopCheckoutError.cancelled {
-      // User cancelled
-  }
-  ```
-
-  **Key point:** Don't rely on `membership` being non-nil to grant access. Always use `checkout.isSubscribed` or `checkout.hasAccess(to:)` to check subscription status.
-</Accordion>
+> [accordion] When's membership nil?
+>
+> The `membership` property depends on the payment method used:
+>
+> | Payment Method | Region | `membership` value |
+> | - | - | - |
+> | Whop web checkout | US | Populated immediately |
+> | StoreKit | Outside US | `nil` initially |
+>
+> **Why StoreKit purchases return nil:**
+> StoreKit transactions are processed asynchronously by Apple. When the purchase completes, the SDK may not yet have the Whop membership synced. The SDK also tracks StoreKit entitlements, so `checkout.isSubscribed` will still return `true`.
+>
+> **How to handle both cases:**
+>
+> ```swift theme={null}
+> do {
+>     let result = try await checkout.purchase("plan_xxx")
+>
+>     // Always check isSubscribed - works for both payment methods
+>     if checkout.isSubscribed {
+>         // Grant access
+>     }
+>
+>     // Optionally use membership details if available
+>     if let membership = result.membership {
+>         print("Membership ID: \(membership.id)")
+>         print("Expires: \(membership.expiresAt?.formatted() ?? "N/A")")
+>     }
+> } catch WhopCheckoutError.cancelled {
+>     // User cancelled
+> }
+> ```
+>
+> **Key point:** Don't rely on `membership` being non-nil to grant access. Always use `checkout.isSubscribed` or `checkout.hasAccess(to:)` to check subscription status.
 
 ***
 
 ### `PlanMapping`
 
-A mapping between a Whop plan and an Apple StoreKit product, used during SDK configuration. This tells the SDK which Apple product to use for StoreKit purchases outside the United States.
+A mapping between a Whop variant and an Apple StoreKit product, used during SDK configuration. This tells the SDK which Apple product to use for StoreKit purchases outside the United States.
 
-<Info>
-  **PlanMapping vs CheckoutPlan:** `PlanMapping` is for SDK configuration
-  (mapping IDs). `CheckoutPlan` is what you display in your UI (has pricing,
-  titles, etc.). You create `PlanMapping` objects in `configure()`, then access
-  `CheckoutPlan` objects via `checkout.plans`.
-</Info>
+> [!NOTE]
+>
+> **PlanMapping vs CheckoutPlan:** `PlanMapping` is for SDK configuration
+> (mapping IDs). `CheckoutPlan` is what you display in your UI (has pricing,
+> titles, etc.). You create `PlanMapping` objects in `configure()`, then access
+> `CheckoutPlan` objects via `checkout.plans`.
 
 ```swift theme={null}
 struct PlanMapping: Sendable {
@@ -422,9 +432,9 @@ struct PlanMapping: Sendable {
 }
 ```
 
-| Property  | Type     | Description                                                               |
-| --------- | -------- | ------------------------------------------------------------------------- |
-| `whopId`  | `String` | The Whop plan ID (e.g., `plan_xxx`)                                       |
+| Property | Type | Description |
+| - | - | - |
+| `whopId` | `String` | The Whop variant ID (e.g., `plan_xxx`) |
 | `appleId` | `String` | The Apple product ID from App Store Connect (e.g., `com.yourapp.monthly`) |
 
 **Example:**
@@ -440,17 +450,17 @@ try await Checkout.shared.configure(
     ]
 )
 
-// After configuration, use checkout.plans (CheckoutPlan array) for UI
+// After configuration, use the compatibility checkout.plans property for UI
 ForEach(checkout.plans) { plan in  // These are CheckoutPlan objects
-    Text(plan.title ?? "Plan")
+    Text(plan.title ?? "Variant")
     Text(plan.whopDisplayPrice)
 }
 ```
 
-<Tip>
-  Your Whop plans and Apple products should have matching pricing and billing
-  periods. See [Plan mapping configuration](/developer/guides/ios/checkout-reference#planmapping) for details.
-</Tip>
+> [!TIP]
+>
+> Your Whop variants and Apple products should have matching pricing and billing
+> periods. See [`PlanMapping`](#planmapping) for the compatibility API details.
 
 ***
 
@@ -465,16 +475,16 @@ enum PaymentMethod: Sendable {
 }
 ```
 
-| Case       | Description                                                                                               |
-| ---------- | --------------------------------------------------------------------------------------------------------- |
-| `whop`     | Web checkout through Whop. 2.7% + \$0.30 fees (versus Apple's 15-30%). Available in the United States.    |
+| Case | Description |
+| - | - |
+| `whop` | Web checkout through Whop. 2.7% + \$0.30 fees (versus Apple's 15-30%). Available in the United States. |
 | `storeKit` | StoreKit in-app purchase through the App Store (15-30% fees). Used as fallback outside the United States. |
 
-<Info>
-  Apple Pay isn't included in `PaymentMethod` — it has its own surfaces:
-  [`Checkout.ApplePayButton`](#checkoutapplepaybutton) and
-  [`presentApplePay(_:)`](#presentapplepay).
-</Info>
+> [!NOTE]
+>
+> Apple Pay isn't included in `PaymentMethod` — it has its own surfaces:
+> [`Checkout.ApplePayButton`](#checkout-applepaybutton) and
+> [`presentApplePay(_:)`](#presentapplepay-_).
 
 ***
 
@@ -494,11 +504,11 @@ struct ApplePayButton: View {
 
 **Parameters:**
 
-| Parameter      | Type                         | Description                                                                              |
-| -------------- | ---------------------------- | ---------------------------------------------------------------------------------------- |
-| `planId`       | `String`                     | The Whop plan ID to purchase                                                             |
-| `label`        | `PayWithApplePayButtonLabel` | Button label style: `.plain`, `.buy`, `.subscribe`, `.checkout`, `.book`, `.order`, etc. |
-| `onCompletion` | `(Result) -> Void`           | Called on success or failure. **Not called** when the user cancels.                      |
+| Parameter | Type | Description |
+| - | - | - |
+| `planId` | `String` | The Whop variant ID to purchase |
+| `label` | `PayWithApplePayButtonLabel` | Button label style: `.plain`, `.buy`, `.subscribe`, `.checkout`, `.book`, `.order`, etc. |
+| `onCompletion` | `(Result) -> Void` | Called on success or failure. **Not called** when the user cancels. |
 
 **Example:**
 
@@ -514,13 +524,13 @@ Checkout.ApplePayButton(planId: "plan_xxx", label: .subscribe) { result in
 .frame(height: 48)
 ```
 
-<Warning>
-  **Apple Pay isn't for digital content.** Only use `Checkout.ApplePayButton`
-  if your app sells physical goods or real-world services. Apps selling digital
-  content (subscriptions to premium features, in-app currency, etc.) must use
-  StoreKit. See the [Apple Pay eligibility](#apple-pay-eligibility) section
-  below.
-</Warning>
+> [!WARNING]
+>
+> **Apple Pay isn't for digital content.** Only use `Checkout.ApplePayButton`
+> if your app sells physical goods or real-world services. Apps selling digital
+> content (subscriptions to premium features, in-app currency, etc.) must use
+> StoreKit. See the [Apple Pay eligibility](#apple-pay-eligibility) section
+> below.
 
 ### `presentApplePay(_:)`
 
@@ -542,14 +552,14 @@ The same [Apple Pay eligibility](#apple-pay-eligibility) rules apply as for `Che
 
 ### `CheckoutPlan` display model
 
-A subscription plan available for purchase, accessed via `checkout.plans`. Use this for displaying plan information in your UI and for making purchases.
+A subscription variant available for purchase, accessed through the compatibility property `checkout.plans`. Use this for displaying variant information in your UI and for making purchases.
 
-<Info>
-  **CheckoutPlan vs Plan:** `CheckoutPlan` contains full plan details (pricing,
-  titles, trial info) for your UI. `Plan` is just an ID mapping used during SDK
-  configuration. You never create `CheckoutPlan` objects—they come from
-  `checkout.plans` after configuration.
-</Info>
+> [!NOTE]
+>
+> **Compatibility types:** `CheckoutPlan` contains full variant details (pricing,
+> titles, trial info) for your UI. `Plan` is an ID mapping used during SDK
+> configuration. You never create `CheckoutPlan` objects—they come from
+> `checkout.plans` after configuration.
 
 ```swift theme={null}
 struct CheckoutPlan: Identifiable {
@@ -585,21 +595,21 @@ enum RenewalPeriod: Equatable {
 }
 ```
 
-| Property            | Type             | Description                                                  |
-| ------------------- | ---------------- | ------------------------------------------------------------ |
-| `id`                | `String`         | The plan ID                                                  |
-| `productId`         | `String?`        | The product this plan belongs to                             |
-| `title`             | `String?`        | Display name of the plan                                     |
-| `description`       | `String?`        | Description text for the plan                                |
-| `planType`          | `PlanType`       | Whether this is a one-time or recurring plan                 |
-| `billingPeriodDays` | `Int?`           | Number of days in billing cycle (30 = monthly, 365 = yearly) |
-| `baseCurrency`      | `String`         | Currency code (e.g., `usd`)                                  |
-| `initialPrice`      | `Double`         | Initial price of the plan                                    |
-| `renewalPrice`      | `Double`         | Price for renewals                                           |
-| `trialPeriodDays`   | `Int?`           | Number of days in trial period                               |
-| `renewalPeriod`     | `RenewalPeriod?` | Computed renewal period (`.monthly`, `.yearly`, etc.)        |
-| `whopDisplayPrice`  | `String`         | Formatted Whop price (e.g., "\$9.99")                        |
-| `appleDisplayPrice` | `String?`        | Localized StoreKit price, if a plan mapping exists           |
+| Property | Type | Description |
+| - | - | - |
+| `id` | `String` | The variant ID |
+| `productId` | `String?` | The product this variant belongs to |
+| `title` | `String?` | Display name of the variant |
+| `description` | `String?` | Description text for the variant |
+| `planType` | `PlanType` | Whether this is a one-time or recurring variant |
+| `billingPeriodDays` | `Int?` | Number of days in billing cycle (30 = monthly, 365 = yearly) |
+| `baseCurrency` | `String` | Currency code (e.g., `usd`) |
+| `initialPrice` | `Double` | Initial price of the variant |
+| `renewalPrice` | `Double` | Price for renewals |
+| `trialPeriodDays` | `Int?` | Number of days in trial period |
+| `renewalPeriod` | `RenewalPeriod?` | Computed renewal period (`.monthly`, `.yearly`, etc.) |
+| `whopDisplayPrice` | `String` | Formatted Whop price (e.g., "\$9.99") |
+| `appleDisplayPrice` | `String?` | Localized StoreKit price, if a variant mapping exists |
 
 ***
 
@@ -637,19 +647,19 @@ enum Status: String {
 }
 ```
 
-| Property            | Type      | Description                                                                                               |
-| ------------------- | --------- | --------------------------------------------------------------------------------------------------------- |
-| `id`                | `String`  | The membership ID                                                                                         |
-| `productId`         | `String`  | The product this membership belongs to                                                                    |
-| `planId`            | `String`  | The plan this membership is for                                                                           |
-| `status`            | `Status`  | Current status of the membership                                                                          |
-| `isActive`          | `Bool`    | Whether the membership grants access (true for `active`, `trialing`, `canceling`, `pastDue`, `completed`) |
-| `isClaimed`         | `Bool`    | Whether a user has claimed the membership                                                                 |
-| `createdAt`         | `Date`    | When Whop created the membership                                                                          |
-| `expiresAt`         | `Date?`   | When the membership expires                                                                               |
-| `renewalPeriodEnd`  | `Date?`   | End of the current renewal period                                                                         |
-| `cancelAtPeriodEnd` | `Bool`    | Whether the membership will cancel at period end                                                          |
-| `receiptId`         | `String?` | The receipt ID for this membership                                                                        |
+| Property | Type | Description |
+| - | - | - |
+| `id` | `String` | The membership ID |
+| `productId` | `String` | The product this membership belongs to |
+| `planId` | `String` | Compatibility field containing the variant ID for this membership |
+| `status` | `Status` | Current status of the membership |
+| `isActive` | `Bool` | Whether the membership grants access (true for `active`, `trialing`, `canceling`, `pastDue`, `completed`) |
+| `isClaimed` | `Bool` | Whether a user has claimed the membership |
+| `createdAt` | `Date` | When Whop created the membership |
+| `expiresAt` | `Date?` | When the membership expires |
+| `renewalPeriodEnd` | `Date?` | End of the current renewal period |
+| `cancelAtPeriodEnd` | `Bool` | Whether the membership will cancel at period end |
+| `receiptId` | `String?` | The receipt ID for this membership |
 
 ***
 
@@ -665,21 +675,21 @@ enum WhopCheckoutError: Error {
 }
 ```
 
-| Case                    | Description                                                       |
-| ----------------------- | ----------------------------------------------------------------- |
-| `cancelled`             | User dismissed the checkout sheet without completing purchase     |
-| `notConfigured`         | SDK isn't configured. Call `Checkout.shared.configure()` first.   |
+| Case | Description |
+| - | - |
+| `cancelled` | User dismissed the checkout sheet without completing purchase |
+| `notConfigured` | SDK isn't configured. Call `Checkout.shared.configure()` first. |
 | `paymentFailed(String)` | Payment failed. The associated string contains the error message. |
 
 ***
 
 ## `Apple Pay` eligibility
 
-<Warning>
-  **Most apps shouldn't use Apple Pay.** Apple Pay via the WhopCheckout SDK is
-  only for apps that sell physical goods or real-world services — not digital
-  content, subscriptions to app features, or in-app currency.
-</Warning>
+> [!WARNING]
+>
+> **Most apps shouldn't use Apple Pay.** Apple Pay via the WhopCheckout SDK is
+> only for apps that sell physical goods or real-world services — not digital
+> content, subscriptions to app features, or in-app currency.
 
 ### `App Store` review guidelines
 
@@ -691,24 +701,24 @@ Apple's [App Store Review Guideline 3.1.1](https://developer.apple.com/app-store
 
 Apps that **can** use Apple Pay (`Checkout.ApplePayButton`):
 
-| Category              | Examples                                             |
-| --------------------- | ---------------------------------------------------- |
-| E-commerce            | Clothing, electronics, physical merchandise          |
-| Food & delivery       | Meal delivery, grocery orders                        |
-| Transportation        | Ride-hailing, car rentals, parking                   |
-| Travel & hospitality  | Hotel bookings, flight tickets, event tickets        |
-| Professional services | Tutoring sessions, consulting, home repair bookings  |
-| Fitness & wellness    | In-person class bookings, personal training sessions |
+| Category | Examples |
+| - | - |
+| E-commerce | Clothing, electronics, physical merchandise |
+| Food & delivery | Meal delivery, grocery orders |
+| Transportation | Ride-hailing, car rentals, parking |
+| Travel & hospitality | Hotel bookings, flight tickets, event tickets |
+| Professional services | Tutoring sessions, consulting, home repair bookings |
+| Fitness & wellness | In-person class bookings, personal training sessions |
 
 Apps that **must** use StoreKit (`.storeKit`) or Whop web checkout (`.whop`):
 
-| Category              | Examples                                   |
-| --------------------- | ------------------------------------------ |
-| Digital subscriptions | Premium app features, pro tiers            |
-| Digital content       | E-books, music, video streaming            |
-| Virtual goods         | In-app currency, cosmetic items, power-ups |
-| Online courses        | Video courses, digital workshops           |
-| SaaS features         | Cloud storage upgrades, API access tiers   |
+| Category | Examples |
+| - | - |
+| Digital subscriptions | Premium app features, pro tiers |
+| Digital content | E-books, music, video streaming |
+| Virtual goods | In-app currency, cosmetic items, power-ups |
+| Online courses | Video courses, digital workshops |
+| SaaS features | Cloud storage upgrades, API access tiers |
 
 ### How to choose
 
@@ -727,3 +737,10 @@ If your app qualifies, use `Checkout.ApplePayButton`. If you're unsure whether y
 * iOS 17.0+
 * Xcode 15.0+
 * Swift 5.10+
+
+
+## Related topics
+
+- [iOS Checkout SDK](https://docs.whop.com/developer/guides/ios/overview.md)
+- [Install the Whop iOS SDKs](https://docs.whop.com/developer/guides/ios/installation.md)
+- [Build an iOS Paywall](https://docs.whop.com/developer/guides/ios/build-a-paywall.md)

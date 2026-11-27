@@ -2,62 +2,70 @@
 > Fetch the complete documentation index at: https://docs.whop.com/llms.txt
 > Use this file to discover all available pages before exploring further.
 
-# Send an Invoice
+> ## Agent Instructions
+> Treat these docs and the Whop MCP server as the source of truth for Whop API behavior. Don't infer endpoint behavior from marketing pages.
+> MCP server: connect https://mcp.whop.com/mcp (streamable HTTP, browser sign-in, no API key in the client config) to search these docs and read or change live Whop data. Setup: https://docs.whop.com/developer/guides/ai_and_mcp.md
+> Whop CLI: install with `curl -fsSL https://whop.com/install.sh | sh` to scaffold, run, and deploy Whop apps and websites. It acts on production, not the sandbox. Overview: https://docs.whop.com/cli/overview.md Agent mode: https://docs.whop.com/cli/agent-mode.md
+> Hosting: Whop serves a site or app from the build `whop apps deploy` uploads, with rollbacks, secrets, and server logs. Guide: https://docs.whop.com/developer/websites/hosting.md
+> Plugins: in Claude Code, run `/plugin marketplace add whopio/plugins`, then `/plugin install whop@whop`. Guide: https://docs.whop.com/developer/guides/plugins/claude-code.md Every agent tool: https://docs.whop.com/developer/ai/overview.md
+> Environments: build and test in the sandbox (API `https://sandbox-api.whop.com/api/v1`, keys at https://sandbox.whop.com/dashboard/developer, SDK environment `Sandbox`; no real money). Production (API `https://api.whop.com/api/v1`, keys at https://whop.com/dashboard/developer, SDK environment `Production`, the SDK default) moves real money, so use it only at launch. The two share no accounts, keys, products, or webhooks, and their keys look identical: never mix them. Sandbox guide: https://docs.whop.com/developer/guides/sandbox.md Comparison: https://docs.whop.com/developer/quickstart.md
+> API: send `Authorization: Bearer <API_KEY>` from your server only, and pin a dated version with the `Api-Version-Date` header. OpenAPI spec: https://api.whop.com/api/v1/openapi.json
+> Which API: build on the Current API, whose pages live under https://docs.whop.com/api-reference/ (start at https://docs.whop.com/api-reference/overview.md). Pages under /api-reference/legacy/ are the Legacy API. Use one only when https://docs.whop.com/api-reference/stability.md lists the resource as Legacy-only.
 
-> Learn how to create, send, and track invoices on Whop
+# Create and Send Invoices on Whop
+
+> Create a one-time or recurring invoice from your dashboard, choose payment methods, and track, remind, void, download, or export invoices afterward.
 
 Your business might send customers an invoice upfront for a specific service. A customer might also require an invoice before making a payment. In either case, you can create an invoice on Whop in a few seconds.
 
 ## How to create and send an invoice
 
-<Steps>
-  <Step title="Navigate to 'Invoices'" titleSize="h3">
-    * Go to your **Dashboard** and select **Invoices** in the **Payments** section.
-    * Select **+ Create invoice.**
-  </Step>
+### 1. Navigate to 'Invoices'
 
-  <Step title="Add customer details" titleSize="h3">
-    * Select the **Find or add a customer** dropdown menu. - Select an existing
-      customer in the dropdown, or select **+ Add new customer** and enter their
-      email and name.
-  </Step>
+* Go to your **Dashboard** and select **Invoices** in the **Payments** section.
+* Select **+ Create invoice.**
 
-  <Step title="Add due date" titleSize="h3">
-    Select the dropdown menu under **Due date** and select when the invoice will
-    become due for payment.
-  </Step>
+### 2. Add customer details
 
-  <Step title="Add description" titleSize="h3">
-    Add a clear description of what you're billing for — your customer will see
-    this on their invoice.
-  </Step>
+* Select the **Find or add a customer** dropdown menu. - Select an existing
+  customer in the dropdown, or select **+ Add new customer** and enter their
+  email and name.
 
-  <Step title="Add amount" titleSize="h3">
-    * Choose whether it's a **One-time** or **Recurring** payment: - **One-time:**
-      The customer receives a single invoice with the amount you set. -
-      **Recurring:** Creates a subscription. The customer receives an invoice for the first
-      payment, and Whop automatically charges all following payments (customers
-      receive receipts for these payments, not new invoices). If you select
-      *Recurring*, you'll need to choose how often to charge the customer (e.g.
-      every 7 days, monthly, quarterly, yearly, or a custom billing cycle). -
-      **Enter the amount:** Type in the price and use the dropdown to choose the
-      currency. - Configure advanced options: - **Ask questions before checkout:**
-      Collect information from customers before they purchase. - **Redirect after checkout:** Send customers to a specific page after they complete checkout. -
-      **Payment methods:** Choose how your customer can pay the invoice — options
-      include card, ACH, platform balance, financing (apply for access), PayPal, or
-      crypto (setup required).
-  </Step>
+### 3. Add due date
 
-  <Step title="Pass processing fees (optional)" titleSize="h3">
-    You can pass payment processing fees on to the customer by checking the box
-    next to **Pass payment processing fees on to the customer**. When this is
-    selected, the total invoice amount includes the payment processing fees.
-  </Step>
+Select the dropdown menu under **Due date** and select when the invoice will
+become due for payment.
 
-  <Step title="Send invoice" titleSize="h3">
-    When you are happy with the email and checkout link previews, and you're sure all the details are correct, select **Send invoice**. Your customer will immediately receive the invoice in their email inbox.
-  </Step>
-</Steps>
+### 4. Add description
+
+Add a clear description of what you're billing for — your customer will see
+this on their invoice.
+
+### 5. Add amount
+
+* Choose whether it's a **One-time** or **Recurring** payment: - **One-time:**
+  The customer receives a single invoice with the amount you set. -
+  **Recurring:** Creates a subscription. With **Send invoice**, Whop emails the customer
+  a new invoice every billing period. With **Charge automatically**,
+  Whop charges the customer's saved payment method each period. If you select
+  *Recurring*, you'll need to choose how often to charge the customer (e.g.
+  every 7 days, monthly, quarterly, yearly, or a custom billing cycle). -
+  **Enter the amount:** Type in the price and use the dropdown to choose the
+  currency. - Configure advanced options: - **Ask questions before checkout:**
+  Collect information from customers before they purchase. - **Redirect after checkout:** Send customers to a specific page after they complete checkout. -
+  **Payment methods:** Choose how your customer can pay the invoice — options
+  include card, ACH, platform balance, financing (apply for access), PayPal, or
+  crypto (setup required).
+
+### 6. Pass processing fees (optional)
+
+You can pass payment processing fees on to the customer by checking the box
+next to **Pass payment processing fees on to the customer**. When this is
+selected, the total invoice amount includes the payment processing fees.
+
+### 7. Send invoice
+
+When you are happy with the email and checkout link previews, and you're sure all the details are correct, select **Send invoice**. Your customer will immediately receive the invoice in their email inbox.
 
 The customer pays a 5% service fee on invoices, which is automatically added on to the invoiced amount. This service fee is to cover the cost of payment processing.
 
@@ -75,31 +83,39 @@ If the invoice is still unpaid after 120 days, it will be automatically voided.
 
 ## How to cancel / void an invoice
 
-<Steps>
-  <Step title="Go to Invoices">Go to your **Invoices** dashboard</Step>
-  <Step title="Find the invoice">Find the invoice you want to void</Step>
+**1. Go to Invoices**
 
-  <Step title="Void the invoice">
-    Select the three-dot menu on the right and select **Void invoice**
-  </Step>
+Go to your **Invoices** dashboard
 
-  <Step title="Done">After you void the invoice, the customer can no longer pay it</Step>
-</Steps>
+**2. Find the invoice**
+
+Find the invoice you want to void
+
+**3. Void the invoice**
+
+Select the three-dot menu on the right and select **Void invoice**
+
+**4. Done**
+
+After you void the invoice, the customer can no longer pay it
 
 ## How to download an invoice
 
-<Steps>
-  <Step title="Go to Invoices">Go to your **Invoices** dashboard</Step>
-  <Step title="Find the invoice">Find the invoice you want to download</Step>
+**1. Go to Invoices**
 
-  <Step title="Download PDF">
-    Select the three-dot menu on the right and select **Download PDF**
-  </Step>
-</Steps>
+Go to your **Invoices** dashboard
+
+**2. Find the invoice**
+
+Find the invoice you want to download
+
+**3. Download PDF**
+
+Select the three-dot menu on the right and select **Download PDF**
 
 ## Tracking invoices in your dashboard
 
-Your dashboard gives you a full view of every invoice and its status across all your customers. You can see which customers paid and which invoices remain outstanding.
+Your dashboard gives you a full view of every invoice and its status across all your customers. You can see which customers paid and which invoices remain outstanding. The **Invoices** page lists, creates, and sends native invoices, including ones created through the [Invoices API](https://docs.whop.com/developer/guides/invoices.md). Legacy invoices are on its **Legacy invoices** tab.
 
 ### Statuses
 
@@ -115,21 +131,30 @@ Your dashboard gives you a full view of every invoice and its status across all 
 
 ### Export invoices for your records
 
-<Steps>
-  <Step title="Select Export">
-    Select **Export** in the top right of the dashboard
-  </Step>
+**1. Select Export**
 
-  <Step title="Choose your time zone">Select local or UTC</Step>
+Select **Export** in the top right of the dashboard
 
-  <Step title="Select a date range">
-    Choose today, last 7 days, last month, or a custom range
-  </Step>
+**2. Choose your time zone**
 
-  <Step title="Pick columns">Pick which columns to include, or export all</Step>
+Select local or UTC
 
-  <Step title="Download">
-    Select **Export** to download a CSV file you can use for accounting or
-    record-keeping
-  </Step>
-</Steps>
+**3. Select a date range**
+
+Choose today, last 7 days, last month, or a custom range
+
+**4. Pick columns**
+
+Pick which columns to include, or export all
+
+**5. Download**
+
+Select **Export** to download a CSV file you can use for accounting or
+record-keeping
+
+
+## Related topics
+
+- [Invoice Customers from Your Dashboard](https://docs.whop.com/payments/send-an-invoice.md)
+- [Create a Whop](https://docs.whop.com/payments/create-a-whop.md)
+- [Get Started with Whop](https://docs.whop.com/get-started.md)

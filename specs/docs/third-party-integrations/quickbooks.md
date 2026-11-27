@@ -2,132 +2,112 @@
 > Fetch the complete documentation index at: https://docs.whop.com/llms.txt
 > Use this file to discover all available pages before exploring further.
 
+> ## Agent Instructions
+> Treat these docs and the Whop MCP server as the source of truth for Whop API behavior. Don't infer endpoint behavior from marketing pages.
+> MCP server: connect https://mcp.whop.com/mcp (streamable HTTP, browser sign-in, no API key in the client config) to search these docs and read or change live Whop data. Setup: https://docs.whop.com/developer/guides/ai_and_mcp.md
+> Whop CLI: install with `curl -fsSL https://whop.com/install.sh | sh` to scaffold, run, and deploy Whop apps and websites. It acts on production, not the sandbox. Overview: https://docs.whop.com/cli/overview.md Agent mode: https://docs.whop.com/cli/agent-mode.md
+> Hosting: Whop serves a site or app from the build `whop apps deploy` uploads, with rollbacks, secrets, and server logs. Guide: https://docs.whop.com/developer/websites/hosting.md
+> Plugins: in Claude Code, run `/plugin marketplace add whopio/plugins`, then `/plugin install whop@whop`. Guide: https://docs.whop.com/developer/guides/plugins/claude-code.md Every agent tool: https://docs.whop.com/developer/ai/overview.md
+> Environments: build and test in the sandbox (API `https://sandbox-api.whop.com/api/v1`, keys at https://sandbox.whop.com/dashboard/developer, SDK environment `Sandbox`; no real money). Production (API `https://api.whop.com/api/v1`, keys at https://whop.com/dashboard/developer, SDK environment `Production`, the SDK default) moves real money, so use it only at launch. The two share no accounts, keys, products, or webhooks, and their keys look identical: never mix them. Sandbox guide: https://docs.whop.com/developer/guides/sandbox.md Comparison: https://docs.whop.com/developer/quickstart.md
+> API: send `Authorization: Bearer <API_KEY>` from your server only, and pin a dated version with the `Api-Version-Date` header. OpenAPI spec: https://api.whop.com/api/v1/openapi.json
+> Which API: build on the Current API, whose pages live under https://docs.whop.com/api-reference/ (start at https://docs.whop.com/api-reference/overview.md). Pages under /api-reference/legacy/ are the Legacy API. Use one only when https://docs.whop.com/api-reference/stability.md lists the resource as Legacy-only.
+
 # QuickBooks
 
-> Sync Whop payments, refunds, and payouts to QuickBooks Online automatically. Keep your books accurate without manual data entry.
+> Record Whop sales, refunds, and payouts in QuickBooks Online, and let customers pay QuickBooks invoices through Whop, with the QuickBooks Sync app.
 
-<Card title="Install the Whop app for QuickBooks" icon="download" href="https://whop.com/apps/app_ygXqVjukBrVaU3/install/">
-  Available on Whop Apps
-</Card>
+> [card] [Install QuickBooks Sync](https://whop.com/apps/app_ygXqVjukBrVaU3/install/)
+>
+> Available on the Whop App Store
 
-## Overview
+The QuickBooks Sync app connects a Whop business to a QuickBooks Online company. Use it to record Whop activity in your books, and to collect payment on QuickBooks invoices through Whop. The sync mode you choose decides which Whop activity QuickBooks records.
 
-The Whop × QuickBooks integration connects your QuickBooks Online account with Whop and keeps the two in sync automatically. It works in both directions:
+You need admin access to your Whop business and to a QuickBooks Online company. QuickBooks Desktop isn't supported.
 
-1. **Sell on Whop → sync to QuickBooks.** Whop records payments as SalesReceipts and reconciles payouts with your bank. No manual data entry.
-2. **Invoice from QuickBooks → pay through Whop.** The integration adds a Whop payment option to each invoice so customers can pay online. It marks the invoice Paid when they pay.
+## What syncs
 
-Refunds, recurring subscriptions, withdrawals, and processing fees all sync between the two systems automatically.
+| Activity | Direction | What happens |
+| - | - | - |
+| **Whop sales** | Whop → QuickBooks | A Sales Receipt for each sale (All Sales mode only) |
+| **Whop payouts** | Whop → QuickBooks | A Bank Deposit for each completed withdrawal, with Whop fees on their own line (All Sales and Withdrawals Only modes) |
+| **Refunds** | Both | A refund in QuickBooks (Refund Receipt or Credit Memo) refunds the Whop payment. A refund in Whop creates a Refund Receipt in QuickBooks, except in Invoicing Only mode. |
+| **Invoices** | QuickBooks → Whop | New QuickBooks invoices get a Whop payment link in the memo. When the customer pays, the app marks the invoice paid. |
+| **Recurring transactions** | QuickBooks → Whop | A recurring invoice template creates a weekly, monthly, or yearly Whop plan |
+| **Products** | QuickBooks → Whop | New and updated QuickBooks items create or update Whop products. Whop products reach QuickBooks only through a backfill. |
+| **Customers** | Both | Matched by email address |
 
-## What this integration does
+While connected, the app turns off QuickBooks Payments on new invoices so customers pay through Whop. Invoices that are already open don't change.
 
-| Feature                        | Description                                                                         |
-| ------------------------------ | ----------------------------------------------------------------------------------- |
-| **Payment Sync**               | Whop records every payment in QuickBooks as a SalesReceipt automatically.           |
-| **Invoice Automation**         | QuickBooks invoices get a Whop payment link. Payments mark the invoice Paid.        |
-| **Refund Tracking**            | QuickBooks sends refunds through Whop automatically.                                |
-| **Subscription Sync**          | Recurring Transactions in QuickBooks create matching Whop recurring plans.          |
-| **Payout Reconciliation**      | Whop records payouts as multi-line Bank Deposits that reconcile 1:1 with your bank. |
-| **Bidirectional Product Sync** | Products/Services sync between QuickBooks and Whop in either direction.             |
+## Set up the app
 
-## Before you begin
+**1. Install the app**
 
-* An active Whop account where you sell your products or services
-* An active QuickBooks Online account (any plan — sandbox accounts work too)
-* Admin access to both accounts
+Select **Install QuickBooks Sync** at the top of this page, or search for "QuickBooks Sync" in the Whop App Store. The app then appears in your Whop dashboard.
 
-Estimated setup time: 5–10 minutes.
+**2. Connect QuickBooks**
 
-## Step 1: Install the app from Whop
+Open the app and go to **Connection**. Select **Connect (Production)** for your live company, or **Connect (Sandbox)** for a QuickBooks sandbox company. Sign in to Intuit, choose the company, and approve the connection.
 
-Select the **Install the Whop app for QuickBooks** button at the top of this page, or search for "QuickBooks Sync" in the Whop App Marketplace. Select **Install**. The app then appears in your Whop dashboard under the Apps section.
+**3. Map your accounts**
 
-## Step 2: Connect your QuickBooks account
+Go to **Accounts** and pick the revenue account, the processing fee account, and the bank account your Whop withdrawals land in. The app can create a "Whop Processing Fees" expense account for you. If you don't pick a fee account, payout deposits leave out the fee line.
 
-Open the app and select **Connection** in the left sidebar. You have two options:
+**4. Choose a sync mode**
 
-* **Connect (Sandbox)** — for testing with a QuickBooks sandbox account
-* **Connect (Production)** — for your live QuickBooks account
+Go to **Overview** and pick a sync mode (see below). Check this before you rely on the sync, because the mode decides whether the app records individual Whop sales.
 
-Select the button for your environment. Intuit opens a page where you can log in, select your account, and authorize the connection.
+**5. Import existing data (optional)**
 
-## Step 3: Configure your account mapping
+Go to **Backfill** to bring over data from before you connected:
 
-Select **Accounts** in the sidebar and configure:
+* **Users to Customers** — creates QuickBooks customers from Whop members, matched by email
+* **Items / Products** — syncs items between QuickBooks and Whop
+* **Unpaid Invoices** — adds Whop payment links to open invoices
+* **Paid Invoice Matching** — matches paid invoices to Whop payments
 
-| Field                      | What to pick                                                                                                              |
-| -------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
-| **Revenue Account**        | Where QuickBooks records invoice revenue — usually "Sales" or "Sales of Product Income"                                   |
-| **Processing Fee Account** | Where QuickBooks records Whop fees — use the automatic "Whop Processing Fees" account or pick an existing expense account |
-| **Bank Account**           | Where Whop withdrawals land — pick your business checking account                                                         |
-| **Undeposited Funds**      | QuickBooks detects this account automatically. No action needed.                                                          |
-
-<Note>
-  **Tax handling:** QuickBooks calculates tax based on your settings, and Whop
-  charges the tax-inclusive total. If your Whop products have their
-  own tax codes configured, remove them to avoid double-taxation.
-</Note>
-
-## Step 4: Import historical data (optional)
-
-If you have existing data in QuickBooks from before connecting, select **Backfill** in the sidebar. Four operations are available:
-
-* **Users to Customers** — imports Whop members as QuickBooks customers (matches by email)
-* **Items / Products** — sync items between QuickBooks and Whop in either direction
-* **Unpaid Invoices** — creates Whop payment links for existing unpaid invoices
-* **Paid Invoice Matching** — matches existing paid invoices to Whop payments for reconciliation
-
-Each backfill is idempotent — safe to re-run. Entities already mapped get skipped.
+The app skips records it has already mapped.
 
 ## Sync modes
 
-The integration supports three sync modes. Switch anytime from the dashboard — the change is forward-only.
+Switching modes only affects activity from that point on. Earlier records don't change.
 
-### All sales (recommended)
+| | All Sales | Withdrawals Only | Invoicing Only |
+| - | - | - | - |
+| **Whop sales** | Sales Receipt for each sale | Not recorded | Not recorded |
+| **Whop payouts** | Bank Deposit | Bank Deposit | Not recorded |
+| **Whop refunds** | Refund Receipt | Refund Receipt | Not recorded |
+| **QuickBooks invoices, recurring templates, items, refunds** | Synced | Synced | Synced |
+| **Best for** | Selling mainly on Whop | Tracking only payouts | Using Whop only to collect QuickBooks invoices |
 
-Records every Whop sale individually in QuickBooks. Direct sales create a SalesReceipt depositing to a Whop Clearing account. Payments on QuickBooks Online invoices create a Payment record. Withdrawals drain the clearing account through a multi-line Bank Deposit.
+In **All Sales** mode, the app creates a "Whop Clearing" account. Sales Receipts deposit into it, and each payout moves the balance out to your bank account.
 
-### Withdrawals only
+In Withdrawals Only mode, the app records payouts as revenue. If you also invoice customers in QuickBooks, you count that revenue twice: once on the invoice and again on the deposit.
 
-QuickBooks records only Whop payouts. It doesn't record individual sales. This mode works best for sellers who don't use QuickBooks Online invoices and only want to track payouts.
+## Taxes
 
-<Warning>
-  If you also use QuickBooks Online invoices in this mode, revenue will be double-counted
-  (the invoice credits Revenue, and the deposit credits it again).
-</Warning>
+For QuickBooks invoices, QuickBooks calculates tax and the customer pays the invoice total through Whop. Remove tax settings from the matching Whop products so buyers aren't taxed twice. Sales Receipts for direct Whop sales record the full amount on one line, without a separate tax line.
 
-### Invoicing only
+## Monitor the sync
 
-QuickBooks doesn't record Whop payments, refunds, or withdrawals in this mode. QuickBooks Online → Whop flows still work, including invoice link embedding, recurring templates, product sync, and refunds.
+**Sync History** lists every event the app processed, filtered by status. **Errors** lists failed events. The app retries a failed event up to 5 times, with increasing delays between attempts.
 
-## What happens next
+## Disconnect
 
-Once connected and configured, the integration syncs automatically:
+Go to **Connection** and select **Disconnect QuickBooks**. The app keeps your sync history and mappings if you reconnect later. Records already in QuickBooks stay there.
 
-* **New QuickBooks Online invoice** → The integration generates and embeds a Whop payment link within about 1 minute
-* **Customer pays** → The integration creates a QuickBooks Payment record and marks the invoice Paid
-* **Refund in QuickBooks Online** → QuickBooks sends the refund through Whop automatically
-* **Recurring Transaction** → Creates a Whop recurring plan. Future payments sync back
-* **Whop payout** → Creates a multi-line Bank Deposit in QuickBooks Online for the gross amount minus fees
+## Next steps
 
-## Monitoring sync activity
+> [card] [Xero](https://docs.whop.com/third-party-integrations/xero.md)
+>
+> Send Whop activity to Xero as a bank feed.
 
-The **Sync History** page shows every event processed — filter by status (completed, failed, pending). The **Errors** page shows failed events with retry status. The integration retries failed operations up to 5 times with exponential backoff.
+> [card] [Pricing and fees](https://docs.whop.com/fees.md)
+>
+> See the fees that appear on your payouts.
 
-## Frequently asked questions
 
-**Whop payments without QuickBooks invoices**
+## Related topics
 
-Use All Sales sync mode, which is the default. The integration records every Whop payment as a SalesReceipt.
-
-**Existing QuickBooks Payments setup**
-
-While connected, the integration routes new invoices through Whop instead of QuickBooks Payments. It leaves existing open invoices unchanged. Use the unpaid invoice backfill to convert them.
-
-**Testing with a QuickBooks sandbox account**
-
-Select **Connect (Sandbox)** on the Connection page.
-
-**Disconnecting QuickBooks**
-
-Go to the Connection page and select **Disconnect QuickBooks**. Your sync history and mappings remain available if you reconnect later.
+- [Xero](https://docs.whop.com/third-party-integrations/xero.md)
+- [Connect a Social Account](https://docs.whop.com/api-reference/social-accounts/connect-a-social-account.md)
+- [Connect an External Account](https://docs.whop.com/api-reference/external-accounts/connect-an-external-account.md)

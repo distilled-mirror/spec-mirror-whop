@@ -2,252 +2,270 @@
 > Fetch the complete documentation index at: https://docs.whop.com/llms.txt
 > Use this file to discover all available pages before exploring further.
 
+> ## Agent Instructions
+> Treat these docs and the Whop MCP server as the source of truth for Whop API behavior. Don't infer endpoint behavior from marketing pages.
+> MCP server: connect https://mcp.whop.com/mcp (streamable HTTP, browser sign-in, no API key in the client config) to search these docs and read or change live Whop data. Setup: https://docs.whop.com/developer/guides/ai_and_mcp.md
+> Whop CLI: install with `curl -fsSL https://whop.com/install.sh | sh` to scaffold, run, and deploy Whop apps and websites. It acts on production, not the sandbox. Overview: https://docs.whop.com/cli/overview.md Agent mode: https://docs.whop.com/cli/agent-mode.md
+> Hosting: Whop serves a site or app from the build `whop apps deploy` uploads, with rollbacks, secrets, and server logs. Guide: https://docs.whop.com/developer/websites/hosting.md
+> Plugins: in Claude Code, run `/plugin marketplace add whopio/plugins`, then `/plugin install whop@whop`. Guide: https://docs.whop.com/developer/guides/plugins/claude-code.md Every agent tool: https://docs.whop.com/developer/ai/overview.md
+> Environments: build and test in the sandbox (API `https://sandbox-api.whop.com/api/v1`, keys at https://sandbox.whop.com/dashboard/developer, SDK environment `Sandbox`; no real money). Production (API `https://api.whop.com/api/v1`, keys at https://whop.com/dashboard/developer, SDK environment `Production`, the SDK default) moves real money, so use it only at launch. The two share no accounts, keys, products, or webhooks, and their keys look identical: never mix them. Sandbox guide: https://docs.whop.com/developer/guides/sandbox.md Comparison: https://docs.whop.com/developer/quickstart.md
+> API: send `Authorization: Bearer <API_KEY>` from your server only, and pin a dated version with the `Api-Version-Date` header. OpenAPI spec: https://api.whop.com/api/v1/openapi.json
+> Which API: build on the Current API, whose pages live under https://docs.whop.com/api-reference/ (start at https://docs.whop.com/api-reference/overview.md). Pages under /api-reference/legacy/ are the Legacy API. Use one only when https://docs.whop.com/api-reference/stability.md lists the resource as Legacy-only.
+
 # Chat Element
 
-> Display a chat in your app
+> Render a real-time chat for a channel, DM, or support chat on your site with the chat element from @whop/elements.
 
-The chat element renders a real-time chat UI connected to a specific channel.
+The chat element renders a real-time chat UI connected to a specific channel. Its colors and message layout follow the [theme and chat style](https://docs.whop.com/developer/guides/chat/theming-and-styles.md) you set. For every option it takes on the web, see the [`ChatElement` reference](https://docs.whop.com/elements/latest/chat/chat).
 
 ### Basic usage
 
 Pass a `channelId` to connect to a specific channel, DM, or support chat.
 
-<Tabs>
-  <Tab title="React">
-    ```tsx theme={null}
-    "use client";
+> [tab] React
+>
+> ```tsx theme={null}
+> "use client";
+>
+> import { useEffect, useState } from "react";
+> import { WhopElements, Chat, ChatElement } from "@whop/elements-react";
+> import { loadWhop } from "@whop/elements";
+>
+> const REFRESH_INTERVAL = 45 * 60 * 1000;
+>
+> async function fetchToken() {
+>   const res = await fetch("https://your-server.com/api/chat/token", { method: "POST" });
+>   const data = await res.json();
+>   return data.token;
+> }
+>
+> export function ChatView() {
+>   const [accessToken, setAccessToken] = useState<string | null>(null);
+>
+>   useEffect(() => {
+>     let ignore = false;
+>
+>     async function refreshToken() {
+>       const token = await fetchToken();
+>       if (!ignore) {
+>         setAccessToken(token);
+>       }
+>     }
+>
+>     refreshToken();
+>     const interval = setInterval(refreshToken, REFRESH_INTERVAL);
+>
+>     return () => {
+>       ignore = true;
+>       clearInterval(interval);
+>     };
+>   }, []);
+>
+>   if (!accessToken) return null;
+>
+>   return (
+>     <WhopElements elements={loadWhop()}>
+>       <Chat accessToken={accessToken} channelId="chat_feed_XXXXXXXXXXXXXX">
+>         <ChatElement style={{ height: "100dvh", width: "100%" }} />
+>       </Chat>
+>     </WhopElements>
+>   );
+> }
+> ```
 
-    import { useMemo } from "react";
-    import {
-    	ChatElement,
-    	ChatSession,
-    	Elements,
-    } from "@whop/embedded-components-react-js";
-    import { loadWhopElements } from "@whop/embedded-components-vanilla-js";
-    import type { ChatElementOptions } from "@whop/embedded-components-vanilla-js/types";
+> [tab] Vanilla JS
+>
+> ```html theme={null}
+> <div id="chat-chat" style="height: 100vh"></div>
+>
+> <script src="https://cdn.whop.com/elements/amber/elements.js" data-whop-elements></script>
+> <script type="module">
+>   const REFRESH_INTERVAL = 45 * 60 * 1000;
+>
+>   async function fetchToken() {
+>     const res = await fetch("https://your-server.com/api/chat/token", { method: "POST" });
+>     const data = await res.json();
+>     return data.token;
+>   }
+>
+>   const chat = window.WhopElements().chat.create({
+>     accessToken: await fetchToken(),
+>     channelId: "chat_feed_XXXXXXXXXXXXXX",
+>   });
+>
+>   chat.create("chat").mount("#chat-chat");
+>
+>   setInterval(async () => {
+>     chat.update({ accessToken: await fetchToken() });
+>   }, REFRESH_INTERVAL);
+> </script>
+> ```
 
-    const elements = loadWhopElements();
-
-    async function getToken() {
-    	const response = await fetch("/api/token");
-    	const data = await response.json();
-    	return data.token;
-    }
-
-    export function ChatPage() {
-    	const chatOptions: ChatElementOptions = useMemo(() => {
-    		return {
-    			channelId: "chat_feed_XXXXXXXXXXXXXX",
-    		};
-    	}, []);
-
-    	return (
-    		<Elements elements={elements}>
-    			<ChatSession token={getToken}>
-    				<ChatElement
-    					options={chatOptions}
-    					style={{ height: "100dvh", width: "100%" }}
-    				/>
-    			</ChatSession>
-    		</Elements>
-    	);
-    }
-    ```
-  </Tab>
-
-  <Tab title="Vanilla JS">
-    ```typescript theme={null}
-    import { loadWhopElements } from "@whop/embedded-components-vanilla-js";
-
-    async function getToken() {
-    	const response = await fetch("/api/token");
-    	const data = await response.json();
-    	return data.token;
-    }
-
-    const whopElements = await loadWhopElements();
-
-    const session = whopElements.createChatSession({
-    	token: getToken,
-    });
-
-    const chatElement = session.createElement("chat-element", {
-    	channelId: "chat_feed_XXXXXXXXXXXXXX",
-    });
-
-    chatElement.mount("#chat-container");
-    ```
-  </Tab>
-
-  <Tab title="Swift">
-    ```swift theme={null}
-    import SwiftUI
-    import WhopElements
-
-    struct ChatView: View {
-        var body: some View {
-            WhopChatView(
-                channelId: "chat_feed_XXXXXXXXXXXXXX",
-                style: .imessage
-            )
-        }
-    }
-    ```
-  </Tab>
-</Tabs>
+> [tab] Swift
+>
+> ```swift theme={null}
+> import SwiftUI
+> import WhopElements
+>
+> struct ChatView: View {
+>     var body: some View {
+>         WhopChatView(
+>             channelId: "chat_feed_XXXXXXXXXXXXXX",
+>             style: .imessage
+>         )
+>     }
+> }
+> ```
 
 ### Deep linking to messages
 
-To scroll to and highlight a specific message, pass `deeplinkToPostId`. The view will automatically navigate to that message.
+> [tab] React
+>
+> To scroll to and highlight a specific message, pass `focusMessageId`. The view will automatically navigate to that message.
+>
+> ```tsx theme={null}
+> <Chat accessToken={accessToken} channelId="chat_feed_XXXXXXXXXXXXXX">
+> 	<ChatElement
+> 		focusMessageId="post_XXXXXXXXXXXXXX"
+> 		style={{ height: "100dvh", width: "100%" }}
+> 	/>
+> </Chat>
+> ```
 
-<Tabs>
-  <Tab title="React">
-    ```tsx theme={null}
-    const chatOptions: ChatElementOptions = useMemo(() => {
-    	return {
-    		channelId: "chat_feed_XXXXXXXXXXXXXX",
-    		deeplinkToPostId: "post_XXXXXXXXXXXXXX",
-    	};
-    }, []);
+> [tab] Vanilla JS
+>
+> To scroll to and highlight a specific message, pass `focusMessageId`. The view will automatically navigate to that message.
+>
+> ```typescript theme={null}
+> const chatElement = chat.create("chat", {
+> 	focusMessageId: "post_XXXXXXXXXXXXXX",
+> });
+>
+> chatElement.mount("#chat-chat");
+> ```
 
-    <ChatElement options={chatOptions} />;
-    ```
-  </Tab>
-
-  <Tab title="Vanilla JS">
-    ```typescript theme={null}
-    const chatElement = session.createElement("chat-element", {
-    	channelId: "chat_feed_XXXXXXXXXXXXXX",
-    	deeplinkToPostId: "post_XXXXXXXXXXXXXX",
-    });
-
-    chatElement.mount("#chat-container");
-    ```
-  </Tab>
-
-  <Tab title="Swift">
-    ```swift theme={null}
-    struct ChatView: View {
-        @State private var targetPostId: String? = nil
-
-        var body: some View {
-            WhopChatView(
-                channelId: "chat_feed_XXXXXXXXXXXXXX",
-                deeplinkToPostId: targetPostId,
-                style: .imessage
-            )
-        }
-    }
-    ```
-  </Tab>
-</Tabs>
+> [tab] Swift
+>
+> To scroll to and highlight a specific message, pass `deeplinkToPostId`. The view will automatically navigate to that message.
+>
+> ```swift theme={null}
+> struct ChatView: View {
+>     @State private var targetPostId: String? = nil
+>
+>     var body: some View {
+>         WhopChatView(
+>             channelId: "chat_feed_XXXXXXXXXXXXXX",
+>             deeplinkToPostId: targetPostId,
+>             style: .imessage
+>         )
+>     }
+> }
+> ```
 
 ### Event handling
 
-Use your platform's event callback to listen for profile selections, link selections, and sent messages.
+Pass event callbacks to listen for profile selections, link selections, and sent messages.
 
-<Tabs>
-  <Tab title="React">
-    | Event             | Detail                                               | Description                                         |
-    | ----------------- | ---------------------------------------------------- | --------------------------------------------------- |
-    | `profileClick`    | `{ id: string }`                                     | Emitted when the user selects a profile             |
-    | `linkClick`       | `{ url: string }`                                    | Emitted when the user selects a link                |
-    | `messageSent`     | `{ id: string, content: string, channelId: string }` | Emitted when the user sends a message               |
-    | `experienceClick` | `{ id: string }`                                     | Emitted when the user selects an experience mention |
+> [tab] React
+>
+> | Event | Payload | Description |
+> | - | - | - |
+> | `onMessageSent` | `{ messageId: string, content: string, channelId: string }` | Emitted when the user sends a message |
+> | `onMessageDeleted` | `{ messageId: string }` | Emitted when the user deletes a message |
+> | `onProfileClick` | `{ userId: string }` | Emitted when the user selects a profile |
+> | `onLinkClick` | `{ url: string }` | Emitted when the user selects a link |
+> | `onExperienceMentionClick` | `{ experienceId: string }` | Emitted when the user selects an experience mention |
+> | `onAttachmentClick` | `{ messageId: string, attachments: Attachment[] }` | Emitted when the user selects an attachment |
+>
+> ```tsx theme={null}
+> <Chat accessToken={accessToken} channelId="chat_feed_XXXXXXXXXXXXXX">
+> 	<ChatElement
+> 		onMessageSent={({ messageId, content, channelId }) => {
+> 			console.log("Message sent:", messageId, content, channelId);
+> 		}}
+> 		onMessageDeleted={({ messageId }) => {
+> 			console.log("Message deleted:", messageId);
+> 		}}
+> 		onProfileClick={({ userId }) => {
+> 			console.log("Profile clicked:", userId);
+> 		}}
+> 		onLinkClick={({ url }) => {
+> 			console.log("Link clicked:", url);
+> 		}}
+> 		onExperienceMentionClick={({ experienceId }) => {
+> 			console.log("Experience clicked:", experienceId);
+> 		}}
+> 		onAttachmentClick={({ messageId, attachments }) => {
+> 			console.log("Attachment clicked:", messageId, attachments);
+> 		}}
+> 	/>
+> </Chat>
+> ```
 
-    ```tsx theme={null}
-    import { useCallback, useMemo } from "react";
-    import type {
-    	ChatElementEvent,
-    	ChatElementOptions,
-    } from "@whop/embedded-components-vanilla-js/types";
+> [tab] Vanilla JS
+>
+> | Event | Payload | Description |
+> | - | - | - |
+> | `onMessageSent` | `{ messageId: string, content: string, channelId: string }` | Emitted when the user sends a message |
+> | `onMessageDeleted` | `{ messageId: string }` | Emitted when the user deletes a message |
+> | `onProfileClick` | `{ userId: string }` | Emitted when the user selects a profile |
+> | `onLinkClick` | `{ url: string }` | Emitted when the user selects a link |
+> | `onExperienceMentionClick` | `{ experienceId: string }` | Emitted when the user selects an experience mention |
+> | `onAttachmentClick` | `{ messageId: string, attachments: Attachment[] }` | Emitted when the user selects an attachment |
+>
+> ```typescript theme={null}
+> const chatElement = chat.create("chat", {
+> 	onMessageSent: ({ messageId, content, channelId }) => {
+> 		console.log("Message sent:", messageId, content, channelId);
+> 	},
+> 	onMessageDeleted: ({ messageId }) => {
+> 		console.log("Message deleted:", messageId);
+> 	},
+> 	onProfileClick: ({ userId }) => {
+> 		console.log("Profile clicked:", userId);
+> 	},
+> 	onLinkClick: ({ url }) => {
+> 		console.log("Link clicked:", url);
+> 	},
+> 	onExperienceMentionClick: ({ experienceId }) => {
+> 		console.log("Experience clicked:", experienceId);
+> 	},
+> 	onAttachmentClick: ({ messageId, attachments }) => {
+> 		console.log("Attachment clicked:", messageId, attachments);
+> 	},
+> });
+>
+> chatElement.mount("#chat-chat");
+> ```
 
-    const handleChatEvent = useCallback((event: ChatElementEvent) => {
-    	switch (event.type) {
-    		case "profileClick":
-    			console.log("Profile clicked:", event.detail.id);
-    			break;
+> [tab] Swift
+>
+> | Event | Detail | Description |
+> | - | - | - |
+> | `.profileTap` | `username: String` | Emitted when the user taps on a profile |
+> | `.urlTap` | `url: String` | Emitted when the user taps on a link |
+> | `.messageSent` | `content: String, messageId: String` | Emitted when the user sends a message |
+>
+> ```swift theme={null}
+> WhopChatView(
+>     channelId: "chat_feed_XXXXXXXXXXXXXX",
+>     style: .imessage,
+>     onEvent: { event in
+>         switch event {
+>         case let .profileTap(username):
+>             print("Profile tapped: \(username)")
+>         case let .urlTap(url):
+>             print("URL tapped: \(url)")
+>         case let .messageSent(content, messageId):
+>             print("Message sent: \(messageId) - \(content)")
+>         }
+>     }
+> )
+> ```
 
-    		case "linkClick":
-    			console.log("Link clicked:", event.detail.url);
-    			break;
 
-    		case "messageSent":
-    			console.log("Message sent:", event.detail.id, event.detail.content, event.detail.channelId);
-    			break;
+## Related topics
 
-    		case "experienceClick":
-    			console.log("Experience clicked:", event.detail.id);
-    			break;
-    	}
-    }, []);
-
-    const chatOptions: ChatElementOptions = useMemo(() => {
-    	return {
-    		channelId: "chat_feed_XXXXXXXXXXXXXX",
-    		onEvent: handleChatEvent,
-    	};
-    }, [handleChatEvent]);
-
-    <ChatElement options={chatOptions} />;
-    ```
-  </Tab>
-
-  <Tab title="Vanilla JS">
-    | Event             | Detail                                               | Description                                         |
-    | ----------------- | ---------------------------------------------------- | --------------------------------------------------- |
-    | `profileClick`    | `{ id: string }`                                     | Emitted when the user selects a profile             |
-    | `linkClick`       | `{ url: string }`                                    | Emitted when the user selects a link                |
-    | `messageSent`     | `{ id: string, content: string, channelId: string }` | Emitted when the user sends a message               |
-    | `experienceClick` | `{ id: string }`                                     | Emitted when the user selects an experience mention |
-
-    ```typescript theme={null}
-    const chatElement = session.createElement("chat-element", {
-    	channelId: "chat_feed_XXXXXXXXXXXXXX",
-    });
-
-    chatElement.on("profileClick", (ev) => {
-    	console.log("Profile clicked:", ev.detail.id);
-    });
-
-    chatElement.on("linkClick", (ev) => {
-    	console.log("Link clicked:", ev.detail.url);
-    });
-
-    chatElement.on("messageSent", (ev) => {
-    	console.log("Message sent:", ev.detail.id, ev.detail.content, ev.detail.channelId);
-    });
-
-    chatElement.on("experienceClick", (ev) => {
-    	console.log("Experience clicked:", ev.detail.id);
-    });
-
-    chatElement.mount("#chat-container");
-    ```
-  </Tab>
-
-  <Tab title="Swift">
-    | Event          | Detail                               | Description                             |
-    | -------------- | ------------------------------------ | --------------------------------------- |
-    | `.profileTap`  | `username: String`                   | Emitted when the user taps on a profile |
-    | `.urlTap`      | `url: String`                        | Emitted when the user taps on a link    |
-    | `.messageSent` | `content: String, messageId: String` | Emitted when the user sends a message   |
-
-    ```swift theme={null}
-    WhopChatView(
-        channelId: "chat_feed_XXXXXXXXXXXXXX",
-        style: .imessage,
-        onEvent: { event in
-            switch event {
-            case let .profileTap(username):
-                print("Profile tapped: \(username)")
-            case let .urlTap(url):
-                print("URL tapped: \(url)")
-            case let .messageSent(content, messageId):
-                print("Message sent: \(messageId) - \(content)")
-            }
-        }
-    )
-    ```
-  </Tab>
-</Tabs>
+- [Chat](https://docs.whop.com/elements/latest/chat/overview.md)
+- [ChatElement](https://docs.whop.com/elements/latest/chat/chat.md)
+- [Support Chats](https://docs.whop.com/developer/guides/chat/support-chats.md)

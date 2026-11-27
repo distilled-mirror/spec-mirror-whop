@@ -2,265 +2,297 @@
 > Fetch the complete documentation index at: https://docs.whop.com/llms.txt
 > Use this file to discover all available pages before exploring further.
 
+> ## Agent Instructions
+> Treat these docs and the Whop MCP server as the source of truth for Whop API behavior. Don't infer endpoint behavior from marketing pages.
+> MCP server: connect https://mcp.whop.com/mcp (streamable HTTP, browser sign-in, no API key in the client config) to search these docs and read or change live Whop data. Setup: https://docs.whop.com/developer/guides/ai_and_mcp.md
+> Whop CLI: install with `curl -fsSL https://whop.com/install.sh | sh` to scaffold, run, and deploy Whop apps and websites. It acts on production, not the sandbox. Overview: https://docs.whop.com/cli/overview.md Agent mode: https://docs.whop.com/cli/agent-mode.md
+> Hosting: Whop serves a site or app from the build `whop apps deploy` uploads, with rollbacks, secrets, and server logs. Guide: https://docs.whop.com/developer/websites/hosting.md
+> Plugins: in Claude Code, run `/plugin marketplace add whopio/plugins`, then `/plugin install whop@whop`. Guide: https://docs.whop.com/developer/guides/plugins/claude-code.md Every agent tool: https://docs.whop.com/developer/ai/overview.md
+> Environments: build and test in the sandbox (API `https://sandbox-api.whop.com/api/v1`, keys at https://sandbox.whop.com/dashboard/developer, SDK environment `Sandbox`; no real money). Production (API `https://api.whop.com/api/v1`, keys at https://whop.com/dashboard/developer, SDK environment `Production`, the SDK default) moves real money, so use it only at launch. The two share no accounts, keys, products, or webhooks, and their keys look identical: never mix them. Sandbox guide: https://docs.whop.com/developer/guides/sandbox.md Comparison: https://docs.whop.com/developer/quickstart.md
+> API: send `Authorization: Bearer <API_KEY>` from your server only, and pin a dated version with the `Api-Version-Date` header. OpenAPI spec: https://api.whop.com/api/v1/openapi.json
+> Which API: build on the Current API, whose pages live under https://docs.whop.com/api-reference/ (start at https://docs.whop.com/api-reference/overview.md). Pages under /api-reference/legacy/ are the Legacy API. Use one only when https://docs.whop.com/api-reference/stability.md lists the resource as Legacy-only.
+
 # SaaS
 
-> Learn how to build and run your SaaS on Whop
+> Sell your software on Whop. Gate a web app by checking each user's access, or gate downloadable software with license keys.
 
-<CardGroup cols={2}>
-  <Card title="Integrate with license keys" href="#license-key-integration" icon="key" color="#16a34a">
-    Use license keys to gate access to your software.
-  </Card>
+Whop runs checkout, billing, and subscription management for your software. Before your app lets someone in, it checks with Whop that the customer has access right now. This page shows the two ways to run that check.
 
-  <Card title="Integrate with email login" href="#email-login-integration" icon="envelope" color="#16a34a">
-    Let users sign in via email and validate access with the SDK.
-  </Card>
-</CardGroup>
+## Choose your integration
+
+| | Access check | License keys |
+| - | - | - |
+| **Best for** | A web app where users sign in to your site | Desktop apps, scripts, and tools users download |
+| **What identifies the customer** | Their Whop user ID, stored on your user record | A license key Whop issues with each purchase |
+| **What your server calls** | `users.checkAccess` | `memberships.retrieve` and `memberships.update` |
+| **Limit to one machine** | No | Yes, with a hardware ID in membership metadata |
+
+Both paths share the same setup.
+
+## Set up
+
+### 1. Create your whop and a product
+
+Start at [whop.com/sell](https://whop.com/dashboard/start/) to name your whop and pick its URL. Then go to **Products** in your dashboard and add a product with the price your customers pay. Copy the product ID (`prod_`) and its plan ID (`plan_`). You need both below.
+
+### 2. Create an API key
+
+In your dashboard, go to **Developer → API keys** and create an account API key. It acts on behalf of your business, so keep it on your server and never ship it in client code or a downloadable app. Store it as `WHOP_API_KEY`.
+
+### 3. Install the SDK
+
+```bash npm theme={null}
+npm install @whop/sdk
+```
+
+```bash pip theme={null}
+pip install whop-sdk
+```
+
+Create one client and reuse it. The examples on this page call it `client`.
+
+```typescript TypeScript theme={null}
+import { WhopClient } from "@whop/sdk";
+
+export const client = new WhopClient({ token: process.env.WHOP_API_KEY });
+```
+
+```python Python theme={null}
+import os
+
+from whop_sdk import Whop
+
+client = Whop(token=os.environ["WHOP_API_KEY"])
+```
 
 ## Email login integration
 
-If you have an existing SaaS or are building a new one, you can use Whop to direct your customers to pay and let them manage their membership.
+Use this path when customers sign in to your own web app. Store each customer's Whop user ID on your user record, then check access with it before you serve paid features.
 
-To integrate, all you have to do is adjust your `User` table to include the `whop_user_id` and `whop_username` columns.
+### 1. Add Whop columns to your user table
 
-| Column          | Type   | Description                                      |
-| --------------- | ------ | ------------------------------------------------ |
-| `whop_user_id`  | string | Unique identifier for the user provided by Whop. |
-| `whop_username` | string | The user's Whop username for displays and logs.  |
+| Column | Type | Description |
+| - | - | - |
+| `whop_user_id` | string | The customer's Whop user ID, prefixed `user_`. |
+| `whop_username` | string | Optional. The customer's Whop username. Show it in your UI and logs. |
 
-**Note**
-Use the `users.checkAccess` method from the Whop SDK, as shown in Step 6. Pass the `whop_user_id` and the relevant product ID to determine whether the user can access your software.
+### 2. Send signed-in users to checkout
 
-If you would prefer to not have manage your own user table or even a database, consider building a Whop app here.
+Create a checkout configuration from your server and put your own user ID in `metadata`. Whop copies that metadata onto the membership, which is how the next step links the purchase back to your user. Then redirect the user to `purchase_url`.
 
-## Get your SaaS live on Whop:
+```typescript TypeScript theme={null}
+export async function startCheckout(userId: string) {
+  const checkout = await client.checkoutConfigurations.create({
+    variant_id: process.env.WHOP_VARIANT_ID!,
+    metadata: { customer_id: userId },
+    redirect_url: "https://yourapp.com/billing/return",
+  });
 
-<Steps>
-  <Step title="Create your whop" titleSize="h3">
-    Head over to [**whop.com/sell**](https://whop.com/dashboard/start/):
+  return checkout.purchase_url;
+}
+```
 
-    * Choose a name for your SaaS
-    * Select your custom URL
-    * Complete the basic setup
+```python Python theme={null}
+def start_checkout(user_id: str) -> str:
+    checkout = client.checkout_configurations.create(
+        variant_id=os.environ["WHOP_VARIANT_ID"],
+        metadata={"customer_id": user_id},
+        redirect_url="https://yourapp.com/billing/return",
+    )
 
-    Your whop is now live and ready to customize.
+    return checkout.purchase_url
+```
 
-    <img src="https://mintcdn.com/whop/gkU9N_oxv5Gb4qnv/images/createawhopcommunity.png?fit=max&auto=format&n=gkU9N_oxv5Gb4qnv&q=85&s=36ae05914ab535e5b0fed4ae9643d0bd" alt="Launch your SaaS" width="1637" height="961" data-path="images/createawhopcommunity.png" />
-  </Step>
+To keep buyers on your own page instead, [embed the Checkout element](https://docs.whop.com/developer/guides/embed-checkout.md) and pass the same `metadata` on its handle. [Accept payments](https://docs.whop.com/developer/guides/accept-payments.md) compares every checkout option.
 
-  <Step title="Create a product" titleSize="h3">
-    * Go to your Dashboard
-    * Go to Products
-    * Select Add Product
-  </Step>
+### 3. Save the Whop user ID from the webhook
 
-  <Step title="Add checkout link to your website" titleSize="h3">
-    There are two primary ways to send customers to checkout: the Checkout element on your own site or a hosted checkout link.
+Open the [Developer tab of your dashboard](https://whop.com/dashboard/developer), select **Create webhook**, subscribe to `membership.activated`, and store the signing secret as `WHOP_WEBHOOK_SECRET`. The event's `data` is the membership, with the buyer's `user_id` and the `metadata` you set at checkout.
 
-    ### Checkout element
+```typescript TypeScript theme={null}
+// app/api/webhooks/whop/route.ts
+import { unwrapWebhook } from "@whop/sdk/helpers";
+import type { NextRequest } from "next/server";
 
-    Mount the [Checkout element](/elements/latest/checkout/overview) from Whop Elements. First, include the Elements script:
+export async function POST(request: NextRequest) {
+  // Verify the raw body. Parsing it first changes the bytes and the signature check fails.
+  const event = unwrapWebhook(await request.text(), {
+    headers: Object.fromEntries(request.headers),
+    key: process.env.WHOP_WEBHOOK_SECRET!,
+  });
 
-    ```html theme={null}
-    <!-- Step 1 – Include Whop Elements -->
-    <script src="https://cdn.whop.com/elements/amber/elements.js" data-whop-elements></script>
-    ```
+  if (event.type === "membership.activated") {
+    const customerId = event.data.metadata?.customer_id;
+    if (customerId && event.data.user_id) {
+      await db.users.update(customerId, { whop_user_id: event.data.user_id });
+    }
+  }
 
-    Then add a container where you want the checkout to appear and mount the element into it. Replace `plan_XXXXXXXXX` with your actual plan ID from the dashboard.
+  return new Response("OK", { status: 200 });
+}
+```
 
-    ```html theme={null}
-    <!-- Step 2 – Mount the checkout element -->
-    <div id="checkout"></div>
-    <script type="module">
-      const checkout = window.WhopElements().checkout.create({ plan: "plan_XXXXXXXXX" });
-      checkout.create("checkout").mount("#checkout");
-    </script>
-    ```
+```python Python theme={null}
+import os
 
-    ### Hosted checkout link
+from fastapi import FastAPI, Request, Response
+from whop_sdk.lib.verify_webhook import unwrap
 
-    Alternatively, you can link customers to Whop’s hosted checkout page. You can get this link from your dashboard or generate one programmatically and link to the `checkoutUrl` it returns (as shown in Step 6).
+app = FastAPI()
 
-    ```html theme={null}
-    <!-- Hosted checkout link -->
-    <a href="https://whop.com/checkout/plan_xxxxxxxxx" target="_blank" rel="noopener">
-      Buy now
-    </a>
-    ```
 
-    If you would like to programmatically create a checkout session, you can do so with the following code:
+@app.post("/api/webhooks/whop")
+async def whop_webhook(request: Request):
+    # Verify the raw body. Parsing it first changes the bytes and the signature check fails.
+    event = unwrap(await request.body(), dict(request.headers), os.environ["WHOP_WEBHOOK_SECRET"])
 
-    <CodeGroup>
-      ```typescript pages/api/create-checkout-session.ts theme={null}
-      import { whop } from "~/lib/whop-sdk";
+    if event["type"] == "membership.activated":
+        membership = event["data"]
+        customer_id = (membership.get("metadata") or {}).get("customer_id")
+        if customer_id and membership.get("user_id"):
+            db.users.update(customer_id, whop_user_id=membership["user_id"])
 
-      export async function createCheckoutSession() {
-      	const checkoutConfig = await whop.checkoutConfigurations.create({
-      		plan_id: process.env.NEXT_PUBLIC_PREMIUM_PLAN_ID!,
-      		metadata: {
-      			customKey: "customValue",
-      		},
-      	});
+    return Response(status_code=200)
+```
 
-      	return checkoutConfig;
-      }
-      ```
+`membership.activated` also fires on renewals, so make the write safe to repeat. [Webhooks](https://docs.whop.com/developer/guides/webhooks.md) covers retries and testing.
 
-      When you receive the webhook (see below), you can use the `metadata` object to access the custom key and value you attached to the checkout session.
-    </CodeGroup>
-  </Step>
+### 4. Check access before serving paid features
 
-  <Step title="Get your API key" titleSize="h3">
-    In your dashboard, go to **Developer → API keys** and create an account API key. This key acts on behalf of your account (your business), so keep it server-side and never expose it in client code.
-  </Step>
+Ask Whop whether the user has access to your product. The answer follows renewals, cancellations, and refunds, so you don't need to track billing state yourself.
 
-  <Step title="Subscribe to webhooks" titleSize="h3">
-    Go to the dashboard section and add a webhook.
-  </Step>
+```typescript TypeScript theme={null}
+export async function hasAccess(whopUserId: string) {
+  const access = await client.users.checkAccess({
+    id: whopUserId,
+    resource_id: process.env.WHOP_PRODUCT_ID!,
+  });
 
-  <Step title="Check for access programmatically" titleSize="h3">
-    <CodeGroup>
-      ```typescript lib/whop-sdk.ts theme={null}
-      import { WhopClient } from "@whop/sdk";
+  return access.has_access;
+}
+```
 
-      // Instantiate the Whop SDK client with the account API key you created in
-      // "Developer → API keys". Server-side only — never expose this key to the client.
-      export const whop = new WhopClient({
-      	token: process.env.WHOP_API_KEY!,
-      });
-      ```
+```python Python theme={null}
+def has_access(whop_user_id: str) -> bool:
+    access = client.users.check_access(
+        resource_id=os.environ["WHOP_PRODUCT_ID"],
+        id=whop_user_id,
+    )
 
-      ```typescript pages/api/validate-access.ts theme={null}
-      import { whop } from "~/lib/whop-sdk";
+    return access.has_access
+```
 
-      // Validate that a signed-in user has access to your premium product before
-      // letting them use your SaaS feature.
-      export async function validateAccess(whopUserId: string) {
-      	const result = await whop.users.checkAccess({
-      		// The Whop user we stored in our database
-      		id: whopUserId,
-      		// Product ID you want to gate behind (prod_ tag, Dashboard → Products)
-      		resource_id: process.env.NEXT_PUBLIC_PREMIUM_PRODUCT_ID!,
-      	});
+`access_level` on the same response is `customer`, `admin`, or `no_access`.
 
-      	return result.has_access; // boolean; access_level is "customer", "admin", or "no_access"
-      }
-      ```
-    </CodeGroup>
-  </Step>
+### 5. Let customers manage billing
 
-  <Step title="Give users a way to manage their membership" titleSize="h3">
-    You can link users here to manage their membership: [https://whop.com/@me/settings/memberships/](https://whop.com/@me/settings/memberships/).
-
-    They can simply login with the same email and they use to access your SaaS without a password.
-  </Step>
-
-  <Step title="Design your store page and list on marketplace" titleSize="h3">
-    Your store page is where people can learn about your offer. Select your whop name in the top left, then select **Design store page** to open the editor. Select **Edit details** to customize:
-
-    * **Choose a clear name and headline:** Make it immediately obvious what your community offers and who it's for. Examples: "Marketing professionals sharing strategies and insights" or "Fitness enthusiasts building accountability and motivation"
-    * **Write a compelling description:** Focus on the value members receive and how your community will help them achieve their goals. Highlight specific benefits like exclusive content, expert guidance, peer connections, and ongoing support
-    * **Upload a logo:** Add a clean, simple logo to your store page
-    * **Add gallery images or video:** Images of events, member success stories, or a brief welcome video help potential members get to know you and what to expect when they join
-    * **Select the appropriate category:** This helps people discover your community when browsing Whop
-
-          <img src="https://mintcdn.com/whop/XkQkLHsY-Hk8KVyG/images/Storepagecommunity.png?fit=max&auto=format&n=XkQkLHsY-Hk8KVyG&q=85&s=38ca3471a7298e364fc1b6b649b7a3ce" alt="Community store page" width="1832" height="964" data-path="images/Storepagecommunity.png" />
-  </Step>
-</Steps>
+Link customers to their [Whop orders](https://whop.com/@me/settings/orders) to update their payment method or cancel. They sign in with the email they bought with.
 
 ## License key integration
 
-After a purchase, each user receives a unique license key that unlocks the product. Require users to enter this key before they access the product. You can also validate the current key before enabling specific application features.
+Use this path for software that runs on the customer's machine. Each purchase comes with a unique license key. Your software asks for the key, and your server checks it with Whop.
 
-## Getting started
+### 1. Add the Software app to your product
 
-1. Add the software app to your whop [here](https://whop.com/apps/app_jHH5YT7jHYQANi/install/).
-2. Select configure in the new software app you added
-3. Add software name and download link
+[Install the Software app](https://whop.com/apps/app_jHH5YT7jHYQANi/install/) on your whop, open it, and add your software's name and download link. Buyers then see their license key and the download in their orders. The API returns a membership's `license_key` only when its product includes this app.
 
-### Validate license keys
+### 2. Validate keys from your server
 
-If the license key metadata is empty, the key isn't yet bound to a computer. Whop's API returns status code `201` to confirm that the key is valid. Your software can then grant access to the product. The API saves the metadata from the request on the license key.
+Check keys from your own server, never from the software you ship. Your API key can read and change every membership in your business, so never embed it in a desktop app or script that users download. Your software sends the license key and a machine identifier to your server, and your server checks it with Whop.
 
-<CodeGroup title="Initially Setting the Metadata" tag="POST" label="memberships/:id/validate_license">
-  ```js typescript theme={null}
-  import axios from "axios";
+To limit each key to one machine, store a hardware ID in the membership's metadata the first time someone uses the key, then compare it on every later check:
 
-  const setMetadata = async () => {
-  	try {
-  		const response = await axios.post(
-  			`https://api.whop.com/api/v2/memberships/${licenseKey}/validate_license`,
-  			{
-  				headers: {
-  					Authorization: `Bearer ${accessToken}`,
-  				},
-  				body: {
-  					metadata: {
-  						key: "value", // This is initially setting the key/value pair if it doesn't already exist
-  					},
-  				},
-  			},
-  		);
-  		return response.data;
-  	} catch (error) {
-  		throw error;
-  	}
-  };
+* **The key isn't bound yet** (no `hwid` in its metadata): save the machine's `hwid` and grant access.
+* **The stored `hwid` matches:** grant access.
+* **The stored `hwid` is different:** deny access. The key is in use on another machine until the customer resets it.
 
-  export default setMetadata;
-  ```
-</CodeGroup>
+```typescript TypeScript theme={null}
+// Add "past_due" if you let customers keep access while Whop retries a failed renewal.
+const VALID_STATUSES = ["active", "trialing", "completed"];
 
-### Validate matching metadata
+export async function validateLicense(licenseKey: string, hwid: string) {
+  // Retrieve accepts a license key in place of a membership ID. An unknown key throws a 404 error.
+  const membership = await client.memberships.retrieve({ id: licenseKey });
 
-When existing license key metadata matches the metadata your software sends, Whop's API returns a success response. This response confirms that the license key is valid. Your software can then grant access to the product. The API compares every metadata key-value pair and verifies that all fields contain the same data.
+  if (!VALID_STATUSES.includes(membership.status)) {
+    return { valid: false, reason: "membership_inactive" };
+  }
 
-To limit each user to one session, store the user's hardware ID in the metadata as shown below:
+  const boundHwid = membership.metadata?.hwid;
 
-**Client-side**
+  if (!boundHwid) {
+    // Update merges these keys into the existing metadata.
+    await client.memberships.update({ id: membership.id, metadata: { hwid } });
+    return { valid: true };
+  }
 
-```json theme={null}
-{
-	"hwid": "098H52ST479QE053V2"
+  if (boundHwid !== hwid) {
+    return { valid: false, reason: "bound_to_another_machine" };
+  }
+
+  return { valid: true };
 }
 ```
 
-**Server-side**
+```python Python theme={null}
+# Add "past_due" if you let customers keep access while Whop retries a failed renewal.
+VALID_STATUSES = {"active", "trialing", "completed"}
 
-```json theme={null}
-{
-	"hwid": "098H52ST479QE053V2"
-}
+
+def validate_license(license_key: str, hwid: str) -> dict:
+    # Retrieve accepts a license key in place of a membership ID. An unknown key raises a 404 error.
+    membership = client.memberships.retrieve(license_key)
+
+    if membership.status not in VALID_STATUSES:
+        return {"valid": False, "reason": "membership_inactive"}
+
+    bound_hwid = (membership.metadata or {}).get("hwid")
+
+    if not bound_hwid:
+        # Update merges these keys into the existing metadata.
+        client.memberships.update(membership.id, metadata={"hwid": hwid})
+        return {"valid": True}
+
+    if bound_hwid != hwid:
+        return {"valid": False, "reason": "bound_to_another_machine"}
+
+    return {"valid": True}
 ```
 
-### Validate mismatched metadata
+### 3. Reset a license key
 
-If the stored metadata doesn't match the metadata your software sends, Whop's API returns status code `400`. This response means the license key is invalid, so your software can't grant access.
+Customers can reset their key from their orders. To reset it from your server, [update the membership](https://docs.whop.com/api-reference/memberships/update-membership.md) with an empty metadata object (`metadata: {}`). The next check from any machine binds the key again.
 
-Below is example metadata that would return this error.
+## Design your store page
 
-**Client-side**
+Your store page is where people learn about your software before they buy. Select your whop name in the top left, then select **Design store page** to open the editor. Select **Edit details** to customize:
 
-```json theme={null}
-{
-	"hwid": "30294GLDKJ54F0SLKF"
-}
-```
-
-**Server-side**
-
-```json theme={null}
-{
-	"hwid": "098H52ST479QE053V2"
-}
-```
-
-### Remove metadata
-
-Users can reset their key's metadata from their orders. To reset it through the API, send an empty metadata body in a POST request to the [memberships endpoint](/api-reference/beta/memberships/update-membership).
+* **Name and headline:** say what the software does and who it's for.
+* **Description:** focus on the problem it solves and what buyers get, such as updates, support, or a community.
+* **Logo:** add a clean, simple logo.
+* **Gallery images or video:** show the software in use. A short demo video helps buyers decide.
+* **Category:** pick the category that helps people find your software when they browse Whop.
 
 ## Next steps
 
-<Card title="Add apps to your whop" icon="chart-line" href="/manage-your-business">
-  Add apps to let your users learn how to use your software, chat with
-  each other, and even order merch.
-</Card>
+> [card] [Accept payments](https://docs.whop.com/developer/guides/accept-payments.md)
+>
+> Compare checkout links, the Checkout element, and payment elements.
+
+> [card] [Webhooks](https://docs.whop.com/developer/guides/webhooks.md)
+>
+> Verify signatures, handle retries, and test events.
+
+> [card] [Manage memberships](https://docs.whop.com/developer/guides/memberships.md)
+>
+> Cancel, pause, extend, and update memberships from your server.
+
+> [card] [Sign in with Whop](https://docs.whop.com/developer/guides/oauth.md)
+>
+> Let customers sign in with their Whop account instead of a password.
+
+
+## Related topics
+
+- [Get Started with Whop](https://docs.whop.com/get-started.md)
+- [What Are Whop Apps](https://docs.whop.com/whop-apps/what-are-whop-apps.md)

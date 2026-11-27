@@ -2,169 +2,225 @@
 > Fetch the complete documentation index at: https://docs.whop.com/llms.txt
 > Use this file to discover all available pages before exploring further.
 
-# Promo Code
+> ## Agent Instructions
+> Treat these docs and the Whop MCP server as the source of truth for Whop API behavior. Don't infer endpoint behavior from marketing pages.
+> MCP server: connect https://mcp.whop.com/mcp (streamable HTTP, browser sign-in, no API key in the client config) to search these docs and read or change live Whop data. Setup: https://docs.whop.com/developer/guides/ai_and_mcp.md
+> Whop CLI: install with `curl -fsSL https://whop.com/install.sh | sh` to scaffold, run, and deploy Whop apps and websites. It acts on production, not the sandbox. Overview: https://docs.whop.com/cli/overview.md Agent mode: https://docs.whop.com/cli/agent-mode.md
+> Hosting: Whop serves a site or app from the build `whop apps deploy` uploads, with rollbacks, secrets, and server logs. Guide: https://docs.whop.com/developer/websites/hosting.md
+> Plugins: in Claude Code, run `/plugin marketplace add whopio/plugins`, then `/plugin install whop@whop`. Guide: https://docs.whop.com/developer/guides/plugins/claude-code.md Every agent tool: https://docs.whop.com/developer/ai/overview.md
+> Environments: build and test in the sandbox (API `https://sandbox-api.whop.com/api/v1`, keys at https://sandbox.whop.com/dashboard/developer, SDK environment `Sandbox`; no real money). Production (API `https://api.whop.com/api/v1`, keys at https://whop.com/dashboard/developer, SDK environment `Production`, the SDK default) moves real money, so use it only at launch. The two share no accounts, keys, products, or webhooks, and their keys look identical: never mix them. Sandbox guide: https://docs.whop.com/developer/guides/sandbox.md Comparison: https://docs.whop.com/developer/quickstart.md
+> API: send `Authorization: Bearer <API_KEY>` from your server only, and pin a dated version with the `Api-Version-Date` header. OpenAPI spec: https://api.whop.com/api/v1/openapi.json
+> Which API: build on the Current API, whose pages live under https://docs.whop.com/api-reference/ (start at https://docs.whop.com/api-reference/overview.md). Pages under /api-reference/legacy/ are the Legacy API. Use one only when https://docs.whop.com/api-reference/stability.md lists the resource as Legacy-only.
 
-> A promo code applies a discount to a plan during checkout. Promo codes can be percentage-based or fixed-amount, and can have usage limits and expiration dates.
+# Promo Codes API
 
-<Note>
-  This resource has a successor in the [Whop
-  API](/api-reference/beta/promo-codes/list-promo-codes), the versioned API that
-  new integrations should build on. This page stays fully supported.
-</Note>
+> A Promo Code is a discount a buyer enters at checkout, either a percentage or a fixed amount off.
 
-<ResponseExample>
-  ```json Example theme={null}
-  {
-  	"amount_off": 6.9,
-  	"churned_users_only": true,
-  	"code": "<string>",
-  	"company": {
-  		"id": "biz_xxxxxxxxxxxxxx",
-  		"title": "<string>"
-  	},
-  	"created_at": "2023-12-01T05:00:00.401Z",
-  	"currency": "usd",
-  	"duration": "forever",
-  	"existing_memberships_only": true,
-  	"expires_at": "2023-12-01T05:00:00.401Z",
-  	"id": "promo_xxxxxxxxxxxx",
-  	"new_users_only": true,
-  	"one_per_customer": true,
-  	"product": {
-  		"id": "prod_xxxxxxxxxxxxx",
-  		"title": "Pickaxe Analytics"
-  	},
-  	"promo_duration_months": 42,
-  	"promo_type": "percentage",
-  	"status": "active",
-  	"stock": 42,
-  	"unlimited_stock": true,
-  	"uses": 42
-  }
-  ```
-</ResponseExample>
+It belongs to an account, can be limited to one product, and controls who can redeem it, how many times, until when, and for how many billing periods the discount lasts.
 
-<ResponseField name="amount_off" type="number" required>
-  The discount amount. Interpretation depends on promo\_type: if 'percentage', this is the percentage (e.g., 20 means 20% off); if 'flat\_amount', this is dollars off (e.g., 10.00 means \$10.00 off).
+Use the Promo Codes API to create codes for an account, list and retrieve them, deactivate a code to pause redemptions or activate it again, and archive codes you no longer offer.
 
-  Example: `6.9`
-</ResponseField>
+## Endpoints
 
-<ResponseField name="churned_users_only" type="boolean" required>
-  Restricts promo use to only users who have churned from the company before.
-</ResponseField>
+| Endpoint | Request |
+| - | - |
+| [List Promo Codes](https://docs.whop.com/api-reference/promo-codes/list-promo-codes.md) | GET `/promo_codes` |
+| [Retrieve Promo Code](https://docs.whop.com/api-reference/promo-codes/retrieve-promo-code.md) | GET `/promo_codes/{id}` |
+| [Create Promo Code](https://docs.whop.com/api-reference/promo-codes/create-promo-code.md) | POST `/promo_codes` |
+| [Activate Promo Code](https://docs.whop.com/api-reference/promo-codes/activate-promo-code.md) | POST `/promo_codes/{id}/activate` |
+| [Deactivate Promo Code](https://docs.whop.com/api-reference/promo-codes/deactivate-promo-code.md) | POST `/promo_codes/{id}/deactivate` |
+| [Delete Promo Code](https://docs.whop.com/api-reference/promo-codes/delete-promo-code.md) | DELETE `/promo_codes/{id}` |
 
-<ResponseField name="code" type="string | null" required>
-  The specific code used to apply the promo at checkout.
-</ResponseField>
+## Attributes
 
-<ResponseField name="company" type="object" required>
-  The company for the promo code.
+**id** `string` *required*
 
-  <Expandable title="child attributes">
-    <ResponseField name="id" type="string" required>
-      The unique identifier for the company.
+Promo code ID, prefixed `promo_`.
 
-      Example: `biz_xxxxxxxxxxxxxx`
-    </ResponseField>
+**account** `object` *required*
 
-    <ResponseField name="title" type="string" required>
-      The written name of the company.
-    </ResponseField>
-  </Expandable>
-</ResponseField>
+Account that owns the promo code.
 
-<ResponseField name="created_at" type="string<date-time>" required>
-  The datetime the promo code was created.
+> [accordion] Properties
+>
+> **id** `string` *required*
+>
+> Account ID, prefixed `biz_`.
+>
+> **title** `string` *required*
+>
+> Account display name.
 
-  Example: `2023-12-01T05:00:00.401Z`
-</ResponseField>
+**affiliate** `object | null` *required*
 
-<ResponseField name="currency" type="Currencies" required>
-  The monetary currency of the promo code.
+Affiliate credited with referrals that use the promo code, or `null` when no affiliate is attached.
 
-  Available options: `usd`, `sgd`, `inr`, `aud`, `brl`, `cad`, `dkk`, `eur`, `nok`, `gbp`, `sek`, `chf`, `hkd`, `huf`, `jpy`, `mxn`, `myr`, `pln`, `czk`, `nzd`, `aed`, `eth`, `ape`, `cop`, `ron`, `thb`, `bgn`, `idr`, `dop`, `php`, `try`, `krw`, `twd`, `vnd`, `pkr`, `clp`, `uyu`, `ars`, `zar`, `dzd`, `tnd`, `mad`, `kes`, `kwd`, `jod`, `all`, `xcd`, `amd`, `bsd`, `bhd`, `bob`, `bam`, `khr`, `crc`, `xof`, `egp`, `etb`, `gmd`, `ghs`, `gtq`, `gyd`, `ils`, `jmd`, `mop`, `mga`, `mur`, `mdl`, `mnt`, `nad`, `ngn`, `mkd`, `omr`, `pyg`, `pen`, `qar`, `rwf`, `sar`, `rsd`, `lkr`, `tzs`, `ttd`, `uzs`, `rub`, `btc`, `cny`, `usdt`, `kzt`, `awg`, `whop_usd`, `xau`
-</ResponseField>
+> [accordion] Properties
+>
+> **id** `string` *required*
+>
+> Affiliate ID, prefixed `aff_`.
+>
+> **user** `object` *required*
+>
+> User who is the affiliate.
+>
+> > [accordion] Properties
+> >
+> > **id** `string` *required*
+> >
+> > Affiliate user ID, prefixed `user_`.
+> >
+> > **name** `string | null` *required*
+> >
+> > Display name of the affiliate.
+> >
+> > **profile\_pic** `string` *required*
+> >
+> > Affiliate avatar URL, including the generated fallback when no avatar is set.
+> >
+> > **username** `string | null` *required*
+> >
+> > Public username of the affiliate.
 
-<ResponseField name="duration" type="PromoDurations | null" required>
-  The duration of the promo.
+**amount\_off** `number` *required*
 
-  Available options: `forever`, `once`, `repeating`
-</ResponseField>
+Discount amount. Percentage discounts are represented as a decimal fraction.
 
-<ResponseField name="existing_memberships_only" type="boolean" required>
-  Restricts promo use to only be applied to already purchased memberships.
-</ResponseField>
+**churned\_users\_only** `boolean` *required*
 
-<ResponseField name="expires_at" type="string<date-time> | null" required>
-  The date/time of when the promo expires.
+Whether the promo code is restricted to churned customers.
 
-  Example: `2023-12-01T05:00:00.401Z`
-</ResponseField>
+**code** `string | null` *required*
 
-<ResponseField name="id" type="string" required>
-  The unique identifier for the promo code.
+Code entered at checkout.
 
-  Example: `promo_xxxxxxxxxxxx`
-</ResponseField>
+**created\_at** `string` *required*
 
-<ResponseField name="new_users_only" type="boolean" required>
-  Restricts promo use to only users who have never purchased from the company
-  before.
-</ResponseField>
+When the promo code was created, as an ISO 8601 timestamp.
 
-<ResponseField name="one_per_customer" type="boolean" required>
-  Restricts promo use to only be applied once per customer.
-</ResponseField>
+**currency** `string` *required*
 
-<ResponseField name="product" type="object | null" required>
-  The product this promo code applies to
+Currency used for a fixed-amount discount.
 
-  <Expandable title="child attributes">
-    <ResponseField name="id" type="string" required>
-      The unique identifier for the product.
+Available options: `usd`, `sgd`, `inr`, `aud`, `brl`, `cad`, `dkk`, `eur`, `nok`, `gbp`, `sek`, `chf`, `hkd`, `huf`, `jpy`, `mxn`, `myr`, `pln`, `czk`, `nzd`, `aed`, `eth`, `ape`, `cop`, `ron`, `thb`, `bgn`, `idr`, `dop`, `php`, `try`, `krw`, `twd`, `vnd`, `pkr`, `clp`, `uyu`, `ars`, `zar`, `dzd`, `tnd`, `mad`, `kes`, `kwd`, `jod`, `all`, `xcd`, `amd`, `bsd`, `bhd`, `bob`, `bam`, `khr`, `crc`, `xof`, `egp`, `etb`, `gmd`, `ghs`, `gtq`, `gyd`, `ils`, `jmd`, `mop`, `mga`, `mur`, `mdl`, `mnt`, `nad`, `ngn`, `mkd`, `omr`, `pyg`, `pen`, `qar`, `rwf`, `sar`, `rsd`, `lkr`, `tzs`, `ttd`, `uzs`, `rub`, `btc`, `cny`, `usdt`, `kzt`, `awg`, `whop_usd`, `xau`, `hnl`
 
-      Example: `prod_xxxxxxxxxxxxx`
-    </ResponseField>
+**duration** `string` *required*
 
-    <ResponseField name="title" type="string" required>
-      The display name of the product shown to customers on the product page and in search results.
+How long the discount applies.
 
-      Example: `Pickaxe Analytics`
-    </ResponseField>
-  </Expandable>
-</ResponseField>
+Available options: `forever`, `once`, `repeating`
 
-<ResponseField name="promo_duration_months" type="integer | null" required>
-  The number of months the promo is applied for.
+**existing\_memberships\_only** `boolean` *required*
 
-  Example: `42`
-</ResponseField>
+Whether the promo code applies only to existing memberships.
 
-<ResponseField name="promo_type" type="PromoTypes" required>
-  The type (% or flat amount) of the promo.
+**expires\_at** `string | null` *required*
 
-  Available options: `percentage`, `flat_amount`
-</ResponseField>
+When the promo code expires, as an ISO 8601 timestamp.
 
-<ResponseField name="status" type="PromoCodeStatus" required>
-  Indicates if the promo code is live or disabled.
+**metadata** `object` *required*
 
-  Available options: `active`, `inactive`, `archived`
-</ResponseField>
+Custom key-value metadata stored on the promo code.
 
-<ResponseField name="stock" type="integer" required>
-  The quantity limit on the number of uses.
+**new\_users\_only** `boolean` *required*
 
-  Example: `42`
-</ResponseField>
+Whether the promo code is restricted to new customers.
 
-<ResponseField name="unlimited_stock" type="boolean" required>
-  Whether or not the promo code has unlimited stock.
-</ResponseField>
+**one\_per\_customer** `boolean` *required*
 
-<ResponseField name="uses" type="integer" required>
-  The amount of times the promo codes has been used.
+Whether each customer may redeem the promo code only once.
 
-  Example: `42`
-</ResponseField>
+**product** `object | null` *required*
+
+Product the promo code is restricted to, or `null` when it is not product-scoped.
+
+> [accordion] Properties
+>
+> **id** `string` *required*
+>
+> Product ID, prefixed `prod_`.
+>
+> **title** `string` *required*
+>
+> Product display name.
+
+**promo\_duration\_months** `integer | null` *required*
+
+Billing intervals the discount applies to.
+
+**promo\_type** `string` *required*
+
+Whether the discount is percentage-based or a fixed amount.
+
+Available options: `percentage`, `flat_amount`
+
+**status** `string` *required*
+
+Promo code lifecycle status.
+
+Available options: `active`, `inactive`, `archived`
+
+**stock** `integer` *required*
+
+Maximum uses when stock is limited.
+
+**unlimited\_stock** `boolean` *required*
+
+Whether the promo code has no redemption limit.
+
+**updated\_at** `string` *required*
+
+When the promo code was updated, as an ISO 8601 timestamp.
+
+**uses** `integer` *required*
+
+Memberships that used the promo code.
+
+```json PromoCode theme={null}
+{
+	"id": "promo_xxxxxxxxxxxxxx",
+	"code": "SUMMER25",
+	"account": {
+		"id": "biz_xxxxxxxxxxxxxx",
+		"title": "Shine Time Auto Detailing"
+	},
+	"product": {
+		"id": "prod_xxxxxxxxxxxxxx",
+		"title": "Ceramic Coating Package"
+	},
+	"affiliate": {
+		"id": "aff_xxxxxxxxxxxxxx",
+		"user": {
+			"id": "user_xxxxxxxxxxxxxx",
+			"username": "danawhitfield",
+			"name": "Dana Whitfield",
+			"profile_pic": "https://ui-avatars.com/api/?name=Dana+Whitfield"
+		}
+	},
+	"status": "active",
+	"promo_type": "percentage",
+	"amount_off": 0.25,
+	"currency": "usd",
+	"duration": "repeating",
+	"promo_duration_months": 3,
+	"new_users_only": true,
+	"churned_users_only": false,
+	"existing_memberships_only": false,
+	"one_per_customer": true,
+	"unlimited_stock": false,
+	"stock": 200,
+	"uses": 37,
+	"expires_at": "2026-12-31T23:59:59.000Z",
+	"metadata": {},
+	"created_at": "2026-09-01T12:00:00.000Z",
+	"updated_at": "2026-09-01T12:00:00.000Z"
+}
+```
+
+
+## Related topics
+
+- [Promo Code](https://docs.whop.com/api-reference/legacy/promo-codes/promo-code.md)
+- [Delete Promo Code](https://docs.whop.com/api-reference/promo-codes/delete-promo-code.md)
+- [Delete promo code](https://docs.whop.com/api-reference/legacy/promo-codes/delete-promo-code.md)

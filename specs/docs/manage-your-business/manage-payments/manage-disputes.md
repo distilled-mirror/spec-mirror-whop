@@ -2,9 +2,19 @@
 > Fetch the complete documentation index at: https://docs.whop.com/llms.txt
 > Use this file to discover all available pages before exploring further.
 
+> ## Agent Instructions
+> Treat these docs and the Whop MCP server as the source of truth for Whop API behavior. Don't infer endpoint behavior from marketing pages.
+> MCP server: connect https://mcp.whop.com/mcp (streamable HTTP, browser sign-in, no API key in the client config) to search these docs and read or change live Whop data. Setup: https://docs.whop.com/developer/guides/ai_and_mcp.md
+> Whop CLI: install with `curl -fsSL https://whop.com/install.sh | sh` to scaffold, run, and deploy Whop apps and websites. It acts on production, not the sandbox. Overview: https://docs.whop.com/cli/overview.md Agent mode: https://docs.whop.com/cli/agent-mode.md
+> Hosting: Whop serves a site or app from the build `whop apps deploy` uploads, with rollbacks, secrets, and server logs. Guide: https://docs.whop.com/developer/websites/hosting.md
+> Plugins: in Claude Code, run `/plugin marketplace add whopio/plugins`, then `/plugin install whop@whop`. Guide: https://docs.whop.com/developer/guides/plugins/claude-code.md Every agent tool: https://docs.whop.com/developer/ai/overview.md
+> Environments: build and test in the sandbox (API `https://sandbox-api.whop.com/api/v1`, keys at https://sandbox.whop.com/dashboard/developer, SDK environment `Sandbox`; no real money). Production (API `https://api.whop.com/api/v1`, keys at https://whop.com/dashboard/developer, SDK environment `Production`, the SDK default) moves real money, so use it only at launch. The two share no accounts, keys, products, or webhooks, and their keys look identical: never mix them. Sandbox guide: https://docs.whop.com/developer/guides/sandbox.md Comparison: https://docs.whop.com/developer/quickstart.md
+> API: send `Authorization: Bearer <API_KEY>` from your server only, and pin a dated version with the `Api-Version-Date` header. OpenAPI spec: https://api.whop.com/api/v1/openapi.json
+> Which API: build on the Current API, whose pages live under https://docs.whop.com/api-reference/ (start at https://docs.whop.com/api-reference/overview.md). Pages under /api-reference/legacy/ are the Legacy API. Use one only when https://docs.whop.com/api-reference/stability.md lists the resource as Legacy-only.
+
 # Manage Disputes
 
-> Handle chargebacks and payment disputes with the Dispute fighter
+> Respond to credit card disputes with evidence in the Dispute fighter, understand dispute fees and timelines, and set up early alerts to win more cases.
 
 When a customer disputes a charge with their bank, you can respond with evidence and manage the case from your dashboard. Whop's **Dispute fighter** helps you track, get ahead of, respond to, and resolve disputes.
 
@@ -31,28 +41,26 @@ When a customer files a dispute:
 
 * They don't recognize the charge on their statement
 * They think the transaction was fraudulent
-* They're unhappy with their purchase and aren't aware of the [Resolution Center](/manage-your-business/manage-payments/resolution-center)
+* They're unhappy with their purchase and aren't aware of the [Resolution Center](https://docs.whop.com/manage-your-business/manage-payments/resolution-center.md)
 * They tried to cancel but got charged anyway
 
 ## Managing a dispute
 
-<Steps>
-  <Step title="Go to Disputes">
-    Go to your **Dashboard** > **Disputes** (or **Resolution Center**)
-  </Step>
+**1. Go to Disputes**
 
-  <Step title="Review the dispute">
-    Open the dispute and review the reason and deadline
-  </Step>
+Go to your **Dashboard** > **Disputes** (or **Resolution Center**)
 
-  <Step title="Upload evidence">
-    Upload **evidence** (receipts, communications, terms, proof of delivery)
-  </Step>
+**2. Review the dispute**
 
-  <Step title="Submit your response">
-    Submit your response before the deadline
-  </Step>
-</Steps>
+Open the dispute and review the reason and deadline
+
+**3. Upload evidence**
+
+Upload **evidence** (receipts, communications, terms, proof of delivery)
+
+**4. Submit your response**
+
+Submit your response before the deadline
 
 Winning a dispute depends on strong evidence. Respond in time to avoid an automatic loss.
 
@@ -60,15 +68,13 @@ Winning a dispute depends on strong evidence. Respond in time to avoid an automa
 
 You can monitor and manage all your disputes in the **Dispute fighter**:
 
-<Steps>
-  <Step title="Go to Dispute fighter">
-    Go to **Dashboard** > **Dispute fighter**
-  </Step>
+**1. Go to Dispute fighter**
 
-  <Step title="Filter by status">
-    Select **Status** and choose from: Needs response, Under review, Won, or Lost
-  </Step>
-</Steps>
+Go to **Dashboard** > **Dispute fighter**
+
+**2. Filter by status**
+
+Select **Status** and choose from: Needs response, Under review, Won, or Lost
 
 Track response deadlines and outcomes from this main view.
 
@@ -78,32 +84,30 @@ When you get a dispute notification, act fast and submit your evidence before th
 
 **To fight a dispute:**
 
-<Steps>
-  <Step title="Go to Dispute fighter">
-    Go to **Dashboard** > **[Dispute fighter](https://whop.com/dashboard/disputes/)**
-  </Step>
+**1. Go to Dispute fighter**
 
-  <Step title="Select the dispute">
-    Select the dispute you want to respond to
-  </Step>
+Go to **Dashboard** > **[Dispute fighter](https://whop.com/dashboard/disputes/)**
 
-  <Step title="Upload evidence">
-    Upload your evidence and documentation, such as chat logs with the customer, product details and descriptions, cancellation policy, and refund policy
-  </Step>
+**2. Select the dispute**
 
-  <Step title="Add supporting evidence">
-    Add any supporting evidence like cancellation request records, customer communications, refund records, and proof of subscription agreement
-  </Step>
+Select the dispute you want to respond to
 
-  <Step title="Submit">
-    Select **Submit** to send your response
-  </Step>
-</Steps>
+**3. Upload evidence**
 
-<Warning>
-  Each dispute shows a "Respond by" date under Status. Submit your evidence
-  before this deadline or you'll automatically lose the dispute.
-</Warning>
+Upload your evidence and documentation, such as chat logs with the customer, product details and descriptions, cancellation policy, and refund policy
+
+**4. Add supporting evidence**
+
+Add any supporting evidence like cancellation request records, customer communications, refund records, and proof of subscription agreement
+
+**5. Submit**
+
+Select **Submit** to send your response
+
+> [!WARNING]
+>
+> Each dispute shows a "Respond by" date under Status. Submit your evidence
+> before this deadline or you'll automatically lose the dispute.
 
 ## What Whop automatically submits
 
@@ -132,10 +136,10 @@ Whop automatically uploads relevant files and user logs to strengthen your case:
 * Policy disclosure (proves customer knew refund rules before buying)
 * Your actual refund policy document
 
-<Tip>
-  Add your own evidence: beyond what Whop automatically includes, you can upload
-  supporting evidence and customer communications to strengthen your case.
-</Tip>
+> [!TIP]
+>
+> Add your own evidence: beyond what Whop automatically includes, you can upload
+> supporting evidence and customer communications to strengthen your case.
 
 ## Dispute fees
 
@@ -161,46 +165,46 @@ Early dispute alerts warn you when a customer is about to file a dispute. You ca
 
 **To set it up:**
 
-<Steps>
-  <Step title="Go to Dispute fighter">
-    Go to **Dashboard** > **Dispute fighter**
-  </Step>
+**1. Go to Risk settings**
 
-  <Step title="Select Early dispute alert">
-    Select **Early dispute alert**
-  </Step>
+Go to **Dashboard** > **Settings** > **Risk**
 
-  <Step title="Set the refund threshold">
-    Enter the amount under **Refund transactions lower than**
-  </Step>
+**2. Find Early dispute alerts**
 
-  <Step title="Save">
-    Select **Save**
-  </Step>
-</Steps>
+Scroll to **Early dispute alerts**
+
+**3. Set the refund threshold**
+
+Enter the amount under **Refund alerted payments under**
+
+**4. Save**
+
+Select **Save**
 
 When you're new to Whop and don't have healthy payment history yet, disputes can lead to reserves or account suspension. Whop automatically refunds transactions under \$500 when they trigger an early dispute alert. This protects your payments account during this period. After you build healthy payment history, you can turn off dispute alert refunds or change the maximum.
 
-<Warning>Each early dispute alert costs \$29.</Warning>
+> [!WARNING]
+>
+> Each early dispute alert costs \$29.
 
 ### The decision process
 
-<Steps>
-  <Step title="Initial review">
-    The card issuer looks into the customer's complaint
-  </Step>
+**1. Initial review**
 
-  <Step title="Submitting evidence">
-    You have 7–21 days to send your evidence (depending on the card company)
-  </Step>
+The card issuer looks into the customer's complaint
 
-  <Step title="Evaluation">
-    The card issuer reviews all evidence and makes a decision (usually 60–75
-    days)
-  </Step>
+**2. Submitting evidence**
 
-  <Step title="Final answer">You either win or lose the dispute</Step>
-</Steps>
+You have 7–21 days to send your evidence (depending on the card company)
+
+**3. Evaluation**
+
+The card issuer reviews all evidence and makes a decision (usually 60–75
+days)
+
+**4. Final answer**
+
+You either win or lose the dispute
 
 ### What card issuers look for in your evidence
 
@@ -210,66 +214,71 @@ When you're new to Whop and don't have healthy payment history yet, disputes can
 * **Terms of Service:** Proof the customer agreed to your terms
 * **Return policy:** Your clearly written return policy
 
-<Warning>
-  Even with Whop's help, the card issuer has the final call on whether you win
-  or lose the dispute.
-</Warning>
+> [!WARNING]
+>
+> Even with Whop's help, the card issuer has the final call on whether you win
+> or lose the dispute.
 
 ## Reserves and account health
 
-High dispute rates or unresolved [Resolution Center](/manage-your-business/manage-payments/resolution-center) cases can lead to [reserves](/trust-and-safety/account-health/reserves) on your balance. To keep your account healthy and dispute rates low, see [Managing dispute rates](/trust-and-safety/account-health/managing-dispute-rates).
+High dispute rates or unresolved [Resolution Center](https://docs.whop.com/manage-your-business/manage-payments/resolution-center.md) cases can lead to [reserves](https://docs.whop.com/trust-and-safety/account-health/reserves.md) on your balance. To keep your account healthy and dispute rates low, see [Managing dispute rates](https://docs.whop.com/trust-and-safety/account-health/managing-dispute-rates.md).
 
 ## Frequently asked questions
 
-<AccordionGroup>
-  <Accordion title="How long do I have to respond to a dispute?">
-    Each dispute has a deadline shown under Status in the Dispute fighter.
-    Response times vary, so check them individually.
-  </Accordion>
+> [accordion] How long do I have to respond to a dispute?
+>
+> Each dispute has a deadline shown under Status in the Dispute fighter.
+> Response times vary, so check them individually.
 
-  <Accordion title="How do I increase my chances of winning?">
-    Provide evidence that directly answers the customer's complaint. Upload
-    clear policies, show proof they received and used your product, and include
-    screenshots of them using your service.
-  </Accordion>
+> [accordion] How do I increase my chances of winning?
+>
+> Provide evidence that directly answers the customer's complaint. Upload
+> clear policies, show proof they received and used your product, and include
+> screenshots of them using your service.
 
-  <Accordion title="Why did I lose a dispute?">
-    The customer's bank makes the final decision, not Whop. Banks review all
-    evidence you submit through the Dispute fighter, but they decide the
-    outcome. Whop gives you every tool to win, but the bank controls the final
-    decision.
-  </Accordion>
+> [accordion] Why did I lose a dispute?
+>
+> The customer's bank makes the final decision, not Whop. Banks review all
+> evidence you submit through the Dispute fighter, but they decide the
+> outcome. Whop gives you every tool to win, but the bank controls the final
+> decision.
 
-  <Accordion title="Can a customer dispute the same payment multiple times?">
-    Yes, but it's rare. Card companies and payment processors permit this. Fight
-    each dispute fully using the Dispute fighter, even if it's the same
-    purchase.
-  </Accordion>
+> [accordion] Can a customer dispute the same payment multiple times?
+>
+> Yes, but it's rare. Card companies and payment processors permit this. Fight
+> each dispute fully using the Dispute fighter, even if it's the same
+> purchase.
 
-  <Accordion title="Can I refund a disputed payment?">
-    If it's become a full chargeback, you can't refund it. If the customer
-    contacts their bank and cancels the dispute, then you can give them a
-    refund.
-  </Accordion>
+> [accordion] Can I refund a disputed payment?
+>
+> If it's become a full chargeback, you can't refund it. If the customer
+> contacts their bank and cancels the dispute, then you can give them a
+> refund.
 
-  <Accordion title="Why is the dispute amount different from what the customer originally paid?">
-    The dispute amount can differ for several reasons:
+> [accordion] Why is the dispute amount different from what the customer originally paid?
+>
+> The dispute amount can differ for several reasons:
+>
+> * **Currency changes** — Exchange rates shift between the payment and dispute.
+> * **Partial disputes** — The customer disputes only part of the purchase.
+> * **Multiple charges** — The card issuer combines several disputed payments into one dispute.
+> * **Payments with partial refunds** — The customer disputes the full amount after receiving some money back.
 
-    * **Currency changes** — Exchange rates shift between the payment and dispute.
-    * **Partial disputes** — The customer disputes only part of the purchase.
-    * **Multiple charges** — The card issuer combines several disputed payments into one dispute.
-    * **Payments with partial refunds** — The customer disputes the full amount after receiving some money back.
-  </Accordion>
+> [accordion] Why can't I respond to a dispute?
+>
+> You automatically lose some disputes and can't challenge them:
+>
+> * Certain fraud cases, depending on the card company
+> * Disputes from some countries due to local laws
+> * Cases where the card issuer won't accept evidence
 
-  <Accordion title="Why can't I respond to a dispute?">
-    You automatically lose some disputes and can't challenge them:
+> [accordion] Do I need to submit evidence if the customer cancels their dispute?
+>
+> Yes, you still need to submit evidence.
 
-    * Certain fraud cases, depending on the card company
-    * Disputes from some countries due to local laws
-    * Cases where the card issuer won't accept evidence
-  </Accordion>
 
-  <Accordion title="Do I need to submit evidence if the customer cancels their dispute?">
-    Yes, you still need to submit evidence.
-  </Accordion>
-</AccordionGroup>
+## Related topics
+
+- [Team Management](https://docs.whop.com/manage-your-business/team-management/manage-team-roles.md)
+- [Manage Users](https://docs.whop.com/manage-your-business/manage-payments/manage-users.md)
+- [Business Analytics Dashboard](https://docs.whop.com/manage-your-business/manage-business/analytics.md)

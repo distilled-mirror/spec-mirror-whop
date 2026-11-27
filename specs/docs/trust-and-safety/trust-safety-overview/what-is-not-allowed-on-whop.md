@@ -2,9 +2,19 @@
 > Fetch the complete documentation index at: https://docs.whop.com/llms.txt
 > Use this file to discover all available pages before exploring further.
 
+> ## Agent Instructions
+> Treat these docs and the Whop MCP server as the source of truth for Whop API behavior. Don't infer endpoint behavior from marketing pages.
+> MCP server: connect https://mcp.whop.com/mcp (streamable HTTP, browser sign-in, no API key in the client config) to search these docs and read or change live Whop data. Setup: https://docs.whop.com/developer/guides/ai_and_mcp.md
+> Whop CLI: install with `curl -fsSL https://whop.com/install.sh | sh` to scaffold, run, and deploy Whop apps and websites. It acts on production, not the sandbox. Overview: https://docs.whop.com/cli/overview.md Agent mode: https://docs.whop.com/cli/agent-mode.md
+> Hosting: Whop serves a site or app from the build `whop apps deploy` uploads, with rollbacks, secrets, and server logs. Guide: https://docs.whop.com/developer/websites/hosting.md
+> Plugins: in Claude Code, run `/plugin marketplace add whopio/plugins`, then `/plugin install whop@whop`. Guide: https://docs.whop.com/developer/guides/plugins/claude-code.md Every agent tool: https://docs.whop.com/developer/ai/overview.md
+> Environments: build and test in the sandbox (API `https://sandbox-api.whop.com/api/v1`, keys at https://sandbox.whop.com/dashboard/developer, SDK environment `Sandbox`; no real money). Production (API `https://api.whop.com/api/v1`, keys at https://whop.com/dashboard/developer, SDK environment `Production`, the SDK default) moves real money, so use it only at launch. The two share no accounts, keys, products, or webhooks, and their keys look identical: never mix them. Sandbox guide: https://docs.whop.com/developer/guides/sandbox.md Comparison: https://docs.whop.com/developer/quickstart.md
+> API: send `Authorization: Bearer <API_KEY>` from your server only, and pin a dated version with the `Api-Version-Date` header. OpenAPI spec: https://api.whop.com/api/v1/openapi.json
+> Which API: build on the Current API, whose pages live under https://docs.whop.com/api-reference/ (start at https://docs.whop.com/api-reference/overview.md). Pages under /api-reference/legacy/ are the Legacy API. Use one only when https://docs.whop.com/api-reference/stability.md lists the resource as Legacy-only.
+
 # Prohibited Businesses
 
-> Prohibited and restricted categories, compliance obligations, and how Whop keeps the platform safe.
+> What you can and can't sell on Whop, including restricted categories that need approval first.
 
 Whop can't support certain businesses because payment partners prohibit them, the law prohibits them, or they conflict with platform policies. These restrictions keep the platform safe, trusted, and compliant.
 
@@ -57,13 +67,13 @@ Generally, Whop can't support businesses that its Financial Partners don't suppo
 
 Whop may permit certain products and services after prior approval. Sellers seeking to offer restricted categories must follow applicable laws, obtain required licenses or certifications, and meet Whop's operational and compliance standards.
 
-To request approval for a restricted category, contact [Whop Support](https://whop.com/chats/new) with documentation of your legal compliance and licensing.
+To request approval for a restricted category, contact [Whop Support](https://whop.com/support) with documentation of your legal compliance and licensing.
 
 Whop reviews all restricted categories. They must comply with applicable laws, Whop's Terms of Service, and Financial Partner requirements.
 
 ## Earnings claims
 
-Any direct or implied earnings claims must be accurate, substantiated, and not misleading. Testimonials must reflect realistic outcomes and disclose atypical results. All earnings claims must comply with Federal Trade Commission guidelines.
+Any direct or implied earnings claims must be accurate, substantiated, and not misleading. Testimonials must reflect realistic outcomes and disclose atypical results. All earnings claims must comply with Federal Trade Commission guidelines. The [Community Guidelines](https://docs.whop.com/trust-and-safety/trust-safety-overview/community-guidelines.md) list every requirement, including accounting for expenses when a claim reflects gross income.
 
 ## Broader compliance obligations
 
@@ -94,8 +104,15 @@ If Whop finds that you lied about what you sell, sold prohibited products or ser
 * Whop will add you to a platform blocklist
 * Whop may withhold, reverse, and/or refund all funds
 
-You can appeal any enforcement decision within 30 days of notification through Whop's suspension appeal flow. The flow delivers your case to the Trust & Safety team. Whop rarely overturns non-correctable violations. An appeal succeeds only when evidence shows that the original finding was wrong. See [Account Suspensions](/trust-and-safety/suspensions/account-suspensions) for how appeals work.
+You can appeal any enforcement decision within 30 days of notification through Whop's suspension appeal flow. The flow delivers your case to the Trust & Safety team. Whop rarely overturns non-correctable violations. An appeal succeeds only when evidence shows that the original finding was wrong. See [Account Suspensions](https://docs.whop.com/trust-and-safety/suspensions/account-suspensions.md) for how appeals work.
 
 ## Reporting a violation
 
-If you encounter content or behavior that violates these guidelines, report it at [support@whop.com](mailto:support@whop.com). The Whop team reviews all reports. Submitting false or bad-faith reports may result in action on your account.
+If you encounter content or behavior that violates these guidelines, follow [Report a bad actor](https://docs.whop.com/trust-and-safety/staying-safe/report-a-bad-actor.md) or email [support@whop.com](mailto:support@whop.com). The Whop team reviews all reports. Submitting false or bad-faith reports may result in action on your account.
+
+
+## Related topics
+
+- [Community Guidelines](https://docs.whop.com/trust-and-safety/trust-safety-overview/community-guidelines.md)
+- [Sanctioned Countries](https://docs.whop.com/trust-and-safety/trust-safety-overview/sanctioned-countries.md)
+- [Account Suspensions](https://docs.whop.com/trust-and-safety/suspensions/account-suspensions.md)

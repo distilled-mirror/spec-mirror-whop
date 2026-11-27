@@ -2,6 +2,16 @@
 > Fetch the complete documentation index at: https://docs.whop.com/llms.txt
 > Use this file to discover all available pages before exploring further.
 
+> ## Agent Instructions
+> Treat these docs and the Whop MCP server as the source of truth for Whop API behavior. Don't infer endpoint behavior from marketing pages.
+> MCP server: connect https://mcp.whop.com/mcp (streamable HTTP, browser sign-in, no API key in the client config) to search these docs and read or change live Whop data. Setup: https://docs.whop.com/developer/guides/ai_and_mcp.md
+> Whop CLI: install with `curl -fsSL https://whop.com/install.sh | sh` to scaffold, run, and deploy Whop apps and websites. It acts on production, not the sandbox. Overview: https://docs.whop.com/cli/overview.md Agent mode: https://docs.whop.com/cli/agent-mode.md
+> Hosting: Whop serves a site or app from the build `whop apps deploy` uploads, with rollbacks, secrets, and server logs. Guide: https://docs.whop.com/developer/websites/hosting.md
+> Plugins: in Claude Code, run `/plugin marketplace add whopio/plugins`, then `/plugin install whop@whop`. Guide: https://docs.whop.com/developer/guides/plugins/claude-code.md Every agent tool: https://docs.whop.com/developer/ai/overview.md
+> Environments: build and test in the sandbox (API `https://sandbox-api.whop.com/api/v1`, keys at https://sandbox.whop.com/dashboard/developer, SDK environment `Sandbox`; no real money). Production (API `https://api.whop.com/api/v1`, keys at https://whop.com/dashboard/developer, SDK environment `Production`, the SDK default) moves real money, so use it only at launch. The two share no accounts, keys, products, or webhooks, and their keys look identical: never mix them. Sandbox guide: https://docs.whop.com/developer/guides/sandbox.md Comparison: https://docs.whop.com/developer/quickstart.md
+> API: send `Authorization: Bearer <API_KEY>` from your server only, and pin a dated version with the `Api-Version-Date` header. OpenAPI spec: https://api.whop.com/api/v1/openapi.json
+> Which API: build on the Current API, whose pages live under https://docs.whop.com/api-reference/ (start at https://docs.whop.com/api-reference/overview.md). Pages under /api-reference/legacy/ are the Legacy API. Use one only when https://docs.whop.com/api-reference/stability.md lists the resource as Legacy-only.
+
 # Community Guidelines
 
 > Standards for conduct and content on Whop, including prohibited conduct, review rules, earnings claims, enforcement, and how to report violations.
@@ -37,7 +47,7 @@ You may not engage in any of the following:
 * **Payment and transaction abuse** — Payment fraud, chargeback abuse, money laundering, or other financial misconduct.
 * **Platform manipulation** — Creating fake accounts, artificially inflating engagement or sales metrics, evading bans, or coordinating inauthentic behavior.
 * **Privacy violations** — Collecting or sharing personal information of other users or third parties without consent, or doxxing and publicly sharing private information to harass or intimidate.
-* **Prohibited products and services** — Selling items or services listed in the [Prohibited Businesses](/trust-and-safety/trust-safety-overview/what-is-not-allowed-on-whop) policy, including weapons, illegal drugs, pharmaceuticals without authorization, and other restricted items.
+* **Prohibited products and services** — Selling items or services listed in the [Prohibited Businesses](https://docs.whop.com/trust-and-safety/trust-safety-overview/what-is-not-allowed-on-whop.md) policy, including weapons, illegal drugs, pharmaceuticals without authorization, and other restricted items.
 * **Self-harm content** — Promoting, glorifying, or providing instructions for suicide, self-injury, or eating disorders.
 * **Solicitation and spam** — Sending unsolicited offers, advertisements, or promotions to other users, or posting repetitive or irrelevant content.
 * **Unauthorized data access** — Using bots, scrapers, crawlers, or other automated tools to access or collect data from Whop.
@@ -87,16 +97,21 @@ Whop enforces these measures to maintain a fair and secure marketplace for all u
 
 ### 5. Reporting
 
-If you encounter content or behavior that violates these guidelines, report it at [support@whop.com](mailto:support@whop.com). Whop reviews all reports and takes appropriate action. Submitting false or bad-faith reports may result in action on your account.
+If you encounter content or behavior that violates these guidelines, follow [Report a bad actor](https://docs.whop.com/trust-and-safety/staying-safe/report-a-bad-actor.md) or email [support@whop.com](mailto:support@whop.com). Whop reviews all reports and takes appropriate action. Submitting false or bad-faith reports may result in action on your account.
 
 ## Next steps
 
-<CardGroup cols={2}>
-  <Card title="Prohibited businesses" href="/trust-and-safety/trust-safety-overview/what-is-not-allowed-on-whop">
-    Review the categories of products and services prohibited on Whop.
-  </Card>
+> [card] [Prohibited businesses](https://docs.whop.com/trust-and-safety/trust-safety-overview/what-is-not-allowed-on-whop.md)
+>
+> Review the categories of products and services prohibited on Whop.
 
-  <Card title="Account suspensions" href="/trust-and-safety/suspensions/account-suspensions">
-    Learn what happens when an account is suspended and how appeals work.
-  </Card>
-</CardGroup>
+> [card] [Account suspensions](https://docs.whop.com/trust-and-safety/suspensions/account-suspensions.md)
+>
+> Learn what happens when an account is suspended and how appeals work.
+
+
+## Related topics
+
+- [Prohibited Businesses](https://docs.whop.com/trust-and-safety/trust-safety-overview/what-is-not-allowed-on-whop.md)
+- [Paid Groups](https://docs.whop.com/supported-business-models/paid-groups.md)
+- [Account Suspensions](https://docs.whop.com/trust-and-safety/suspensions/account-suspensions.md)
