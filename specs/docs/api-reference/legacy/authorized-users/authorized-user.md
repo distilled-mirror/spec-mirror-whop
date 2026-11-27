@@ -97,5 +97,5 @@ Example: `marcuswebb`
 ## Related topics
 
 - [Create authorized user](https://docs.whop.com/api-reference/legacy/authorized-users/create-authorized-user.md)
+- [Delete authorized user](https://docs.whop.com/api-reference/legacy/authorized-users/delete-authorized-user.md)
 - [List authorized users](https://docs.whop.com/api-reference/legacy/authorized-users/list-authorized-users.md)
-- [Retrieve authorized user](https://docs.whop.com/api-reference/legacy/authorized-users/retrieve-authorized-user.md)

@@ -30,4 +30,4 @@ Required permissions:
 
 - [Check Permissions](https://docs.whop.com/api-reference/permissions/check-permissions.md)
 - [Authorized User](https://docs.whop.com/api-reference/legacy/authorized-users/authorized-user.md)
-- [List authorized users](https://docs.whop.com/api-reference/legacy/authorized-users/list-authorized-users.md)
+- [Delete authorized user](https://docs.whop.com/api-reference/legacy/authorized-users/delete-authorized-user.md)

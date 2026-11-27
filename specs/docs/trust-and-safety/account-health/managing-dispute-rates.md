@@ -82,3 +82,10 @@ Your balance can go negative if you have already withdrawn your funds and don't 
 > As your dispute rate comes down and your account recovers,
 > [controls](https://docs.whop.com/trust-and-safety/account-health/controls.md) ease and lift
 > automatically. You don't need to contact support.
+
+
+## Related topics
+
+- [Manage Disputes](https://docs.whop.com/manage-your-business/manage-payments/manage-disputes.md)
+- [Dispute Monitoring Programs](https://docs.whop.com/trust-and-safety/account-health/dispute-monitoring-programs.md)
+- [Payment Health](https://docs.whop.com/trust-and-safety/account-health/payment-health.md)

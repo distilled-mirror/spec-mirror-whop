@@ -26636,6 +26636,8 @@
               "payment_revshare_payout",
               "payment_revshare_reversal",
               "payment_revshare_refund",
+              "payment_revshare_reinstated",
+              "payment_revshare_reinstated_payout",
               "payment_referral",
               "payment_referral_payable",
               "payment_referral_reversal",
@@ -57050,7 +57052,10 @@
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Validation failed: amount must be greater than 0",
+                    "type": "unprocessable_entity"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -57091,13 +57096,16 @@
                 }
               }
             },
-            "description": "Verification required"
+            "description": "Unprocessable entity"
           },
           "429": {
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Too many requests",
+                    "type": "too_many_requests"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -57461,7 +57469,10 @@
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Validation failed: amount must be greater than 0",
+                    "type": "unprocessable_entity"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -57502,13 +57513,16 @@
                 }
               }
             },
-            "description": "Verification required"
+            "description": "Unprocessable entity"
           },
           "429": {
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Too many requests",
+                    "type": "too_many_requests"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -68571,7 +68585,10 @@
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Validation failed: amount must be greater than 0",
+                    "type": "unprocessable_entity"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -68612,13 +68629,16 @@
                 }
               }
             },
-            "description": "Verification required"
+            "description": "Unprocessable entity"
           },
           "429": {
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Too many requests",
+                    "type": "too_many_requests"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -68972,7 +68992,10 @@
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Validation failed: amount must be greater than 0",
+                    "type": "unprocessable_entity"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -69013,13 +69036,16 @@
                 }
               }
             },
-            "description": "Verification required"
+            "description": "Unprocessable entity"
           },
           "429": {
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Too many requests",
+                    "type": "too_many_requests"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -69360,7 +69386,10 @@
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Validation failed: amount must be greater than 0",
+                    "type": "unprocessable_entity"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -69401,13 +69430,16 @@
                 }
               }
             },
-            "description": "Verification required"
+            "description": "Unprocessable entity"
           },
           "429": {
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Too many requests",
+                    "type": "too_many_requests"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -69749,7 +69781,10 @@
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Validation failed: amount must be greater than 0",
+                    "type": "unprocessable_entity"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -69790,13 +69825,16 @@
                 }
               }
             },
-            "description": "Verification required"
+            "description": "Unprocessable entity"
           },
           "429": {
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Too many requests",
+                    "type": "too_many_requests"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -70314,7 +70352,10 @@
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Validation failed: amount must be greater than 0",
+                    "type": "unprocessable_entity"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -70355,13 +70396,16 @@
                 }
               }
             },
-            "description": "Verification required"
+            "description": "Unprocessable entity"
           },
           "429": {
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Too many requests",
+                    "type": "too_many_requests"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -70923,7 +70967,10 @@
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Validation failed: amount must be greater than 0",
+                    "type": "unprocessable_entity"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -70964,13 +71011,16 @@
                 }
               }
             },
-            "description": "Verification required"
+            "description": "Unprocessable entity"
           },
           "429": {
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Too many requests",
+                    "type": "too_many_requests"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -71321,7 +71371,10 @@
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Validation failed: amount must be greater than 0",
+                    "type": "unprocessable_entity"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -71362,13 +71415,16 @@
                 }
               }
             },
-            "description": "Verification required"
+            "description": "Unprocessable entity"
           },
           "429": {
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Too many requests",
+                    "type": "too_many_requests"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -71818,7 +71874,10 @@
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Validation failed: amount must be greater than 0",
+                    "type": "unprocessable_entity"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -71859,13 +71918,16 @@
                 }
               }
             },
-            "description": "Verification required"
+            "description": "Unprocessable entity"
           },
           "429": {
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Too many requests",
+                    "type": "too_many_requests"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -72370,7 +72432,10 @@
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Validation failed: amount must be greater than 0",
+                    "type": "unprocessable_entity"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -72411,13 +72476,16 @@
                 }
               }
             },
-            "description": "Verification required"
+            "description": "Unprocessable entity"
           },
           "429": {
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Too many requests",
+                    "type": "too_many_requests"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -72759,7 +72827,10 @@
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Validation failed: amount must be greater than 0",
+                    "type": "unprocessable_entity"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -72800,13 +72871,16 @@
                 }
               }
             },
-            "description": "Verification required"
+            "description": "Unprocessable entity"
           },
           "429": {
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Too many requests",
+                    "type": "too_many_requests"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -73234,7 +73308,10 @@
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Validation failed: amount must be greater than 0",
+                    "type": "unprocessable_entity"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -73275,13 +73352,16 @@
                 }
               }
             },
-            "description": "Verification required"
+            "description": "Unprocessable entity"
           },
           "429": {
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Too many requests",
+                    "type": "too_many_requests"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -73693,7 +73773,10 @@
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Validation failed: amount must be greater than 0",
+                    "type": "unprocessable_entity"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -73734,13 +73817,16 @@
                 }
               }
             },
-            "description": "Verification required"
+            "description": "Unprocessable entity"
           },
           "429": {
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Too many requests",
+                    "type": "too_many_requests"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -74082,7 +74168,10 @@
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Validation failed: amount must be greater than 0",
+                    "type": "unprocessable_entity"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -74123,13 +74212,16 @@
                 }
               }
             },
-            "description": "Verification required"
+            "description": "Unprocessable entity"
           },
           "429": {
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Too many requests",
+                    "type": "too_many_requests"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -74468,7 +74560,10 @@
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Validation failed: amount must be greater than 0",
+                    "type": "unprocessable_entity"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -74509,13 +74604,16 @@
                 }
               }
             },
-            "description": "Verification required"
+            "description": "Unprocessable entity"
           },
           "429": {
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Too many requests",
+                    "type": "too_many_requests"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -74893,7 +74991,10 @@
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Validation failed: amount must be greater than 0",
+                    "type": "unprocessable_entity"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -74934,13 +75035,16 @@
                 }
               }
             },
-            "description": "Verification required"
+            "description": "Unprocessable entity"
           },
           "429": {
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Too many requests",
+                    "type": "too_many_requests"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -79492,7 +79596,10 @@
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Validation failed: amount must be greater than 0",
+                    "type": "unprocessable_entity"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -79533,13 +79640,16 @@
                 }
               }
             },
-            "description": "Verification required"
+            "description": "Unprocessable entity"
           },
           "429": {
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Too many requests",
+                    "type": "too_many_requests"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -79966,7 +80076,10 @@
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Validation failed: amount must be greater than 0",
+                    "type": "unprocessable_entity"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -80007,13 +80120,16 @@
                 }
               }
             },
-            "description": "Verification required"
+            "description": "Unprocessable entity"
           },
           "429": {
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Too many requests",
+                    "type": "too_many_requests"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -80368,7 +80484,10 @@
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Validation failed: amount must be greater than 0",
+                    "type": "unprocessable_entity"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -80409,13 +80528,16 @@
                 }
               }
             },
-            "description": "Verification required"
+            "description": "Unprocessable entity"
           },
           "429": {
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Too many requests",
+                    "type": "too_many_requests"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -80754,7 +80876,10 @@
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Validation failed: amount must be greater than 0",
+                    "type": "unprocessable_entity"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -80795,13 +80920,16 @@
                 }
               }
             },
-            "description": "Verification required"
+            "description": "Unprocessable entity"
           },
           "429": {
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Too many requests",
+                    "type": "too_many_requests"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -91138,7 +91266,10 @@
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Validation failed: amount must be greater than 0",
+                    "type": "unprocessable_entity"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -91179,13 +91310,16 @@
                 }
               }
             },
-            "description": "Verification required"
+            "description": "Unprocessable entity"
           },
           "429": {
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Too many requests",
+                    "type": "too_many_requests"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -91671,7 +91805,10 @@
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Validation failed: amount must be greater than 0",
+                    "type": "unprocessable_entity"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -91712,13 +91849,16 @@
                 }
               }
             },
-            "description": "Verification required"
+            "description": "Unprocessable entity"
           },
           "429": {
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Too many requests",
+                    "type": "too_many_requests"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -92060,7 +92200,10 @@
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Validation failed: amount must be greater than 0",
+                    "type": "unprocessable_entity"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -92101,13 +92244,16 @@
                 }
               }
             },
-            "description": "Verification required"
+            "description": "Unprocessable entity"
           },
           "429": {
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Too many requests",
+                    "type": "too_many_requests"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -92576,7 +92722,10 @@
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Validation failed: amount must be greater than 0",
+                    "type": "unprocessable_entity"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -92617,13 +92766,16 @@
                 }
               }
             },
-            "description": "Verification required"
+            "description": "Unprocessable entity"
           },
           "429": {
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Too many requests",
+                    "type": "too_many_requests"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -92979,7 +93131,10 @@
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Validation failed: amount must be greater than 0",
+                    "type": "unprocessable_entity"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -93020,13 +93175,16 @@
                 }
               }
             },
-            "description": "Verification required"
+            "description": "Unprocessable entity"
           },
           "429": {
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Too many requests",
+                    "type": "too_many_requests"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -93368,7 +93526,10 @@
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Validation failed: amount must be greater than 0",
+                    "type": "unprocessable_entity"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -93409,13 +93570,16 @@
                 }
               }
             },
-            "description": "Verification required"
+            "description": "Unprocessable entity"
           },
           "429": {
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Too many requests",
+                    "type": "too_many_requests"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -93754,7 +93918,10 @@
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Validation failed: amount must be greater than 0",
+                    "type": "unprocessable_entity"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -93795,13 +93962,16 @@
                 }
               }
             },
-            "description": "Verification required"
+            "description": "Unprocessable entity"
           },
           "429": {
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Too many requests",
+                    "type": "too_many_requests"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -94160,7 +94330,10 @@
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Validation failed: amount must be greater than 0",
+                    "type": "unprocessable_entity"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -94201,13 +94374,16 @@
                 }
               }
             },
-            "description": "Verification required"
+            "description": "Unprocessable entity"
           },
           "429": {
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Too many requests",
+                    "type": "too_many_requests"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -94649,7 +94825,10 @@
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Validation failed: amount must be greater than 0",
+                    "type": "unprocessable_entity"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -94690,13 +94869,16 @@
                 }
               }
             },
-            "description": "Verification required"
+            "description": "Unprocessable entity"
           },
           "429": {
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Too many requests",
+                    "type": "too_many_requests"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -95038,7 +95220,10 @@
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Validation failed: amount must be greater than 0",
+                    "type": "unprocessable_entity"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -95079,13 +95264,16 @@
                 }
               }
             },
-            "description": "Verification required"
+            "description": "Unprocessable entity"
           },
           "429": {
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Too many requests",
+                    "type": "too_many_requests"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -95505,7 +95693,10 @@
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Validation failed: amount must be greater than 0",
+                    "type": "unprocessable_entity"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -95546,13 +95737,16 @@
                 }
               }
             },
-            "description": "Verification required"
+            "description": "Unprocessable entity"
           },
           "429": {
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Too many requests",
+                    "type": "too_many_requests"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -95963,7 +96157,10 @@
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Validation failed: amount must be greater than 0",
+                    "type": "unprocessable_entity"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -96004,13 +96201,16 @@
                 }
               }
             },
-            "description": "Verification required"
+            "description": "Unprocessable entity"
           },
           "429": {
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Too many requests",
+                    "type": "too_many_requests"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -96352,7 +96552,10 @@
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Validation failed: amount must be greater than 0",
+                    "type": "unprocessable_entity"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -96393,13 +96596,16 @@
                 }
               }
             },
-            "description": "Verification required"
+            "description": "Unprocessable entity"
           },
           "429": {
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Too many requests",
+                    "type": "too_many_requests"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -96738,7 +96944,10 @@
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Validation failed: amount must be greater than 0",
+                    "type": "unprocessable_entity"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -96779,13 +96988,16 @@
                 }
               }
             },
-            "description": "Verification required"
+            "description": "Unprocessable entity"
           },
           "429": {
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Too many requests",
+                    "type": "too_many_requests"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -97383,7 +97595,10 @@
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Validation failed: amount must be greater than 0",
+                    "type": "unprocessable_entity"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -97424,13 +97639,16 @@
                 }
               }
             },
-            "description": "Verification required"
+            "description": "Unprocessable entity"
           },
           "429": {
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Too many requests",
+                    "type": "too_many_requests"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -97771,7 +97989,10 @@
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Validation failed: amount must be greater than 0",
+                    "type": "unprocessable_entity"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -97812,13 +98033,16 @@
                 }
               }
             },
-            "description": "Verification required"
+            "description": "Unprocessable entity"
           },
           "429": {
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Too many requests",
+                    "type": "too_many_requests"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -98157,7 +98381,10 @@
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Validation failed: amount must be greater than 0",
+                    "type": "unprocessable_entity"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -98198,13 +98425,16 @@
                 }
               }
             },
-            "description": "Verification required"
+            "description": "Unprocessable entity"
           },
           "429": {
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Too many requests",
+                    "type": "too_many_requests"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -98704,7 +98934,10 @@
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Validation failed: amount must be greater than 0",
+                    "type": "unprocessable_entity"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -98745,13 +98978,16 @@
                 }
               }
             },
-            "description": "Verification required"
+            "description": "Unprocessable entity"
           },
           "429": {
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Too many requests",
+                    "type": "too_many_requests"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -99167,7 +99403,10 @@
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Validation failed: amount must be greater than 0",
+                    "type": "unprocessable_entity"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -99208,13 +99447,16 @@
                 }
               }
             },
-            "description": "Verification required"
+            "description": "Unprocessable entity"
           },
           "429": {
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Too many requests",
+                    "type": "too_many_requests"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -99555,7 +99797,10 @@
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Validation failed: amount must be greater than 0",
+                    "type": "unprocessable_entity"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -99596,13 +99841,16 @@
                 }
               }
             },
-            "description": "Verification required"
+            "description": "Unprocessable entity"
           },
           "429": {
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Too many requests",
+                    "type": "too_many_requests"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -100022,7 +100270,10 @@
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Validation failed: amount must be greater than 0",
+                    "type": "unprocessable_entity"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -100063,13 +100314,16 @@
                 }
               }
             },
-            "description": "Verification required"
+            "description": "Unprocessable entity"
           },
           "429": {
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Too many requests",
+                    "type": "too_many_requests"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -100480,7 +100734,10 @@
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Validation failed: amount must be greater than 0",
+                    "type": "unprocessable_entity"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -100521,13 +100778,16 @@
                 }
               }
             },
-            "description": "Verification required"
+            "description": "Unprocessable entity"
           },
           "429": {
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Too many requests",
+                    "type": "too_many_requests"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -100869,7 +101129,10 @@
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Validation failed: amount must be greater than 0",
+                    "type": "unprocessable_entity"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -100910,13 +101173,16 @@
                 }
               }
             },
-            "description": "Verification required"
+            "description": "Unprocessable entity"
           },
           "429": {
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Too many requests",
+                    "type": "too_many_requests"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -101255,7 +101521,10 @@
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Validation failed: amount must be greater than 0",
+                    "type": "unprocessable_entity"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -101296,13 +101565,16 @@
                 }
               }
             },
-            "description": "Verification required"
+            "description": "Unprocessable entity"
           },
           "429": {
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Too many requests",
+                    "type": "too_many_requests"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -101805,7 +102077,10 @@
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Validation failed: amount must be greater than 0",
+                    "type": "unprocessable_entity"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -101846,13 +102121,16 @@
                 }
               }
             },
-            "description": "Verification required"
+            "description": "Unprocessable entity"
           },
           "429": {
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Too many requests",
+                    "type": "too_many_requests"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -108129,7 +108407,10 @@
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Validation failed: amount must be greater than 0",
+                    "type": "unprocessable_entity"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -108170,13 +108451,16 @@
                 }
               }
             },
-            "description": "Verification required"
+            "description": "Unprocessable entity"
           },
           "429": {
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Too many requests",
+                    "type": "too_many_requests"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -108574,7 +108858,10 @@
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Validation failed: amount must be greater than 0",
+                    "type": "unprocessable_entity"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -108615,13 +108902,16 @@
                 }
               }
             },
-            "description": "Verification required"
+            "description": "Unprocessable entity"
           },
           "429": {
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Too many requests",
+                    "type": "too_many_requests"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -108963,7 +109253,10 @@
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Validation failed: amount must be greater than 0",
+                    "type": "unprocessable_entity"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -109004,13 +109297,16 @@
                 }
               }
             },
-            "description": "Verification required"
+            "description": "Unprocessable entity"
           },
           "429": {
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Too many requests",
+                    "type": "too_many_requests"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -109349,7 +109645,10 @@
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Validation failed: amount must be greater than 0",
+                    "type": "unprocessable_entity"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -109390,13 +109689,16 @@
                 }
               }
             },
-            "description": "Verification required"
+            "description": "Unprocessable entity"
           },
           "429": {
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Too many requests",
+                    "type": "too_many_requests"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -109811,7 +110113,10 @@
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Validation failed: amount must be greater than 0",
+                    "type": "unprocessable_entity"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -109852,13 +110157,16 @@
                 }
               }
             },
-            "description": "Verification required"
+            "description": "Unprocessable entity"
           },
           "429": {
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Too many requests",
+                    "type": "too_many_requests"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -110220,7 +110528,10 @@
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Validation failed: amount must be greater than 0",
+                    "type": "unprocessable_entity"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -110261,13 +110572,16 @@
                 }
               }
             },
-            "description": "Verification required"
+            "description": "Unprocessable entity"
           },
           "429": {
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Too many requests",
+                    "type": "too_many_requests"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -110629,7 +110943,10 @@
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Validation failed: amount must be greater than 0",
+                    "type": "unprocessable_entity"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -110670,13 +110987,16 @@
                 }
               }
             },
-            "description": "Verification required"
+            "description": "Unprocessable entity"
           },
           "429": {
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Too many requests",
+                    "type": "too_many_requests"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -111038,7 +111358,10 @@
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Validation failed: amount must be greater than 0",
+                    "type": "unprocessable_entity"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -111079,13 +111402,16 @@
                 }
               }
             },
-            "description": "Verification required"
+            "description": "Unprocessable entity"
           },
           "429": {
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Too many requests",
+                    "type": "too_many_requests"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -113960,7 +114286,10 @@
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Validation failed: amount must be greater than 0",
+                    "type": "unprocessable_entity"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -114001,13 +114330,16 @@
                 }
               }
             },
-            "description": "Verification required"
+            "description": "Unprocessable entity"
           },
           "429": {
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Too many requests",
+                    "type": "too_many_requests"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -114392,7 +114724,10 @@
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Validation failed: amount must be greater than 0",
+                    "type": "unprocessable_entity"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -114433,13 +114768,16 @@
                 }
               }
             },
-            "description": "Verification required"
+            "description": "Unprocessable entity"
           },
           "429": {
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Too many requests",
+                    "type": "too_many_requests"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -114780,7 +115118,10 @@
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Validation failed: amount must be greater than 0",
+                    "type": "unprocessable_entity"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -114821,13 +115162,16 @@
                 }
               }
             },
-            "description": "Verification required"
+            "description": "Unprocessable entity"
           },
           "429": {
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Too many requests",
+                    "type": "too_many_requests"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -115595,6 +115939,8 @@
                   "payment_revshare",
                   "payment_revshare_payout",
                   "payment_revshare_refund",
+                  "payment_revshare_reinstated",
+                  "payment_revshare_reinstated_payout",
                   "payment_revshare_reversal",
                   "payout_fee",
                   "platform_affiliate_payment",
@@ -116097,6 +116443,8 @@
                   "payment_revshare",
                   "payment_revshare_payout",
                   "payment_revshare_refund",
+                  "payment_revshare_reinstated",
+                  "payment_revshare_reinstated_payout",
                   "payment_revshare_reversal",
                   "payout_fee",
                   "platform_affiliate_payment",
@@ -116526,6 +116874,8 @@
                               "payment_revshare",
                               "payment_revshare_payout",
                               "payment_revshare_refund",
+                              "payment_revshare_reinstated",
+                              "payment_revshare_reinstated_payout",
                               "payment_revshare_reversal",
                               "payment_unreconciled_clearing",
                               "payment_unreconciled_reversal",
@@ -118123,7 +118473,10 @@
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Validation failed: amount must be greater than 0",
+                    "type": "unprocessable_entity"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -118164,13 +118517,16 @@
                 }
               }
             },
-            "description": "Verification required"
+            "description": "Unprocessable entity"
           },
           "429": {
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Too many requests",
+                    "type": "too_many_requests"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -118654,7 +119010,10 @@
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Validation failed: amount must be greater than 0",
+                    "type": "unprocessable_entity"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -118695,13 +119054,16 @@
                 }
               }
             },
-            "description": "Verification required"
+            "description": "Unprocessable entity"
           },
           "429": {
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Too many requests",
+                    "type": "too_many_requests"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -119041,7 +119403,10 @@
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Validation failed: amount must be greater than 0",
+                    "type": "unprocessable_entity"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -119082,13 +119447,16 @@
                 }
               }
             },
-            "description": "Verification required"
+            "description": "Unprocessable entity"
           },
           "429": {
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Too many requests",
+                    "type": "too_many_requests"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -119493,7 +119861,10 @@
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Validation failed: amount must be greater than 0",
+                    "type": "unprocessable_entity"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -119534,13 +119905,16 @@
                 }
               }
             },
-            "description": "Verification required"
+            "description": "Unprocessable entity"
           },
           "429": {
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Too many requests",
+                    "type": "too_many_requests"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -119957,7 +120331,10 @@
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Validation failed: amount must be greater than 0",
+                    "type": "unprocessable_entity"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -119998,13 +120375,16 @@
                 }
               }
             },
-            "description": "Verification required"
+            "description": "Unprocessable entity"
           },
           "429": {
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Too many requests",
+                    "type": "too_many_requests"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -120344,7 +120724,10 @@
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Validation failed: amount must be greater than 0",
+                    "type": "unprocessable_entity"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -120385,13 +120768,16 @@
                 }
               }
             },
-            "description": "Verification required"
+            "description": "Unprocessable entity"
           },
           "429": {
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Too many requests",
+                    "type": "too_many_requests"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -120804,7 +121190,10 @@
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Validation failed: amount must be greater than 0",
+                    "type": "unprocessable_entity"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -120845,13 +121234,16 @@
                 }
               }
             },
-            "description": "Verification required"
+            "description": "Unprocessable entity"
           },
           "429": {
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Too many requests",
+                    "type": "too_many_requests"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -121280,7 +121672,10 @@
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Validation failed: amount must be greater than 0",
+                    "type": "unprocessable_entity"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -121321,13 +121716,16 @@
                 }
               }
             },
-            "description": "Verification required"
+            "description": "Unprocessable entity"
           },
           "429": {
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Too many requests",
+                    "type": "too_many_requests"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -121680,7 +122078,10 @@
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Validation failed: amount must be greater than 0",
+                    "type": "unprocessable_entity"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -121721,13 +122122,16 @@
                 }
               }
             },
-            "description": "Verification required"
+            "description": "Unprocessable entity"
           },
           "429": {
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Too many requests",
+                    "type": "too_many_requests"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -122066,7 +122470,10 @@
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Validation failed: amount must be greater than 0",
+                    "type": "unprocessable_entity"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -122107,13 +122514,16 @@
                 }
               }
             },
-            "description": "Verification required"
+            "description": "Unprocessable entity"
           },
           "429": {
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Too many requests",
+                    "type": "too_many_requests"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -122571,7 +122981,10 @@
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Validation failed: amount must be greater than 0",
+                    "type": "unprocessable_entity"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -122612,13 +123025,16 @@
                 }
               }
             },
-            "description": "Verification required"
+            "description": "Unprocessable entity"
           },
           "429": {
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Too many requests",
+                    "type": "too_many_requests"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -125493,7 +125909,10 @@
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Validation failed: amount must be greater than 0",
+                    "type": "unprocessable_entity"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -125534,13 +125953,16 @@
                 }
               }
             },
-            "description": "Verification required"
+            "description": "Unprocessable entity"
           },
           "429": {
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Too many requests",
+                    "type": "too_many_requests"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -136758,7 +137180,10 @@
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Validation failed: amount must be greater than 0",
+                    "type": "unprocessable_entity"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -136799,13 +137224,16 @@
                 }
               }
             },
-            "description": "Verification required"
+            "description": "Unprocessable entity"
           },
           "429": {
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Too many requests",
+                    "type": "too_many_requests"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -137171,7 +137599,10 @@
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Validation failed: amount must be greater than 0",
+                    "type": "unprocessable_entity"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -137212,13 +137643,16 @@
                 }
               }
             },
-            "description": "Verification required"
+            "description": "Unprocessable entity"
           },
           "429": {
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Too many requests",
+                    "type": "too_many_requests"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -137581,7 +138015,10 @@
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Validation failed: amount must be greater than 0",
+                    "type": "unprocessable_entity"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -137622,13 +138059,16 @@
                 }
               }
             },
-            "description": "Verification required"
+            "description": "Unprocessable entity"
           },
           "429": {
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Too many requests",
+                    "type": "too_many_requests"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -143362,7 +143802,10 @@
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Validation failed: amount must be greater than 0",
+                    "type": "unprocessable_entity"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -143403,13 +143846,16 @@
                 }
               }
             },
-            "description": "Verification required"
+            "description": "Unprocessable entity"
           },
           "429": {
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Too many requests",
+                    "type": "too_many_requests"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -143816,7 +144262,10 @@
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Validation failed: amount must be greater than 0",
+                    "type": "unprocessable_entity"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -143857,13 +144306,16 @@
                 }
               }
             },
-            "description": "Verification required"
+            "description": "Unprocessable entity"
           },
           "429": {
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Too many requests",
+                    "type": "too_many_requests"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -144204,7 +144656,10 @@
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Validation failed: amount must be greater than 0",
+                    "type": "unprocessable_entity"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -144245,13 +144700,16 @@
                 }
               }
             },
-            "description": "Verification required"
+            "description": "Unprocessable entity"
           },
           "429": {
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Too many requests",
+                    "type": "too_many_requests"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -155124,7 +155582,10 @@
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Validation failed: amount must be greater than 0",
+                    "type": "unprocessable_entity"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -155165,13 +155626,16 @@
                 }
               }
             },
-            "description": "Verification required"
+            "description": "Unprocessable entity"
           },
           "429": {
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Too many requests",
+                    "type": "too_many_requests"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -155553,7 +156017,10 @@
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Validation failed: amount must be greater than 0",
+                    "type": "unprocessable_entity"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -155594,13 +156061,16 @@
                 }
               }
             },
-            "description": "Verification required"
+            "description": "Unprocessable entity"
           },
           "429": {
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Too many requests",
+                    "type": "too_many_requests"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -155973,7 +156443,10 @@
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Validation failed: amount must be greater than 0",
+                    "type": "unprocessable_entity"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -156014,13 +156487,16 @@
                 }
               }
             },
-            "description": "Verification required"
+            "description": "Unprocessable entity"
           },
           "429": {
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Too many requests",
+                    "type": "too_many_requests"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -156379,7 +156855,10 @@
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Validation failed: amount must be greater than 0",
+                    "type": "unprocessable_entity"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -156420,13 +156899,16 @@
                 }
               }
             },
-            "description": "Verification required"
+            "description": "Unprocessable entity"
           },
           "429": {
             "content": {
               "application/json": {
                 "example": {
-                  "error": null
+                  "error": {
+                    "message": "Too many requests",
+                    "type": "too_many_requests"
+                  }
                 },
                 "schema": {
                   "properties": {
@@ -173727,6 +174209,11 @@
                       "null"
                     ]
                   },
+                  "stock_adjustment": {
+                    "description": "The number of units to add to the current stock. Use a negative number to remove units. The change applies after the other changes in this request, to the stock at that time. This keeps a sale made at the same time. Do not send 0, and do not send it with `stock`. A variant with unlimited stock, or a change that takes the stock below 0, returns a `409`.",
+                    "example": 2,
+                    "type": "integer"
+                  },
                   "strike_through_initial_price": {
                     "description": "A comparison price displayed with a strikethrough for the initial price.",
                     "example": 99,
@@ -173812,6 +174299,10 @@
           "401": {
             "$ref": "#/components/responses/Unauthorized",
             "description": "missing or invalid authentication"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict",
+            "description": "stock_adjustment takes the stock below 0"
           }
         },
         "security": [

@@ -26,4 +26,4 @@
 
 - [Disputes API](https://docs.whop.com/api-reference/disputes/dispute.md)
 - [Update evidence](https://docs.whop.com/api-reference/legacy/disputes/update-evidence.md)
-- [Dispute updated](https://docs.whop.com/api-reference/disputes/dispute-updated.md)
+- [Dispute updated](https://docs.whop.com/api-reference/legacy/disputes/dispute-updated.md)

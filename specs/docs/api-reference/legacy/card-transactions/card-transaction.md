@@ -151,4 +151,4 @@ Example: `6.9`
 
 - [List Card Transactions](https://docs.whop.com/api-reference/cards/list-card-transactions.md)
 - [Retrieve Card Transaction](https://docs.whop.com/api-reference/cards/retrieve-card-transaction.md)
-- [Card transaction created](https://docs.whop.com/api-reference/legacy/card-transactions/card-transaction-created.md)
+- [Card transaction reversed](https://docs.whop.com/api-reference/legacy/card-transactions/card-transaction-reversed.md)

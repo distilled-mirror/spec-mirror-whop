@@ -291,4 +291,4 @@ Example: `2023-12-01T05:00:00.401Z`
 
 - [Whop CLI Commands](https://docs.whop.com/cli/commands.md)
 - [Dispute Alerts API](https://docs.whop.com/api-reference/dispute-alerts/dispute-alert.md)
-- [Dispute alert created](https://docs.whop.com/api-reference/dispute-alerts/dispute-alert-created.md)
+- [List dispute alerts](https://docs.whop.com/api-reference/legacy/dispute-alerts/list-dispute-alerts.md)

@@ -35,4 +35,4 @@ Required permissions:
 
 - [Retrieve App](https://docs.whop.com/api-reference/apps/retrieve-app.md)
 - [Retrieve App Installation](https://docs.whop.com/api-reference/app-installations/retrieve-app-installation.md)
-- [Retrieve App Build](https://docs.whop.com/api-reference/app-builds/retrieve-app-build.md)
+- [Retrieve app build](https://docs.whop.com/api-reference/legacy/app-builds/retrieve-app-build.md)

@@ -336,4 +336,4 @@ Available options: `visible`, `hidden`
 
 - [List courses](https://docs.whop.com/api-reference/legacy/courses/list-courses.md)
 - [Retrieve course](https://docs.whop.com/api-reference/legacy/courses/retrieve-course.md)
-- [Update course](https://docs.whop.com/api-reference/legacy/courses/update-course.md)
+- [Delete course](https://docs.whop.com/api-reference/legacy/courses/delete-course.md)

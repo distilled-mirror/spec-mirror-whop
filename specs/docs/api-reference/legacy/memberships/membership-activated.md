@@ -31,4 +31,4 @@ Required permissions:
 
 - [Membership activated](https://docs.whop.com/api-reference/memberships/membership-activated.md)
 - [Memberships](https://docs.whop.com/developer/guides/memberships.md)
-- [Membership updated](https://docs.whop.com/api-reference/legacy/memberships/membership-updated.md)
+- [Membership updated](https://docs.whop.com/api-reference/memberships/membership-updated.md)

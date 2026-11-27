@@ -576,5 +576,5 @@ When the verification profile was last updated, as an ISO 8601 timestamp.
 ## Related topics
 
 - [Verifications](https://docs.whop.com/elements/latest/verifications/overview.md)
+- [Verify User Identities with KYC](https://docs.whop.com/developer/verification/overview.md)
 - [Verification](https://docs.whop.com/api-reference/legacy/verifications/verification.md)
-- [List verifications](https://docs.whop.com/api-reference/legacy/verifications/list-verifications.md)

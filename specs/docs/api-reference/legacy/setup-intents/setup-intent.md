@@ -270,4 +270,4 @@ set up.
 
 - [Whop CLI Commands](https://docs.whop.com/cli/commands.md)
 - [Setup Intents API](https://docs.whop.com/api-reference/setup-intents/setup-intent.md)
-- [Create Setup Intent](https://docs.whop.com/api-reference/setup-intents/create-setup-intent.md)
+- [List setup intents](https://docs.whop.com/api-reference/legacy/setup-intents/list-setup-intents.md)
