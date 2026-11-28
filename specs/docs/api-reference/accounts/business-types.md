@@ -781,7 +781,7 @@ Set them on [Create Account](https://docs.whop.com/api-reference/accounts/create
 > `password_manager`, `patient_communication`, `pay_to_rank_leaderboards`,
 > `checkout_and_subscription_billing_software`, `payroll_software`,
 > `pdf_tools`, `penetration_testing_tools`, `people_search`,
-> `personal_data_scraping`, `personal_finance_apps`, `pharmacy_management`,
+> `profile_scraping_tools`, `personal_finance_apps`, `pharmacy_management`,
 > `phone_customization_apps`, `photo_editor`, `plagiarism_and_ai_detection`,
 > `podcast_hosting`, `point_of_sale`, `poker_study_tools`,
 > `prediction_market_analytics`, `photo_and_video_editing_presets`,

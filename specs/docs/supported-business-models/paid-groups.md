@@ -150,4 +150,4 @@ To do this, select **Recurring** when creating your pricing and select weekly, m
 
 - [Get Started with Whop](https://docs.whop.com/get-started.md)
 - [Create a Product and Choose a Pricing Strategy](https://docs.whop.com/manage-your-business/products/create-product.md)
-- [Invoice Customers from Your Dashboard](https://docs.whop.com/payments/send-an-invoice.md)
+- [Create and Send Invoices on Whop](https://docs.whop.com/manage-your-business/manage-payments/send-invoice.md)
